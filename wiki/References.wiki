@@ -1,0 +1,23 @@
+#Related references, some of which were used for implementation.
+
+= References =
+
+Each reference is described with a few lines to help exploring them.
+
+== System ==
+
+== Atmosphere ==
+
+== Celestial Bodies ==
+
+=== Sun ===
+
+=== Moon ===
+
+=== Stars ===
+
+== Clouds ==
+
+== Weather ==
+
+== Post Processing ==
