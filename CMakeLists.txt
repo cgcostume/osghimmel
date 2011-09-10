@@ -89,6 +89,8 @@ SET(PROJECT_NAME osghimmel)
 
 PROJECT(${PROJECT_NAME} C CXX)
 
+SET(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "limited configs" FORCE)
+
 SET(VERSION_MAJOR "0" CACHE STRING "${PROJECT_NAME} Major Version")
 SET(VERSION_MINOR "0" CACHE STRING "${PROJECT_NAME} Minor Version")
 
@@ -99,6 +101,7 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 OPTION(OPTION_MAKE_DEMOS "Make Demos" ON)
 OPTION(OPTION_MAKE_SKYBOX "Make SkyBox - Sandbox for osgHimmel (requires Qt)" OFF)
+OPTION(OPTION_MAKE_PACKAGE "Make Package (project yielding binary archive)" OFF)
 
 # packages
 
@@ -109,15 +112,52 @@ FIND_PACKAGE(OpenSceneGraph REQUIRED
     osgDB 
     osgGA)
 
+IF(OPTION_MAKE_PACKAGE)
+	STRING(REPLACE "include" "bin" PACKAGE_OSG_BUILD ${OSG_INCLUDE_DIR})
+    SET(PACKAGE_OSG_BUILD ${PACKAGE_OSG_BUILD} CACHE PATH "Binary directory containing OSG dlls.")
+    SET(PACKAGE_OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
+ENDIF(OPTION_MAKE_PACKAGE)
+
 IF(OPTION_MAKE_SKYBOX)
+
     SET(QT_MIN_VERSION "4.7.0")
     FIND_PACKAGE(Qt4)
 
     IF(NOT QT4_FOUND)
-		MESSAGE(WARNING "Skybox project will be ignored.")
+        MESSAGE(WARNING "Skybox project will be ignored.")
     ENDIF(NOT QT4_FOUND)
 
 ENDIF(OPTION_MAKE_SKYBOX)
+
+# cpack deploy
+
+IF(OPTION_MAKE_PACKAGE)
+
+    SET(CPACK_GENERATOR "ZIP")
+    SET(CPACK_SOURCE_GENERATOR "ZIP")
+
+    SET(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+    SET(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+    #SET(CPACK_PACKAGE_VERSION_PATCH 0)
+    INCLUDE(CPack)
+
+    INSTALL(FILES 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgd.dll" 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgUtild.dll" 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgDBd.dll" 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgGAd.dll" 
+        DESTINATION . 
+        CONFIGURATIONS Debug)
+
+    INSTALL(FILES 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osg.dll" 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgUtil.dll" 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgDB.dll" 
+        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgGA.dll" 
+        DESTINATION . 
+        CONFIGURATIONS Release)
+
+ENDIF(OPTION_MAKE_PACKAGE)
 
 # qt is required for apps only, so appropriate find_package is called there
 
