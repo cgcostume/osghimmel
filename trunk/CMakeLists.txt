@@ -60,25 +60,25 @@ ENDMACRO()
 
 
 MACRO(SOURCE_GROUP_BY_PATH RELATIVE_PARENT_PATH)
-	FOREACH(filename ${ARGV})
-		GET_FILENAME_COMPONENT(path "${filename}" REALPATH)
-		FILE(RELATIVE_PATH path ${RELATIVE_PARENT_PATH} ${path})
-		GET_FILENAME_COMPONENT(path "${path}" PATH)
-		string(REPLACE "/" "\\" path "${path}")
-		IF(${filename} MATCHES "ui_|cxx$")
-			SOURCE_GROUP("generated" FILES ${filename})
-		ELSEIF(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
-			SOURCE_GROUP("${path}" FILES ${filename})
-		ENDIF()
-	ENDFOREACH()
+    FOREACH(filename ${ARGV})
+        GET_FILENAME_COMPONENT(path "${filename}" REALPATH)
+        FILE(RELATIVE_PATH path ${RELATIVE_PARENT_PATH} ${path})
+        GET_FILENAME_COMPONENT(path "${path}" PATH)
+        string(REPLACE "/" "\\" path "${path}")
+        IF(${filename} MATCHES "ui_|cxx$")
+            SOURCE_GROUP("generated" FILES ${filename})
+        ELSEIF(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
+            SOURCE_GROUP("${path}" FILES ${filename})
+        ENDIF()
+    ENDFOREACH()
 ENDMACRO(SOURCE_GROUP_BY_PATH)
 
 
 MACRO(SET_WARNING_LEVEL4 target)
 
-	IF(MSVC)
-		SET_TARGET_PROPERTIES(${target} PROPERTIES COMPILE_FLAGS "/W4")
-	ENDIF(MSVC)
+    IF(MSVC)
+        SET_TARGET_PROPERTIES(${target} PROPERTIES COMPILE_FLAGS "/W4")
+    ENDIF(MSVC)
 
 ENDMACRO(SET_WARNING_LEVEL4 target)
 
@@ -104,10 +104,20 @@ OPTION(OPTION_MAKE_SKYBOX "Make SkyBox - Sandbox for osgHimmel (requires Qt)" OF
 
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(OpenSceneGraph REQUIRED 
-	osgViewer 
+    osgViewer 
     osgUtil 
     osgDB 
     osgGA)
+
+IF(OPTION_MAKE_SKYBOX)
+    SET(QT_MIN_VERSION "4.7.0")
+    FIND_PACKAGE(Qt4)
+
+    IF(NOT QT4_FOUND)
+		MESSAGE(WARNING "Skybox project will be ignored.")
+    ENDIF(NOT QT4_FOUND)
+
+ENDIF(OPTION_MAKE_SKYBOX)
 
 # qt is required for apps only, so appropriate find_package is called there
 
@@ -115,5 +125,6 @@ INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/include
     ${OSG_INCLUDE_DIR})
 
-ADD_SUBDIRECTORY("apps")
+ADD_SUBDIRECTORY("3rdp")
 ADD_SUBDIRECTORY("src")
+ADD_SUBDIRECTORY("apps")
