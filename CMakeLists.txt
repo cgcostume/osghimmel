@@ -113,9 +113,9 @@ FIND_PACKAGE(OpenSceneGraph REQUIRED
     osgGA)
 
 IF(OPTION_MAKE_PACKAGE)
-	STRING(REPLACE "include" "bin" PACKAGE_OSG_BUILD ${OSG_INCLUDE_DIR})
-    SET(PACKAGE_OSG_BUILD ${PACKAGE_OSG_BUILD} CACHE PATH "Binary directory containing OSG dlls.")
-    SET(PACKAGE_OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
+	STRING(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
+    SET(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
+    SET(OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
 ENDIF(OPTION_MAKE_PACKAGE)
 
 IF(OPTION_MAKE_SKYBOX)
@@ -142,18 +142,18 @@ IF(OPTION_MAKE_PACKAGE)
     INCLUDE(CPack)
 
     INSTALL(FILES 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgd.dll" 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgUtild.dll" 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgDBd.dll" 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgGAd.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtild.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDBd.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGAd.dll" 
         DESTINATION . 
         CONFIGURATIONS Debug)
 
     INSTALL(FILES 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osg.dll" 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgUtil.dll" 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgDB.dll" 
-        "${PACKAGE_OSG_BUILD}/osg${PACKAGE_OSG_SOVERSION}-osgGA.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osg.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtil.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDB.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGA.dll" 
         DESTINATION . 
         CONFIGURATIONS Release)
 
