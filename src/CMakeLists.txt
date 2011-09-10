@@ -30,11 +30,11 @@
 SET(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 
 SET(LIB_SOURCES
-	${HEADER_PATH}/abstracthimmel.h
+    ${HEADER_PATH}/abstracthimmel.h
     abstracthimmel.cpp)
 
 SOURCE_GROUP_BY_PATH(${PROJECT_SOURCE_DIR}
-	${LIB_SOURCES})
+    ${LIB_SOURCES})
 
 ADD_LIBRARY(osghimmel STATIC ${LIB_SOURCES})
 
