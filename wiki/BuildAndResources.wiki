@@ -1,0 +1,14 @@
+I (dm) am developing osghimmel with CMake 2.8.5, OSG 2.8.5 and Qt 4.8.0. Usually i prefer to build x64 binaries and since all mentioned libs and tools above are opensource, i build them my self. To bypass building third party libs yourself, this wikipage provides build instructions and lists available binary resources for each of them.
+
+= Requirements and Binaries =
+
+*CMake* 
+Latest downloads can be found here [http://www.cmake.org/cmake/resources/software.html].
+
+*OpenSceneGraph*
+osghimmel requires [http://www.openscenegraph.org/projects/osg OpenSceneGraph] tagged 2.8.5 or higher.
+Up-to-date sets of working binaries can be found at [http://openscenegraph.alphapixel.com/osg/downloads/free-openscenegraph-binary-downloads Alpha Pixel].
+
+*Qt*
+The skybox (osghimmel's sandbox) requires Qt4 tagged 4.7 or higher.
+[http://code.google.com/p/qt-msvc-installer/downloads/list qt-msvc-installer] provides several Microsoft Visual Studio builds.
