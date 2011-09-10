@@ -2,6 +2,9 @@ I (dm) am developing osghimmel with CMake 2.8.5, OSG 2.8.5 and Qt 4.8.0. Usually
 
 = Requirements and Binaries =
 
+QtPropertyBrowser
+ * Sources [http://qt.gitorious.org/qt-solutions/qt-solutions/trees/master/qtpropertybrowser located here] are included in the trunk. No additional building is required.
+
 CMake
  * Version *2.8 or higher* is recommended
  * Latest downloads can be found here [http://www.cmake.org/cmake/resources/software.html].
