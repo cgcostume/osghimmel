@@ -1,8 +1,4 @@
-#
-#     _  _ _ |_ . _ _  _ _  _ |
-#    (_)_\(_|| ||| | || | |(/_|
-#          _|  
-#
+
 # Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
 # Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 # All rights reserved.
