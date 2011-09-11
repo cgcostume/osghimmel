@@ -33,7 +33,7 @@
 #define __STABLE_H__
 
 #ifdef WIN32
-	#define WINDOWS_LEAN_AND_MEAN
+    #define WINDOWS_LEAN_AND_MEAN
 #endif // WIN32
 
 #include "pragmanote.h"
@@ -41,8 +41,8 @@
 
 // STABLE DEFINES
 
-#define APPLICATION_NAME		"SkyBox"
-#define APPLICATION_VERSION		"0.0.0"
+#define APPLICATION_NAME     "SkyBox"
+#define APPLICATION_VERSION  "0.0.0"
 
 
 // STABLE INCLUDES
