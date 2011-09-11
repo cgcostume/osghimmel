@@ -52,19 +52,19 @@
 
 
 LogEntry::LogEntry(e_LogEntryType type, const QString &message)
-:    _type(type)
-,    _message(message)
-,    _timestamp(QDateTime::currentDateTime())
+:    m_type(type)
+,    m_message(message)
+,    m_timestamp(QDateTime::currentDateTime())
 {
 }
 
 
 LogEntry::LogEntry(const LogEntry &entry)
-:    _type(entry._type)
-,    _message(entry._message)
-,    _timestamp(entry._timestamp)
-,    _file(entry._file)
-,    _line(entry._line)
+:    m_type(entry.m_type)
+,    m_message(entry.m_message)
+,    m_timestamp(entry.m_timestamp)
+,    m_file(entry.m_file)
+,    m_line(entry.m_line)
 {
 }
 
@@ -109,23 +109,23 @@ void StdLogOutput::print(const LogEntry &entry)
 
 
 FileLogOutput::FileLogOutput(const QString &filename)
-:    _opened(false)
-,   _stream(NULL)
+:    m_opened(false)
+,   m_stream(NULL)
 {
-    _file = new QFile(filename);
+    m_file = new QFile(filename);
 
 #ifndef WIN32
     FILE* file = fopen(filename.toLocal8Bit(), "wx+");
     if(file)
-        _opened = _file->open(file, QFile::WriteOnly);
+        m_opened = m_file->open(file, QFile::WriteOnly);
 #else
     int fhandle = _sopen(filename.toLocal8Bit(), O_CREAT | O_WRONLY | O_TEXT, SH_DENYWR, S_IWRITE);
     if(fhandle != -1)
-        _opened = _file->open(fhandle, QFile::WriteOnly);
+        m_opened = m_file->open(fhandle, QFile::WriteOnly);
 #endif
 
-    if(_opened)
-        _stream = new QTextStream(_file);    
+    if(m_opened)
+        m_stream = new QTextStream(m_file);    
     else
         throw std::exception(TR("Cannot open log file %1 in write mode.").arg(filename).toLocal8Bit());
 }
@@ -133,8 +133,8 @@ FileLogOutput::FileLogOutput(const QString &filename)
 
 FileLogOutput::~FileLogOutput()
 {
-    _file->close();
-    delete _file;
+    m_file->close();
+    delete m_file;
 }
 
 
@@ -146,19 +146,19 @@ void FileLogOutput::print(const LogEntry &entry)
     switch(entry.type())
     {
     case LogEntry::INFORMATION_LOG:
-        (*_stream) << QString("%1:         %2\n").arg(timestamp).arg(entry.message());
+        (*m_stream) << QString("%1:         %2\n").arg(timestamp).arg(entry.message());
         break;
     case LogEntry::WORKFLOW_LOG:
-        (*_stream) << QString("%1:       f %2\n").arg(timestamp).arg(entry.message());
+        (*m_stream) << QString("%1:       f %2\n").arg(timestamp).arg(entry.message());
         break;
     case LogEntry::WARNING_LOG:
-        (*_stream) << QString("%1 warning: %2\n").arg(timestamp).arg(entry.message());
+        (*m_stream) << QString("%1 warning: %2\n").arg(timestamp).arg(entry.message());
         break;
     case LogEntry::ERROR_LOG:            
-        (*_stream) << QString("%1 error:   %2\n").arg(timestamp).arg(entry.message());
+        (*m_stream) << QString("%1 error:   %2\n").arg(timestamp).arg(entry.message());
         break;
     case LogEntry::DEBUG_LOG:            
-        (*_stream) << QString("%1 %2 %3: %4\n").arg(timestamp).arg(entry.file()).arg(entry.line()).arg(entry.message());
+        (*m_stream) << QString("%1 %2 %3: %4\n").arg(timestamp).arg(entry.file()).arg(entry.line()).arg(entry.message());
         break;
     case LogEntry::MESSAGE_LOG:    
     case LogEntry::UNDEFINED_LOG:
@@ -166,56 +166,56 @@ void FileLogOutput::print(const LogEntry &entry)
         break;
     };
 
-    _stream->flush();
+    m_stream->flush();
 }
 
 
 
 
 LogDispatcher::LogDispatcher()
-:    _cache(true)
+:    m_cache(true)
 {
 }
 
 
 LogDispatcher::~LogDispatcher()
 {
-    foreach(LogEntry *entry, _cachedEntries)
+    foreach(LogEntry *entry, m_cachedEntries)
         delete entry;
 
-    _cachedEntries.clear();
+    m_cachedEntries.clear();
 }
 
 
 void LogDispatcher::append(const LogEntry &entry)
 {
-    if(_cache)
+    if(m_cache)
         cache(entry);
 
-    foreach(LogOutput *output, _outputs)
+    foreach(LogOutput *output, m_outputs)
         output->print(entry);
 }
 
 
 void LogDispatcher::cache(const LogEntry &entry)
 {
-    if(_cache)
-        _cachedEntries.append(new LogEntry(entry));
+    if(m_cache)
+        m_cachedEntries.append(new LogEntry(entry));
 }
 
 
 void LogDispatcher::flushCache(LogOutput *output)
 {
-    foreach(LogEntry *entry, _cachedEntries)
+    foreach(LogEntry *entry, m_cachedEntries)
         output->print(*entry);
 }
 
 
 void LogDispatcher::attachLogOutput(LogOutput *output)
 {
-    if(output && !_outputs.contains(output))
+    if(output && !m_outputs.contains(output))
     {
-        _outputs.insert(output);
+        m_outputs.insert(output);
         flushCache(output);
     }
 }
@@ -223,14 +223,14 @@ void LogDispatcher::attachLogOutput(LogOutput *output)
 
 void LogDispatcher::detachLogOutput(LogOutput *output)
 {
-    if(output && _outputs.contains(output))
-        _outputs.remove(output);
+    if(output && m_outputs.contains(output))
+        m_outputs.remove(output);
 }
 
 
 void LogDispatcher::stopCaching()
 {
-    _cache = false;
+    m_cache = false;
 }
 
 
@@ -250,7 +250,7 @@ void LogDispatcher::stopCaching()
 
 
 Log::Log()
-:    _dispatcher(NULL)
+:    m_dispatcher(NULL)
 {
 }
 
@@ -265,13 +265,13 @@ void Log::attachDispatcher(LogDispatcher *dispatcher)
     if(!dispatcher)
         return;
 
-    _dispatcher = dispatcher;
+    m_dispatcher = dispatcher;
     
     // forwards the whole log history to the new dispatcher
-    while(!_earlyEntries.isEmpty())
+    while(!m_earlyEntries.isEmpty())
     {
-        LogEntry *entry(_earlyEntries.takeFirst());
-        _dispatcher->append(*entry);
+        LogEntry *entry(m_earlyEntries.takeFirst());
+        m_dispatcher->append(*entry);
         delete entry;
     }
 }
@@ -279,7 +279,7 @@ void Log::attachDispatcher(LogDispatcher *dispatcher)
 
 LogDispatcher *Log::dispatcher()
 {
-    return _dispatcher;
+    return m_dispatcher;
 }
 
 
@@ -297,8 +297,8 @@ void Log::debug(const char *file, const int line)
 {
     lock();
 
-    _debug_file = QString::fromLatin1(file);
-    _debug_line = line;
+    m_debug_file = QString::fromLatin1(file);
+    m_debug_line = line;
 
     unlock();
 }
@@ -310,19 +310,19 @@ void Log::append(LogEntry::e_LogEntryType type, const QString &message, const bo
 
     if(debug)
     {
-        entry->setFile(_debug_file);
-        entry->setLine(_debug_line);
+        entry->setFile(m_debug_file);
+        entry->setLine(m_debug_line);
     }
 
-    if(_dispatcher)
+    if(m_dispatcher)
     {
-        _dispatcher->append(*entry);
+        m_dispatcher->append(*entry);
         delete entry;
     }
     else
     {
         // cache items
-        _earlyEntries << entry;
+        m_earlyEntries << entry;
     }
 }
 
@@ -467,13 +467,13 @@ void Log::appendError(const QString &message)
 
 void ThreadSafeLog::lock()
 {
-    _mutex.lock();
+    m_mutex.lock();
 }
 
 
 void ThreadSafeLog::unlock()
 {
-    _mutex.unlock();
+    m_mutex.unlock();
 }
 
 

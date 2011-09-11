@@ -49,14 +49,14 @@ public:
 
 
 protected:
-	QTextCharFormat	_messageCharFormat;
-	QTextCharFormat	_informationCharFormat;
-	QTextCharFormat	_warningCharFormat;
-	QTextCharFormat	_errorCharFormat;
-	QTextCharFormat	_debugCharFormat;
+	QTextCharFormat	m_messageCharFormat;
+	QTextCharFormat	m_informationCharFormat;
+	QTextCharFormat	m_warningCharFormat;
+	QTextCharFormat	m_errorCharFormat;
+	QTextCharFormat	m_debugCharFormat;
 
-	QTextCursor *_cursor;
-	QTextEdit *_swap;
+	QTextCursor *m_cursor;
+	QTextEdit *m_swap;
 };
 
 #endif __LOGOUTPUTWIDGET_H__

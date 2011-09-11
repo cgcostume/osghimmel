@@ -38,8 +38,8 @@ LogOutputWidget::LogOutputWidget(QWidget* parent)
 	setOpenLinks(false);
 	setOpenExternalLinks(false);
 
-	_cursor = new QTextCursor(this->textCursor());
-	_swap = new QTextEdit();
+	m_cursor = new QTextCursor(this->textCursor());
+	m_swap = new QTextEdit();
 
 	update();
 	clear();
@@ -52,8 +52,8 @@ LogOutputWidget::LogOutputWidget(QWidget* parent)
 
 LogOutputWidget::~LogOutputWidget()
 {
-	delete _cursor;
-	delete _swap;
+	delete m_cursor;
+	delete m_swap;
 }
 
 
@@ -62,19 +62,19 @@ void LogOutputWidget::setColor(const LogEntry::e_LogEntryType type, const QColor
 	switch(type)
 	{
 	case LogEntry::INFORMATION_LOG:
-		_informationCharFormat.setForeground(QBrush(color));
+		m_informationCharFormat.setForeground(QBrush(color));
 		break;
 	case LogEntry::WARNING_LOG:
-		_warningCharFormat.setForeground(QBrush(color));
+		m_warningCharFormat.setForeground(QBrush(color));
 		break;
 	case LogEntry::ERROR_LOG:
-		_errorCharFormat.setForeground(QBrush(color));
+		m_errorCharFormat.setForeground(QBrush(color));
 		break;
 	case LogEntry::DEBUG_LOG:
-		_debugCharFormat.setForeground(QBrush(color));
+		m_debugCharFormat.setForeground(QBrush(color));
 		break;
 	case LogEntry::MESSAGE_LOG:
-		_messageCharFormat.setForeground(QBrush(color));
+		m_messageCharFormat.setForeground(QBrush(color));
 		break;
 	case LogEntry::WORKFLOW_LOG:
 	case LogEntry::UNDEFINED_LOG:
@@ -95,27 +95,27 @@ void LogOutputWidget::print(const LogEntry &entry)
 #endif
 	//const QString timestamp(entry.timestamp().toString("hh:mm:ss"));
 
-	_swap->clear();
-	_swap->setFont(font());
+	m_swap->clear();
+	m_swap->setFont(font());
 
 	QString message = entry.message();
 
 	switch(entry.type())
 	{
 	case LogEntry::INFORMATION_LOG:
-		_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), _informationCharFormat);
+		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_informationCharFormat);
 		break;
 	case LogEntry::WARNING_LOG:
-		_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), _warningCharFormat);
+		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_warningCharFormat);
 		break;
 	case LogEntry::ERROR_LOG:			
-		_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), _errorCharFormat);
+		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_errorCharFormat);
 		break;
 	case LogEntry::DEBUG_LOG:			
-		_swap->textCursor().insertText(QString("%1 %2 %3: %4\n").arg(timestamp).arg(entry.file()).arg(entry.line()).arg(message), _debugCharFormat);
+		m_swap->textCursor().insertText(QString("%1 %2 %3: %4\n").arg(timestamp).arg(entry.file()).arg(entry.line()).arg(message), m_debugCharFormat);
 		break;
 	case LogEntry::MESSAGE_LOG:	
-		_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), _messageCharFormat);
+		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_messageCharFormat);
 		break;
 	case LogEntry::WORKFLOW_LOG:
 	case LogEntry::UNDEFINED_LOG:
@@ -123,7 +123,7 @@ void LogOutputWidget::print(const LogEntry &entry)
 		break;
 	};
 
-	QString htmlMessage = _swap->toHtml();
+	QString htmlMessage = m_swap->toHtml();
 
 	QRegExp reEmail("\\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4})\\b");
 	QRegExp reLink("\\b((ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?)\\b");
@@ -144,7 +144,7 @@ void LogOutputWidget::print(const LogEntry &entry)
 		htmlMessage.replace(link, QString("<a href =\"%1\">%1</a>").arg(link));
 	}
 
-	_cursor->insertHtml(htmlMessage);
+	m_cursor->insertHtml(htmlMessage);
 
 	ensureCursorVisible();
 	update();

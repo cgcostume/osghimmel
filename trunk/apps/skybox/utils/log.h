@@ -48,12 +48,12 @@ public:
 
     enum e_LogEntryType
     {
-        UNDEFINED_LOG    = 1 << 0
-    ,   MESSAGE_LOG        = 1 << 1
+        UNDEFINED_LOG   = 1 << 0
+    ,   MESSAGE_LOG     = 1 << 1
     ,   INFORMATION_LOG = 1 << 2
-    ,   WARNING_LOG        = 1 << 3
-    ,   ERROR_LOG        = 1 << 4
-    ,   DEBUG_LOG        = 1 << 5
+    ,   WARNING_LOG     = 1 << 3
+    ,   ERROR_LOG       = 1 << 4
+    ,   DEBUG_LOG       = 1 << 5
     ,   WORKFLOW_LOG    = 1 << 6
     };
 
@@ -65,54 +65,54 @@ public:
 
     inline void LogEntry::setLine(const int line)
     {
-        _line = line;
+        m_line = line;
     }
 
 
     inline void LogEntry::setFile(const QString &filename)
     {
-        _file = filename;
+        m_file = filename;
     }
 
 
     inline LogEntry::e_LogEntryType LogEntry::type() const
     {
-        return _type;
+        return m_type;
     }
 
 
     inline const QString LogEntry::message() const
     {
-        return _message;
+        return m_message;
     }
 
 
     inline const QDateTime LogEntry::timestamp() const
     {
-        return _timestamp;
+        return m_timestamp;
     }
 
 
     inline const QString LogEntry::file() const
     {
-        return _file;
+        return m_file;
     }
 
 
     inline const int LogEntry::line() const
     {
-        return _line;
+        return m_line;
     }
 
 protected:
 
-    e_LogEntryType _type;
+    e_LogEntryType m_type;
 
-    QString _message;
-    QDateTime _timestamp;
+    QString m_message;
+    QDateTime m_timestamp;
 
-    QString _file;
-    int _line;
+    QString m_file;
+    int m_line;
 };
 
 
@@ -145,10 +145,10 @@ public:
     virtual ~FileLogOutput();
 
 protected:
-    QFile *_file;
-    QTextStream *_stream;
+    QFile *m_file;
+    QTextStream *m_stream;
 
-    bool _opened;
+    bool m_opened;
 
 protected:
     virtual void print(const LogEntry &entry);
@@ -168,10 +168,10 @@ public:
 
 protected:
 
-    QSet<LogOutput*> _outputs;
+    QSet<LogOutput*> m_outputs;
 
-    QVector<LogEntry*> _cachedEntries;
-    bool _cache;
+    QVector<LogEntry*> m_cachedEntries;
+    bool m_cache;
 
 protected:
 
@@ -226,13 +226,13 @@ public:
 protected:
 
     //! stores debug information passed by debug(...)
-    QString _debug_file;
-    int _debug_line;
+    QString m_debug_file;
+    int m_debug_line;
 
-    LogDispatcher *_dispatcher;
+    LogDispatcher *m_dispatcher;
 
     //! stores entries that are appended before a valid dispatcher is assigned
-    QQueue<LogEntry*> _earlyEntries;
+    QQueue<LogEntry*> m_earlyEntries;
 
 protected:
 
@@ -252,7 +252,7 @@ protected:
 class ThreadSafeLog : public Log
 {
 protected:
-    QMutex _mutex;
+    QMutex m_mutex;
 
 protected:
     virtual void lock();
