@@ -41,30 +41,30 @@ class QTimer;
 
 class LogOutputLabel : public QLabel, public LogOutput
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	LogOutputLabel(QDockWidget *output, QWidget* parent = 0);
-	virtual ~LogOutputLabel();
+    LogOutputLabel(QDockWidget *output, QWidget* parent = 0);
+    virtual ~LogOutputLabel();
 
-	virtual void print(const LogEntry &entry);
-
-protected:
-
-	QDockWidget *m_output;
-	QTimer *m_timer;
-	QString m_ready;
-
-	bool m_readyShowHelpShown;
-	bool m_readyHideHelpShown;
+    virtual void print(const LogEntry &entry);
 
 protected:
 
-	virtual void mousePressEvent(QMouseEvent *event);
-	inline const QString readyString();
+    QDockWidget *m_output;
+    QTimer *m_timer;
+    QString m_ready;
+
+    bool m_readyShowHelpShown;
+    bool m_readyHideHelpShown;
+
+protected:
+
+    virtual void mousePressEvent(QMouseEvent *event);
+    inline const QString readyString();
 
 protected slots:
-	void timedout();
+    void timedout();
 };
 
 

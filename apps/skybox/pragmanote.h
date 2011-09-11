@@ -42,7 +42,7 @@
 #if _MSC_VER
 #   define FILE_LINE_LINK __FILE__ "(" STRINGISE(__LINE__) ") : "
 #   define NOTE(exp) message (FILE_LINE_LINK "note: " exp)
-#	define NOTE_wARG(exp, arg)  message (FILE_LINE_LINK "note: " exp STRINGISE(arg))
+#    define NOTE_wARG(exp, arg)  message (FILE_LINE_LINK "note: " exp STRINGISE(arg))
 #else //__GNUC__ - may need other defines for different compilers
 #   define NOTE(exp) ("note: " exp)
 #endif

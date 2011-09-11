@@ -38,25 +38,25 @@
 class LogOutputWidget : public LogOutput, public QTextBrowser
 {
 public:
-	LogOutputWidget(QWidget* parent = 0);
-	virtual ~LogOutputWidget();
+    LogOutputWidget(QWidget* parent = 0);
+    virtual ~LogOutputWidget();
 
-	virtual void setColor(
+    virtual void setColor(
         const LogEntry::e_LogEntryType type
     ,   const QColor &color);
 
-	virtual void print(const LogEntry &entry);
+    virtual void print(const LogEntry &entry);
 
 
 protected:
-	QTextCharFormat	m_messageCharFormat;
-	QTextCharFormat	m_informationCharFormat;
-	QTextCharFormat	m_warningCharFormat;
-	QTextCharFormat	m_errorCharFormat;
-	QTextCharFormat	m_debugCharFormat;
+    QTextCharFormat m_messageCharFormat;
+    QTextCharFormat m_informationCharFormat;
+    QTextCharFormat m_warningCharFormat;
+    QTextCharFormat m_errorCharFormat;
+    QTextCharFormat m_debugCharFormat;
 
-	QTextCursor *m_cursor;
-	QTextEdit *m_swap;
+    QTextCursor *m_cursor;
+    QTextEdit *m_swap;
 };
 
 #endif __LOGOUTPUTWIDGET_H__

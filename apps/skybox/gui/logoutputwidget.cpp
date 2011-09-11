@@ -33,54 +33,54 @@ LogOutputWidget::LogOutputWidget(QWidget* parent)
 :   LogOutput()
 ,   QTextBrowser(parent)
 {
-	setTextInteractionFlags(Qt::TextBrowserInteraction);
-	setReadOnly(true);
-	setOpenLinks(false);
-	setOpenExternalLinks(false);
+    setTextInteractionFlags(Qt::TextBrowserInteraction);
+    setReadOnly(true);
+    setOpenLinks(false);
+    setOpenExternalLinks(false);
 
-	m_cursor = new QTextCursor(this->textCursor());
-	m_swap = new QTextEdit();
+    m_cursor = new QTextCursor(this->textCursor());
+    m_swap = new QTextEdit();
 
-	update();
-	clear();
+    update();
+    clear();
 
-	setCursor(Qt::IBeamCursor);
+    setCursor(Qt::IBeamCursor);
 
-	setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
 }
 
 
 LogOutputWidget::~LogOutputWidget()
 {
-	delete m_cursor;
-	delete m_swap;
+    delete m_cursor;
+    delete m_swap;
 }
 
 
 void LogOutputWidget::setColor(const LogEntry::e_LogEntryType type, const QColor &color)
 {
-	switch(type)
-	{
-	case LogEntry::INFORMATION_LOG:
-		m_informationCharFormat.setForeground(QBrush(color));
-		break;
-	case LogEntry::WARNING_LOG:
-		m_warningCharFormat.setForeground(QBrush(color));
-		break;
-	case LogEntry::ERROR_LOG:
-		m_errorCharFormat.setForeground(QBrush(color));
-		break;
-	case LogEntry::DEBUG_LOG:
-		m_debugCharFormat.setForeground(QBrush(color));
-		break;
-	case LogEntry::MESSAGE_LOG:
-		m_messageCharFormat.setForeground(QBrush(color));
-		break;
-	case LogEntry::WORKFLOW_LOG:
-	case LogEntry::UNDEFINED_LOG:
-	default:
-		break;
-	};
+    switch(type)
+    {
+    case LogEntry::INFORMATION_LOG:
+        m_informationCharFormat.setForeground(QBrush(color));
+        break;
+    case LogEntry::WARNING_LOG:
+        m_warningCharFormat.setForeground(QBrush(color));
+        break;
+    case LogEntry::ERROR_LOG:
+        m_errorCharFormat.setForeground(QBrush(color));
+        break;
+    case LogEntry::DEBUG_LOG:
+        m_debugCharFormat.setForeground(QBrush(color));
+        break;
+    case LogEntry::MESSAGE_LOG:
+        m_messageCharFormat.setForeground(QBrush(color));
+        break;
+    case LogEntry::WORKFLOW_LOG:
+    case LogEntry::UNDEFINED_LOG:
+    default:
+        break;
+    };
 }
 
 
@@ -89,63 +89,63 @@ void LogOutputWidget::setColor(const LogEntry::e_LogEntryType type, const QColor
 void LogOutputWidget::print(const LogEntry &entry)
 {
 #ifdef _NDEBUG
-	const QString timestamp(entry.timestamp().toString("hh:mm:ss"));
+    const QString timestamp(entry.timestamp().toString("hh:mm:ss"));
 #else
-	const QString timestamp(entry.timestamp().toString("hh:mm:ss:zzz"));
+    const QString timestamp(entry.timestamp().toString("hh:mm:ss:zzz"));
 #endif
-	//const QString timestamp(entry.timestamp().toString("hh:mm:ss"));
+    //const QString timestamp(entry.timestamp().toString("hh:mm:ss"));
 
-	m_swap->clear();
-	m_swap->setFont(font());
+    m_swap->clear();
+    m_swap->setFont(font());
 
-	QString message = entry.message();
+    QString message = entry.message();
 
-	switch(entry.type())
-	{
-	case LogEntry::INFORMATION_LOG:
-		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_informationCharFormat);
-		break;
-	case LogEntry::WARNING_LOG:
-		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_warningCharFormat);
-		break;
-	case LogEntry::ERROR_LOG:			
-		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_errorCharFormat);
-		break;
-	case LogEntry::DEBUG_LOG:			
-		m_swap->textCursor().insertText(QString("%1 %2 %3: %4\n").arg(timestamp).arg(entry.file()).arg(entry.line()).arg(message), m_debugCharFormat);
-		break;
-	case LogEntry::MESSAGE_LOG:	
-		m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_messageCharFormat);
-		break;
-	case LogEntry::WORKFLOW_LOG:
-	case LogEntry::UNDEFINED_LOG:
-	default:
-		break;
-	};
+    switch(entry.type())
+    {
+    case LogEntry::INFORMATION_LOG:
+        m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_informationCharFormat);
+        break;
+    case LogEntry::WARNING_LOG:
+        m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_warningCharFormat);
+        break;
+    case LogEntry::ERROR_LOG:
+        m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_errorCharFormat);
+        break;
+    case LogEntry::DEBUG_LOG:
+        m_swap->textCursor().insertText(QString("%1 %2 %3: %4\n").arg(timestamp).arg(entry.file()).arg(entry.line()).arg(message), m_debugCharFormat);
+        break;
+    case LogEntry::MESSAGE_LOG:
+        m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_messageCharFormat);
+        break;
+    case LogEntry::WORKFLOW_LOG:
+    case LogEntry::UNDEFINED_LOG:
+    default:
+        break;
+    };
 
-	QString htmlMessage = m_swap->toHtml();
+    QString htmlMessage = m_swap->toHtml();
 
-	QRegExp reEmail("\\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4})\\b");
-	QRegExp reLink("\\b((ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?)\\b");
+    QRegExp reEmail("\\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4})\\b");
+    QRegExp reLink("\\b((ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?)\\b");
 
-	int pos = 0;
-	while((pos = reEmail.indexIn(message, pos)) != -1) 
-	{
-		pos += reEmail.matchedLength();
-		const QString email = reEmail.capturedTexts()[0];
-		htmlMessage.replace(email, QString("<a href =\"mailto:%1\">%1</a>").arg(email));
-	}
+    int pos = 0;
+    while((pos = reEmail.indexIn(message, pos)) != -1) 
+    {
+        pos += reEmail.matchedLength();
+        const QString email = reEmail.capturedTexts()[0];
+        htmlMessage.replace(email, QString("<a href =\"mailto:%1\">%1</a>").arg(email));
+    }
 
-	pos = 0;
-	while((pos = reLink.indexIn(message, pos)) != -1) 
-	{
-		pos += reLink.matchedLength();
-		const QString link = reLink.capturedTexts()[0];
-		htmlMessage.replace(link, QString("<a href =\"%1\">%1</a>").arg(link));
-	}
+    pos = 0;
+    while((pos = reLink.indexIn(message, pos)) != -1) 
+    {
+        pos += reLink.matchedLength();
+        const QString link = reLink.capturedTexts()[0];
+        htmlMessage.replace(link, QString("<a href =\"%1\">%1</a>").arg(link));
+    }
 
-	m_cursor->insertHtml(htmlMessage);
+    m_cursor->insertHtml(htmlMessage);
 
-	ensureCursorVisible();
-	update();
+    ensureCursorVisible();
+    update();
 }
