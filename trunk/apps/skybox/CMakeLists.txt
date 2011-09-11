@@ -32,18 +32,18 @@ SET(QT_USE_UI TRUE)
 SET(QT_USE_CORE TRUE)
 
 SET(SKYBOX_SOURCES
-	pragmanote.h
-	mainlogdispatcher.h
-	mainlogdispatcher.cpp
+    pragmanote.h
+    mainlogdispatcher.h
+    mainlogdispatcher.cpp
     skyboxmain.cpp
-	stable.h
-	stable.cpp
-	gui/logoutputlabel.h
-	gui/logoutputlabel.cpp
-	gui/logoutputwidget.h
-	gui/logoutputwidget.cpp
-	utils/log.h
-	utils/log.cpp)
+    stable.h
+    stable.cpp
+    gui/logoutputlabel.h
+    gui/logoutputlabel.cpp
+    gui/logoutputwidget.h
+    gui/logoutputwidget.cpp
+    utils/log.h
+    utils/log.cpp)
 
 SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
 
@@ -54,17 +54,17 @@ INCLUDE(${QT_USE_FILE})
 
 INCLUDE_DIRECTORIES(
     ${QT_INCLUDES})
-	
+    
 ADD_EXECUTABLE(skybox
     ${QT4_SOURCES}
-	${SKYBOX_SOURCES})
+    ${SKYBOX_SOURCES})
 
 TARGET_LINK_LIBRARIES(skybox
     osghimmel
     qtpropertybrowser
     ${QT_QTMAIN_LIBRARY}
-	${QT_QTCORE_LIBRARY}
-	${QT_QTGUI_LIBRARY}
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})

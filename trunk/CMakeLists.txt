@@ -37,48 +37,48 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
 
 MACRO(QT4_AUTO_WRAP outfiles)
 
-	SET (moc_headers "")
-	SET (ui_files "")
-	SET (qrc_files "")
+    SET (moc_headers "")
+    SET (ui_files "")
+    SET (qrc_files "")
 
-	FOREACH(fileName ${ARGV})
+    FOREACH(fileName ${ARGV})
 
-		IF(fileName MATCHES "\\.h$")
+        IF(fileName MATCHES "\\.h$")
             FILE(STRINGS ${fileName} lines REGEX Q_OBJECT)
             IF(lines)
-				LIST(APPEND moc_headers ${fileName})
-				MESSAGE(STATUS "moc: ${fileName}")
+                LIST(APPEND moc_headers ${fileName})
+                MESSAGE(STATUS "moc: ${fileName}")
             ENDIF()
         ENDIF()
-		
+        
         IF(fileName MATCHES "\\.ui$")
             LIST(APPEND ui_files ${fileName})
-			MESSAGE(STATUS "uic: ${fileName}")
+            MESSAGE(STATUS "uic: ${fileName}")
         ENDIF()
 
         IF(fileName MATCHES "\\.qrc$")
             LIST(APPEND qrc_files ${fileName})
-			MESSAGE(STATUS "qrc: ${fileName}")
+            MESSAGE(STATUS "qrc: ${fileName}")
         ENDIF()
 
-	ENDFOREACH()
+    ENDFOREACH()
 
     QT4_WRAP_CPP(mocGeneratedByHeader ${moc_headers})
     QT4_WRAP_UI(uicGenerated ${ui_files})
 
     QT4_ADD_RESOURCES(mocGeneratedByRessources ${qrc_files})
 
-	LIST(APPEND ${outfiles}
-		${uicGenerated}
-		${mocGeneratedByHeader} 
-		${mocGeneratedByRessources})
+    LIST(APPEND ${outfiles}
+        ${uicGenerated}
+        ${mocGeneratedByHeader} 
+        ${mocGeneratedByRessources})
 
-	SOURCE_GROUP("_ Qt Generated" FILES 
-		${uicGenerated}
-		${mocGeneratedByHeader}
-		${mocGeneratedByRessources})
+    SOURCE_GROUP("_ Qt Generated" FILES 
+        ${uicGenerated}
+        ${mocGeneratedByHeader}
+        ${mocGeneratedByRessources})
 
-	SOURCE_GROUP("_ CMake Rules" REGULAR_EXPRESSION "rule$")
+    SOURCE_GROUP("_ CMake Rules" REGULAR_EXPRESSION "rule$")
 
 ENDMACRO()
 
@@ -86,15 +86,15 @@ ENDMACRO()
 MACRO(SOURCE_GROUP_BY_PATH parent_path)
 
     FOREACH(filename ${ARGV})
-	
+    
         GET_FILENAME_COMPONENT(path "${filename}" REALPATH)
-		FILE(RELATIVE_PATH path ${parent_path} ${path})
-		GET_FILENAME_COMPONENT(path "${path}" PATH)
-		STRING(REPLACE "/" "\\" path "${path}")
+        FILE(RELATIVE_PATH path ${parent_path} ${path})
+        GET_FILENAME_COMPONENT(path "${path}" PATH)
+        STRING(REPLACE "/" "\\" path "${path}")
 
-		IF(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
-			SOURCE_GROUP("${path}" FILES ${filename})
-		ENDIF()
+        IF(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
+            SOURCE_GROUP("${path}" FILES ${filename})
+        ENDIF()
 
     ENDFOREACH()
 
