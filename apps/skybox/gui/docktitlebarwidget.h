@@ -27,32 +27,48 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
-#include "gui/mainwindow.h"
+#pragma once
+#ifndef __DOCKTITLEBARWIDGET_H__
+#define __DOCKTITLEBARWIDGET_H__
 
-#include <QtGui/QApplication>
 
-int main(int argc, char* argv[])
+#include <QWidget>
+
+#include <memory> //auto_ptr
+
+class QDockWidget;
+
+class Ui_DockTitleBarWidget;
+
+
+class DockTitleBarWidget 
+:    public QWidget
 {
-    int result = -1;
+    Q_OBJECT
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
+public:
+    DockTitleBarWidget(QDockWidget* parent, const bool useParentIcon = true);
+    virtual ~DockTitleBarWidget();
 
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
+    void setAllowCollapse(const bool allow);
+    void setCollapsed(const bool collapsed);
+    void setWindowIcon(const QIcon& icon);
 
-    QApplication a(argc, argv);
+signals:
+    void detach();
+    void collapse();
 
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
-#endif
+public slots:
+    void setWindowTitle(const QString& title);
 
-    result = a.exec();
+    void on_collapseToolButton_clicked(bool checked = false);
+    void on_detachToolButton_clicked(bool checked = false);
 
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
+protected:
+    std::auto_ptr<Ui_DockTitleBarWidget> _ui;
 
-    return result;
-}
+protected:
+    virtual void mouseDoubleClickEvent(QMouseEvent* event);
+};
+
+#endif __DOCKTITLEBARWIDGET_H__

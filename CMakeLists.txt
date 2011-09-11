@@ -223,6 +223,7 @@ ENDIF(OPTION_MAKE_PACKAGE)
 # qt is required for apps only, so appropriate find_package is called there
 
 INCLUDE_DIRECTORIES(
+	${CMAKE_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}/include
     ${OSG_INCLUDE_DIR})
 

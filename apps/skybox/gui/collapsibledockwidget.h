@@ -27,32 +27,67 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
-#include "gui/mainwindow.h"
+#pragma once
+#ifndef __COLLAPSIBLEDOCKWIDGET_H__
+#define __COLLAPSIBLEDOCKWIDGET_H__
 
-#include <QtGui/QApplication>
 
-int main(int argc, char* argv[])
+#include "docktitlebarwidget.h"
+
+#include <QDockWidget>
+#include <QSet>
+
+
+class QMainWindow;
+class QSettings;
+
+
+class DockTitleBarWidget;
+
+class CollapsibleDockWidget
+:    public QDockWidget
 {
-    int result = -1;
+    Q_OBJECT
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
+public:
+    CollapsibleDockWidget(
+        QWidget& widget
+    ,   QWidget* parent = NULL
+    ,   const bool collapsed = false);
+    ~CollapsibleDockWidget();
 
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
+    const bool isCollapsed() const;
 
-    QApplication a(argc, argv);
+    void saveLayoutState(QSettings &settings);
+    void restoreLayoutState(const QSettings &settings);
 
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
-#endif
+public slots:
+    void toggleCollapse();
+    void toggleCollapse(const bool collapse);
 
-    result = a.exec();
+    void updateWindowTitle(QString windowTitle);
 
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
+protected:
+    QWidget *_originalWidget;
+    QWidget *_emptyWidget;
 
-    return result;
-}
+    DockTitleBarWidget *_titleBar;
+
+    static QSet<CollapsibleDockWidget*> _instances;
+
+protected:
+    void setAllowCollapse(const bool allow);
+
+    static void updateCollapsePolicy(QMainWindow& mainWindow);
+
+    // this is for a qdockwidget hot fix
+    virtual bool eventFilter(QObject *object, QEvent *event);
+
+protected slots:
+    void detach();
+    void dockStatusChanged();
+    void addTitleBarIfFloating();
+};
+
+
+#endif __COLLAPSIBLEDOCKWIDGET_H__

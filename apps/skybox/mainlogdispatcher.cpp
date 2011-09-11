@@ -102,7 +102,15 @@ void MainLogDispatcher::setOutputWidget(LogOutputWidget *widget)
     m_widgetOutput = widget;
 
     if(m_widgetOutput)
+    {
+        m_widgetOutput->setColor(LogEntry::MESSAGE_LOG,     Qt::black);
+        m_widgetOutput->setColor(LogEntry::INFORMATION_LOG, Qt::gray);
+        m_widgetOutput->setColor(LogEntry::WARNING_LOG,     QColor("#d60"));
+        m_widgetOutput->setColor(LogEntry::ERROR_LOG,       QColor("#b01"));
+        m_widgetOutput->setColor(LogEntry::DEBUG_LOG,       QColor("#02b"));
+
         attachLogOutput(m_widgetOutput);
+    }
 
     stopCaching();
 }

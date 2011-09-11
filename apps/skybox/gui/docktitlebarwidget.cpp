@@ -1,0 +1,115 @@
+
+// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are met:
+//   * Redistributions of source code must retain the above copyright notice, 
+//     this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright 
+//     notice, this list of conditions and the following disclaimer in the 
+//     documentation and/or other materials provided with the distribution.
+//   * Neither the name of the Computer Graphics Systems Group at the 
+//     Hasso-Plattner-Institute (HPI), Germany nor the names of its 
+//     contributors may be used to endorse or promote products derived from 
+//     this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+// POSSIBILITY OF SUCH DAMAGE.
+
+#include "docktitlebarwidget.h"
+#include "apps/skybox/ui_docktitlebarwidget.h"
+
+#include <QDockWidget>
+#include <assert.h>
+
+
+DockTitleBarWidget::DockTitleBarWidget(QDockWidget* parent, const bool useParentIcon)
+:    QWidget(parent)
+,    _ui(new Ui_DockTitleBarWidget)
+{
+    assert(parent);
+    _ui->setupUi(this);
+
+    // 'copy' default title bar
+    _ui->closeToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarCloseButton));
+    _ui->detachToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarNormalButton));
+    _ui->collapseToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarUnshadeButton));
+
+    setWindowTitle(parent->windowTitle());
+    if(useParentIcon)
+        setWindowIcon(parent->windowIcon());
+    else
+        _ui->iconLabel->setVisible(false);
+
+    QPalette p(_ui->frame->palette());
+    p.setColor(QPalette::Window, QColor("#DBDBDB"));
+    p.setColor(QPalette::Foreground, QColor("#B9B9B9"));
+    _ui->frame->setPalette(p);
+
+    connect(_ui->closeToolButton, SIGNAL(clicked(bool)), parent, SLOT(close()));
+}
+
+
+DockTitleBarWidget::~DockTitleBarWidget()
+{    
+    disconnect(_ui->closeToolButton, SIGNAL(clicked(bool)), parent(), SLOT(close()));
+}
+
+
+void DockTitleBarWidget::setWindowIcon(const QIcon &icon)
+{
+    _ui->iconLabel->setVisible(true);
+    _ui->iconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+    QWidget::setWindowIcon(icon);
+}
+
+
+void DockTitleBarWidget::setWindowTitle(const QString &title)
+{
+    _ui->titleLabel->setText(title);
+    QWidget::setWindowTitle(title);
+}
+
+
+void DockTitleBarWidget::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if(_ui->collapseToolButton->isEnabled())
+        emit collapse();
+}
+
+
+void DockTitleBarWidget::on_collapseToolButton_clicked(bool checked)
+{
+    emit collapse();
+}
+
+
+void DockTitleBarWidget::on_detachToolButton_clicked(bool checked)
+{
+    emit detach();
+}
+
+
+void DockTitleBarWidget::setCollapsed(const bool collapsed)
+{
+    _ui->collapseToolButton->setIcon(QApplication::style()->standardPixmap(
+        collapsed ? QStyle::SP_TitleBarUnshadeButton : QStyle::SP_TitleBarShadeButton));
+}
+
+
+void DockTitleBarWidget::setAllowCollapse(const bool allow)
+{
+    _ui->collapseToolButton->setEnabled(allow);
+    _ui->collapseToolButton->setVisible(allow);
+}

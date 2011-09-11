@@ -27,32 +27,54 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
-#include "gui/mainwindow.h"
+#pragma once
+#ifndef __MAINWINDOW_H__
+#define __MAINWINDOW_H__
 
-#include <QtGui/QApplication>
+#include <QMainWindow>
 
-int main(int argc, char* argv[])
+class LogOutputWidget;
+class LogOutputLabel;
+class CollapsibleDockWidget;
+
+class Ui_MainWindow;
+
+class MainWindow : public QMainWindow
 {
-    int result = -1;
+    Q_OBJECT
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
+public:
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
+protected:
+    
+    // dock widgets
+    LogOutputWidget *m_logWidget;
+    CollapsibleDockWidget *m_logDockWidget;
 
-    QApplication a(argc, argv);
+protected:
+    void initializeToolBars();
+    void initializeDockWidgets();
 
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
-#endif
+    virtual void changeEvent(QEvent *event);
+    virtual void showEvent(QShowEvent *event);
 
-    result = a.exec();
+protected slots:
 
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
+    // ui
+    void on_quitAction_triggered(bool);
+    void on_aboutAction_triggered(bool);
 
-    return result;
-}
+private:
+    void initializeLog();
+    void uninitializeLog();
+
+private:
+
+    std::auto_ptr<Ui_MainWindow> m_ui;
+    LogOutputLabel *m_logStatusLabel;
+};
+
+
+#endif __MAINWINDOW_H__
