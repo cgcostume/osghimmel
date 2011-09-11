@@ -30,6 +30,7 @@
 SET(DEMO_SOURCES
     texturedmain.cpp)
 
+MESSAGE(STATUS "add executable: demo_textured")
 ADD_EXECUTABLE(demo_textured
     ${DEMO_SOURCES})
 
@@ -38,14 +39,15 @@ TARGET_LINK_LIBRARIES(demo_textured
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
-
-SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} 
-    ${DEMO_SOURCES})
-    
-SET_WARNING_LEVEL4(demo_textured)
-
+   
 IF(OPTION_MAKE_PACKAGE)
     INSTALL(TARGETS demo_textured
         DESTINATION . 
         CONFIGURATIONS Debug Release)
 ENDIF(OPTION_MAKE_PACKAGE)
+
+SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
+
+SET_WARNING_LEVEL4  (demo_textured)
+SET_FAST_COMPILE    (demo_textured)
+ADD_POSTFIX_TO_DEBUG(demo_textured)

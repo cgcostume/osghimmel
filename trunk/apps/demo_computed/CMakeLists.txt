@@ -30,6 +30,7 @@
 SET(DEMO_SOURCES
     computedmain.cpp)
 
+MESSAGE(STATUS "add executable: demo_computed")
 ADD_EXECUTABLE(demo_computed
     ${DEMO_SOURCES})
 
@@ -39,13 +40,14 @@ TARGET_LINK_LIBRARIES(demo_computed
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
 
-SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR}/
-    ${DEMO_SOURCES})
-    
-SET_WARNING_LEVEL4(demo_computed)
-
 IF(OPTION_MAKE_PACKAGE)
     INSTALL(TARGETS demo_computed
         DESTINATION . 
         CONFIGURATIONS Debug Release)
 ENDIF(OPTION_MAKE_PACKAGE)
+
+SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
+
+SET_WARNING_LEVEL4  (demo_computed)
+SET_FAST_COMPILE    (demo_computed)
+ADD_POSTFIX_TO_DEBUG(demo_computed)

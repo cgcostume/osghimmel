@@ -30,12 +30,14 @@
 SET(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 
 SET(LIB_SOURCES
-    ${HEADER_PATH}/abstracthimmel.h
-    abstracthimmel.cpp)
+    abstracthimmel.cpp
+    ${HEADER_PATH}/abstracthimmel.h)
 
-SOURCE_GROUP_BY_PATH(${PROJECT_SOURCE_DIR}
-    ${LIB_SOURCES})
-
+MESSAGE(STATUS "add static library: osghimmel")
 ADD_LIBRARY(osghimmel STATIC ${LIB_SOURCES})
 
-SET_WARNING_LEVEL4(osghimmel)
+SOURCE_GROUP_BY_PATH(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})
+
+SET_WARNING_LEVEL4  (osghimmel)
+SET_FAST_COMPILE    (osghimmel)
+ADD_POSTFIX_TO_DEBUG(osghimmel)

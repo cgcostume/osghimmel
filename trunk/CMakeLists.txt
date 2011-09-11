@@ -36,41 +36,68 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
 # macros
 
 MACRO(QT4_AUTO_WRAP outfiles)
-    FOREACH(fileName ${ARGN})
-        IF(fileName MATCHES "\\.h$")
+
+	SET (moc_headers "")
+	SET (ui_files "")
+	SET (qrc_files "")
+
+	FOREACH(fileName ${ARGV})
+
+		IF(fileName MATCHES "\\.h$")
             FILE(STRINGS ${fileName} lines REGEX Q_OBJECT)
             IF(lines)
-                SET(moc_headers ${moc_headers} ${fileName})
-                MESSAGE(STATUS "moc: ${fileName}")
+				LIST(APPEND moc_headers ${fileName})
+				MESSAGE(STATUS "moc: ${fileName}")
             ENDIF()
         ENDIF()
+		
         IF(fileName MATCHES "\\.ui$")
-            SET(ui_files ${ui_files} ${fileName})
-            MESSAGE(STATUS "uic: ${fileName}")
+            LIST(APPEND ui_files ${fileName})
+			MESSAGE(STATUS "uic: ${fileName}")
         ENDIF()
+
         IF(fileName MATCHES "\\.qrc$")
-            SET(qrc_files ${qrc_files} ${fileName})
-            MESSAGE(STATUS "qrc: ${fileName}")
+            LIST(APPEND qrc_files ${fileName})
+			MESSAGE(STATUS "qrc: ${fileName}")
         ENDIF()
-    ENDFOREACH()
-    QT4_WRAP_CPP(${outfiles} ${moc_headers})
-    QT4_WRAP_UI(${outfiles} ${ui_files})
-    QT4_ADD_RESOURCES(${outfiles} ${qrc_files})
+
+	ENDFOREACH()
+
+    QT4_WRAP_CPP(mocGeneratedByHeader ${moc_headers})
+    QT4_WRAP_UI(uicGenerated ${ui_files})
+
+    QT4_ADD_RESOURCES(mocGeneratedByRessources ${qrc_files})
+
+	LIST(APPEND ${outfiles}
+		${uicGenerated}
+		${mocGeneratedByHeader} 
+		${mocGeneratedByRessources})
+
+	SOURCE_GROUP("_ Qt Generated" FILES 
+		${uicGenerated}
+		${mocGeneratedByHeader}
+		${mocGeneratedByRessources})
+
+	SOURCE_GROUP("_ CMake Rules" REGULAR_EXPRESSION "rule$")
+
 ENDMACRO()
 
 
-MACRO(SOURCE_GROUP_BY_PATH RELATIVE_PARENT_PATH)
+MACRO(SOURCE_GROUP_BY_PATH parent_path)
+
     FOREACH(filename ${ARGV})
+	
         GET_FILENAME_COMPONENT(path "${filename}" REALPATH)
-        FILE(RELATIVE_PATH path ${RELATIVE_PARENT_PATH} ${path})
-        GET_FILENAME_COMPONENT(path "${path}" PATH)
-        string(REPLACE "/" "\\" path "${path}")
-        IF(${filename} MATCHES "ui_|cxx$")
-            SOURCE_GROUP("generated" FILES ${filename})
-        ELSEIF(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
-            SOURCE_GROUP("${path}" FILES ${filename})
-        ENDIF()
+		FILE(RELATIVE_PATH path ${parent_path} ${path})
+		GET_FILENAME_COMPONENT(path "${path}" PATH)
+		STRING(REPLACE "/" "\\" path "${path}")
+
+		IF(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
+			SOURCE_GROUP("${path}" FILES ${filename})
+		ENDIF()
+
     ENDFOREACH()
+
 ENDMACRO(SOURCE_GROUP_BY_PATH)
 
 
@@ -81,6 +108,40 @@ MACRO(SET_WARNING_LEVEL4 target)
     ENDIF(MSVC)
 
 ENDMACRO(SET_WARNING_LEVEL4 target)
+
+
+MACRO(SETUP_STABLE)
+
+    FOREACH(arg in ${ARGV})
+        LIST(APPEND sources ${arg})
+    ENDFOREACH()
+
+    SET_SOURCE_FILES_PROPERTIES(${sources}
+        PROPERTIES
+        COMPILE_FLAGS "/FIstable.h /Yustable.h")
+
+    SET_SOURCE_FILES_PROPERTIES(stable.cpp
+        PROPERTIES
+        COMPILE_FLAGS "/Ycstable.h")
+
+ENDMACRO(SETUP_STABLE sources)
+
+
+MACRO(SET_FAST_COMPILE target)
+
+    SET_TARGET_PROPERTIES(${target}
+        PROPERTIES
+        COMPILE_FLAGS "/arch:SSE2 /fp:fast /Ot /GS-"
+        LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt")
+
+ENDMACRO(SET_FAST_COMPILE target)
+
+
+MACRO(ADD_POSTFIX_TO_DEBUG targetName)
+    SET_TARGET_PROPERTIES(${targetName}
+        PROPERTIES DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
+ENDMACRO(ADD_POSTFIX_TO_DEBUG)
+
 
 # config
 
@@ -113,7 +174,7 @@ FIND_PACKAGE(OpenSceneGraph REQUIRED
     osgGA)
 
 IF(OPTION_MAKE_PACKAGE)
-	STRING(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
+    STRING(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
     SET(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
     SET(OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
 ENDIF(OPTION_MAKE_PACKAGE)
