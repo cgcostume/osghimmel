@@ -51,12 +51,12 @@ public:
 
 protected:
 
-	QDockWidget *_output;
-	QTimer *_timer;
-	QString _ready;
+	QDockWidget *m_output;
+	QTimer *m_timer;
+	QString m_ready;
 
-	bool _readyShowHelpShown;
-	bool _readyHideHelpShown;
+	bool m_readyShowHelpShown;
+	bool m_readyHideHelpShown;
 
 protected:
 

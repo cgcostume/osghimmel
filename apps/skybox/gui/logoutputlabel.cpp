@@ -38,16 +38,16 @@
 LogOutputLabel::LogOutputLabel(QDockWidget *output, QWidget* parent)
 :	LogOutput()
 ,	QLabel(parent)
-,	_output(output)
-,	_timer(new QTimer())
-,	_readyShowHelpShown(false)
-,	_readyHideHelpShown(false)
+,	m_output(output)
+,	m_timer(new QTimer())
+,	m_readyShowHelpShown(false)
+,	m_readyHideHelpShown(false)
 {
-	_ready = readyString();
+	m_ready = readyString();
 
-	if(_output)
+	if(m_output)
 	{
-		_output->hide();
+		m_output->hide();
 		setToolTip(tr("click to show/hide log"));
 	}
 
@@ -56,14 +56,14 @@ LogOutputLabel::LogOutputLabel(QDockWidget *output, QWidget* parent)
 
 	setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-	connect(_timer, SIGNAL(timeout()), this, SLOT(timedout()));
-	_timer->setInterval(4000);
-	_timer->setSingleShot(true);
+	connect(m_timer, SIGNAL(timeout()), this, SLOT(timedout()));
+	m_timer->setInterval(4000);
+	m_timer->setSingleShot(true);
 }
 
 LogOutputLabel::~LogOutputLabel()
 {
-	delete _timer;
+	delete m_timer;
 }
 
 void LogOutputLabel::print(const LogEntry &entry)
@@ -76,28 +76,28 @@ void LogOutputLabel::print(const LogEntry &entry)
 	{
 	case LogEntry::WARNING_LOG:			
 		setText(QString("warning: %1").arg(message));
-		if(_output && _output->isVisible())
-			_timer->start();
+		if(m_output && m_output->isVisible())
+			m_timer->start();
 		else
-			_timer->stop();
+			m_timer->stop();
 
 		break;
 	case LogEntry::ERROR_LOG:
 		setText(QString("error: %1").arg(message));
-		if(_output && _output->isVisible())
-			_timer->start();
+		if(m_output && m_output->isVisible())
+			m_timer->start();
 		else
-			_timer->stop();
+			m_timer->stop();
 
 		break;
 	case LogEntry::MESSAGE_LOG:
 	case LogEntry::INFORMATION_LOG:
 		setText(QString("%1").arg(message));
-		_timer->start();
+		m_timer->start();
 		break;
 	case LogEntry::DEBUG_LOG:
 		setText(QString("debug: %1").arg(message));
-		_timer->start();
+		m_timer->start();
 		break;
 	case LogEntry::WORKFLOW_LOG:
 	case LogEntry::UNDEFINED_LOG:
@@ -108,9 +108,9 @@ void LogOutputLabel::print(const LogEntry &entry)
 
 void LogOutputLabel::mousePressEvent(QMouseEvent *event)
 {
-	if(_output)
+	if(m_output)
 	{
-		_output->setVisible(!_output->isVisible());
+		m_output->setVisible(!m_output->isVisible());
 		timedout();
 	}
 
@@ -124,16 +124,16 @@ void LogOutputLabel::timedout()
 
 inline const QString LogOutputLabel::readyString()
 {
-	if(_output)
+	if(m_output)
 	{
-		if(_output->isVisible() && !_readyHideHelpShown)
+		if(m_output->isVisible() && !m_readyHideHelpShown)
 		{
-			_readyHideHelpShown = true;
+			m_readyHideHelpShown = true;
 			return QString("ready (click to hide log...)");
 		}
-		else if(_output->isHidden() && !_readyShowHelpShown)
+		else if(m_output->isHidden() && !m_readyShowHelpShown)
 		{
-			_readyShowHelpShown = true;
+			m_readyShowHelpShown = true;
 			return QString("ready (click to show log...)");
 		}
 	}
