@@ -61,10 +61,12 @@ LogOutputLabel::LogOutputLabel(QDockWidget *output, QWidget* parent)
     m_timer->setSingleShot(true);
 }
 
+
 LogOutputLabel::~LogOutputLabel()
 {
     delete m_timer;
 }
+
 
 void LogOutputLabel::print(const LogEntry &entry)
 {
@@ -106,6 +108,7 @@ void LogOutputLabel::print(const LogEntry &entry)
     };
 }
 
+
 void LogOutputLabel::mousePressEvent(QMouseEvent *event)
 {
     if(m_output)
@@ -117,10 +120,12 @@ void LogOutputLabel::mousePressEvent(QMouseEvent *event)
     return QLabel::mousePressEvent(event);
 }
 
+
 void LogOutputLabel::timedout()
 {
     setText(readyString());
 }
+
 
 inline const QString LogOutputLabel::readyString()
 {

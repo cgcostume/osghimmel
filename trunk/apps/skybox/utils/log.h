@@ -279,28 +279,26 @@ private:
 
 
 
+#define _LOG GlobalLog::instance()
+
 //! Using the do..while trick, we can execute two statements in one macro 
 // without having to worry about what happens when we to a conditional LOG_DEBUG
 // without enclosing braces.
 
 // See http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/ for explanation...
 #ifndef NDEBUG
-#define LOG_DEBUG(...)    do { \
-    LOG->debug(__FILE__, __LINE__); \
-    LOG->appendDebug(__VA_ARGS__); \
+#define _LOG_DEBUG(...)    do { \
+    _LOG->debug(__FILE__, __LINE__); \
+    _LOG->appendDebug(__VA_ARGS__); \
 } while(false)
 #else
-#define LOG_DEBUG(...) do { } while(0)
+#define _LOG_DEBUG(...) do { } while(0)
 #endif
-
-
-#define _LOG GlobalLog::instance()
 
 #define _LOG_MESSAGE     _LOG->appendMessage
 #define _LOG_INFO        _LOG->appendInformation
 #define _LOG_WARNING     _LOG->appendWarning
 #define _LOG_ERROR       _LOG->appendError
-#define _LOG_WORKFLOW    _LOG->appendWorkflow
 
 
 #endif __LOG_H__

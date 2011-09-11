@@ -38,10 +38,18 @@ SET(SKYBOX_SOURCES
     skyboxmain.cpp
     stable.h
     stable.cpp
+    gui/collapsibledockwidget.h
+    gui/collapsibledockwidget.cpp
+    gui/docktitlebarwidget.h
+    gui/docktitlebarwidget.cpp
+	gui/docktitlebarwidget.ui
     gui/logoutputlabel.h
     gui/logoutputlabel.cpp
     gui/logoutputwidget.h
     gui/logoutputwidget.cpp
+    gui/mainwindow.h
+    gui/mainwindow.cpp
+	gui/mainwindow.ui
     utils/log.h
     utils/log.cpp)
 
@@ -53,11 +61,18 @@ SETUP_STABLE(${SKYBOX_SOURCES} ${QT4_SOURCES})
 INCLUDE(${QT_USE_FILE})
 
 INCLUDE_DIRECTORIES(
+	${CMAKE_CURRENT_SOURCE_DIR}
     ${QT_INCLUDES})
     
-ADD_EXECUTABLE(skybox
-    ${QT4_SOURCES}
-    ${SKYBOX_SOURCES})
+IF(MSVC)
+	ADD_EXECUTABLE(skybox WIN32
+		${QT4_SOURCES}
+		${SKYBOX_SOURCES})
+ELSE(MSVC)
+	ADD_EXECUTABLE(skybox
+		${QT4_SOURCES}
+		${SKYBOX_SOURCES})
+ENDIF(MSVC)
 
 TARGET_LINK_LIBRARIES(skybox
     osghimmel
@@ -68,10 +83,6 @@ TARGET_LINK_LIBRARIES(skybox
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
-
-IF(MSVC)
-    SET_TARGET_PROPERTIES(skybox PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-ENDIF(MSVC)
 
 
 IF(OPTION_MAKE_PACKAGE)
