@@ -27,31 +27,45 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
+#pragma once
+#ifndef __LOGOUTPUTLABEL_H__
+#define __LOGOUTPUTLABEL_H__
 
-#include <QtGui/QApplication>
+#include <QLabel>
 
-int main(int argc, char* argv[])
+class QObject;
+class QMouseEvent;
+class QDockWidget;
+class QTimer;
+
+
+class LogOutputLabel : public QLabel, public LogOutput
 {
-    int result = -1;
+	Q_OBJECT
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
+public:
+	LogOutputLabel(QDockWidget *output, QWidget* parent = 0);
+	virtual ~LogOutputLabel();
 
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
+	virtual void print(const LogEntry &entry);
 
-/*    QApplication a(argc, argv);
+protected:
 
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
-#endif
+	QDockWidget *_output;
+	QTimer *_timer;
+	QString _ready;
 
-    result = a.exec();
-*/
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
+	bool _readyShowHelpShown;
+	bool _readyHideHelpShown;
 
-    return result;
-}
+protected:
+
+	virtual void mousePressEvent(QMouseEvent *event);
+	inline const QString readyString();
+
+protected slots:
+	void timedout();
+};
+
+
+#endif __LOGOUTPUTLABEL_H__

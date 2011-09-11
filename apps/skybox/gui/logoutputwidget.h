@@ -27,31 +27,36 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
+#pragma once
+#ifndef __LOGOUTPUTWIDGET_H__
+#define __LOGOUTPUTWIDGET_H__
 
-#include <QtGui/QApplication>
+#include <QTextBrowser>
+#include <QTextCharFormat>
 
-int main(int argc, char* argv[])
+
+class LogOutputWidget : public LogOutput, public QTextBrowser
 {
-    int result = -1;
+public:
+	LogOutputWidget(QWidget* parent = 0);
+	virtual ~LogOutputWidget();
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
+	virtual void setColor(
+        const LogEntry::e_LogEntryType type
+    ,   const QColor &color);
 
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
+	virtual void print(const LogEntry &entry);
 
-/*    QApplication a(argc, argv);
 
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
-#endif
+protected:
+	QTextCharFormat	_messageCharFormat;
+	QTextCharFormat	_informationCharFormat;
+	QTextCharFormat	_warningCharFormat;
+	QTextCharFormat	_errorCharFormat;
+	QTextCharFormat	_debugCharFormat;
 
-    result = a.exec();
-*/
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
+	QTextCursor *_cursor;
+	QTextEdit *_swap;
+};
 
-    return result;
-}
+#endif __LOGOUTPUTWIDGET_H__

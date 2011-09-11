@@ -27,31 +27,36 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
+#pragma once
+#ifndef __MAINLOGDISPATCHER_H__
+#define __MAINLOGDISPATCHER_H__
 
-#include <QtGui/QApplication>
+#include "utils/log.h"
 
-int main(int argc, char* argv[])
+
+class LogOutputWidget;
+class LogOutputLabel;
+
+
+class MainLogDispatcher : public LogDispatcher
 {
-    int result = -1;
+public:
+    MainLogDispatcher();
+    virtual ~MainLogDispatcher();
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
+    void setOutputWidget(LogOutputWidget *widget = NULL);
+    void setOutputLabel(LogOutputLabel *label = NULL);
 
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
+protected:
 
-/*    QApplication a(argc, argv);
+    LogOutputWidget *m_widgetOutput;
+    LogOutputLabel *m_labelOutput;
+    FileLogOutput *m_fileOutput;
 
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
+#ifndef NDEBUG
+    StdLogOutput *m_stdOutput;
 #endif
+};
 
-    result = a.exec();
-*/
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
 
-    return result;
-}
+#endif __MAINLOGDISPATCHER_H__

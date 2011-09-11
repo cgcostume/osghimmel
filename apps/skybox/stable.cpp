@@ -27,31 +27,4 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
-
-#include <QtGui/QApplication>
-
-int main(int argc, char* argv[])
-{
-    int result = -1;
-
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
-
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
-
-/*    QApplication a(argc, argv);
-
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
-#endif
-
-    result = a.exec();
-*/
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
-
-    return result;
-}
+#include "stable.h"

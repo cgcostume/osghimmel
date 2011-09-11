@@ -27,31 +27,44 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
+// compiler independent include guard speedup (used in all headers of this project)
+#pragma once
+#ifndef __STABLE_H__
+#define __STABLE_H__
 
-#include <QtGui/QApplication>
+#ifdef WIN32
+	#define WINDOWS_LEAN_AND_MEAN
+#endif // WIN32
 
-int main(int argc, char* argv[])
-{
-    int result = -1;
+#include "pragmanote.h"
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
 
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
+// STABLE DEFINES
 
-/*    QApplication a(argc, argv);
+#define APPLICATION_NAME		"SkyBox"
+#define APPLICATION_VERSION		"0.0.0"
 
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
-#endif
 
-    result = a.exec();
-*/
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
+// STABLE INCLUDES
 
-    return result;
-}
+#include <assert.h>
+#include <math.h>
+
+#define PI 3.1415926535897932384626433832795
+#define RAD2DEG 180.0 / PI
+#define DEG2RAD PI / 180.0
+
+#include "utils/log.h"
+
+#include <QHash>
+#include <QSet>
+#include <QList>
+#include <QMap>
+#include <QQueue>
+#include <QVector>
+
+
+
+#define TR QObject::tr
+
+#endif __STABLE_H__

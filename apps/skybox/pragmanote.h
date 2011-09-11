@@ -27,31 +27,24 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "mainlogdispatcher.h"
+#pragma once
+#ifndef __PRAGMANOTE_H__
+#define __PRAGMANOTE_H__
 
-#include <QtGui/QApplication>
+// Macros to Generate Compile Time Messages - modified from sources:
+// http://www.codeguru.com/cpp/misc/misc/compilerandpre-compiler/article.php/c14797)
+// http://stackoverflow.com/questions/471935/user-warnings-on-msvc-and-gcc
 
-int main(int argc, char* argv[])
-{
-    int result = -1;
+#define STRINGISE_IMPL(x) #x
+#define STRINGISE(x) STRINGISE_IMPL(x)
 
-    MainLogDispatcher logDispatcher;
-    _LOG->attachDispatcher(&logDispatcher);
-
-    _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
-
-/*    QApplication a(argc, argv);
-
-    MainWindow w;
-#if defined(Q_WS_S60)
-    w.showMaximized();
-#else
-    w.show();
+// Use: #pragma NOTE("...")
+#if _MSC_VER
+#   define FILE_LINE_LINK __FILE__ "(" STRINGISE(__LINE__) ") : "
+#   define NOTE(exp) message (FILE_LINE_LINK "note: " exp)
+#	define NOTE_wARG(exp, arg)  message (FILE_LINE_LINK "note: " exp STRINGISE(arg))
+#else //__GNUC__ - may need other defines for different compilers
+#   define NOTE(exp) ("note: " exp)
 #endif
 
-    result = a.exec();
-*/
-    _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
-
-    return result;
-}
+#endif __PRAGMANOTE_H__

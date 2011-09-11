@@ -31,33 +31,43 @@ SET(QT_USE_QTOPENGL TRUE)
 SET(QT_USE_UI TRUE)
 SET(QT_USE_CORE TRUE)
 
+SET(SKYBOX_SOURCES
+	pragmanote.h
+	mainlogdispatcher.h
+	mainlogdispatcher.cpp
+    skyboxmain.cpp
+	stable.h
+	stable.cpp
+	gui/logoutputlabel.h
+	gui/logoutputlabel.cpp
+	gui/logoutputwidget.h
+	gui/logoutputwidget.cpp
+	utils/log.h
+	utils/log.cpp)
+
+SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
+
+QT4_AUTO_WRAP(QT4_SOURCES ${SKYBOX_SOURCES})
+SETUP_STABLE(${SKYBOX_SOURCES} ${QT4_SOURCES})
+
 INCLUDE(${QT_USE_FILE})
 
 INCLUDE_DIRECTORIES(
     ${QT_INCLUDES})
-
-SET(SKYBOX_SOURCES
-    skyboxmain.cpp)
-
-QT4_AUTO_WRAP(${QT4_SOURCES} ${SKYBOX_SOURCES})
-
+	
 ADD_EXECUTABLE(skybox
-    ${SKYBOX_SOURCES}
-    ${QT4_SOURCES})
+    ${QT4_SOURCES}
+	${SKYBOX_SOURCES})
 
 TARGET_LINK_LIBRARIES(skybox
     osghimmel
     qtpropertybrowser
     ${QT_QTMAIN_LIBRARY}
+	${QT_QTCORE_LIBRARY}
+	${QT_QTGUI_LIBRARY}
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
-
-SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR}
-    ${SKYBOX_SOURCES}
-    ${QT4_SOURCES})
-
-SET_WARNING_LEVEL4(skybox)
 
 IF(MSVC)
     SET_TARGET_PROPERTIES(skybox PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
@@ -83,3 +93,6 @@ IF(OPTION_MAKE_PACKAGE)
         CONFIGURATIONS Release)
 
 ENDIF(OPTION_MAKE_PACKAGE)
+
+SET_FAST_COMPILE    (skybox)
+ADD_POSTFIX_TO_DEBUG(skybox)
