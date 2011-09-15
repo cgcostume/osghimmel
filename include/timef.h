@@ -28,31 +28,70 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __QOSGVIEWER_H__
-#define __QOSGVIEWER_H__
+#ifndef __TIMEF_H__
+#define __TIMEF_H__
 
-#include "qosgwidget.h"
+#include <time.h>
 
-#include <QtCore/QTimer>
-
-#include <osgViewer/Viewer>
-#include <osgViewer/View>
-
-
-class QOsgViewer : public QOsgWidget, public osgViewer::Viewer
+namespace osg
 {
-    Q_OBJECT
+    class Timer;
+}
 
+
+class TimeF
+{
 public:
+    TimeF(
+        const float time = 0.f
+    ,   const float secondsPerCycle = 0.f);
 
-    QOsgViewer(QWidget *parent = 0);
-    virtual void initialize();
+    TimeF(
+        const time_t &time
+    ,   const float secondsPerCycle = 0.f);
 
-    public slots:
-        virtual void repaint();
+    ~TimeF();
+
+    void update();
+
+    inline const float getf() const
+    {
+        return m_timef[1];
+    }
+
+    const float getf(const bool forceUpdate);
+    const float setf(
+        const float time
+    ,   const bool forceUpdate = false);
+
+    inline const time_t gett() const
+    {
+        return m_time[1];
+    }
+
+    const time_t gett(const bool forceUpdate);
+    const time_t sett(
+        const time_t &time
+    ,   const bool forceUpdate = false);
+
+    inline const float getSecondsPerCycle() const
+    {
+        return m_secondsPerCycle;
+    }
+
+    const float setSecondsPerCycle(const float secondsPerCycle);
 
 protected:
-    QTimer m_timer;
+    static inline const float secondsTof(const time_t &time);
+    static inline const time_t fToSeconds(const float time);
+
+protected:
+    osg::Timer *m_timer;
+
+    time_t m_time[2];
+    float m_timef[2];
+
+    float m_secondsPerCycle;
 };
 
-#endif __QOSGVIEWER_H__
+#endif __TIMEF_H__
