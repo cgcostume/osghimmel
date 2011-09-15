@@ -32,13 +32,14 @@
 #include <osgGA/TrackballManipulator>
 
 
-QOsgViewer::QOsgViewer(QWidget *parent)    : QOsgWidget(parent)
+QOsgViewer::QOsgViewer(QWidget *parent) 
+:   QOsgWidget(parent)
 {
     getCamera()->setGraphicsContext(getGraphicsWindow());
 
     setThreadingModel(osgViewer::Viewer::SingleThreaded);
 
-    connect(&_timer, SIGNAL(timeout()), this, SLOT(repaint()));
+    connect(&m_timer, SIGNAL(timeout()), this, SLOT(repaint()));
 
     initialize();
 }
@@ -48,7 +49,7 @@ void QOsgViewer::initialize()
 {
     setCameraManipulator(new osgGA::TrackballManipulator);
 
-    _timer.start(0);
+    m_timer.start(0);
 }
 
 

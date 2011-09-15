@@ -31,7 +31,9 @@ SET(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 
 SET(LIB_SOURCES
     abstracthimmel.cpp
-    ${HEADER_PATH}/abstracthimmel.h)
+    ${HEADER_PATH}/abstracthimmel.h
+    timef.cpp
+    ${HEADER_PATH}/timef.h)
 
 MESSAGE(STATUS "add static library: osghimmel")
 ADD_LIBRARY(osghimmel STATIC ${LIB_SOURCES})
