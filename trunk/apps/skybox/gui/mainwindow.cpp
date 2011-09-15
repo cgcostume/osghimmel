@@ -35,6 +35,19 @@
 #include "logoutputlabel.h"
 #include "logoutputwidget.h"
 #include "collapsibledockwidget.h"
+#include "qosgviewer.h"
+
+#include <QFileInfo>
+
+#include <osgGA/TrackballManipulator>
+#include <osgGA/FlightManipulator>
+#include <osgGA/DriveManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+//#include <osgGA/StateSetManipulator>
+#include <osgGA/TerrainManipulator>
+
+#include <osgViewer/View>
+//#include <osgViewer/ViewerEventHandlers>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -49,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(APPLICATION_NAME " " APPLICATION_VERSION);
 
     initializeLog();
+    //initializeOsgViewer();
 }
 
 
@@ -90,6 +104,23 @@ void MainWindow::uninitializeLog()
     delete m_logDockWidget;
 
     delete m_logStatusLabel;
+}
+
+
+void MainWindow::initializeOsgViewer()
+{
+    // set up the camera manipulators.
+    osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
+
+    keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
+    //keyswitchManipulator->addMatrixManipulator('2', "Flight",    new osgGA::FlightManipulator());
+    //keyswitchManipulator->addMatrixManipulator('3', "Drive",     new osgGA::DriveManipulator());
+    //keyswitchManipulator->addMatrixManipulator('4', "Terrain",   new osgGA::TerrainManipulator());
+
+    m_ui->qOsgViewerFrame->setCameraManipulator(keyswitchManipulator.get());
+
+    //m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::StatsHandler);
+    //m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::ThreadingHandler);
 }
 
 

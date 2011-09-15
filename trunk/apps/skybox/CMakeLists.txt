@@ -50,7 +50,14 @@ SET(SKYBOX_SOURCES
     gui/mainwindow.h
     gui/mainwindow.cpp
 	gui/mainwindow.ui
-    utils/log.h
+	gui/propertysupport.h
+    gui/propertysupport.cpp
+	gui/qosgviewer.h
+    gui/qosgviewer.cpp
+	gui/qosgwidget.h
+    gui/qosgwidget.cpp
+	utils/abstractfactory.hpp
+	utils/log.h
     utils/log.cpp)
 
 SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
@@ -65,7 +72,7 @@ INCLUDE_DIRECTORIES(
     ${QT_INCLUDES})
     
 IF(MSVC)
-	ADD_EXECUTABLE(skybox WIN32
+	ADD_EXECUTABLE(skybox #WIN32
 		${QT4_SOURCES}
 		${SKYBOX_SOURCES})
 ELSE(MSVC)

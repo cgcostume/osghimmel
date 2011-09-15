@@ -28,55 +28,32 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __QOSGVIEWER_H__
+#define __QOSGVIEWER_H__
 
-#include <QMainWindow>
+#include "qosgwidget.h"
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
+#include <QtCore/QTimer>
 
-class Ui_MainWindow;
+#include <osgViewer/Viewer>
+#include <osgViewer/View>
 
-class MainWindow : public QMainWindow
+
+class QOsgViewer : public QOsgWidget, public osgViewer::Viewer
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+
+    QOsgViewer(QWidget *parent = 0);
+    virtual void initialize();
+
+    public slots:
+        virtual void repaint();
 
 protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
+    QTimer _timer;
 
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeOsgViewer();
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
 };
 
-
-#endif __MAINWINDOW_H__
+#endif __QOSGVIEWER_H__

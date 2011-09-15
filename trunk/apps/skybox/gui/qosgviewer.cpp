@@ -27,56 +27,32 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#include "qosgviewer.h"
 
-#include <QMainWindow>
+#include <osgGA/TrackballManipulator>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
 
-class Ui_MainWindow;
-
-class MainWindow : public QMainWindow
+QOsgViewer::QOsgViewer(QWidget *parent)    : QOsgWidget(parent)
 {
-    Q_OBJECT
+    getCamera()->setGraphicsContext(getGraphicsWindow());
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    setThreadingModel(osgViewer::Viewer::SingleThreaded);
 
-protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
+    connect(&_timer, SIGNAL(timeout()), this, SLOT(repaint()));
 
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeOsgViewer();
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
-};
+    initialize();
+}
 
 
-#endif __MAINWINDOW_H__
+void QOsgViewer::initialize()
+{
+    setCameraManipulator(new osgGA::TrackballManipulator);
+
+    _timer.start(0);
+}
+
+
+void QOsgViewer::repaint()
+{
+    frame();
+}

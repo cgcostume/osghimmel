@@ -28,55 +28,67 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __ABSTRACTFACTORY_HPP__
+#define __ABSTRACTFACTORY_HPP__
 
-#include <QMainWindow>
+#include <QStringList>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
-
-class Ui_MainWindow;
-
-class MainWindow : public QMainWindow
+template<class T>
+class AbstractFactory
 {
-    Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+	// factory interface
+    static const bool reg(T *object, const QString &name);
+
+    static const QStringList identifiers();
+    static T* create(const QString &identifier);
+
+    static const bool knows(const QString &identifier);
 
 protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
-
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeOsgViewer();
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
+    static QHash<QString, T*> m_registeredObjectsByIdentifier;
 };
 
 
-#endif __MAINWINDOW_H__
+
+
+// AbstractFactory
+
+template<class T>
+QHash<QString, T*> AbstractFactory<T>::m_registeredObjectsByIdentifier;
+
+
+template<class T>
+const bool AbstractFactory<T>::reg(T* object, const QString &name)
+{
+    assert(object);
+    assert(!m_registeredObjectsByIdentifier.contains(name));
+
+    m_registeredObjectsByIdentifier.insert(name, object);
+    return true;
+}
+
+
+template<class T>
+T *AbstractFactory<T>::create(const QString &identifier)
+{
+    if(m_registeredObjectsByIdentifier.contains(identifier))
+	    return m_registeredObjectsByIdentifier[identifier]->copy();
+    return NULL;
+}
+
+
+template<class T>
+const bool AbstractFactory<T>::knows(const QString &identifier)
+{
+    return m_registeredObjectsByIdentifier.contains(identifier);
+}
+
+
+template<class T>
+const QStringList AbstractFactory<T>::identifiers()
+{
+    return m_registeredObjectsByIdentifier.keys();
+}
+
+#endif __ABSTRACTFACTORY_HPP__

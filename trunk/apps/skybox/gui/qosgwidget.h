@@ -28,55 +28,55 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __QOSGWIDGET_H__
+#define __QOSGWIDGET_H__
 
-#include <QMainWindow>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
+#include <QFrame>
+#include <QtGui/QKeyEvent>
+#include <QUrl>
 
-class Ui_MainWindow;
+#include <osgViewer/Viewer>
 
-class MainWindow : public QMainWindow
+
+class QOsgWidget : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    QOsgWidget(QWidget *parent = 0);
+
+    osgViewer::GraphicsWindow* getGraphicsWindow() { return _gw.get(); }
+    const osgViewer::GraphicsWindow* getGraphicsWindow() const { return _gw.get(); }
+
+signals:
+    void resizeWidget(unsigned int width, unsigned int height);
+    void mouseDrop(QList<QUrl> urlList);
 
 protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
+    osg::ref_ptr<osgViewer::GraphicsWindow> _gw;
 
 protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
+    virtual void createContext();
 
-    void initializeOsgViewer();
+    virtual void destroyEvent(bool destroyWindow, bool destroySubWindows);
+    virtual void closeEvent( QCloseEvent * event );
 
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
+    virtual void resizeEvent( QResizeEvent * event );
 
-protected slots:
+    virtual void keyPressEvent( QKeyEvent* event );
+    virtual void keyReleaseEvent( QKeyEvent* event );
 
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
+    virtual void mousePressEvent( QMouseEvent* event );
+    virtual void mouseDoubleClickEvent ( QMouseEvent * event );
+    virtual void mouseReleaseEvent( QMouseEvent* event );
+    virtual void mouseMoveEvent( QMouseEvent* event );
 
-private:
-    void initializeLog();
-    void uninitializeLog();
 
-private:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dragMoveEvent(QDragMoveEvent *event);
 
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
+    virtual void dropEvent(QDropEvent *event);
 };
 
-
-#endif __MAINWINDOW_H__
+#endif __QOSGWIDGET_H__
