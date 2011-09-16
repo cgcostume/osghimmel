@@ -27,68 +27,36 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#include "import.h"
 
-#include <QMainWindow>
+#include <QFileInfo>
 
-#include <osg/Group>
+#include <osgUtil/Optimizer>
+#include <osgDB/ReadFile>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
-
-class Ui_MainWindow;
-
-namespace osgViewer 
+osg::ref_ptr<osg::Node> importAndOptimizeNodeFromFile(const QFileInfo &fileInfo)
 {
-    class View;
+    const QString source(fileInfo.absoluteFilePath());
+    if(!fileInfo.exists())
+    {
+        _LOG_WARNING(QString("Loading %1 has failed. File does not exist.").arg(source));
+        return NULL;
+    }
+
+    const std::string c_source(source.toLatin1());
+
+    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile(c_source);
+    if(!loadedScene) 
+    {
+        _LOG_WARNING(QString("Loading %1 has failed.").arg(source));
+        return NULL;
+    }
+    else
+    {
+        // optimize the scene graph, remove redundant nodes and state etc.
+        osgUtil::Optimizer optimizer;
+        optimizer.optimize(loadedScene.get());
+
+        return loadedScene;
+    }
 }
-
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
-
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-
-protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
-
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
-
-    osg::ref_ptr<osg::Group> m_scene;
-};
-
-
-#endif __MAINWINDOW_H__

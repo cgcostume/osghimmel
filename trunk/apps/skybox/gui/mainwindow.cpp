@@ -37,22 +37,25 @@
 #include "collapsibledockwidget.h"
 #include "qosgviewer.h"
 
+#include "utils/import.h"
+
 #include <QFileInfo>
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>
 #include <osgGA/DriveManipulator>
 #include <osgGA/KeySwitchMatrixManipulator>
-//#include <osgGA/StateSetManipulator>
 #include <osgGA/TerrainManipulator>
+#include <osgGA/StateSetManipulator>
 
 #include <osgViewer/View>
-//#include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/ViewerEventHandlers>
 
 
 MainWindow::MainWindow(QWidget *parent)
-:    QMainWindow(parent)
-,    m_ui(new Ui::MainWindow)
+:   QMainWindow(parent)
+,   m_ui(new Ui::MainWindow)
+,   m_scene(NULL)
 {
     QCoreApplication::setOrganizationName("dm@g4t3.de");
     QCoreApplication::setApplicationName(APPLICATION_NAME);
@@ -62,7 +65,11 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(APPLICATION_NAME " " APPLICATION_VERSION);
 
     initializeLog();
-    //initializeOsgViewer();
+
+    const QSize size(m_ui->qOsgViewerFrame->size());
+
+    initializeScene(m_ui->qOsgViewerFrame, size);
+    initializeManipulator(m_ui->qOsgViewerFrame);
 }
 
 
@@ -107,20 +114,46 @@ void MainWindow::uninitializeLog()
 }
 
 
-void MainWindow::initializeOsgViewer()
+void MainWindow::initializeManipulator(osgViewer::View *view)
 {
     // set up the camera manipulators.
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
 
     keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
-    //keyswitchManipulator->addMatrixManipulator('2', "Flight",    new osgGA::FlightManipulator());
-    //keyswitchManipulator->addMatrixManipulator('3', "Drive",     new osgGA::DriveManipulator());
-    //keyswitchManipulator->addMatrixManipulator('4', "Terrain",   new osgGA::TerrainManipulator());
+    keyswitchManipulator->addMatrixManipulator('2', "Flight",    new osgGA::FlightManipulator());
+    keyswitchManipulator->addMatrixManipulator('3', "Drive",     new osgGA::DriveManipulator());
+    keyswitchManipulator->addMatrixManipulator('4', "Terrain",   new osgGA::TerrainManipulator());
 
     m_ui->qOsgViewerFrame->setCameraManipulator(keyswitchManipulator.get());
 
-    //m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::StatsHandler);
-    //m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::ThreadingHandler);
+    m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::StatsHandler);
+    m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::ThreadingHandler);
+}
+
+
+void MainWindow::initializeScene(
+    osgViewer::View *view
+,   const QSize &size)
+{
+    osg::Camera* cam = view->getCamera();
+
+	cam->setViewport(new osg::Viewport(0, 0, size.width(), size.height()));
+	cam->setProjectionMatrixAsPerspective(
+		40.0f, static_cast<double>(size.width()) / static_cast<double>(size.height()), 0.1f, 8.0f);
+
+	cam->setClearColor(osg::Vec4(1.f, 1.f, 1.f, 1.f));
+
+	osg::ref_ptr<osg::Viewport> viewport = cam->getViewport();
+
+	osg::ref_ptr<osg::Group> root = new osg::Group;
+
+	m_scene = new osg::Group;
+	root->addChild(m_scene);
+
+	view->setSceneData(root.get());
+
+    osg::ref_ptr<osg::Node> node = importAndOptimizeNodeFromFile(QFileInfo("resources/farmhouse.3ds"));
+    m_scene->addChild(node);
 }
 
 

@@ -174,9 +174,14 @@ FIND_PACKAGE(OpenSceneGraph REQUIRED
     osgGA)
 
 IF(OPTION_MAKE_PACKAGE)
+
     STRING(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
+
     SET(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
     SET(OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
+
+    SET(PACKAGE_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources" CACHE PATH "Resources for osghimmel binaries.")
+
 ENDIF(OPTION_MAKE_PACKAGE)
 
 IF(OPTION_MAKE_SKYBOX)
@@ -202,11 +207,22 @@ IF(OPTION_MAKE_PACKAGE)
     #SET(CPACK_PACKAGE_VERSION_PATCH 0)
     INCLUDE(CPack)
 
+    INSTALL(DIRECTORY 
+        "${PACKAGE_RESOURCE_DIR}"
+        DESTINATION .)
+
+    SET(OSG_PLUGIN_DIR "${OSG_BINARY_DIR}/osgPlugins-${OPENSCENEGRAPH_VERSION}")
+
     INSTALL(FILES 
         "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll" 
         "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtild.dll" 
         "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDBd.dll" 
         "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGAd.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgTextd.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewerd.dll" 
+        "${OSG_BINARY_DIR}/ot11-OpenThreadsd.dll" 
+        "${OSG_PLUGIN_DIR}/osgdb_3dsd.dll"
+        "${OSG_PLUGIN_DIR}/osgdb_tgad.dll"
         DESTINATION . 
         CONFIGURATIONS Debug)
 
@@ -215,6 +231,11 @@ IF(OPTION_MAKE_PACKAGE)
         "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtil.dll" 
         "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDB.dll" 
         "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGA.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgText.dll" 
+        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewer.dll" 
+        "${OSG_BINARY_DIR}/ot11-OpenThreads.dll" 
+        "${OSG_PLUGIN_DIR}/osgdb_3ds.dll"
+        "${OSG_PLUGIN_DIR}/osgdb_tga.dll"
         DESTINATION . 
         CONFIGURATIONS Release)
 
