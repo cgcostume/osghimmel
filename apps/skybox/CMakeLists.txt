@@ -42,22 +42,24 @@ SET(SKYBOX_SOURCES
     gui/collapsibledockwidget.cpp
     gui/docktitlebarwidget.h
     gui/docktitlebarwidget.cpp
-	gui/docktitlebarwidget.ui
+    gui/docktitlebarwidget.ui
     gui/logoutputlabel.h
     gui/logoutputlabel.cpp
     gui/logoutputwidget.h
     gui/logoutputwidget.cpp
     gui/mainwindow.h
     gui/mainwindow.cpp
-	gui/mainwindow.ui
-	gui/propertysupport.h
+    gui/mainwindow.ui
+    gui/propertysupport.h
     gui/propertysupport.cpp
-	gui/qosgviewer.h
+    gui/qosgviewer.h
     gui/qosgviewer.cpp
-	gui/qosgwidget.h
+    gui/qosgwidget.h
     gui/qosgwidget.cpp
-	utils/abstractfactory.hpp
-	utils/log.h
+    utils/abstractfactory.hpp
+    utils/import.h
+    utils/import.cpp
+    utils/log.h
     utils/log.cpp)
 
 SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
@@ -68,17 +70,17 @@ SETUP_STABLE(${SKYBOX_SOURCES} ${QT4_SOURCES})
 INCLUDE(${QT_USE_FILE})
 
 INCLUDE_DIRECTORIES(
-	${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${QT_INCLUDES})
     
 IF(MSVC)
-	ADD_EXECUTABLE(skybox #WIN32
-		${QT4_SOURCES}
-		${SKYBOX_SOURCES})
+    ADD_EXECUTABLE(skybox #WIN32
+        ${QT4_SOURCES}
+        ${SKYBOX_SOURCES})
 ELSE(MSVC)
-	ADD_EXECUTABLE(skybox
-		${QT4_SOURCES}
-		${SKYBOX_SOURCES})
+    ADD_EXECUTABLE(skybox
+        ${QT4_SOURCES}
+        ${SKYBOX_SOURCES})
 ENDIF(MSVC)
 
 TARGET_LINK_LIBRARIES(skybox
