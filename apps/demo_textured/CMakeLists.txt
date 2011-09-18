@@ -27,27 +27,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
-SET(DEMO_SOURCES
+set(DEMO_SOURCES
     texturedmain.cpp)
 
-MESSAGE(STATUS "add executable: demo_textured")
-ADD_EXECUTABLE(demo_textured
-    ${DEMO_SOURCES})
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
+    
+message(STATUS "add executable: demo_textured")
 
-TARGET_LINK_LIBRARIES(demo_textured
+add_executable(demo_textured ${DEMO_SOURCES})
+set_default_target_properties(demo_textured OFF)
+
+target_link_libraries(demo_textured
     osghimmel
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
    
-IF(OPTION_MAKE_PACKAGE)
-    INSTALL(TARGETS demo_textured
-        DESTINATION . 
-        CONFIGURATIONS Debug Release)
-ENDIF(OPTION_MAKE_PACKAGE)
-
-SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
-
-SET_WARNING_LEVEL4  (demo_textured)
-SET_FAST_COMPILE    (demo_textured)
-ADD_POSTFIX_TO_DEBUG(demo_textured)
+install(TARGETS demo_textured
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

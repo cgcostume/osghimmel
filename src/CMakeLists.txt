@@ -27,19 +27,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
-SET(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
+set(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 
-SET(LIB_SOURCES
+set(LIB_SOURCES
     abstracthimmel.cpp
     ${HEADER_PATH}/abstracthimmel.h
     timef.cpp
     ${HEADER_PATH}/timef.h)
 
-MESSAGE(STATUS "add static library: osghimmel")
-ADD_LIBRARY(osghimmel STATIC ${LIB_SOURCES})
+source_group_by_path(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})    
 
-SOURCE_GROUP_BY_PATH(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})
+message(STATUS "add static library: osghimmel")
 
-SET_WARNING_LEVEL4  (osghimmel)
-SET_FAST_COMPILE    (osghimmel)
-ADD_POSTFIX_TO_DEBUG(osghimmel)
+add_library(osghimmel STATIC ${LIB_SOURCES})
+set_default_target_properties(osghimmel ON)

@@ -27,11 +27,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
   
-IF(OPTION_MAKE_DEMOS)
-    ADD_SUBDIRECTORY("demo_computed")
-    ADD_SUBDIRECTORY("demo_textured")
-ENDIF(OPTION_MAKE_DEMOS)
+if(OPTION_MAKE_DEMOS)
+    add_subdirectory("demo_computed")
+    add_subdirectory("demo_textured")
+endif()
     
-IF(OPTION_MAKE_SKYBOX AND QT4_FOUND)
-    ADD_SUBDIRECTORY("skybox")
-ENDIF(OPTION_MAKE_SKYBOX AND QT4_FOUND)
+if(OPTION_MAKE_SKYBOX AND QT4_FOUND)
+    add_subdirectory("skybox")
+endif()
