@@ -28,86 +28,75 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __TIMEF_H__
-#define __TIMEF_H__
+#ifndef __SHADERSOURCE_H__
+#define __SHADERSOURCE_H__
 
-#include <time.h>
+#include <string>
+#include <map>
+#include <set>
 
-namespace osg
+namespace osg 
 {
-    class Timer;
+    class Shader; 
 }
 
-//! Encapsulates scaled time: Seconds starting on a user-defined point in 
-//  time on the one hand and a float time in the range [0;1] on the other.
+//! Link a shader with its source fileName and update on demand. 
+//  Supports static update by fileName, so GUIs do not need to know shader objects.
 
-//  The secondsPerCycle parameter specifies in how many seconds one cycle 
-//  [0;1] completes and starts over again. Further more it specifies the 
-//  duration of a 24 hours day for the t time (gett). This, however is not
-//  cyclic, but from the initialized time.
-
-class TimeF
+class ShaderSource
 {
 public:
-    TimeF(
-        const float time = 0.f
-    ,   const float secondsPerCycle = 0.f);
 
-    TimeF(
-        const time_t &time
-    ,   const float secondsPerCycle = 0.f);
+    ShaderSource(
+        const std::string &fileName
+    ,   osg::Shader *shader);
 
-    ~TimeF();
+    ~ShaderSource();
 
-    // increments time appropriate to secondsPerCycle
-    void update();
+    // reloads the source from file
+    const bool update();
+
+    // returns the number of updated shader sources
+    static const int updateByFileName(const std::string &fileName);
 
 
-    inline const float getSecondsPerCycle() const
+    // is valid if shader source is loaded and set to shader
+    inline const bool isValid() const
     {
-        return m_secondsPerCycle;
+        return m_valid;
     }
 
-    const float setSecondsPerCycle(const float secondsPerCycle);
-
-
-    // cycling float time in the range [0;1]
-
-    inline const float getf() const
+    inline const std::string getFileName() const
     {
-        return m_timef[1];
+        return m_fileName;
     }
 
-    const float getf(const bool updateFirst);
-    const float setf(
-        const float time
-    ,   const bool forceUpdate = false);
-
-
-    // time in seconds from initial time
-
-    inline const time_t gett() const
+    inline osg::Shader *getShader() const
     {
-        return m_time[1];
+        return m_shader;
     }
-
-    const time_t gett(const bool updateFirst);
-    const time_t sett(
-        const time_t &time
-    ,   const bool forceUpdate = false);
-
 
 protected:
-    static inline const float secondsTof(const time_t &time);
-    static inline const time_t fToSeconds(const float time);
+
+    void registerShaderSource(ShaderSource *ss);
+    void unregisterShaderSource(ShaderSource *ss);
+
+    static const bool loadShaderSourceFromFile(
+        const std::string &fileName
+    ,   osg::Shader *shader);
 
 protected:
-    osg::Timer *m_timer;
 
-    time_t m_time[2];
-    float m_timef[2];
+    typedef std::set<ShaderSource*> t_shaderSources;
+    typedef std::map<std::string, t_shaderSources> t_shaderSourcesByFileNames;
 
-    float m_secondsPerCycle;
+    // this is used to allow updating shader by filepath
+    static t_shaderSourcesByFileNames s_shaderSourcesByFileNames;
+
+    bool m_valid;
+
+    const std::string m_fileName;
+    osg::Shader *m_shader;
 };
 
-#endif __TIMEF_H__
+#endif __SHADERSOURCE_H__
