@@ -87,9 +87,9 @@ void TimeF::update()
 }
 
 
-const float TimeF::getf(const bool forceUpdate)
+const float TimeF::getf(const bool updateFirst)
 {
-    if(forceUpdate)
+    if(updateFirst)
         update();
 
     return m_timef[1];
@@ -110,9 +110,9 @@ const float TimeF::setf(
 }
 
 
-const time_t TimeF::gett(const bool forceUpdate)
+const time_t TimeF::gett(const bool updateFirst)
 {
-    if(forceUpdate)
+    if(updateFirst)
         update();
 
     return m_time[1];

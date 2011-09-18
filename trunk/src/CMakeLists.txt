@@ -31,8 +31,10 @@ set(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 
 set(LIB_SOURCES
     abstracthimmel.cpp
-    ${HEADER_PATH}/abstracthimmel.h
+	shadersource.cpp
     timef.cpp
+    ${HEADER_PATH}/abstracthimmel.h
+	${HEADER_PATH}/shadersource.h
     ${HEADER_PATH}/timef.h)
 
 source_group_by_path(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})    
