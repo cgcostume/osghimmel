@@ -92,6 +92,20 @@ const int ShaderSource::updateByFileName(const std::string &fileName)
 }
 
 
+const std::set<std::string> ShaderSource::getFileNames()
+{
+    std::set<std::string> fileNames;
+
+    t_shaderSourcesByFileNames::const_iterator i(s_shaderSourcesByFileNames.begin());
+    const t_shaderSourcesByFileNames::const_iterator iEnd(s_shaderSourcesByFileNames.end());
+
+    for(; i != iEnd; ++i)
+        fileNames.insert(i->first);
+
+    return fileNames;
+}
+
+
 void ShaderSource::registerShaderSource(ShaderSource *ss)
 {
     assert(ss);

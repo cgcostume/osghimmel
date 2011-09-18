@@ -40,8 +40,8 @@ namespace osg
     class Shader; 
 }
 
-//! Link a shader with its source fileName and update on demand. 
-//  Supports static update by fileName, so GUIs do not need to know shader objects.
+//! Link a shader with its source fileName and update on demand. Supports 
+//  static update by fileName, so GUIs do not need to know shader objects.
 
 class ShaderSource
 {
@@ -53,14 +53,18 @@ public:
 
     ~ShaderSource();
 
-    // reloads the source from file
+    // Reloads the source from file.
     const bool update();
 
-    // returns the number of updated shader sources
+    // Returns the number of updated shader sources.
     static const int updateByFileName(const std::string &fileName);
 
+    // Allows to obtain all registered shader source filenames.
+    // For example, useful for file system watchers.
+    static const std::set<std::string> getFileNames();
 
-    // is valid if shader source is loaded and set to shader
+
+    // Valid if shader source is loaded and set to shader.
     inline const bool isValid() const
     {
         return m_valid;
@@ -90,7 +94,7 @@ protected:
     typedef std::set<ShaderSource*> t_shaderSources;
     typedef std::map<std::string, t_shaderSources> t_shaderSourcesByFileNames;
 
-    // this is used to allow updating shader by filepath
+    // Used to allow updating shader sources by filenames.
     static t_shaderSourcesByFileNames s_shaderSourcesByFileNames;
 
     bool m_valid;
