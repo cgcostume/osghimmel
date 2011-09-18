@@ -62,28 +62,24 @@ SET(SKYBOX_SOURCES
     utils/log.h
     utils/log.cpp)
 
-SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
 
-QT4_AUTO_WRAP(QT4_SOURCES ${SKYBOX_SOURCES})
-SETUP_STABLE(${SKYBOX_SOURCES} ${QT4_SOURCES})
+qt4_auto_wrap(QT4_SOURCES ${SKYBOX_SOURCES})
+setup_stable(${SKYBOX_SOURCES} ${QT4_SOURCES})
 
-INCLUDE(${QT_USE_FILE})
-
-INCLUDE_DIRECTORIES(
+include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${QT_INCLUDES})
     
-IF(MSVC)
-    ADD_EXECUTABLE(skybox #WIN32
-        ${QT4_SOURCES}
-        ${SKYBOX_SOURCES})
-ELSE(MSVC)
-    ADD_EXECUTABLE(skybox
-        ${QT4_SOURCES}
-        ${SKYBOX_SOURCES})
-ENDIF(MSVC)
+if(MSVC)
+    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
+else(MSVC)
+    add_executable(skybox       ${QT4_SOURCES} ${SKYBOX_SOURCES})
+endif()
 
-TARGET_LINK_LIBRARIES(skybox
+set_default_target_properties(skybox ON)
+
+target_link_libraries(skybox
     osghimmel
     qtpropertybrowser
     ${QT_QTMAIN_LIBRARY}
@@ -93,26 +89,18 @@ TARGET_LINK_LIBRARIES(skybox
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
 
+install(TARGETS skybox
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+	CONFIGURATIONS Debug Release)
 
-IF(OPTION_MAKE_PACKAGE)
+install(FILES 
+    "${QT_BINARY_DIR}/QtCored${QT_VERSION_MAJOR}.dll"
+    "${QT_BINARY_DIR}/QtGuid${QT_VERSION_MAJOR}.dll"
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    CONFIGURATIONS Debug)
 
-    INSTALL(TARGETS skybox
-        DESTINATION . 
-        CONFIGURATIONS Debug Release)
-
-    INSTALL(FILES 
-        "${QT_BINARY_DIR}/QtCored${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtGuid${QT_VERSION_MAJOR}.dll" 
-        DESTINATION . 
-        CONFIGURATIONS Debug)
-
-    INSTALL(FILES 
-        "${QT_BINARY_DIR}/QtCore${QT_VERSION_MAJOR}.dll" 
-        "${QT_BINARY_DIR}/QtGui${QT_VERSION_MAJOR}.dll" 
-        DESTINATION . 
-        CONFIGURATIONS Release)
-
-ENDIF(OPTION_MAKE_PACKAGE)
-
-SET_FAST_COMPILE    (skybox)
-ADD_POSTFIX_TO_DEBUG(skybox)
+install(FILES 
+    "${QT_BINARY_DIR}/QtCore${QT_VERSION_MAJOR}.dll"
+    "${QT_BINARY_DIR}/QtGui${QT_VERSION_MAJOR}.dll"
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    CONFIGURATIONS Release)

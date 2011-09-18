@@ -31,225 +31,253 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
   
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 # macros
 
-MACRO(QT4_AUTO_WRAP outfiles)
+macro(QT4_AUTO_WRAP outfiles)
 
-    SET (moc_headers "")
-    SET (ui_files "")
-    SET (qrc_files "")
+    set(moc_headers "")
+    set(ui_files "")
+    set(qrc_files "")
 
-    FOREACH(fileName ${ARGV})
+    foreach(fileName ${ARGV})
 
-        IF(fileName MATCHES "\\.h$")
+        if(fileName MATCHES "\\.h$")
             FILE(STRINGS ${fileName} lines REGEX Q_OBJECT)
             IF(lines)
                 LIST(APPEND moc_headers ${fileName})
                 MESSAGE(STATUS "moc: ${fileName}")
-            ENDIF()
-        ENDIF()
+            endif()
+        endif()
         
-        IF(fileName MATCHES "\\.ui$")
+        if(fileName MATCHES "\\.ui$")
             LIST(APPEND ui_files ${fileName})
             MESSAGE(STATUS "uic: ${fileName}")
-        ENDIF()
+        endif()
 
-        IF(fileName MATCHES "\\.qrc$")
+        if(fileName MATCHES "\\.qrc$")
             LIST(APPEND qrc_files ${fileName})
             MESSAGE(STATUS "qrc: ${fileName}")
-        ENDIF()
+        endif()
 
-    ENDFOREACH()
+    endforeach()
 
-    QT4_WRAP_CPP(mocGeneratedByHeader ${moc_headers})
-    QT4_WRAP_UI(uicGenerated ${ui_files})
+    qt4_wrap_cpp(mocGeneratedByHeader ${moc_headers})
+    qt4_wrap_ui(uicGenerated ${ui_files})
 
-    QT4_ADD_RESOURCES(mocGeneratedByRessources ${qrc_files})
+    qt4_add_resources(mocGeneratedByRessources ${qrc_files})
 
-    LIST(APPEND ${outfiles}
+    list(APPEND ${outfiles}
         ${uicGenerated}
         ${mocGeneratedByHeader} 
         ${mocGeneratedByRessources})
 
-    SOURCE_GROUP("_ Qt Generated" FILES 
+    source_group("_ Qt Generated" FILES 
         ${uicGenerated}
         ${mocGeneratedByHeader}
         ${mocGeneratedByRessources})
 
-    SOURCE_GROUP("_ CMake Rules" REGULAR_EXPRESSION "rule$")
+    source_group("_ CMake Rules" REGULAR_EXPRESSION "rule$")
 
-ENDMACRO()
+endmacro()
 
 
-MACRO(SOURCE_GROUP_BY_PATH parent_path)
+macro(SOURCE_GROUP_BY_PATH parent_path)
 
-    FOREACH(filename ${ARGV})
+    foreach(filename ${ARGV})
     
-        GET_FILENAME_COMPONENT(path "${filename}" REALPATH)
-        FILE(RELATIVE_PATH path ${parent_path} ${path})
-        GET_FILENAME_COMPONENT(path "${path}" PATH)
-        STRING(REPLACE "/" "\\" path "${path}")
+        get_filename_component(path "${filename}" REALPATH)
+        file(RELATIVE_PATH path ${parent_path} ${path})
+        get_filename_component(path "${path}" PATH)
+        string(REPLACE "/" "\\" path "${path}")
 
-        IF(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
+        if(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
             SOURCE_GROUP("${path}" FILES ${filename})
-        ENDIF()
+        endif()
 
-    ENDFOREACH()
+    endforeach()
 
-ENDMACRO(SOURCE_GROUP_BY_PATH)
-
-
-MACRO(SET_WARNING_LEVEL4 target)
-
-    IF(MSVC)
-        SET_TARGET_PROPERTIES(${target} PROPERTIES COMPILE_FLAGS "/W4")
-    ENDIF(MSVC)
-
-ENDMACRO(SET_WARNING_LEVEL4 target)
+endmacro()
 
 
-MACRO(SETUP_STABLE)
+macro(SETUP_STABLE)
 
-    FOREACH(arg in ${ARGV})
+    foreach(arg in ${ARGV})
         LIST(APPEND sources ${arg})
-    ENDFOREACH()
+    endforeach()
 
-    SET_SOURCE_FILES_PROPERTIES(${sources}
+    set_source_files_properties(${sources}
         PROPERTIES
         COMPILE_FLAGS "/FIstable.h /Yustable.h")
 
-    SET_SOURCE_FILES_PROPERTIES(stable.cpp
+    set_source_files_properties(stable.cpp
         PROPERTIES
         COMPILE_FLAGS "/Ycstable.h")
 
-ENDMACRO(SETUP_STABLE sources)
+endmacro()
 
 
-MACRO(SET_FAST_COMPILE target)
+macro(SET_DEFAULT_TARGET_PROPERTIES target w4)
 
-    SET_TARGET_PROPERTIES(${target}
-        PROPERTIES
-        COMPILE_FLAGS "/arch:SSE2 /fp:fast /Ot /GS-"
-        LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt")
+    if(MSVC)
 
-ENDMACRO(SET_FAST_COMPILE target)
+        if(w4)
+            SET_TARGET_PROPERTIES(${target}
+                PROPERTIES
+                COMPILE_FLAGS "/W4 /arch:SSE2 /fp:fast /Ot /GS-"
+                LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
+                DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
+        else(w4)
+            SET_TARGET_PROPERTIES(${target}
+                PROPERTIES
+                COMPILE_FLAGS "/arch:SSE2 /fp:fast /Ot /GS-"
+                LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
+                DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
+        endif()
 
+    else(MSVC)
 
-MACRO(ADD_POSTFIX_TO_DEBUG targetName)
-    SET_TARGET_PROPERTIES(${targetName}
-        PROPERTIES DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
-ENDMACRO(ADD_POSTFIX_TO_DEBUG)
+        SET_TARGET_PROPERTIES(${target}
+            PROPERTIES
+            DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
+    endif()
+
+endmacro()
 
 # config
 
-SET(PROJECT_NAME osghimmel)
-SET(PROJECT_NAME osghimmel)
+set(PROJECT_NAME osghimmel)
+set(PROJECT_NAME osghimmel)
 
-PROJECT(${PROJECT_NAME} C CXX)
+project(${PROJECT_NAME} C CXX)
 
-SET(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "limited configs" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "limited configs" FORCE)
 
-SET(VERSION_MAJOR "0" CACHE STRING "${PROJECT_NAME} Major Version")
-SET(VERSION_MINOR "0" CACHE STRING "${PROJECT_NAME} Minor Version")
+set(VERSION_MAJOR "0" CACHE STRING "${PROJECT_NAME} Major Version")
+set(VERSION_MINOR "0" CACHE STRING "${PROJECT_NAME} Minor Version")
 
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+
+option(OPTION_MAKE_DEMOS "Make Demos" ON)
+option(OPTION_MAKE_SKYBOX "Make SkyBox - Sandbox for osgHimmel (requires Qt)" ON)
 
 
-OPTION(OPTION_MAKE_DEMOS "Make Demos" ON)
-OPTION(OPTION_MAKE_SKYBOX "Make SkyBox - Sandbox for osgHimmel (requires Qt)" OFF)
-OPTION(OPTION_MAKE_PACKAGE "Make Package (project yielding binary archive)" OFF)
+# 3rdp and resources
 
-# packages
-
-FIND_PACKAGE(OpenGL REQUIRED)
-FIND_PACKAGE(OpenSceneGraph REQUIRED 
+find_package(OpenGL REQUIRED)
+find_package(OpenSceneGraph REQUIRED 
     osgViewer 
     osgUtil 
     osgDB 
     osgGA)
 
-IF(OPTION_MAKE_PACKAGE)
+if(OPTION_MAKE_DEMOS OR OPTION_MAKE_SKYBOX)
+    
+    set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources" CACHE PATH "Resources for osghimmel binaries.")
 
-    STRING(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
+    if(NOT EXISTS "${RESOURCE_DIR}/")
+        MESSAGE(WARNING "Resource dir not found, please specify RESOURCE_DIR.")
+    endif()
 
-    SET(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
-    SET(OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
+    string(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
 
-    SET(PACKAGE_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources" CACHE PATH "Resources for osghimmel binaries.")
+    set(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
+    set(OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
+    
+endif()
 
-ENDIF(OPTION_MAKE_PACKAGE)
+if(OPTION_MAKE_SKYBOX)
 
-IF(OPTION_MAKE_SKYBOX)
+    set(QT_MIN_VERSION "4.7.0")
+    find_package(Qt4 COMPONENTS QtCore QtOpenGL QtGui REQUIRED)
+    include(${QT_USE_FILE})
 
-    SET(QT_MIN_VERSION "4.7.0")
-    FIND_PACKAGE(Qt4)
-
-    IF(NOT QT4_FOUND)
+    if(NOT QT4_FOUND)
         MESSAGE(WARNING "Skybox project will be ignored.")
-    ENDIF(NOT QT4_FOUND)
+    endif(NOT QT4_FOUND)
 
-ENDIF(OPTION_MAKE_SKYBOX)
+endif()
 
-# cpack deploy
 
-IF(OPTION_MAKE_PACKAGE)
+# lib/bin copy
 
-    SET(CPACK_GENERATOR "ZIP")
-    SET(CPACK_SOURCE_GENERATOR "ZIP")
+set(OSG_PLUGIN_DIR "${OSG_BINARY_DIR}/osgPlugins-${OPENSCENEGRAPH_VERSION}")
 
-    SET(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
-    SET(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
-    #SET(CPACK_PACKAGE_VERSION_PATCH 0)
-    INCLUDE(CPack)
+if(NOT EXISTS ${OSG_PLUGIN_DIR}/)
+    message(WARNING "osgPlugins dir not found, please specify OSG_PLUGIN_DIR.")
+endif()
 
-    INSTALL(DIRECTORY 
-        "${PACKAGE_RESOURCE_DIR}"
-        DESTINATION .)
 
-    SET(OSG_PLUGIN_DIR "${OSG_BINARY_DIR}/osgPlugins-${OPENSCENEGRAPH_VERSION}")
+# install
+   
+install(DIRECTORY "${RESOURCE_DIR}" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-    INSTALL(FILES 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtild.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDBd.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGAd.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgTextd.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewerd.dll" 
-        "${OSG_BINARY_DIR}/ot11-OpenThreadsd.dll" 
-        "${OSG_PLUGIN_DIR}/osgdb_3dsd.dll"
-        "${OSG_PLUGIN_DIR}/osgdb_tgad.dll"
-        DESTINATION . 
-        CONFIGURATIONS Debug)
+if(NOT EXISTS ${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll)
+    message(WARNING "OSG_SOVERSION (${OSG_SOVERSION}) seems wrong. ${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll not found.")
+endif()
 
-    INSTALL(FILES 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osg.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtil.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDB.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGA.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgText.dll" 
-        "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewer.dll" 
-        "${OSG_BINARY_DIR}/ot11-OpenThreads.dll" 
-        "${OSG_PLUGIN_DIR}/osgdb_3ds.dll"
-        "${OSG_PLUGIN_DIR}/osgdb_tga.dll"
-        DESTINATION . 
-        CONFIGURATIONS Release)
+install(FILES 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtild.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDBd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGAd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgTextd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewerd.dll" 
+    "${OSG_BINARY_DIR}/ot11-OpenThreadsd.dll" 
+    "${OSG_PLUGIN_DIR}/osgdb_3dsd.dll"
+    "${OSG_PLUGIN_DIR}/osgdb_tgad.dll"
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    CONFIGURATIONS Debug)
 
-ENDIF(OPTION_MAKE_PACKAGE)
+install(FILES 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osg.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtil.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDB.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGA.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgText.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewer.dll" 
+    "${OSG_BINARY_DIR}/ot11-OpenThreads.dll" 
+    "${OSG_PLUGIN_DIR}/osgdb_3ds.dll"
+    "${OSG_PLUGIN_DIR}/osgdb_tga.dll"
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    CONFIGURATIONS Release)
+
 
 # qt is required for apps only, so appropriate find_package is called there
 
-INCLUDE_DIRECTORIES(
-	${CMAKE_BINARY_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${PROJECT_SOURCE_DIR}/3rdp
+include_directories(
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/3rdp
     ${PROJECT_SOURCE_DIR}/include
     ${OSG_INCLUDE_DIR})
 
-ADD_SUBDIRECTORY("3rdp")
-ADD_SUBDIRECTORY("src")
-ADD_SUBDIRECTORY("apps")
+add_subdirectory("3rdp")
+add_subdirectory("src")
+add_subdirectory("apps")
+
+
+# cpack deploy
+
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_SOURCE_GENERATOR "ZIP")
+
+set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH 0)
+
+set(CPACK_INSTALL_DIRECTORIES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CPACK_IGNORE_FILES "/.pdb/;/.ilk/;/\\.svn/;/\\.hg/;/\\.git/;\\.swp$;\\.#;/#")
+set(CPACK_OUTPUT_FILE_PREFIX ${CMAKE_SOURCE_DIR})
+
+include(CPack)

@@ -27,27 +27,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
-SET(DEMO_SOURCES
+set(DEMO_SOURCES
     computedmain.cpp)
 
-MESSAGE(STATUS "add executable: demo_computed")
-ADD_EXECUTABLE(demo_computed
-    ${DEMO_SOURCES})
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
 
-TARGET_LINK_LIBRARIES(demo_computed
+message(STATUS "add executable: demo_computed")
+
+add_executable(demo_computed ${DEMO_SOURCES})
+set_default_target_properties(demo_computed OFF)
+
+target_link_libraries(demo_computed
     osghimmel
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
 
-IF(OPTION_MAKE_PACKAGE)
-    INSTALL(TARGETS demo_computed
-        DESTINATION . 
-        CONFIGURATIONS Debug Release)
-ENDIF(OPTION_MAKE_PACKAGE)
-
-SOURCE_GROUP_BY_PATH(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
-
-SET_WARNING_LEVEL4  (demo_computed)
-SET_FAST_COMPILE    (demo_computed)
-ADD_POSTFIX_TO_DEBUG(demo_computed)
+install(TARGETS demo_computed
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

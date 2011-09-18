@@ -31,17 +31,15 @@
 # http://qt.gitorious.org/qt-solutions/qt-solutions/trees/master/qtpropertybrowser
 # cmake modified from: http://bugreports.qt.nokia.com/browse/QTSOLBUG-80
 
-SET(QT_USE_UI TRUE)
-SET(QT_USE_CORE TRUE)
-SET(QT_USE_GUI TRUE)
+set(QT_USE_UI TRUE)
+set(QT_USE_CORE TRUE)
+set(QT_USE_GUI TRUE)
 
-INCLUDE(${QT_USE_FILE})
-
-INCLUDE_DIRECTORIES(
+include_directories(
     ${QT_INCLUDE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR})
 
-SET(sources
+set(sources
     qtpropertybrowser.cpp
     qtpropertymanager.cpp
     qteditorfactory.cpp
@@ -51,18 +49,18 @@ SET(sources
     qtgroupboxpropertybrowser.cpp
     qtpropertybrowserutils.cpp)
 
-QT4_GENERATE_MOC(qtpropertybrowser.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowser.cpp)
-QT4_GENERATE_MOC(qtpropertymanager.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertymanager.cpp)
-QT4_GENERATE_MOC(qteditorfactory.h           ${CMAKE_CURRENT_BINARY_DIR}/moc_qteditorfactory.cpp)
-QT4_GENERATE_MOC(qtvariantproperty.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtvariantproperty.cpp)
-QT4_GENERATE_MOC(qttreepropertybrowser.h     ${CMAKE_CURRENT_BINARY_DIR}/moc_qttreepropertybrowser.cpp)
-QT4_GENERATE_MOC(qtbuttonpropertybrowser.h   ${CMAKE_CURRENT_BINARY_DIR}/moc_qtbuttonpropertybrowser.cpp)
-QT4_GENERATE_MOC(qtgroupboxpropertybrowser.h ${CMAKE_CURRENT_BINARY_DIR}/moc_qtgroupboxpropertybrowser.cpp)
-QT4_GENERATE_MOC(qtpropertymanager.cpp       ${CMAKE_CURRENT_BINARY_DIR}/qtpropertymanager.moc)
-QT4_GENERATE_MOC(qteditorfactory.cpp         ${CMAKE_CURRENT_BINARY_DIR}/qteditorfactory.moc)
-QT4_GENERATE_MOC(qttreepropertybrowser.cpp   ${CMAKE_CURRENT_BINARY_DIR}/qttreepropertybrowser.moc)
+qt4_generate_moc(qtpropertybrowser.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowser.cpp)
+qt4_generate_moc(qtpropertymanager.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertymanager.cpp)
+qt4_generate_moc(qteditorfactory.h           ${CMAKE_CURRENT_BINARY_DIR}/moc_qteditorfactory.cpp)
+qt4_generate_moc(qtvariantproperty.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtvariantproperty.cpp)
+qt4_generate_moc(qttreepropertybrowser.h     ${CMAKE_CURRENT_BINARY_DIR}/moc_qttreepropertybrowser.cpp)
+qt4_generate_moc(qtbuttonpropertybrowser.h   ${CMAKE_CURRENT_BINARY_DIR}/moc_qtbuttonpropertybrowser.cpp)
+qt4_generate_moc(qtgroupboxpropertybrowser.h ${CMAKE_CURRENT_BINARY_DIR}/moc_qtgroupboxpropertybrowser.cpp)
+qt4_generate_moc(qtpropertymanager.cpp       ${CMAKE_CURRENT_BINARY_DIR}/qtpropertymanager.moc)
+qt4_generate_moc(qteditorfactory.cpp         ${CMAKE_CURRENT_BINARY_DIR}/qteditorfactory.moc)
+qt4_generate_moc(qttreepropertybrowser.cpp   ${CMAKE_CURRENT_BINARY_DIR}/qttreepropertybrowser.moc)
 
-SET(headers_MOC
+set(headers_MOC
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowser.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertymanager.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qteditorfactory.cpp
@@ -75,26 +73,28 @@ SET(headers_MOC
     ${CMAKE_CURRENT_BINARY_DIR}/qttreepropertybrowser.moc
 )
 
-SET_SOURCE_FILES_PROPERTIES(${headers_MOC} 
+set_source_files_properties(${headers_MOC} 
     PROPERTIES
     HEADER_FILE_ONLY true)
 
-QT4_GENERATE_MOC(qtpropertybrowserutils_p.h  
+qt4_generate_moc(qtpropertybrowserutils_p.h  
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowserutils_p.cpp)
 
-QT4_ADD_RESOURCES(resources
+qt4_add_resources(resources
     qtpropertybrowser.qrc)
 
-ADD_LIBRARY(qtpropertybrowser STATIC
+add_library(qtpropertybrowser STATIC
     ${extension_MOC}
     ${headers_MOC}
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowserutils_p.cpp
     ${sources}
     ${resources})
 
-ADD_DEFINITIONS(${QT_DEFINITIONS})
-ADD_DEFINITIONS(-DQT_DLL)
-ADD_DEFINITIONS(-DQT_QTPROPERTYBROWSER_EXPORT)
-ADD_DEFINITIONS(-DQT_PLUGIN)
-#ADD_DEFINITIONS(-DQT_NO_DEBUG)
-ADD_DEFINITIONS(-DQT_STATIC)
+add_definitions(${QT_DEFINITIONS})
+add_definitions(-DQT_DLL)
+add_definitions(-DQT_QTPROPERTYBROWSER_EXPORT)
+add_definitions(-DQT_PLUGIN)
+#add_definitions(-DQT_NO_DEBUG)
+add_definitions(-DQT_STATIC)
+
+set_default_target_properties(qtpropertybrowser OFF)
