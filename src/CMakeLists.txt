@@ -31,10 +31,12 @@ set(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 
 set(LIB_SOURCES
     abstracthimmel.cpp
-	shadersource.cpp
+    himmelquad.cpp
+	shadermodifier.cpp
     timef.cpp
     ${HEADER_PATH}/abstracthimmel.h
-	${HEADER_PATH}/shadersource.h
+    ${HEADER_PATH}/himmelquad.h
+    ${HEADER_PATH}/shadermodifier.h
     ${HEADER_PATH}/timef.h)
 
 source_group_by_path(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})    
@@ -43,3 +45,7 @@ message(STATUS "add static library: osghimmel")
 
 add_library(osghimmel STATIC ${LIB_SOURCES})
 set_default_target_properties(osghimmel ON)
+
+if(OPTION_MAKE_SKYBOX)
+	ADD_DEFINITIONS("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
+endif()

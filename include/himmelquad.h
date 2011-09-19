@@ -27,36 +27,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "abstracthimmel.h"
+#pragma once
+#ifndef __HIMMELQUAD_H__
+#define __HIMMELQUAD_H__
 
-#include "timef.h"
-#include "himmelquad.h"
-
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-#include "shadermodifier.h"
-ShaderModifier AbstractHimmel::s_shaderModifier;
-
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+#include <osg/Geode>
+#include <osg/Geometry>
 
 
-AbstractHimmel::AbstractHimmel()
-:   osg::Transform()
-,   m_timef(NULL)
-,   m_hquad(new HimmelQuad())
+class HimmelQuad : public osg::Geode
 {
-    addChild(m_hquad);
+public:
+    HimmelQuad();
+    virtual ~HimmelQuad();
+
+protected:
+    osg::ref_ptr<osg::Geometry> m_quad;
 };
 
 
-AbstractHimmel::~AbstractHimmel()
-{
-
-};
-
-
-void AbstractHimmel::setTime(TimeF const *timef)
-{
-    m_timef = timef;
-}
+#endif __HIMMELQUAD_H__
