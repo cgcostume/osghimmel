@@ -27,35 +27,19 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "abstracthimmel.h"
+#pragma once
+#ifndef __GLSL_QUADTRANSFORM_VSF__
+#define __GLSL_QUADTRANSFORM_VSF__
 
-#include "timef.h"
-#include "himmelquad.h"
-
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-#include "shadermodifier.h"
-ShaderModifier AbstractHimmel::s_shaderModifier;
-
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-
-AbstractHimmel::AbstractHimmel()
-:   osg::Transform()
-,   m_timef(NULL)
-,   m_hquad(new HimmelQuad())
+namespace 
 {
-    addChild(m_hquad);
-};
-
-
-AbstractHimmel::~AbstractHimmel()
-{
-};
-
-
-void AbstractHimmel::setTime(TimeF const *timef)
-{
-    m_timef = timef;
+    static const std::string glsl_v_quadTransform
+    (
+        "void quadTransform()\n"
+        "{\n"
+        "   gl_Position = gl_Vertex;\n"
+        "}\n"
+    );
 }
+
+#endif __GLSL_QUADTRANSFORM_VSF__
