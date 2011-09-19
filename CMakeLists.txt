@@ -92,7 +92,7 @@ macro(SOURCE_GROUP_BY_PATH parent_path)
         get_filename_component(path "${path}" PATH)
         string(REPLACE "/" "\\" path "${path}")
 
-        if(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$")
+        if(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$|vsf$|fsf$")
             SOURCE_GROUP("${path}" FILES ${filename})
         endif()
 
