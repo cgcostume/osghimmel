@@ -27,36 +27,27 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "abstracthimmel.h"
-
-#include "timef.h"
 #include "himmelquad.h"
 
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-#include "shadermodifier.h"
-ShaderModifier AbstractHimmel::s_shaderModifier;
-
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-
-AbstractHimmel::AbstractHimmel()
-:   osg::Transform()
-,   m_timef(NULL)
-,   m_hquad(new HimmelQuad())
+HimmelQuad::HimmelQuad()
+:   osg::Geode()
+,   m_quad(new osg::Geometry())
 {
-    addChild(m_hquad);
-};
+    // create quad that will be used screen aligned (via vertex shader)
 
+    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array();
+    vertices->push_back(osg::Vec3(-1.f, -1.f, 0.f));
+    vertices->push_back(osg::Vec3(-1.f,  1.f, 0.f));
+    vertices->push_back(osg::Vec3( 1.f,  1.f, 0.f));
+    vertices->push_back(osg::Vec3( 1.f, -1.f, 0.f));
 
-AbstractHimmel::~AbstractHimmel()
-{
-
-};
-
-
-void AbstractHimmel::setTime(TimeF const *timef)
-{
-    m_timef = timef;
+    m_quad->setVertexArray(vertices);
+    m_quad->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 }
+
+
+HimmelQuad::~HimmelQuad()
+{
+
+};

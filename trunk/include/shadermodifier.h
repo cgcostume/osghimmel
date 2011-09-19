@@ -27,80 +27,80 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
 #pragma once
-#ifndef __SHADERSOURCE_H__
-#define __SHADERSOURCE_H__
+#ifndef __SHADERMODIFIER_H__
+#define __SHADERMODIFIER_H__
 
 #include <string>
 #include <map>
 #include <set>
+#include <vector>
 
 namespace osg 
 {
     class Shader; 
 }
 
-//! Link a shader with its source fileName and update on demand. Supports 
-//  static update by fileName, so GUIs do not need to know shader objects.
 
-class ShaderSource
+//! Allows manipulation of shader sources registered elsewhere. 
+//  Helps to decouple shader manipulation of specific shader instances and 
+//  GUIs via identifiers.
+
+class ShaderModifier
 {
 public:
+    typedef std::string t_identifier;
 
-    ShaderSource(
-        const std::string &fileName
+public:
+    ShaderModifier();
+    virtual ~ShaderModifier();
+
+
+    // Returns all registered identifier.
+    std::vector<t_identifier> getIdentifier() const;
+
+    // Registers a shader by an identifier and replaces its source if 
+    // already modified.
+    void registerShader(
+        const t_identifier &identifier
     ,   osg::Shader *shader);
 
-    ~ShaderSource();
-
-    // Reloads the source from file.
-    const bool update();
-
-    // Returns the number of updated shader sources.
-    static const int updateByFileName(const std::string &fileName);
-
-    // Allows to obtain all registered shader source filenames.
-    // For example, useful for file system watchers.
-    static const std::set<std::string> getFileNames();
+    void unregisterShader(osg::Shader *shader);
 
 
-    // Valid if shader source is loaded and set to shader.
-    inline const bool isValid() const
-    {
-        return m_valid;
-    }
+    // manipulation
 
-    inline const std::string getFileName() const
-    {
-        return m_fileName;
-    }
+    const std::string getSource(const t_identifier &identifier) const;
 
-    inline osg::Shader *getShader() const
-    {
-        return m_shader;
-    }
+    // All shaders sources related to identifier get replaced. Update is
+    // optional and can be explcitily called later via update().
+    void setSource(
+        const t_identifier &identifier
+        ,   const std::string &source
+        ,   const bool update = true);
+
+    // Updates all modified shader sources, that are not updated yet.
+    void update();
 
 protected:
+    typedef std::set<osg::Shader*> t_shaderSet;
+    typedef std::set<t_identifier> t_identifierSet;
 
-    void registerShaderSource(ShaderSource *ss);
-    void unregisterShaderSource(ShaderSource *ss);
+    typedef std::map<t_identifier, std::string> t_sourcesByIdentifier;
+    typedef std::map<t_identifier, t_shaderSet> t_shaderSetsByIdentifier;
+    typedef std::map<osg::Shader*, t_identifier> t_identifiersByShader;
 
-    static const bool loadShaderSourceFromFile(
-        const std::string &fileName
-    ,   osg::Shader *shader);
+    t_sourcesByIdentifier m_sourcesByIdentifier;
 
-protected:
+    t_shaderSetsByIdentifier m_shaderSetsByIdentifier;
+    t_identifiersByShader m_identifiersByShader;
 
-    typedef std::set<ShaderSource*> t_shaderSources;
-    typedef std::map<std::string, t_shaderSources> t_shaderSourcesByFileNames;
-
-    // Used to allow updating shader sources by filenames.
-    static t_shaderSourcesByFileNames s_shaderSourcesByFileNames;
-
-    bool m_valid;
-
-    const std::string m_fileName;
-    osg::Shader *m_shader;
+    // Identifiers of shaders whose source was modified and not updated yet.
+    t_identifierSet m_modified;
 };
 
-#endif __SHADERSOURCE_H__
+#endif __SHADERMODIFIER_H__
+
+#endif OSGHIMMEL_ENABLE_SHADERMODIFIER

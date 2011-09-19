@@ -31,15 +31,47 @@
 #ifndef __ABSTRACTHIMMEL_H__
 #define __ABSTRACTHIMMEL_H__
 
+#include <osg/Transform>
 
-class AbstractHimmel
+
+class TimeF;
+class HimmelQuad;
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+class ShaderModifier;
+#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+
+class AbstractHimmel : public osg::Transform
 {
 public:
 
     AbstractHimmel();
     virtual ~AbstractHimmel();
 
+
+    void setTime(TimeF const *timef);
+    inline TimeF const *getTime() const
+    {
+        return m_timef;
+    }
+
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    static inline ShaderModifier *shaderModifier() 
+    {
+        return &s_shaderModifier;
+    }
+#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+
 protected:
+
+    TimeF const *m_timef;
+    HimmelQuad *m_hquad;
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    static ShaderModifier s_shaderModifier;
+#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
 };
 
 #endif __ABSTRACTHIMMEL_H__
