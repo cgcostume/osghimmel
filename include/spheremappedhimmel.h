@@ -59,8 +59,8 @@ protected:
 
 protected:
 
-    typedef std::map<GLuint, osg::ref_ptr<osg::Texture2D> > t_tex2DMap;
-    t_tex2DMap m_tex2DsById;
+    typedef std::map<GLuint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
+    t_tex2DById m_tex2DsById;
 };
 
 #endif __SPHEREMAPPEDHIMMEL_H__

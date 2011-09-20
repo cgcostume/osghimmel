@@ -33,12 +33,33 @@
 
 #include "abstractmappedhimmel.h"
 
+#include <map>
+
+namespace osg
+{
+    class TextureCubeMap;
+}
+
 
 class CubeMappedHimmel : public AbstractMappedHimmel
 {
 public:
     CubeMappedHimmel();
     virtual ~CubeMappedHimmel();
+
+    // Use this helper to work with pre-configured textures.
+    osg::TextureCubeMap *getOrCreateTextureCubeMap(const GLuint textureUnit);
+
+protected:
+
+    // AbstractMappedHimmel interface
+
+    virtual osg::StateAttribute *getTextureAttribute(const GLuint textureUnit) const;
+
+protected:
+
+    typedef std::map<GLubyte, osg::ref_ptr<osg::TextureCubeMap> > t_tcmById;
+    t_tcmById m_tcmsById;
 };
 
 #endif __CUBEMAPPEDHIMMEL_H__
