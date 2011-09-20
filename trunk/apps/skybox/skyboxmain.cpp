@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
     MainLogDispatcher logDispatcher;
     _LOG->attachDispatcher(&logDispatcher);
 
+    _LOG_EMPTYLINE();
     _LOG_INFO(TR("%1 started").arg(APPLICATION_NAME));
 
     QApplication a(argc, argv);
@@ -53,6 +54,7 @@ int main(int argc, char* argv[])
     result = a.exec();
 
     _LOG_INFO(TR("%1 exited").arg(APPLICATION_NAME));
+    _LOG_EMPTYLINE();
 
     return result;
 }

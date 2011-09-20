@@ -98,6 +98,9 @@ void StdLogOutput::print(const LogEntry &entry)
     case LogEntry::WARNING_LOG:
         std::cout << QString("%1 warning: %2").arg(timestamp).arg(entry.message()).toStdString() << std::endl;
         break;
+    case LogEntry::EMPTYLINE_LOG:
+        std::cout << std::endl << std::endl;
+        break;
     case LogEntry::UNDEFINED_LOG:
     default:
         break;
@@ -125,7 +128,10 @@ FileLogOutput::FileLogOutput(const QString &filename)
 #endif
 
     if(m_opened)
-        m_stream = new QTextStream(m_file);    
+    {
+        m_file->seek(m_file->size());
+        m_stream = new QTextStream(m_file);
+    }
     else
         throw std::exception(TR("Cannot open log file %1 in write mode.").arg(filename).toLocal8Bit());
 }
@@ -159,6 +165,9 @@ void FileLogOutput::print(const LogEntry &entry)
         break;
     case LogEntry::DEBUG_LOG:            
         (*m_stream) << QString("%1 %2 %3: %4\n").arg(timestamp).arg(entry.file()).arg(entry.line()).arg(entry.message());
+        break;
+    case LogEntry::EMPTYLINE_LOG:
+        (*m_stream) << "\n";
         break;
     case LogEntry::MESSAGE_LOG:    
     case LogEntry::UNDEFINED_LOG:
@@ -463,6 +472,10 @@ void Log::appendError(const QString &message)
 }
 
 
+void Log::appendEmptyLine()
+{
+    append(LogEntry::EMPTYLINE_LOG, "", false);
+}
 
 
 void ThreadSafeLog::lock()
