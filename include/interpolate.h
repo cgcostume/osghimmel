@@ -52,6 +52,8 @@
 #define interpolate_invsin(t)       (1 - sin((1 - t) * 1.57079632679489661923))
 
 
+// Several interpolation methods in action: http://sol.gfxile.net/interpolation/
+
 enum e_InterpolationMethod
 {
     IM_LINEAR
