@@ -29,6 +29,8 @@
 
 #include "cubemappedhimmel.h"
 
+#include <osg/TextureCubeMap>
+
 
 CubeMappedHimmel::CubeMappedHimmel()
 :   AbstractMappedHimmel()
@@ -39,3 +41,44 @@ CubeMappedHimmel::CubeMappedHimmel()
 CubeMappedHimmel::~CubeMappedHimmel()
 {
 };
+
+
+osg::TextureCubeMap* CubeMappedHimmel::getOrCreateTextureCubeMap(const GLuint textureUnit)
+{
+    // Retrieve an existing texture.
+
+    const t_tcmById::iterator existingTCM(m_tcmsById.find(textureUnit));
+    if(existingTCM != m_tcmsById.end())
+        return existingTCM->second;
+
+    // Create and configure new texture object.
+
+    osg::ref_ptr<osg::TextureCubeMap> newTCM(new osg::TextureCubeMap);
+
+    newTCM->setUnRefImageDataAfterApply(true);
+
+    newTCM->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+    newTCM->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+    newTCM->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+
+    newTCM->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+    newTCM->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+
+    m_tcmsById[textureUnit] = newTCM;
+
+    // Assign some textures if there are none.
+
+    if(m_tcmsById.size() == 1)
+        assignBackUnit(textureUnit);
+    if(m_tcmsById.size() == 2)
+        assignSrcUnit(textureUnit);
+
+    return newTCM;
+}
+
+
+osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLuint textureUnit) const
+{
+    const t_tcmById::const_iterator tex2Di(m_tcmsById.find(textureUnit));
+    return tex2Di == m_tcmsById.end() ? NULL : tex2Di->second;
+}
