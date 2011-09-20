@@ -32,15 +32,23 @@ set(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 set(LIB_SOURCES
 
     abstracthimmel.cpp
+    abstractmappedhimmel.cpp
+    cubemappedhimmel.cpp
     himmelquad.cpp
+    proceduralhimmel.cpp
     shadermodifier.cpp
+    spheremappedhimmel.cpp
     timef.cpp
     twounitschanger.cpp
 	
     ${HEADER_PATH}/abstracthimmel.h
+    ${HEADER_PATH}/abstractmappedhimmel.h
+    ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/interpolate.h
+    ${HEADER_PATH}/proceduralhimmel.h
     ${HEADER_PATH}/shadermodifier.h
+    ${HEADER_PATH}/spheremappedhimmel.h
     ${HEADER_PATH}/timef.h
     ${HEADER_PATH}/twounitschanger.h
 
