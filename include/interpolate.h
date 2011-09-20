@@ -63,8 +63,8 @@ enum e_InterpolationMethod
 ,   IM_INVSQUARED
 ,   IM_CUBED
 ,   IM_INVCUBED
-,   IM_SIN          // strong out, soft ending
-,   IM_INVSIN       // soft out, strong ending
+,   IM_SIN          // strong in, soft out
+,   IM_INVSIN       // soft in, strong out
 };
 
 

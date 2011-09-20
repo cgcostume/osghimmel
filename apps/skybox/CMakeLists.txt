@@ -32,7 +32,6 @@ SET(QT_USE_UI TRUE)
 SET(QT_USE_CORE TRUE)
 
 SET(SKYBOX_SOURCES
-    pragmanote.h
     mainlogdispatcher.h
     mainlogdispatcher.cpp
     skyboxmain.cpp
