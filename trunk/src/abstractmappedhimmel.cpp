@@ -67,7 +67,7 @@ void AbstractMappedHimmel::update()
 
     if(m_changer.hasBackChanged(t))
     {
-        const GLuint backUnit(m_changer.getBack(t));
+        const GLuint backUnit(m_changer.getBackUnit(t));
 
         m_back->set(backUnit);
         assignBackUnit(backUnit);
@@ -75,7 +75,7 @@ void AbstractMappedHimmel::update()
 
     if(m_changer.hasSrcChanged(t))
     {
-        const GLuint srcUnit(m_changer.getSrc(t));
+        const GLuint srcUnit(m_changer.getSrcUnit(t));
 
         m_src->set(srcUnit);
         assignSrcUnit(srcUnit);

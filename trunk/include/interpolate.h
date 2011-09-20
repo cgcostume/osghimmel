@@ -32,7 +32,7 @@
 #define __INTERPOLATE_H__
 
 
-enum e_InterpolationFunction
+enum e_InterpolationMethod
 {
     IM_LINEAR
 ,   IM_SMOOTHSTEP
@@ -43,7 +43,7 @@ enum e_InterpolationFunction
 template<typename T>
 inline const T interpolate(
     const T t
-,   const e_InterpolationFunction function = IM_LINEAR)
+,   const e_InterpolationMethod function = IM_LINEAR)
 {
     switch(function)
     {
