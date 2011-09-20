@@ -53,9 +53,9 @@ std::vector<ShaderModifier::t_identifier> ShaderModifier::getIdentifier() const
     std::vector<t_identifier> identifier;
 
     t_shaderSetsByIdentifier::const_iterator i(m_shaderSetsByIdentifier.begin());
-    const t_shaderSetsByIdentifier::const_iterator iEnd(m_shaderSetsByIdentifier.end());
+    const t_shaderSetsByIdentifier::const_iterator ie(m_shaderSetsByIdentifier.end());
 
-    for(; i != iEnd; ++i)
+    for(; i != ie; ++i)
     {
         assert(!i->second.empty()); // shall never be empty, since identifier should be removed if no shader is attached
         identifier.push_back(i->first);
@@ -160,9 +160,9 @@ void ShaderModifier::setSource(
     if(update)
     {
         t_shaderSet::iterator i(m_shaderSetsByIdentifier[identifier].begin());
-        const t_shaderSet::const_iterator iEnd(m_shaderSetsByIdentifier[identifier].end());
+        const t_shaderSet::const_iterator ie(m_shaderSetsByIdentifier[identifier].end());
 
-        for(; i != iEnd; ++i)
+        for(; i != ie; ++i)
             (*i)->setShaderSource(source);
     }
     else
@@ -173,9 +173,9 @@ void ShaderModifier::setSource(
 void ShaderModifier::update()
 {
     t_identifierSet::const_iterator i(m_modified.begin());
-    const t_identifierSet::const_iterator iEnd(m_modified.end());
+    const t_identifierSet::const_iterator ie(m_modified.end());
 
-    for(; i != iEnd; ++i)
+    for(; i != ie; ++i)
     {
         assert(m_shaderSetsByIdentifier.find(*i) != m_shaderSetsByIdentifier.end());
         assert(m_sourcesByIdentifier.find(*i) != m_sourcesByIdentifier.end());
