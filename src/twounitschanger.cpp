@@ -44,6 +44,8 @@ TwoUnitsChanger::TwoUnitsChanger()
 
 ,   m_backHasChanged(true)
 ,   m_srcHasChanged(true)
+
+,   m_interpolationMethod(IM_LINEAR)
 {
 }
 
@@ -186,11 +188,17 @@ void TwoUnitsChanger::update(const float time) const
     else
     {
         const float tsrc(isrc->first);
-        const float t = tsrc < time ? time : time - 1.f;
+        const float t = tsrc < time ? time - 1.f : time;
 
-        const float a = 1.f - (tsrc - t) / m_transitionDuration;
+        if(m_transitionDuration != 0.f)
+        {
+            float a = 1.f - (tsrc - t) / m_transitionDuration;
+            a = std::min<float>(std::max<float>(a, 0.f), 1.f);
 
-        m_srcAlpha = interpolate<float>(a, IM_LINEAR);
+            m_srcAlpha = interpolate<float>(a, m_interpolationMethod);
+        }
+        else
+            m_srcAlpha = 0.f;
     }
 
     // NOTE: This could also be optimized for 8 or less textures by not 
@@ -206,7 +214,7 @@ void TwoUnitsChanger::update(const float time) const
 }
 
 
-inline const GLuint TwoUnitsChanger::getBack(const float time) const
+const GLuint TwoUnitsChanger::getBackUnit(const float time) const
 {
     if(time != m_lastTime)
         update(time);
@@ -215,7 +223,7 @@ inline const GLuint TwoUnitsChanger::getBack(const float time) const
 }
 
 
-inline const GLuint TwoUnitsChanger::getSrc(const float time) const
+const GLuint TwoUnitsChanger::getSrcUnit(const float time) const
 {
     if(time != m_lastTime)
         update(time);
@@ -224,7 +232,7 @@ inline const GLuint TwoUnitsChanger::getSrc(const float time) const
 }
 
 
-inline const float TwoUnitsChanger::getSrcAlpha(const float time) const
+const float TwoUnitsChanger::getSrcAlpha(const float time) const
 {
     if(time != m_lastTime)
         update(time);
@@ -233,7 +241,7 @@ inline const float TwoUnitsChanger::getSrcAlpha(const float time) const
 }
 
 
-inline const bool TwoUnitsChanger::hasBackChanged(const float time) const
+const bool TwoUnitsChanger::hasBackChanged(const float time) const
 {
     if(time != m_lastTime)
         update(time);
@@ -242,7 +250,7 @@ inline const bool TwoUnitsChanger::hasBackChanged(const float time) const
 }
 
 
-inline const bool TwoUnitsChanger::hasSrcChanged (const float time) const
+const bool TwoUnitsChanger::hasSrcChanged (const float time) const
 {
     if(time != m_lastTime)
         update(time);

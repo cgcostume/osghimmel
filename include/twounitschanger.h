@@ -31,6 +31,8 @@
 #ifndef __TWOUNITSCHANGER_H__
 #define __TWOUNITSCHANGER_H__
 
+#include "interpolate.h"
+
 #include <map>
 #include <osg/GL>
 
@@ -50,6 +52,14 @@ public:
         return m_transitionDuration;
     }
 
+
+    void setInterpolationMethod(const e_InterpolationMethod method);
+    inline const e_InterpolationMethod getInterpolationMethod() const
+    {
+        return m_interpolationMethod;
+    }
+
+
     // Append a time range using the given texture unit. Example: If you
     // add unit 0 at time 0.2 and unit 1 at 0.8, then with a blendDurationf
     // of 0.1 the following blending will occur:
@@ -64,13 +74,13 @@ public:
 
     // Getter (they call update if required).
 
-    inline const GLuint getBack     (const float time) const;
-    inline const GLuint getSrc      (const float time) const;
+    const GLuint getBackUnit (const float time) const;
+    const GLuint getSrcUnit  (const float time) const;
 
-    inline const float getSrcAlpha  (const float time) const;
+    const float getSrcAlpha  (const float time) const;
 
-    inline const bool hasBackChanged(const float time) const;
-    inline const bool hasSrcChanged (const float time) const;
+    const bool hasBackChanged(const float time) const;
+    const bool hasSrcChanged (const float time) const;
 
 protected:
 
@@ -86,6 +96,7 @@ protected:
 protected:
 
     float m_transitionDuration;
+    e_InterpolationMethod m_interpolationMethod;
 
     typedef std::map<float, GLuint> t_unitsByTime;
 
