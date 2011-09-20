@@ -32,6 +32,7 @@
 #define __ABSTRACTHIMMEL_H__
 
 #include <osg/Transform>
+#include <osg/NodeCallback>
 
 
 class TimeF;
@@ -44,18 +45,26 @@ class ShaderModifier;
 
 class AbstractHimmel : public osg::Transform
 {
+private:
+    // This callback calls update.
+    class HimmelNodeCallback : public osg::NodeCallback 
+    {
+    public:
+        virtual void operator()(
+            osg::Node *node
+        ,   osg::NodeVisitor *nv);
+    };
+
 public:
 
     AbstractHimmel();
     virtual ~AbstractHimmel();
-
 
     void setTime(TimeF const *timef);
     inline TimeF const *getTime() const
     {
         return m_timef;
     }
-
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
     static inline ShaderModifier *shaderModifier() 
@@ -65,6 +74,45 @@ public:
 #endif OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
+
+    void setupNode(osg::StateSet* stateSet);
+    void setupProgram(osg::StateSet *stateSet);
+
+    // Called by the HimmelUpdateCallback. Call this first when inherited!
+    virtual void update();
+
+    void initialize();
+    virtual void postInitialize() { };
+
+    void makeVertexShader();
+    void makeFragmentShader();
+
+    // abstract interface
+
+    virtual const std::string getVertexShaderSource() = 0;
+    virtual const std::string getFragmentShaderSource() = 0;
+
+    // getter
+
+    inline osg::Program &program()
+    {
+        return *m_program;
+    }
+
+    inline const float timef() const;
+
+protected:
+
+    bool m_initialized;
+
+    // shader
+
+    osg::Program *m_program;
+
+    osg::Shader *m_vShader;
+    osg::Shader *m_fShader;
+
+    //
 
     TimeF const *m_timef;
     HimmelQuad *m_hquad;
