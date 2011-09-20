@@ -117,6 +117,9 @@ void LogOutputWidget::print(const LogEntry &entry)
     case LogEntry::MESSAGE_LOG:
         m_swap->textCursor().insertText(QString("%1: %2\n").arg(timestamp).arg(message), m_messageCharFormat);
         break;
+    case LogEntry::EMPTYLINE_LOG:
+        m_swap->textCursor().insertText("\n");
+        break;
     case LogEntry::WORKFLOW_LOG:
     case LogEntry::UNDEFINED_LOG:
     default:

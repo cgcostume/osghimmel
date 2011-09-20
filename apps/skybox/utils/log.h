@@ -55,6 +55,7 @@ public:
     ,   ERROR_LOG       = 1 << 4
     ,   DEBUG_LOG       = 1 << 5
     ,   WORKFLOW_LOG    = 1 << 6
+    ,   EMPTYLINE_LOG   = 1 << 7
     };
 
 
@@ -214,6 +215,8 @@ public:
     void appendError(const char *message, ...);
     void appendError(const QString &message);
 
+    void appendEmptyLine();
+
     //! this is a little workaround to obtain a simple to use macro -> LOG_DEBUG
     //  this is basically a split up into two functions: debug and append debug.
     //  one should always use the debug first and the appendDebug afterwards...
@@ -299,6 +302,8 @@ private:
 #define _LOG_INFO        _LOG->appendInformation
 #define _LOG_WARNING     _LOG->appendWarning
 #define _LOG_ERROR       _LOG->appendError
+
+#define _LOG_EMPTYLINE   _LOG->appendEmptyLine
 
 
 #endif __LOG_H__

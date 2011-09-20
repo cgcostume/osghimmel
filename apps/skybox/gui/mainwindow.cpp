@@ -152,8 +152,8 @@ void MainWindow::initializeScene(
 
 	view->setSceneData(root.get());
 
-    osg::ref_ptr<osg::Node> node = importAndOptimizeNodeFromFile(QFileInfo("resources/farmhouse.3ds"));
-    m_scene->addChild(node);
+//    osg::ref_ptr<osg::Node> node = importAndOptimizeNodeFromFile(QFileInfo("resources/farmhouse.3ds"));
+  //  m_scene->addChild(node);
 }
 
 
