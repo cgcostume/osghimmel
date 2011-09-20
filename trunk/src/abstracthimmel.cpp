@@ -41,12 +41,38 @@ ShaderModifier AbstractHimmel::s_shaderModifier;
 #endif OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
+void AbstractHimmel::HimmelNodeCallback::operator()(
+    osg::Node *node
+,   osg::NodeVisitor *nv)
+{
+    osg::ref_ptr<AbstractHimmel> himmel = dynamic_cast<AbstractHimmel*>(node);
+
+    if(himmel)
+        himmel->update();
+
+    traverse(node, nv); 
+}
+
+
 AbstractHimmel::AbstractHimmel()
 :   osg::Transform()
 ,   m_timef(NULL)
+
+,   m_program(new osg::Program)
+,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
+,   m_fShader(new osg::Shader(osg::Shader::FRAGMENT))
+
 ,   m_hquad(new HimmelQuad())
+
+,   m_initialized(false)
 {
+    osg::StateSet* stateSet = getOrCreateStateSet();
+    setupNode(stateSet);
+
     addChild(m_hquad);
+    setupProgram(m_hquad->getOrCreateStateSet());
+
+    setUpdateCallback(new HimmelNodeCallback);
 };
 
 
@@ -55,7 +81,63 @@ AbstractHimmel::~AbstractHimmel()
 };
 
 
+void AbstractHimmel::setupNode(osg::StateSet* stateSet)
+{
+}
+
+
+void AbstractHimmel::setupProgram(osg::StateSet *stateSet)
+{
+    m_program->addShader(m_vShader);
+    m_program->addShader(m_fShader);
+
+    stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
+}
+
+
+void AbstractHimmel::initialize()
+{
+    if(m_initialized)
+        return;
+
+    m_initialized = true;
+
+    makeVertexShader();
+    makeFragmentShader();
+
+    postInitialize();
+}
+
+
+void AbstractHimmel::makeVertexShader()
+{
+    m_vShader->setShaderSource(getVertexShaderSource());
+}
+
+
+void AbstractHimmel::makeFragmentShader()
+{
+    m_fShader->setShaderSource(getFragmentShaderSource());
+}
+
+
+void AbstractHimmel::update()
+{
+    if(!m_initialized)
+        initialize();
+}
+
+
 void AbstractHimmel::setTime(TimeF const *timef)
 {
     m_timef = timef;
+}
+
+
+const float AbstractHimmel::timef() const
+{
+    if(m_timef)
+        return m_timef->getf();
+
+    return 0.f;
 }
