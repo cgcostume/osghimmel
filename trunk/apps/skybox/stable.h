@@ -36,7 +36,7 @@
     #define WINDOWS_LEAN_AND_MEAN
 #endif // WIN32
 
-#include "pragmanote.h"
+#include "include/pragmanote.h"
 
 
 // STABLE DEFINES

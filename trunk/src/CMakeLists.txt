@@ -46,6 +46,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/interpolate.h
+    ${HEADER_PATH}/pragmanote.h
     ${HEADER_PATH}/proceduralhimmel.h
     ${HEADER_PATH}/shadermodifier.h
     ${HEADER_PATH}/spheremappedhimmel.h
