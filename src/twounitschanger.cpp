@@ -42,8 +42,8 @@ TwoUnitsChanger::TwoUnitsChanger()
 ,   m_src(0)
 ,   m_srcAlpha(0.f)
 
-,   m_backHasChanged(false)
-,   m_srcHasChanged(false)
+,   m_backHasChanged(true)
+,   m_srcHasChanged(true)
 {
 }
 
@@ -64,7 +64,7 @@ const float TwoUnitsChanger::setTransitionDuration(const float duration)
 
 
 void TwoUnitsChanger::pushUnit(
-    const GLint unit
+    const GLuint unit
 ,   const float time)
 {
     const float t = std::min<float>(std::max<float>(time, 0.0), 1.0);
@@ -120,33 +120,6 @@ void TwoUnitsChanger::checkAndAdjustTransitionDuration()
 }
 
 
-inline const GLint TwoUnitsChanger::getBack(const float time) const
-{
-    if(time != m_lastTime)
-        update(time);
-        
-    return m_back;
-}
-
-
-inline const GLint TwoUnitsChanger::getSrc(const float time) const
-{
-    if(time != m_lastTime)
-        update(time);
-
-    return m_src;
-}
-
-
-inline const float TwoUnitsChanger::getSrcAlpha(const float time) const
-{
-    if(time != m_lastTime)
-        update(time);
-
-    return m_srcAlpha;
-}
-
-
 void TwoUnitsChanger::updateBackUnits() const
 {
     t_unitsByTime::const_iterator i(m_unitsByTime.begin());
@@ -174,6 +147,9 @@ void TwoUnitsChanger::update(const float time) const
     // If no or only one unit is assigned do nothing.
     if(m_unitsByTime.size() < 2)
     {
+        m_backHasChanged = m_back != 0;
+        m_srcHasChanged = m_src != 0;
+
         m_back = 0;
         m_src  = 0;
         m_srcAlpha = 0.f;
@@ -227,4 +203,49 @@ void TwoUnitsChanger::update(const float time) const
     m_backHasChanged = m_back != iback->second;
     if(m_backHasChanged)
         m_back = iback->second;
+}
+
+
+inline const GLuint TwoUnitsChanger::getBack(const float time) const
+{
+    if(time != m_lastTime)
+        update(time);
+
+    return m_back;
+}
+
+
+inline const GLuint TwoUnitsChanger::getSrc(const float time) const
+{
+    if(time != m_lastTime)
+        update(time);
+
+    return m_src;
+}
+
+
+inline const float TwoUnitsChanger::getSrcAlpha(const float time) const
+{
+    if(time != m_lastTime)
+        update(time);
+
+    return m_srcAlpha;
+}
+
+
+inline const bool TwoUnitsChanger::hasBackChanged(const float time) const
+{
+    if(time != m_lastTime)
+        update(time);
+
+    return m_backHasChanged;
+}
+
+
+inline const bool TwoUnitsChanger::hasSrcChanged (const float time) const
+{
+    if(time != m_lastTime)
+        update(time);
+
+    return m_srcHasChanged;
 }
