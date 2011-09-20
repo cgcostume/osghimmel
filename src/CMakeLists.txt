@@ -33,27 +33,30 @@ set(LIB_SOURCES
 
     abstracthimmel.cpp
     himmelquad.cpp
-	shadermodifier.cpp
+    shadermodifier.cpp
     timef.cpp
-
+    twounitschanger.cpp
+	
     ${HEADER_PATH}/abstracthimmel.h
     ${HEADER_PATH}/himmelquad.h
+    ${HEADER_PATH}/interpolate.h
     ${HEADER_PATH}/shadermodifier.h
     ${HEADER_PATH}/timef.h
+    ${HEADER_PATH}/twounitschanger.h
 
 
-#	shader fragments
+#   shader fragments
 
-	shader/blend_difference.fsf
-	shader/blend_lineardodge.fsf
-	shader/blend_multiply.fsf
-	shader/blend_normal.fsf
-	shader/blend_screen.fsf
-	shader/compose.fsf
-	shader/quadretrieveray.vsf
-	shader/quadtransform.vsf
-	shader/version.fsf
-	shader/version.vsf)
+    shader/blend_difference.fsf
+    shader/blend_lineardodge.fsf
+    shader/blend_multiply.fsf
+    shader/blend_normal.fsf
+    shader/blend_screen.fsf
+    shader/compose.fsf
+    shader/quadretrieveray.vsf
+    shader/quadtransform.vsf
+    shader/version.fsf
+    shader/version.vsf)
 
 source_group_by_path(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})    
 
