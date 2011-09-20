@@ -29,6 +29,8 @@
 
 #include "spheremappedhimmel.h"
 
+#include <osg/Texture2D>
+
 
 SphereMappedHimmel::SphereMappedHimmel()
 :   AbstractMappedHimmel()
@@ -39,3 +41,42 @@ SphereMappedHimmel::SphereMappedHimmel()
 SphereMappedHimmel::~SphereMappedHimmel()
 {
 };
+
+
+osg::Texture2D* SphereMappedHimmel::getOrCreateTexture2D(const GLuint textureUnit)
+{
+    // Retrieve an existing texture.
+    const t_tex2DMap::iterator existingTex2D(m_tex2DsById.find(textureUnit));
+    if(existingTex2D != m_tex2DsById.end())
+        return existingTex2D->second;
+
+
+    // Create and configure new texture object.
+    osg::ref_ptr<osg::Texture2D> newTex2D(new osg::Texture2D);
+
+    newTex2D->setUnRefImageDataAfterApply(true);
+
+    newTex2D->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+    newTex2D->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+
+    newTex2D->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
+    newTex2D->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+
+    m_tex2DsById[textureUnit] = newTex2D;
+
+    // assign some textures if there are none
+
+    if(m_tex2DsById.size() == 1)
+        assignBackUnit(textureUnit);
+    if(m_tex2DsById.size() == 2)
+        assignSrcUnit(textureUnit);
+
+    return newTex2D;
+}
+
+
+osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLuint textureUnit) const
+{
+    const t_tex2DMap::const_iterator tex2Di(m_tex2DsById.find(textureUnit));
+    return tex2Di == m_tex2DsById.end() ? NULL : tex2Di->second;
+}

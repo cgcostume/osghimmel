@@ -46,7 +46,7 @@ public:
 
     // This call gets redirected to a TwoUnitsChanger instance  (see comment there).
     void pushTextureUnit(
-        const GLint textureUnit
+        const GLuint textureUnit
     ,   const float time = 1.f);
 
 protected:
@@ -54,10 +54,19 @@ protected:
     // Inherited by AbstractHimmel. Call this first when inherited!
     virtual void update();
 
-    virtual void setActiveBackUnit(const GLint textureUnit) = 0;
-    virtual void setActiveSrcUnit(const GLint textureUnit) = 0;
+    void assignUnit(
+        const GLuint textureUnit
+    ,   const GLuint targetIndex);
+
+    // For convenience in subclasses.
+    inline void assignBackUnit(const GLuint textureUnit);
+    inline void assignSrcUnit(const GLuint textureUnit);
 
     const float updateSrcAlpha() const; // Accesses TwoUnitsChanger.
+
+    // Interface
+
+    virtual osg::StateAttribute *getTextureAttribute(const GLuint textureUnit) const = 0;
 
 protected:
 
