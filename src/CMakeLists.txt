@@ -56,16 +56,16 @@ set(LIB_SOURCES
 
 #   shader fragments
 
-    shader/blend_difference.fsf
-    shader/blend_lineardodge.fsf
-    shader/blend_multiply.fsf
-    shader/blend_normal.fsf
-    shader/blend_screen.fsf
-    shader/compose.fsf
-    shader/quadretrieveray.vsf
-    shader/quadtransform.vsf
-    shader/version.fsf
-    shader/version.vsf)
+    shaderfragment/blend_difference.fsf
+    shaderfragment/blend_lineardodge.fsf
+    shaderfragment/blend_multiply.fsf
+    shaderfragment/blend_normal.fsf
+    shaderfragment/blend_screen.fsf
+    shaderfragment/compose.fsf
+    shaderfragment/quadretrieveray.vsf
+    shaderfragment/quadtransform.vsf
+    shaderfragment/version.fsf
+    shaderfragment/version.vsf)
 
 source_group_by_path(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})    
 

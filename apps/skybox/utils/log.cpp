@@ -247,14 +247,14 @@ void LogDispatcher::stopCaching()
 
 
 
-//! this macro parses all arguments of the append functions 
-//  and stores the value into the const std::string msg
-#define PARSE_ARGS(MSG_IN, MSG_OUT)                    \
-                                                       \
-    va_list    argp;                                   \
-    va_start(argp, MSG_IN);                            \
-                                                       \
-    char* MSG_OUT = (char*)malloc(sizeof(char) * 512); \
+// This macro parses all arguments of the append functions and stores the 
+// value into the const std::string msg.
+#define PARSE_ARGS(MSG_IN, MSG_OUT)                                        \
+                                                                           \
+    va_list    argp;                                                       \
+    va_start(argp, MSG_IN);                                                \
+                                                                           \
+    char* MSG_OUT = (char*)malloc(sizeof(char) * 512);                     \
     vsprintf(MSG_OUT, MSG_IN, argp);
 
 
@@ -276,7 +276,7 @@ void Log::attachDispatcher(LogDispatcher *dispatcher)
 
     m_dispatcher = dispatcher;
     
-    // forwards the whole log history to the new dispatcher
+    // Forwards the whole log history to the new dispatcher.
     while(!m_earlyEntries.isEmpty())
     {
         LogEntry *entry(m_earlyEntries.takeFirst());
@@ -330,7 +330,7 @@ void Log::append(LogEntry::e_LogEntryType type, const QString &message, const bo
     }
     else
     {
-        // cache items
+        // Cache items.
         m_earlyEntries << entry;
     }
 }

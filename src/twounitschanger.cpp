@@ -34,7 +34,7 @@
 #include <osg/Notify>
 
 
-#pragma NOTE ("Check results for IM_INVSIN interpolation. Might be better for this usecase (soft in, strong out).")
+#pragma NOTE("Check results for IM_INVSIN interpolation. Might be better for this usecase (soft in, strong out).")
 
 TwoUnitsChanger::TwoUnitsChanger()
 :   m_transitionDuration(0.f)

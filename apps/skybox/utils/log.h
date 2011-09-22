@@ -140,8 +140,8 @@ public:
 class FileLogOutput : public LogOutput
 {
 public:
-    //! Initializes the object and tries to open the file named filename
-    //  CAUTION: will throw an exception if the file cannot be open in write mode!!
+    // Initializes and tries to open the file named filename. CAUTION: will 
+    // throw an exception if the file cannot be open in write mode.
     FileLogOutput(const QString &filename);
     virtual ~FileLogOutput();
 
@@ -176,15 +176,16 @@ protected:
 
 protected:
 
-    //! as long caching is enabled (that should be as long as not all outputs have been attached) 
+    // As long caching is enabled (that should be as long as not all 
+    // outputs have been attached).
     void cache(const LogEntry &entry);
     void flushCache(LogOutput *output);
 
-    // these should be used by subclassing from LogDispatcher;
+    // Should be used by sub classing from LogDispatcher.
     void attachLogOutput(LogOutput *output);
     void detachLogOutput(LogOutput *output);
 
-    //! use this after attaching all outputs and no caching is needed anymore
+    // Use this after attaching all outputs and no caching is needed anymore.
     void stopCaching();
 };
 
@@ -217,35 +218,39 @@ public:
 
     void appendEmptyLine();
 
-    //! this is a little workaround to obtain a simple to use macro -> LOG_DEBUG
-    //  this is basically a split up into two functions: debug and append debug.
-    //  one should always use the debug first and the appendDebug afterwards...
-    //  the macro handles the convenient call of both functions.
+    // This is a little workaround to obtain a simple to use macro LOG_DEBUG
+    // This is basically a split up into two functions: debug and append 
+    // debug. One should always use the debug first and the appendDebug 
+    // afterwards... The macro handles the convenient call of both functions.
     void debug(const char *file, const int line);
-    //! any debug message - only visible in debug mode
+    
+    // Any debug message - only visible in debug mode.
     void appendDebug(const char *message, ...);
     void appendDebug(const QString &message);
 
 protected:
 
-    //! stores debug information passed by debug(...)
+    // Stores debug information passed by debug(...).
     QString m_debug_file;
     int m_debug_line;
 
     LogDispatcher *m_dispatcher;
 
-    //! stores entries that are appended before a valid dispatcher is assigned
+    // Stores entries that are appended before a valid dispatcher 
+    // is assigned.
     QQueue<LogEntry*> m_earlyEntries;
 
 protected:
 
-    //! final log action - this creates the LogEntry
+    // Final log action - this creates the LogEntry.
     void append(LogEntry::e_LogEntryType type, const QString &message, const bool debug = false);
 
-    //! for thread safety overload this method in your derived class then, lock the your mutex in this method (done by ThreadSafeLog)
+    // For thread safety overload this method in your derived class then, 
+    // lock the your mutex in this method (done by ThreadSafeLog).
     virtual void lock(); 
 
-    //! for thread safety overload this method in your derived class then, unlock your mutex in this method (done by ThreadSafeLog)
+    // For thread safety overload this method in your derived class then,
+    // unlock your mutex in this method (done by ThreadSafeLog).
     virtual void unlock();
 };
 
@@ -265,7 +270,8 @@ protected:
 
 
 
-//! Singleton that encapsulates a single log instance and supports its global usage.
+// Singleton that encapsulates a single log 
+// instance and supports its global usage.
 class GlobalLog : public ThreadSafeLog
 {
 public:
@@ -284,11 +290,11 @@ private:
 
 #define _LOG GlobalLog::instance()
 
-//! Using the do..while trick, we can execute two statements in one macro 
-// without having to worry about what happens when we to a conditional LOG_DEBUG
-// without enclosing braces.
+// Using the do..while trick, we can execute two statements in one macro 
+// without having to worry about what happens when we to a conditional 
+// LOG_DEBUG without enclosing braces.
 
-// See http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/ for explanation...
+// From http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/ 
 #ifndef NDEBUG
 #define _LOG_DEBUG(...)    do { \
     _LOG->debug(__FILE__, __LINE__); \

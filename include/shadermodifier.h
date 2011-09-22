@@ -33,6 +33,8 @@
 #ifndef __SHADERMODIFIER_H__
 #define __SHADERMODIFIER_H__
 
+#include "pragmanote.h"
+
 #include <string>
 #include <map>
 #include <set>
@@ -44,9 +46,9 @@ namespace osg
 }
 
 
-//! Allows manipulation of shader sources registered elsewhere. 
-//  Helps to decouple shader manipulation of specific shader instances and 
-//  GUIs via identifiers.
+// Allows manipulation of shader sources registered elsewhere. 
+// Helps to decouple shader manipulation of specific shader instances and 
+// GUIs via identifiers.
 
 class ShaderModifier
 {
@@ -57,6 +59,7 @@ public:
     ShaderModifier();
     virtual ~ShaderModifier();
 
+#pragma NOTE("Add support for hints to external updates of shader sources.")
 
     // Returns all registered identifier.
     std::vector<t_identifier> getIdentifier() const;
