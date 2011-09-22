@@ -82,3 +82,66 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLuint textur
     const t_tex2DById::const_iterator tex2Di(m_tex2DsById.find(textureUnit));
     return tex2Di == m_tex2DsById.end() ? NULL : tex2Di->second;
 }
+
+
+// VertexShader
+
+#include "shaderfragment/version.vsf"
+#include "shaderfragment/quadretrieveray.vsf"
+#include "shaderfragment/quadtransform.vsf"
+
+const std::string SphereMappedHimmel::getVertexShaderSource()
+{
+    return glsl_v_version
+
+    +   glsl_v_quadRetrieveRay
+    +   glsl_v_quadTransform
+    +
+        "smooth out vec4 m_ray;\n"
+
+        "void main(void)\n"
+        "{\n"
+        "   m_ray = quadRetrieveRay();"
+        "   quadTransform();"
+        "}\n";
+}
+
+
+// FragmentShader
+
+#include "shaderfragment/version.fsf"
+#include "shaderfragment/blend_normal.fsf"
+
+const std::string SphereMappedHimmel::getFragmentShaderSource()
+{
+    return glsl_f_version
+
+    +   glsl_f_blendNormal
+    +
+        "in vec4 m_ray;\n"
+
+        // From AbstractMappedHimmel
+
+        "uniform float srcAlpha;\n"
+
+        "uniform sampler2D back;\n"
+        "uniform sampler2D src;\n"
+
+        // Color Retrieval
+
+        "const float c_PI       = 3.1415926535897932384626433832795;\n"
+
+        "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
+        "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
+
+        "void main(void)\n"
+        "{\n"
+        "   vec3 stu = normalize(m_ray.xyz);\n"
+        "   vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(-stu.z) * c_2OverPi);\n"
+
+        "   vec4 back = texture2D(back, uv);\n"
+        "   vec4 src  = texture2D(src, uv);\n"
+
+        "   gl_FragColor blend_normal(back, src, srcAlpha);\n"
+        "}\n";
+}

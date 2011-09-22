@@ -109,6 +109,8 @@ void AbstractHimmel::initialize()
 }
 
 
+#pragma NOTE("Implement support for shader modifier.")
+
 void AbstractHimmel::makeVertexShader()
 {
     m_vShader->setShaderSource(getVertexShaderSource());
