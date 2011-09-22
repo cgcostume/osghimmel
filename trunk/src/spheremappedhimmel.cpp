@@ -101,8 +101,8 @@ const std::string SphereMappedHimmel::getVertexShaderSource()
 
         "void main(void)\n"
         "{\n"
-        "   m_ray = quadRetrieveRay();"
-        "   quadTransform();"
+        "   m_ray = quadRetrieveRay();\n"
+        "   quadTransform();\n"
         "}\n";
 }
 
@@ -116,7 +116,7 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
 
-    +   glsl_f_blendNormal
+    +   glsl_f_blendNormalExt
     +
         "in vec4 m_ray;\n"
 
@@ -139,9 +139,10 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "   vec3 stu = normalize(m_ray.xyz);\n"
         "   vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(-stu.z) * c_2OverPi);\n"
 
-        "   vec4 back = texture2D(back, uv);\n"
-        "   vec4 src  = texture2D(src, uv);\n"
+        "   if(uv.y < 0.0)\n"
+        "       discard;\n"
 
-        "   gl_FragColor blend_normal(back, src, srcAlpha);\n"
+        "   gl_FragColor = blend_normal(\n"
+        "       texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
         "}\n";
 }

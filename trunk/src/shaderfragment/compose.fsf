@@ -42,20 +42,19 @@ namespace
 {
     #define IMP_COMPOSE(MODE, COMPOSE)                                    \
                                                                           \
-        "vec4 blend_#MODE(vec4 back, vec4 src)\n"                         \
+        "vec4 blend_" #MODE "(vec4 back, vec4 src)\n"                     \
         "{\n"                                                             \
         "   vec3 b = back.rgb;\n"                                         \
         "   vec3 s = src.rgb;\n"                                          \
                                                                           \
-        "   vec3 bs = COMPOSE;\n"                                         \
+        "   vec3 bs = " #COMPOSE ";\n"                                    \
                                                                           \
         "   float ba = back.a;\n"                                         \
         "   float sa = src.a;\n"                                          \
                                                                           \
         "   float ra = ba + sa - (ba * sa);\n"                            \
                                                                           \
-        "   vec3 r = (1.0 - sa / ra) * b + (sa / ra)"                     \
-        "          * ((1.0 - ba) * s + ba * bs);\n"                       \
+        "   vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
                                                                           \
         "   return vec4(r, ra);\n"                                        \
         "}\n"
@@ -63,20 +62,19 @@ namespace
 
     #define IMP_COMPOSE_SRC_ALPHA(MODE, COMPOSE)                          \
                                                                           \
-        "vec4 blend_#MODE(vec4 back, vec4 src, float src_alpha)\n"        \
+        "vec4 blend_" #MODE "(vec4 back, vec4 src, float srca)\n"         \
         "{\n"                                                             \
         "   vec3 b = back.rgb;\n"                                         \
         "   vec3 s = src.rgb;\n"                                          \
                                                                           \
-        "   vec3 bs = COMPOSE;\n"                                         \
+        "   vec3 bs = " #COMPOSE ";\n"                                    \
                                                                           \
         "   float ba = back.a;\n"                                         \
-        "   float sa = clamp(src_alpha, 0.0, 1.0);\n"                     \
+        "   float sa = clamp(srca, 0.0, 1.0);\n"                          \
                                                                           \
         "   float ra = ba + sa - (ba * sa);\n"                            \
                                                                           \
-        "   vec3 r = (1.0 - sa / ra) * b + (sa / ra)"                     \
-        "          * ((1.0 - ba) * s + ba * bs);\n"                       \
+        "   vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
                                                                           \
         "   return vec4(r, ra);\n"                                        \
         "}\n"
