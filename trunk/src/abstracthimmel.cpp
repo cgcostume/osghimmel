@@ -32,6 +32,8 @@
 #include "timef.h"
 #include "himmelquad.h"
 
+#include <osg/Depth>
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 
@@ -57,6 +59,7 @@ void AbstractHimmel::HimmelNodeCallback::operator()(
 AbstractHimmel::AbstractHimmel()
 :   osg::Transform()
 ,   m_timef(NULL)
+,   m_autoUpdateTime(false)
 
 ,   m_program(new osg::Program)
 ,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
@@ -67,10 +70,11 @@ AbstractHimmel::AbstractHimmel()
 ,   m_initialized(false)
 {
     osg::StateSet* stateSet = getOrCreateStateSet();
+
     setupNode(stateSet);
+    setupProgram(stateSet);
 
     addChild(m_hquad);
-    setupProgram(m_hquad->getOrCreateStateSet());
 
     setUpdateCallback(new HimmelNodeCallback);
 };
@@ -83,6 +87,9 @@ AbstractHimmel::~AbstractHimmel()
 
 void AbstractHimmel::setupNode(osg::StateSet* stateSet)
 {
+    // Only draw at back plane.
+    osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);
+    stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 }
 
 
@@ -127,12 +134,24 @@ void AbstractHimmel::update()
 {
     if(!m_initialized)
         initialize();
+
+    if(m_autoUpdateTime && m_timef)
+        m_timef->update();
 }
 
 
-void AbstractHimmel::setTime(TimeF const *timef)
+void AbstractHimmel::assignTime(
+    TimeF *timef
+,   const bool autoUpdate)
 {
     m_timef = timef;
+    m_autoUpdateTime = autoUpdate;
+}
+
+
+void AbstractHimmel::setAutoUpdateTime(const bool autoUpdate)
+{
+    m_autoUpdateTime = autoUpdate;
 }
 
 

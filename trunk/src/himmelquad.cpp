@@ -32,9 +32,12 @@
 
 HimmelQuad::HimmelQuad()
 :   osg::Geode()
-,   m_quad(new osg::Geometry())
+,   m_quad(NULL)
 {
-    // create quad that will be used screen aligned (via vertex shader)
+    // Create quad that will be used screen aligned (via vertex shader).
+
+    m_quad = new osg::Geometry();
+    addDrawable(m_quad);
 
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array();
     vertices->push_back(osg::Vec3(-1.f, -1.f, 0.f));
@@ -42,12 +45,14 @@ HimmelQuad::HimmelQuad()
     vertices->push_back(osg::Vec3( 1.f,  1.f, 0.f));
     vertices->push_back(osg::Vec3( 1.f, -1.f, 0.f));
 
-    m_quad->setVertexArray(vertices);
-    m_quad->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+    m_quad->setVertexArray(vertices);   
+    m_quad->addPrimitiveSet(
+        new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+
+    setCullingActive(false);
 }
 
 
 HimmelQuad::~HimmelQuad()
 {
-
 };

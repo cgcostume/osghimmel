@@ -48,13 +48,13 @@ public:
     virtual ~CubeMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
-    osg::TextureCubeMap *getOrCreateTextureCubeMap(const GLuint textureUnit);
+    osg::TextureCubeMap *getOrCreateTextureCubeMap(const GLint textureUnit);
 
 protected:
 
     // AbstractMappedHimmel interface
 
-    virtual osg::StateAttribute *getTextureAttribute(const GLuint textureUnit) const;
+    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
 
 protected:
 

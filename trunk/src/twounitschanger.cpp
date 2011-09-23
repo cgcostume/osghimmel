@@ -34,20 +34,16 @@
 #include <osg/Notify>
 
 
-#pragma NOTE("Check results for IM_INVSIN interpolation. Might be better for this usecase (soft in, strong out).")
-
 TwoUnitsChanger::TwoUnitsChanger()
-:   m_transitionDuration(0.f)
+:   m_transitionDuration(1.f)
 ,   m_smallestRange(1.f)
-
+,   m_updated(false)
 ,   m_lastTime(0.f)
 ,   m_back(0)
 ,   m_src(0)
 ,   m_srcAlpha(0.f)
 
-,   m_backHasChanged(true)
-,   m_srcHasChanged(true)
-
+#pragma NOTE("Check results for IM_INVSIN interpolation. Might be better for this usecase (soft in, strong out).")
 ,   m_interpolationMethod(IM_LINEAR)
 {
 }
@@ -69,7 +65,7 @@ const float TwoUnitsChanger::setTransitionDuration(const float duration)
 
 
 void TwoUnitsChanger::pushUnit(
-    const GLuint unit
+    const GLint unit
 ,   const float time)
 {
     const float t = std::min<float>(std::max<float>(time, 0.0), 1.0);
@@ -90,12 +86,15 @@ void TwoUnitsChanger::pushUnit(
 
 void TwoUnitsChanger::updateSmallestRange()
 {
+    m_smallestRange = 1.f;
+
+    if(m_unitsByTime.size() < 2)
+        return;
+
     const t_unitsByTime::const_iterator ie(m_unitsByTime.end());
     
     t_unitsByTime::const_iterator i(m_unitsByTime.begin());
     t_unitsByTime::const_iterator i0(i), i1(i);
-
-    m_smallestRange = 1.f;
 
     // Iterate over all time keys, and retrieve the smallest range.
     for(; i != ie; ++i)
@@ -144,17 +143,17 @@ void TwoUnitsChanger::updateBackUnits() const
 
 void TwoUnitsChanger::update(const float time) const
 {
-    if(time == m_lastTime)
+    if(time == m_lastTime && m_updated)
         return;
+
+    if(!m_updated)
+        m_updated = true;
 
     m_lastTime = time;
 
     // If no or only one unit is assigned do nothing.
     if(m_unitsByTime.size() < 2)
     {
-        m_backHasChanged = m_back != 0;
-        m_srcHasChanged = m_src != 0;
-
         m_back = 0;
         m_src  = 0;
         m_srcAlpha = 0.f;
@@ -207,56 +206,27 @@ void TwoUnitsChanger::update(const float time) const
     // NOTE: This could also be optimized for 8 or less textures by not 
     // switching their texture unit and adapting the shader: "EightUnitsChanger" :P
 
-    m_srcHasChanged = m_src != isrc->second;
-    if(m_srcHasChanged)
-        m_src  = isrc->second;
-
-    m_backHasChanged = m_back != iback->second;
-    if(m_backHasChanged)
-        m_back = iback->second;
+    m_back = iback->second;
+    m_src  = isrc->second;
 }
 
 
-const GLuint TwoUnitsChanger::getBackUnit(const float time) const
+const GLint TwoUnitsChanger::getBackUnit(const float time) const
 {
-    if(time != m_lastTime)
-        update(time);
-
+    update(time);
     return m_back;
 }
 
 
-const GLuint TwoUnitsChanger::getSrcUnit(const float time) const
+const GLint TwoUnitsChanger::getSrcUnit(const float time) const
 {
-    if(time != m_lastTime)
-        update(time);
-
+    update(time);
     return m_src;
 }
 
 
 const float TwoUnitsChanger::getSrcAlpha(const float time) const
 {
-    if(time != m_lastTime)
-        update(time);
-
+    update(time);
     return m_srcAlpha;
-}
-
-
-const bool TwoUnitsChanger::hasBackChanged(const float time) const
-{
-    if(time != m_lastTime)
-        update(time);
-
-    return m_backHasChanged;
-}
-
-
-const bool TwoUnitsChanger::hasSrcChanged (const float time) const
-{
-    if(time != m_lastTime)
-        update(time);
-
-    return m_srcHasChanged;
 }

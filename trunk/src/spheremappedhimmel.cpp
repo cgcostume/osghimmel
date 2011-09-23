@@ -43,7 +43,7 @@ SphereMappedHimmel::~SphereMappedHimmel()
 };
 
 
-osg::Texture2D* SphereMappedHimmel::getOrCreateTexture2D(const GLuint textureUnit)
+osg::Texture2D* SphereMappedHimmel::getOrCreateTexture2D(const GLint textureUnit)
 {
     // Retrieve an existing texture.
 
@@ -77,7 +77,7 @@ osg::Texture2D* SphereMappedHimmel::getOrCreateTexture2D(const GLuint textureUni
 }
 
 
-osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLuint textureUnit) const
+osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint textureUnit) const
 {
     const t_tex2DById::const_iterator tex2Di(m_tex2DsById.find(textureUnit));
     return tex2Di == m_tex2DsById.end() ? NULL : tex2Di->second;
@@ -137,10 +137,10 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "void main(void)\n"
         "{\n"
         "   vec3 stu = normalize(m_ray.xyz);\n"
-        "   vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(-stu.z) * c_2OverPi);\n"
+        "   vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(stu.z) * c_2OverPi);\n"
 
-        "   if(uv.y < 0.0)\n"
-        "       discard;\n"
+//        "   if(uv.y < 0.0)\n"
+//        "       discard;\n"
 
         "   gl_FragColor = blend_normal(\n"
         "       texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"

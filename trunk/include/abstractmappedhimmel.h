@@ -46,7 +46,7 @@ public:
 
     // This call gets redirected to a TwoUnitsChanger instance  (see comment there).
     void pushTextureUnit(
-        const GLuint textureUnit
+        const GLint textureUnit
     ,   const float time = 1.f);
 
 protected:
@@ -55,18 +55,18 @@ protected:
     virtual void update();
 
     void assignUnit(
-        const GLuint textureUnit
-    ,   const GLuint targetIndex);
+        const GLint textureUnit
+    ,   const GLint targetIndex);
 
     // For convenience in subclasses.
-    inline void assignBackUnit(const GLuint textureUnit);
-    inline void assignSrcUnit(const GLuint textureUnit);
+    inline void assignBackUnit(const GLint textureUnit);
+    inline void assignSrcUnit(const GLint textureUnit);
 
     const float updateSrcAlpha() const; // Accesses TwoUnitsChanger.
 
     // Interface
 
-    virtual osg::StateAttribute *getTextureAttribute(const GLuint textureUnit) const = 0;
+    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const = 0;
 
 protected:
 
@@ -76,6 +76,9 @@ protected:
     osg::ref_ptr<osg::Uniform> m_src;  // type depends on subclasses
 
     osg::ref_ptr<osg::Uniform> m_srcAlpha; // float
+
+    GLint m_activeBackUnit;
+    GLint m_activeSrcUnit;
 };
 
 #endif __ABSTRACTMAPPEDHIMMEL_H__
