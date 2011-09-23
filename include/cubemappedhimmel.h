@@ -56,6 +56,11 @@ protected:
 
     virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
 
+    // AbstractHimmel interface
+
+    virtual const std::string getVertexShaderSource();
+    virtual const std::string getFragmentShaderSource();
+
 protected:
 
     typedef std::map<GLubyte, osg::ref_ptr<osg::TextureCubeMap> > t_tcmById;

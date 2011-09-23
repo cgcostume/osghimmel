@@ -82,3 +82,58 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
     const t_tcmById::const_iterator tex2Di(m_tcmsById.find(textureUnit));
     return tex2Di == m_tcmsById.end() ? NULL : tex2Di->second;
 }
+
+
+// VertexShader
+
+#include "shaderfragment/version.vsf"
+#include "shaderfragment/quadretrieveray.vsf"
+#include "shaderfragment/quadtransform.vsf"
+
+const std::string CubeMappedHimmel::getVertexShaderSource()
+{
+    return glsl_v_version
+
+        +   glsl_v_quadRetrieveRay
+        +   glsl_v_quadTransform
+        +
+        "smooth out vec4 m_ray;\n"
+
+        "void main(void)\n"
+        "{\n"
+        "   m_ray = quadRetrieveRay();\n"
+        "   quadTransform();\n"
+        "}\n";
+}
+
+
+// FragmentShader
+
+#include "shaderfragment/version.fsf"
+#include "shaderfragment/blend_normal.fsf"
+
+const std::string CubeMappedHimmel::getFragmentShaderSource()
+{
+    return glsl_f_version
+
+        +   glsl_f_blendNormalExt
+        +
+        "in vec4 m_ray;\n"
+
+        // From AbstractMappedHimmel
+
+        "uniform float srcAlpha;\n"
+
+        "uniform samplerCube back;\n"
+        "uniform samplerCube src;\n"
+
+        // Color Retrieval
+
+        "void main(void)\n"
+        "{\n"
+        "   vec3 stu = normalize(m_ray.xyz);\n"
+
+        "   gl_FragColor = blend_normal(\n"
+        "       textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
+        "}\n";
+}
