@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "include/spheremappedhimmel.h"
+#include "include/cubemappedhimmel.h"
 #include "include/timef.h"
 
 #include <osgViewer/Viewer>
@@ -51,6 +52,7 @@
 enum e_Demo
 {
     D_SphereMappedHimmel = 0
+,   D_CubeMappedHimmel   = 1
 };
 
 
@@ -65,6 +67,7 @@ std::map<e_Demo, osg::ref_ptr<AbstractHimmel> > g_himmelsByDemo;
 void activateDemo(e_Demo demo)
 {
     g_himmelsByDemo[D_SphereMappedHimmel]->setNodeMask(D_SphereMappedHimmel == demo);
+    g_himmelsByDemo[D_CubeMappedHimmel]  ->setNodeMask(D_CubeMappedHimmel   == demo);
 }
 
 
@@ -83,7 +86,7 @@ public:
             {
                 if (ea.getKey()==osgGA::GUIEventAdapter::KEY_Space)
                 {
-                    g_demo = static_cast<e_Demo>((g_demo + 1) % 1);
+                    g_demo = static_cast<e_Demo>((g_demo + 1) % 2);
                     activateDemo(g_demo);
                 }
             }
@@ -108,7 +111,49 @@ osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
     himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sky_sphere_1.tga"));
     himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sky_sphere_2.tga"));
 
-    himmel->pushTextureUnit(0, 0.0f);
+    himmel->pushTextureUnit(0, 0.00f);
+    himmel->pushTextureUnit(1, 0.33f);
+    himmel->pushTextureUnit(2, 0.66f);
+
+    return himmel;
+}
+
+
+osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
+{
+    osg::ref_ptr<CubeMappedHimmel> himmel = new CubeMappedHimmel();
+
+    himmel->assignTime(g_timef, true);
+    himmel->setTransitionDuration(0.2f);
+
+    osg::TextureCubeMap *tcm0 = himmel->getOrCreateTextureCubeMap(0);
+    osg::TextureCubeMap *tcm1 = himmel->getOrCreateTextureCubeMap(1);
+    osg::TextureCubeMap *tcm2 = himmel->getOrCreateTextureCubeMap(2);
+
+    // px = lf; nx = rt; py = dn; ny = up; pz = ft; nz = bk    <- common skybox mapping (lhs to rhs)
+
+    tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_0_px.tga"));
+    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_0_nx.tga"));
+    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_0_py.tga"));
+    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_0_ny.tga"));
+    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_0_pz.tga"));
+    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_0_nz.tga"));
+
+    tcm1->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_1_px.tga"));
+    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_1_nx.tga"));
+    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_1_py.tga"));
+    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_1_ny.tga"));
+    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_1_pz.tga"));
+    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_1_nz.tga"));
+
+    tcm2->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_2_px.tga"));
+    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_2_nx.tga"));
+    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_2_py.tga"));
+    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_2_ny.tga"));
+    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_2_pz.tga"));
+    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_2_nz.tga"));
+
+    himmel->pushTextureUnit(0, 0.00f);
     himmel->pushTextureUnit(1, 0.33f);
     himmel->pushTextureUnit(2, 0.66f);
 
@@ -121,13 +166,16 @@ void initializeScene(osgViewer::View &view)
     osg::Camera* cam = view.getCamera();
     cam->setProjectionMatrixAsPerspective(45.0f, 4.f / 3.f, 0.1f, 8.0f);
 
-    g_scene = new osg::Group;
-    g_himmelsByDemo[D_SphereMappedHimmel] = createSphereMappedDemo();
-
     osg::ref_ptr<osg::Group> root = new osg::Group;
 
+    g_scene = new osg::Group;
     root->addChild(g_scene);
+
+    g_himmelsByDemo[D_SphereMappedHimmel] = createSphereMappedDemo();
     root->addChild(g_himmelsByDemo[D_SphereMappedHimmel]);
+
+    g_himmelsByDemo[D_CubeMappedHimmel] = createCubeMappedDemo();
+    root->addChild(g_himmelsByDemo[D_CubeMappedHimmel]);
 
     view.setSceneData(root.get());
 
@@ -160,15 +208,19 @@ int main(int argc, char* argv[])
     viewer.setUpViewInWindow(128, 128, 640, 480);
 
     // Setup default demo.
-    g_demo = D_SphereMappedHimmel;
+    g_demo = D_CubeMappedHimmel;
 
     while (psr.read("--sphere")) 
         g_demo = D_SphereMappedHimmel;
 
+    while (psr.read("--cube")) 
+        g_demo = D_CubeMappedHimmel;
+
+
     initializeManipulators(viewer);
     initializeScene(viewer);
 
-//    activateDemo(g_demo);
+    activateDemo(g_demo);
 
     viewer.addEventHandler(new KeyboardEventHandler);
 
