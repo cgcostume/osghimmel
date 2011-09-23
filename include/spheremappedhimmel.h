@@ -49,13 +49,13 @@ public:
     virtual ~SphereMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLuint textureUnit);
+    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
 
 protected:
 
     // AbstractMappedHimmel interface
 
-    virtual osg::StateAttribute *getTextureAttribute(const GLuint textureUnit) const;
+    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
 
 
     // AbstractHimmel interface
@@ -65,7 +65,7 @@ protected:
 
 protected:
 
-    typedef std::map<GLuint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
+    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
     t_tex2DById m_tex2DsById;
 };
 

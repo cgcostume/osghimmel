@@ -29,22 +29,28 @@
 
 #include "abstractmappedhimmel.h"
 
+#include <assert.h>
+#include <limits.h>
+
 namespace 
 {
-    static const GLuint BACK_TEXTURE_INDEX(0);
-    static const GLuint SRC_TEXTURE_INDEX(1);
+    static const GLint BACK_TEXTURE_INDEX(0);
+    static const GLint SRC_TEXTURE_INDEX(1);
 }
 
 
 AbstractMappedHimmel::AbstractMappedHimmel()
 :   AbstractHimmel()
-,   m_back    (new osg::Uniform("back", BACK_TEXTURE_INDEX))
-,   m_src     (new osg::Uniform("src", SRC_TEXTURE_INDEX))
 ,   m_srcAlpha(new osg::Uniform("srcAlpha", 0.f))
+,   m_back    (new osg::Uniform("back", BACK_TEXTURE_INDEX))
+,   m_src     (new osg::Uniform("src",  SRC_TEXTURE_INDEX))
+
+,   m_activeBackUnit(std::numeric_limits<GLint>::max())
+,   m_activeSrcUnit( std::numeric_limits<GLint>::max())
 {
+    getOrCreateStateSet()->addUniform(m_srcAlpha);
     getOrCreateStateSet()->addUniform(m_back);
     getOrCreateStateSet()->addUniform(m_src);
-    getOrCreateStateSet()->addUniform(m_srcAlpha);
 };
 
 
@@ -65,39 +71,41 @@ void AbstractMappedHimmel::update()
 
     // Avoid unnecessary unit switches.
 
-    if(m_changer.hasBackChanged(t))
+    const GLint backUnit(m_changer.getBackUnit(t));
+    if(backUnit != m_activeBackUnit)
     {
-        const GLuint backUnit(m_changer.getBackUnit(t));
-
-        m_back->set(backUnit);
         assignBackUnit(backUnit);
+        assert(backUnit == m_activeBackUnit);
     }
 
-    if(m_changer.hasSrcChanged(t))
+    const GLint srcUnit(m_changer.getSrcUnit(t));
+    if(srcUnit != m_activeSrcUnit)
     {
-        const GLuint srcUnit(m_changer.getSrcUnit(t));
-
-        m_src->set(srcUnit);
         assignSrcUnit(srcUnit);
+        assert(srcUnit == m_activeSrcUnit);
     }
 }
 
+#include <osg/Notify>
 
-inline void AbstractMappedHimmel::assignBackUnit(const GLuint textureUnit)
+
+inline void AbstractMappedHimmel::assignBackUnit(const GLint textureUnit)
 {
     assignUnit(textureUnit, BACK_TEXTURE_INDEX);
+    m_activeBackUnit = textureUnit;
 }
 
 
-inline void AbstractMappedHimmel::assignSrcUnit(const GLuint textureUnit)
+inline void AbstractMappedHimmel::assignSrcUnit(const GLint textureUnit)
 {
     assignUnit(textureUnit, SRC_TEXTURE_INDEX);
+    m_activeSrcUnit = textureUnit;
 }
 
 
 void AbstractMappedHimmel::assignUnit(
-    const GLuint textureUnit
-,   const GLuint targetIndex)
+    const GLint textureUnit
+,   const GLint targetIndex)
 {
     osg::StateAttribute *sa(getTextureAttribute(textureUnit));
 
@@ -115,7 +123,7 @@ void AbstractMappedHimmel::setTransitionDuration(const float duration)
 
 
 void AbstractMappedHimmel::pushTextureUnit(
-    const GLuint textureUnit
+    const GLint textureUnit
 ,   const float time)
 {
     m_changer.pushUnit(textureUnit, time);

@@ -43,7 +43,7 @@ CubeMappedHimmel::~CubeMappedHimmel()
 };
 
 
-osg::TextureCubeMap* CubeMappedHimmel::getOrCreateTextureCubeMap(const GLuint textureUnit)
+osg::TextureCubeMap* CubeMappedHimmel::getOrCreateTextureCubeMap(const GLint textureUnit)
 {
     // Retrieve an existing texture.
 
@@ -77,7 +77,7 @@ osg::TextureCubeMap* CubeMappedHimmel::getOrCreateTextureCubeMap(const GLuint te
 }
 
 
-osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLuint textureUnit) const
+osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUnit) const
 {
     const t_tcmById::const_iterator tex2Di(m_tcmsById.find(textureUnit));
     return tex2Di == m_tcmsById.end() ? NULL : tex2Di->second;

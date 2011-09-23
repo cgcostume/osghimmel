@@ -60,10 +60,21 @@ public:
     AbstractHimmel();
     virtual ~AbstractHimmel();
 
-    void setTime(TimeF const *timef);
-    inline TimeF const *getTime() const
+    // The timef gets updated but takes no ownership.
+    void assignTime(
+        TimeF *timef
+    ,   const bool autoUpdate = false);
+
+    inline TimeF *getTime() const
     {
         return m_timef;
+    }
+
+    // Update timef on update.
+    void setAutoUpdateTime(const bool autoUpdate);
+    inline const bool getAutoUpdateTime() const
+    {
+        return m_autoUpdateTime;
     }
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
@@ -99,7 +110,7 @@ protected:
         return *m_program;
     }
 
-    inline const float timef() const;
+    const float timef() const;
 
 protected:
 
@@ -114,7 +125,9 @@ protected:
 
     //
 
-    TimeF const *m_timef;
+    TimeF *m_timef;
+    bool m_autoUpdateTime;
+
     HimmelQuad *m_hquad;
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER

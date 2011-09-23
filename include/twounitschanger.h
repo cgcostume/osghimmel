@@ -68,14 +68,14 @@ public:
     // unit   1    1   1/0   0    0    0    0    0   0/1   1    1
 
     void pushUnit(
-        const GLuint unit
+        const GLint unit
     ,   const float time = 1.f);
 
 
     // Getter (they call update if required).
 
-    const GLuint getBackUnit (const float time) const;
-    const GLuint getSrcUnit  (const float time) const;
+    const GLint getBackUnit (const float time) const;
+    const GLint getSrcUnit  (const float time) const;
 
     const float getSrcAlpha  (const float time) const;
 
@@ -98,7 +98,7 @@ protected:
     float m_transitionDuration;
     e_InterpolationMethod m_interpolationMethod;
 
-    typedef std::map<float, GLuint> t_unitsByTime;
+    typedef std::map<float, GLint> t_unitsByTime;
 
     t_unitsByTime m_unitsByTime;
     mutable t_unitsByTime m_backUnitsByTime;
@@ -107,16 +107,13 @@ protected:
 
     // cache (make mutable to provide const getter)
 
+    mutable bool m_updated; // helper for first update
     mutable float m_lastTime;
 
-    mutable GLuint m_back;
-    mutable GLuint m_src;
+    mutable GLint m_back;
+    mutable GLint m_src;
 
     mutable float m_srcAlpha;
-
-    
-    mutable bool m_backHasChanged;
-    mutable bool m_srcHasChanged;
 };
 
 #endif __TWOUNITSCHANGER_H__
