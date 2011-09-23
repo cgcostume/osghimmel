@@ -27,8 +27,150 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "include/spheremappedhimmel.h"
+#include "include/timef.h"
+
+#include <osgViewer/Viewer>
+
+#include <osg/TextureCubeMap>
+#include <osg/Texture2D>
+#include <osg/PolygonMode>
+
+#include <osgDB/ReadFile>
+
+#include <osgGA/TrackballManipulator>
+#include <osgGA/FlightManipulator>
+#include <osgGA/DriveManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+#include <osgGA/StateSetManipulator>
+#include <osgGA/TerrainManipulator>
+
+#include <iostream>
+
+
+enum e_Demo
+{
+    D_SphereMappedHimmel = 0
+};
+
+
+osg::ref_ptr<osg::Group> g_scene = NULL;
+
+TimeF *g_timef(new TimeF(0.f, 60.f));
+
+e_Demo g_demo;
+std::map<e_Demo, osg::ref_ptr<AbstractHimmel> > g_himmelsByDemo;
+
+
+void activateDemo(e_Demo demo)
+{
+    g_himmelsByDemo[D_SphereMappedHimmel]->setNodeMask(D_SphereMappedHimmel == demo);
+}
+
+
+class KeyboardEventHandler : public osgGA::GUIEventHandler
+{
+public:
+    KeyboardEventHandler()
+    {
+    }
+
+    virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &)
+    {
+        switch(ea.getEventType())
+        {
+        case(osgGA::GUIEventAdapter::KEYDOWN):
+            {
+                if (ea.getKey()==osgGA::GUIEventAdapter::KEY_Space)
+                {
+                    g_demo = static_cast<e_Demo>((g_demo + 1) % 1);
+                    activateDemo(g_demo);
+                }
+            }
+            break;
+
+        default:
+            break;
+        };
+        return false;
+    }
+};
+
+
+osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
+{
+    osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel();
+
+    himmel->assignTime(g_timef, true);
+    himmel->setTransitionDuration(0.2f);
+
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sky_sphere_0.tga"));
+    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sky_sphere_1.tga"));
+    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sky_sphere_2.tga"));
+
+    himmel->pushTextureUnit(0, 0.0f);
+    himmel->pushTextureUnit(1, 0.33f);
+    himmel->pushTextureUnit(2, 0.66f);
+
+    return himmel;
+}
+
+
+void initializeScene(osgViewer::View &view)
+{
+    osg::Camera* cam = view.getCamera();
+    cam->setProjectionMatrixAsPerspective(45.0f, 4.f / 3.f, 0.1f, 8.0f);
+
+    g_scene = new osg::Group;
+    g_himmelsByDemo[D_SphereMappedHimmel] = createSphereMappedDemo();
+
+    osg::ref_ptr<osg::Group> root = new osg::Group;
+
+    root->addChild(g_scene);
+    root->addChild(g_himmelsByDemo[D_SphereMappedHimmel]);
+
+    view.setSceneData(root.get());
+
+    //osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("...");
+    //g_scene->addChild(loadedScene.get());
+}
+
+
+void initializeManipulators(osgViewer::View &view)
+{
+    osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
+
+    keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
+    keyswitchManipulator->addMatrixManipulator('2', "Flight",    new osgGA::FlightManipulator());
+    keyswitchManipulator->addMatrixManipulator('3', "Drive",     new osgGA::DriveManipulator());
+    keyswitchManipulator->addMatrixManipulator('4', "Terrain",   new osgGA::TerrainManipulator());
+
+    view.setCameraManipulator(keyswitchManipulator.get());
+}
+
 
 int main(int argc, char* argv[])
 {
-    return 0;
+    osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [space] to switch sphere and cube mapping." << std::endl;
+
+    osg::ArgumentParser psr(&argc, argv);
+    osgViewer::Viewer viewer(psr);
+
+    viewer.setUpViewInWindow(128, 128, 640, 480);
+
+    // Setup default demo.
+    g_demo = D_SphereMappedHimmel;
+
+    while (psr.read("--sphere")) 
+        g_demo = D_SphereMappedHimmel;
+
+    initializeManipulators(viewer);
+    initializeScene(viewer);
+
+//    activateDemo(g_demo);
+
+    viewer.addEventHandler(new KeyboardEventHandler);
+
+    return viewer.run();
 }
