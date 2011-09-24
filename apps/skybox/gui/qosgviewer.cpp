@@ -35,9 +35,9 @@
 QOsgViewer::QOsgViewer(QWidget *parent) 
 :   QOsgWidget(parent)
 {
-    getCamera()->setGraphicsContext(getGraphicsWindow());
-
     setThreadingModel(osgViewer::Viewer::SingleThreaded);
+
+    getCamera()->setGraphicsContext(getGraphicsWindow());
 
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(repaint()));
 

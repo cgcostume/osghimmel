@@ -32,45 +32,56 @@
 #define __QOSGWIDGET_H__
 
 
-#include <QFrame>
-#include <QtGui/QKeyEvent>
+#include <QWidget>
 #include <QUrl>
 
 #include <osgViewer/Viewer>
 
 
-class QOsgWidget : public QFrame
+class QOsgWidget : public QWidget
 {
     Q_OBJECT
 
 public:
     QOsgWidget(QWidget *parent = 0);
 
-    osgViewer::GraphicsWindow* getGraphicsWindow() { return _gw.get(); }
-    const osgViewer::GraphicsWindow* getGraphicsWindow() const { return _gw.get(); }
+    osgViewer::GraphicsWindow* getGraphicsWindow() 
+    { 
+        return m_gw.get(); 
+    }
+    const osgViewer::GraphicsWindow* getGraphicsWindow() const
+    {
+        return m_gw.get(); 
+    }
 
 signals:
-    void resizeWidget(unsigned int width, unsigned int height);
+    void resizeWidget(
+        unsigned int width
+    ,   unsigned int height);
+
     void mouseDrop(QList<QUrl> urlList);
 
 protected:
-    osg::ref_ptr<osgViewer::GraphicsWindow> _gw;
+    osg::ref_ptr<osgViewer::GraphicsWindow> m_gw;
 
 protected:
     virtual void createContext();
 
-    virtual void destroyEvent(bool destroyWindow, bool destroySubWindows);
-    virtual void closeEvent( QCloseEvent * event );
+    virtual void destroyEvent(
+        bool destroyWindow
+    ,   bool destroySubWindows);
 
-    virtual void resizeEvent( QResizeEvent * event );
+    virtual void closeEvent(QCloseEvent *event);
 
-    virtual void keyPressEvent( QKeyEvent* event );
-    virtual void keyReleaseEvent( QKeyEvent* event );
+    virtual void resizeEvent(QResizeEvent *event);
 
-    virtual void mousePressEvent( QMouseEvent* event );
-    virtual void mouseDoubleClickEvent ( QMouseEvent * event );
-    virtual void mouseReleaseEvent( QMouseEvent* event );
-    virtual void mouseMoveEvent( QMouseEvent* event );
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
+
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
 
 
     virtual void dragEnterEvent(QDragEnterEvent *event);
