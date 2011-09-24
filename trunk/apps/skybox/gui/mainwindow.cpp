@@ -66,10 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     initializeLog();
 
-    const QSize size(m_ui->qOsgViewerFrame->size());
+    const QSize size(m_ui->centralWidget->size());
 
-    initializeScene(m_ui->qOsgViewerFrame, size);
-    initializeManipulator(m_ui->qOsgViewerFrame);
+    initializeScene(m_ui->centralWidget, size);
+    initializeManipulator(m_ui->centralWidget);
 }
 
 
@@ -124,10 +124,10 @@ void MainWindow::initializeManipulator(osgViewer::View *view)
     keyswitchManipulator->addMatrixManipulator('3', "Drive",     new osgGA::DriveManipulator());
     keyswitchManipulator->addMatrixManipulator('4', "Terrain",   new osgGA::TerrainManipulator());
 
-    m_ui->qOsgViewerFrame->setCameraManipulator(keyswitchManipulator.get());
+    m_ui->centralWidget->setCameraManipulator(keyswitchManipulator.get());
 
-    m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::StatsHandler);
-    m_ui->qOsgViewerFrame->addEventHandler(new osgViewer::ThreadingHandler);
+    m_ui->centralWidget->addEventHandler(new osgViewer::StatsHandler);
+    m_ui->centralWidget->addEventHandler(new osgViewer::ThreadingHandler);
 }
 
 

@@ -10,7 +10,7 @@
     <height>235</height>
    </rect>
   </property>
-  <widget class="QWidget" name="centralWidget">
+  <widget class="QOsgViewer" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="spacing">
      <number>0</number>
@@ -18,16 +18,6 @@
     <property name="margin">
      <number>1</number>
     </property>
-    <item>
-     <widget class="QOsgViewer" name="qOsgViewerFrame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -259,7 +249,7 @@
  <customwidgets>
   <customwidget>
    <class>QOsgViewer</class>
-   <extends>QFrame</extends>
+   <extends>QWidget</extends>
    <header>gui/qosgviewer.h</header>
    <container>1</container>
   </customwidget>
