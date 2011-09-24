@@ -81,4 +81,4 @@ protected:
     GLint m_activeSrcUnit;
 };
 
-#endif __ABSTRACTMAPPEDHIMMEL_H__
+#endif // __ABSTRACTMAPPEDHIMMEL_H__

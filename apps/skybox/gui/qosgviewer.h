@@ -55,4 +55,4 @@ protected:
     QTimer m_timer;
 };
 
-#endif __QOSGVIEWER_H__
+#endif // __QOSGVIEWER_H__

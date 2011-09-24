@@ -39,4 +39,4 @@ namespace
     );
 }
 
-#endif __GLSL_VERSION_VSF__
+#endif // __GLSL_VERSION_VSF__

@@ -42,4 +42,4 @@ namespace
     );
 }
 
-#endif __GLSL_QUADRETRIEVERAY_VSF__
+#endif // __GLSL_QUADRETRIEVERAY_VSF__

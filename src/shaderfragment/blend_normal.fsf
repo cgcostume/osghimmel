@@ -41,4 +41,4 @@ namespace
         IMP_COMPOSE_SRC_ALPHA(normal, s));
 }
 
-#endif __GLSL_BLEND_NORMAL_FSF__
+#endif // __GLSL_BLEND_NORMAL_FSF__

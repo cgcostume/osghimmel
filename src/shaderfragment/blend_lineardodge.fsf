@@ -41,4 +41,4 @@ namespace
         IMP_COMPOSE_SRC_ALPHA(lineardodge, b + s));
 }
 
-#endif __GLSL_BLEND_LINEARDODGE_FSF__
+#endif // __GLSL_BLEND_LINEARDODGE_FSF__

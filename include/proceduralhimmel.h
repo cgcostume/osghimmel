@@ -45,4 +45,4 @@ protected:
 
 };
 
-#endif __PROCEDURALHIMMEL_H__
+#endif // __PROCEDURALHIMMEL_H__

@@ -67,4 +67,4 @@ protected:
     t_tcmById m_tcmsById;
 };
 
-#endif __CUBEMAPPEDHIMMEL_H__
+#endif // __CUBEMAPPEDHIMMEL_H__

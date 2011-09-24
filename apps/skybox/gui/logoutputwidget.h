@@ -59,4 +59,4 @@ protected:
     QTextEdit *m_swap;
 };
 
-#endif __LOGOUTPUTWIDGET_H__
+#endif // __LOGOUTPUTWIDGET_H__

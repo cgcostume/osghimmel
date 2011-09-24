@@ -69,4 +69,4 @@ protected:
     t_tex2DById m_tex2DsById;
 };
 
-#endif __SPHEREMAPPEDHIMMEL_H__
+#endif // __SPHEREMAPPEDHIMMEL_H__

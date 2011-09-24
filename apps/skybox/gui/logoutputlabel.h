@@ -68,4 +68,4 @@ protected slots:
 };
 
 
-#endif __LOGOUTPUTLABEL_H__
+#endif // __LOGOUTPUTLABEL_H__

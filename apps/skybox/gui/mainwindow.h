@@ -91,4 +91,4 @@ private:
 };
 
 
-#endif __MAINWINDOW_H__
+#endif // __MAINWINDOW_H__

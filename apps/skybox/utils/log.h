@@ -312,4 +312,4 @@ private:
 #define _LOG_EMPTYLINE   _LOG->appendEmptyLine
 
 
-#endif __LOG_H__
+#endif // __LOG_H__

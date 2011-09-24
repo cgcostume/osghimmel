@@ -103,4 +103,4 @@ inline const T interpolate(
     }
 }
 
-#endif __INTERPOLATE_H__
+#endif // __INTERPOLATE_H__

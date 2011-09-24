@@ -110,4 +110,4 @@ protected:
     float m_secondsPerCycle;
 };
 
-#endif __TIMEF_H__
+#endif // __TIMEF_H__

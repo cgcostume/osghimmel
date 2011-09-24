@@ -42,4 +42,4 @@ namespace
     );
 }
 
-#endif __GLSL_QUADTRANSFORM_VSF__
+#endif // __GLSL_QUADTRANSFORM_VSF__

@@ -71,4 +71,4 @@ protected:
     virtual void mouseDoubleClickEvent(QMouseEvent* event);
 };
 
-#endif __DOCKTITLEBARWIDGET_H__
+#endif // __DOCKTITLEBARWIDGET_H__
