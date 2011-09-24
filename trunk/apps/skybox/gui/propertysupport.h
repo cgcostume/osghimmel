@@ -143,4 +143,4 @@ protected:
     void setEnumValue(const QString &name, const int value);
 };
 
-#endif __PROPERTYSUPPORT_H__
+#endif // __PROPERTYSUPPORT_H__

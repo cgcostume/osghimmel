@@ -59,4 +59,4 @@ protected:
 };
 
 
-#endif __MAINLOGDISPATCHER_H__
+#endif // __MAINLOGDISPATCHER_H__

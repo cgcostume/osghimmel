@@ -40,7 +40,7 @@
 #include "shadermodifier.h"
 ShaderModifier AbstractHimmel::s_shaderModifier;
 
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
 void AbstractHimmel::HimmelNodeCallback::operator()(

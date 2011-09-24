@@ -116,4 +116,4 @@ protected:
     mutable float m_srcAlpha;
 };
 
-#endif __TWOUNITSCHANGER_H__
+#endif // __TWOUNITSCHANGER_H__

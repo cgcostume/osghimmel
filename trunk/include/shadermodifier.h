@@ -104,6 +104,6 @@ protected:
     t_identifierSet m_modified;
 };
 
-#endif __SHADERMODIFIER_H__
+#endif // __SHADERMODIFIER_H__
 
 #endif OSGHIMMEL_ENABLE_SHADERMODIFIER

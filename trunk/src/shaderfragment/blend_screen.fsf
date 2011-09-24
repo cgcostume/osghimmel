@@ -41,4 +41,4 @@ namespace
         IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s)));
 }
 
-#endif __GLSL_BLEND_SCREEN_FSF__
+#endif // __GLSL_BLEND_SCREEN_FSF__

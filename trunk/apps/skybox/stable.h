@@ -67,4 +67,4 @@
 
 #define TR QObject::tr
 
-#endif __STABLE_H__
+#endif // __STABLE_H__

@@ -47,4 +47,4 @@
 #   define NOTE(exp) ("note: " exp)
 #endif
 
-#endif __PRAGMANOTE_H__
+#endif // __PRAGMANOTE_H__

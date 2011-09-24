@@ -79,4 +79,4 @@ protected:
     virtual void dropEvent(QDropEvent *event);
 };
 
-#endif __QOSGWIDGET_H__
+#endif // __QOSGWIDGET_H__

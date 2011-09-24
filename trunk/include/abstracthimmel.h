@@ -40,7 +40,7 @@ class HimmelQuad;
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 class ShaderModifier;
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
 class AbstractHimmel : public osg::Transform
@@ -82,7 +82,7 @@ public:
     {
         return &s_shaderModifier;
     }
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
 
@@ -132,7 +132,7 @@ protected:
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
     static ShaderModifier s_shaderModifier;
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 };
 
-#endif __ABSTRACTHIMMEL_H__
+#endif // __ABSTRACTHIMMEL_H__

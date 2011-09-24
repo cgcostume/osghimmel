@@ -91,4 +91,4 @@ const QStringList AbstractFactory<T>::identifiers()
     return m_registeredObjectsByIdentifier.keys();
 }
 
-#endif __ABSTRACTFACTORY_HPP__
+#endif // __ABSTRACTFACTORY_HPP__

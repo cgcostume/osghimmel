@@ -41,4 +41,4 @@ namespace
         IMP_COMPOSE_SRC_ALPHA(multiply, b * s));
 }
 
-#endif __GLSL_BLEND_MULTIPLY_FSF__
+#endif // __GLSL_BLEND_MULTIPLY_FSF__

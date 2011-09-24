@@ -90,4 +90,4 @@ protected slots:
 };
 
 
-#endif __COLLAPSIBLEDOCKWIDGET_H__
+#endif // __COLLAPSIBLEDOCKWIDGET_H__

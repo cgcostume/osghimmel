@@ -80,4 +80,4 @@ namespace
         "}\n"
 }
 
-#endif __GLSL_COMPOSE_FSF__
+#endif // __GLSL_COMPOSE_FSF__

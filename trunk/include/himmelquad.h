@@ -46,4 +46,4 @@ protected:
 };
 
 
-#endif __HIMMELQUAD_H__
+#endif // __HIMMELQUAD_H__
