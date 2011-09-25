@@ -43,7 +43,6 @@ TwoUnitsChanger::TwoUnitsChanger()
 ,   m_src(0)
 ,   m_srcAlpha(0.f)
 
-#pragma NOTE("Check results for IM_INVSIN interpolation. Might be better for this usecase (soft in, strong out).")
 ,   m_interpolationMethod(IM_LINEAR)
 {
 }
