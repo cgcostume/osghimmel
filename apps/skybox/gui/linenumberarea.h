@@ -28,80 +28,40 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __LINENUMBERAREA_H__
+#define __LINENUMBERAREA_H__
 
-#include <QMainWindow>
+#include <QWidget>
 
-#include <osg/Group>
+class PlainTextWithLineNumberAreaSupport;
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
-
-class Ui_MainWindow;
-
-namespace osgViewer 
-{
-    class View;
-}
+class QPaintEvent;
+class QSize;
 
 
-class GLSLEditor;
-class CollapsibleDockWidget;
-
-
-class MainWindow : public QMainWindow
+class LineNumberArea : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    LineNumberArea(PlainTextWithLineNumberAreaSupport &editor);
+
+    const int lineNumberAreaWidth() const;
+
+
+    QSize sizeHint() const;
 
 protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
-
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 protected slots:
+    void updateLineNumberAreaWidth(int newBlockCount);
 
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
+    void updateLineNumberArea(
+        const QRect &
+    ,   const int);
 
 protected:
-
-    GLSLEditor *m_glslEditor;
-    CollapsibleDockWidget *m_glslEditorDockWidget;
-
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
-
-    osg::ref_ptr<osg::Group> m_scene;
+    PlainTextWithLineNumberAreaSupport &m_editor;
 };
 
-
-#endif // __MAINWINDOW_H__
+#endif // __LINENUMBERAREA_H__

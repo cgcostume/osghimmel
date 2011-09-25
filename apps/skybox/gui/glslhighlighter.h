@@ -28,80 +28,55 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __GLSL_HIGHLIGHTER_H__
+#define __GLSL_HIGHLIGHTER_H__
 
-#include <QMainWindow>
+#include <QSyntaxHighlighter>
 
-#include <osg/Group>
+#include <QMap>
+#include <QVector>
+#include <QTextCharFormat>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
+#include "utils/glsltypes.h"
 
-class Ui_MainWindow;
+class QTextDocument;
+class QStringListModel;
+class QColor;
+class QStringList;
 
-namespace osgViewer 
+
+class GLSLHighlighter : public QSyntaxHighlighter
 {
-    class View;
-}
-
-
-class GLSLEditor;
-class CollapsibleDockWidget;
-
-
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
 
-protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
+    GLSLHighlighter();
+    virtual ~GLSLHighlighter();
 
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
+    void setDocument(
+        QTextDocument *textdoc
+    ,   const e_GlslLanguageType language);
 
 protected:
 
-    GLSLEditor *m_glslEditor;
-    CollapsibleDockWidget *m_glslEditorDockWidget;
+    void setLanguage(const e_GlslLanguageType language);
 
+    void createAndAppendRules(
+        const QString &pattern
+    ,   QTextCharFormat *format);
 
-private:
+    // QSyntaxHighlighter interface
 
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
+    virtual void highlightBlock(const QString &text);
 
-    osg::ref_ptr<osg::Group> m_scene;
+protected:
+
+    typedef QVector<QRegExp> t_regExps;
+    typedef QMap<QTextCharFormat*, t_regExps> t_patternsByFormat;
+
+    QVector<QTextCharFormat*> m_formats;
+    t_patternsByFormat m_patternsByFormat;    
+
+    e_GlslLanguageType m_language;
 };
 
-
-#endif // __MAINWINDOW_H__
+#endif // __GLSL_HIGHLIGHTER_H__

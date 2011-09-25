@@ -42,6 +42,12 @@ SET(SKYBOX_SOURCES
     gui/docktitlebarwidget.h
     gui/docktitlebarwidget.cpp
     gui/docktitlebarwidget.ui
+    gui/glsleditor.h
+    gui/glsleditor.cpp
+    gui/glslhighlighter.h
+    gui/glslhighlighter.cpp
+    gui/linenumberarea.h
+    gui/linenumberarea.cpp
     gui/logoutputlabel.h
     gui/logoutputlabel.cpp
     gui/logoutputwidget.h
@@ -49,6 +55,7 @@ SET(SKYBOX_SOURCES
     gui/mainwindow.h
     gui/mainwindow.cpp
     gui/mainwindow.ui
+    gui/plaintextwithlinenumberareasupport.h
     gui/propertysupport.h
     gui/propertysupport.cpp
     gui/qosgviewer.h
@@ -56,6 +63,8 @@ SET(SKYBOX_SOURCES
     gui/qosgwidget.h
     gui/qosgwidget.cpp
     utils/abstractfactory.hpp
+    utils/glslsyntax.hpp
+    utils/glsltypes.h
     utils/import.h
     utils/import.cpp
     utils/log.h
