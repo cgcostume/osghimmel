@@ -28,80 +28,41 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __PLAINTEXTWITHLINENUMBERAREASUPPORT_H__
+#define __PLAINTEXTWITHLINENUMBERAREASUPPORT_H__
 
-#include <QMainWindow>
+#include <QPlainTextEdit>
+#include <QTextBlock>
 
-#include <osg/Group>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
-
-class Ui_MainWindow;
-
-namespace osgViewer 
+class PlainTextWithLineNumberAreaSupport : public QPlainTextEdit
 {
-    class View;
-}
-
-
-class GLSLEditor;
-class CollapsibleDockWidget;
-
-
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    PlainTextWithLineNumberAreaSupport(QWidget *parent)
+    :   QPlainTextEdit(parent)
+    {
+    }
 
-protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
-
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
-
-protected:
-
-    GLSLEditor *m_glslEditor;
-    CollapsibleDockWidget *m_glslEditorDockWidget;
-
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
-
-    osg::ref_ptr<osg::Group> m_scene;
+    inline QTextBlock firstVisibleBlock() const
+    {
+        return QPlainTextEdit::firstVisibleBlock();
+    }
+    inline QRectF blockBoundingGeometry(const QTextBlock &block) const 
+    {
+        return QPlainTextEdit::blockBoundingGeometry(block);
+    }
+    inline QRectF blockBoundingRect(const QTextBlock &block) const
+    {
+        return QPlainTextEdit::blockBoundingRect(block);
+    }
+    inline QPointF contentOffset() const
+    {
+        return QPlainTextEdit::contentOffset();
+    }
+    inline void setViewportMargins(int left, int top, int right, int bottom)
+    {
+        QPlainTextEdit::setViewportMargins(left, top, right, bottom);
+    }
 };
 
-
-#endif // __MAINWINDOW_H__
+#endif // __PLAINTEXTWITHLINENUMBERAREASUPPORT_H__

@@ -32,9 +32,10 @@
 
 #include "mainlogdispatcher.h"
 
+#include "collapsibledockwidget.h"
+#include "glsleditor.h"
 #include "logoutputlabel.h"
 #include "logoutputwidget.h"
-#include "collapsibledockwidget.h"
 #include "qosgviewer.h"
 
 #include "utils/import.h"
@@ -56,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent)
 :   QMainWindow(parent)
 ,   m_ui(new Ui::MainWindow)
 ,   m_scene(NULL)
+
+,   m_glslEditor(NULL)
+,   m_glslEditorDockWidget(NULL)
 {
     QCoreApplication::setOrganizationName("dm@g4t3.de");
     QCoreApplication::setApplicationName(APPLICATION_NAME);
@@ -70,12 +74,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     initializeScene(m_ui->centralWidget, size);
     initializeManipulator(m_ui->centralWidget);
+
+    initializeDockWidgets();
 }
 
 
 MainWindow::~MainWindow()
 {
     uninitializeLog();
+
+    delete m_glslEditor;
+    delete m_glslEditorDockWidget;
 }
 
 
@@ -161,9 +170,18 @@ void MainWindow::initializeToolBars()
 {
 }
 
+QTextDocument *g_document;
 
 void MainWindow::initializeDockWidgets()
 {
+    m_glslEditor = new GLSLEditor();
+    m_glslEditorDockWidget = new CollapsibleDockWidget(*m_glslEditor, this);
+
+    addDockWidget(Qt::RightDockWidgetArea, m_glslEditorDockWidget);
+
+    g_document = new QTextDocument();
+
+    m_glslEditor->setDocument(g_document, GLSL_FRAGMENT);
 }
 
 

@@ -28,80 +28,57 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __GLSLEDITOR_H__
+#define __GLSLEDITOR_H__
 
-#include <QMainWindow>
+#include "plaintextwithlinenumberareasupport.h"
+#include "utils/glsltypes.h"
 
-#include <osg/Group>
+class GLSLHighlighter;
+class LineNumberArea;
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
-
-class Ui_MainWindow;
-
-namespace osgViewer 
-{
-    class View;
-}
+class QKeyEvent;
+class QResizeEvent;
+class QFocusEvent;
+class QFont;
+class QCompleter;
 
 
-class GLSLEditor;
-class CollapsibleDockWidget;
-
-
-class MainWindow : public QMainWindow
+class GLSLEditor : public PlainTextWithLineNumberAreaSupport
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    GLSLEditor(QWidget *parent = 0);
+    virtual ~GLSLEditor();
+
+    void setDocument(
+        QTextDocument *textdoc
+    ,   const e_GlslLanguageType language);
 
 protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
+    virtual void resizeEvent(QResizeEvent *event);
+    virtual void focusInEvent(QFocusEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+
+    void setupCompleter(const QStringList &strings = QStringList());
 
 protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
+    QString textUnderCursor() const;
 
 protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
+    void highlightCurrentLine();
+    void insertCompletion(const QString &completion);
 
 private:
-    void initializeLog();
-    void uninitializeLog();
+    QFont *m_font;
 
+    GLSLHighlighter *m_highlighter;
+    QCompleter *m_completer;
 
-protected:
+    LineNumberArea *m_lineNumberArea;
 
-    GLSLEditor *m_glslEditor;
-    CollapsibleDockWidget *m_glslEditorDockWidget;
-
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
-
-    osg::ref_ptr<osg::Group> m_scene;
+    bool m_gotDocumentAssigned;
 };
 
-
-#endif // __MAINWINDOW_H__
+#endif // __GLSLEDITOR_H__
