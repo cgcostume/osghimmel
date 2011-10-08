@@ -27,81 +27,42 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#include "scene_spheremappedhimmel.h"
 
-#include <QMainWindow>
+#include "include/spheremappedhimmel.h"
+#include "include/timef.h"
 
-#include <osg/Group>
+#include <osg/Texture2D>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
+#include <osgDB/ReadFile>
 
-class Ui_MainWindow;
 
-namespace osgViewer 
+Scene_SphereMappedHimmel::Scene_SphereMappedHimmel()
+:   AbstractHimmelScene()
+,   m_timef(new TimeF(0.f, 60.f))
 {
-    class View;
+    osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel();
+
+    himmel->assignTime(m_timef, true);
+    himmel->setTransitionDuration(0.2f);
+
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sky_sphere_0.tga"));
+    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sky_sphere_1.tga"));
+    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sky_sphere_2.tga"));
+
+    himmel->pushTextureUnit(0, 0.00f);
+    himmel->pushTextureUnit(1, 0.33f);
+    himmel->pushTextureUnit(2, 0.66f);
+
+    addChild(himmel);
+
+
+    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("resources/knot.obj");
+
+    addChild(loadedScene.get());
 }
 
 
-class GLSLEditor;
-class CollapsibleDockWidget;
-
-
-class MainWindow : public QMainWindow
+Scene_SphereMappedHimmel::~Scene_SphereMappedHimmel()
 {
-    Q_OBJECT
-
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-
-protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
-
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
-
-protected:
-
-    GLSLEditor *m_glslEditor;
-    CollapsibleDockWidget *m_glslEditorDockWidget;
-
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
-
-    osg::ref_ptr<osg::Group> m_scene;
-};
-
-
-#endif // __MAINWINDOW_H__
+}
