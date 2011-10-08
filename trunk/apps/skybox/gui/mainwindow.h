@@ -47,7 +47,7 @@ namespace osgViewer
 }
 
 
-class GLSLEditor;
+class GLSLTextEdit;
 class CollapsibleDockWidget;
 
 
@@ -91,7 +91,7 @@ private:
 
 protected:
 
-    GLSLEditor *m_glslEditor;
+    GLSLTextEdit *m_glslEditor;
     CollapsibleDockWidget *m_glslEditorDockWidget;
 
 

@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "glsleditor.h"
+#include "glsltextedit.h"
 
 #include "glslhighlighter.h"
 #include "linenumberarea.h"
@@ -46,7 +46,7 @@
 #include <assert.h>
 
 
-GLSLEditor::GLSLEditor(QWidget *parent) 
+GLSLTextEdit::GLSLTextEdit(QWidget *parent) 
 :   PlainTextWithLineNumberAreaSupport(parent)
 ,   m_highlighter(NULL)
 ,   m_completer(NULL)
@@ -54,7 +54,7 @@ GLSLEditor::GLSLEditor(QWidget *parent)
 ,   m_gotDocumentAssigned(false)
 ,   m_font(new QFont("Consolas, Courier New, Courier", 9))
 {
-    setWindowTitle("glsl-Editor");
+    setWindowTitle("GLSL-Editor");
 
     m_highlighter = new GLSLHighlighter();
     m_lineNumberArea = new LineNumberArea(*this);
@@ -68,7 +68,7 @@ GLSLEditor::GLSLEditor(QWidget *parent)
 }
 
 
-GLSLEditor::~GLSLEditor()
+GLSLTextEdit::~GLSLTextEdit()
 {
     delete m_highlighter;
     delete m_completer;
@@ -80,7 +80,7 @@ GLSLEditor::~GLSLEditor()
 
 
 
-void GLSLEditor::resizeEvent(QResizeEvent *e)
+void GLSLTextEdit::resizeEvent(QResizeEvent *e)
 {
     QPlainTextEdit::resizeEvent(e);
 
@@ -91,7 +91,7 @@ void GLSLEditor::resizeEvent(QResizeEvent *e)
 }
 
 
-void GLSLEditor::highlightCurrentLine()
+void GLSLTextEdit::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
@@ -112,7 +112,7 @@ void GLSLEditor::highlightCurrentLine()
 }
 
 
-void GLSLEditor::setDocument(
+void GLSLTextEdit::setDocument(
     QTextDocument *textdoc
 ,   const e_GlslLanguageType language)
 {
@@ -162,7 +162,7 @@ void GLSLEditor::setDocument(
 }
 
 
-void GLSLEditor::setupCompleter(const QStringList &strings)
+void GLSLTextEdit::setupCompleter(const QStringList &strings)
 {
     delete m_completer;
     m_completer = NULL;
@@ -180,7 +180,7 @@ void GLSLEditor::setupCompleter(const QStringList &strings)
 }
 
 
-void GLSLEditor::insertCompletion(const QString &completion)
+void GLSLTextEdit::insertCompletion(const QString &completion)
 {
     assert(m_completer);
     assert(m_completer->widget() == this);
@@ -198,7 +198,7 @@ void GLSLEditor::insertCompletion(const QString &completion)
 }
 
 
-void GLSLEditor::focusInEvent(QFocusEvent *event)
+void GLSLTextEdit::focusInEvent(QFocusEvent *event)
 {
     if (m_completer)
         m_completer->setWidget(this);
@@ -207,7 +207,7 @@ void GLSLEditor::focusInEvent(QFocusEvent *event)
 }
 
 
-QString GLSLEditor::textUnderCursor() const
+QString GLSLTextEdit::textUnderCursor() const
 {
     QTextCursor tc(textCursor());
 
@@ -218,7 +218,7 @@ QString GLSLEditor::textUnderCursor() const
 
 // modified from  http://www.trinitydesktop.org/docs/qt4/tools-customcompleter.html
 
-void GLSLEditor::keyPressEvent(QKeyEvent *event)
+void GLSLTextEdit::keyPressEvent(QKeyEvent *event)
 {
     if(m_completer && m_completer->popup()->isVisible()) 
     {

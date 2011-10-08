@@ -42,8 +42,8 @@ SET(SKYBOX_SOURCES
     gui/docktitlebarwidget.h
     gui/docktitlebarwidget.cpp
     gui/docktitlebarwidget.ui
-    gui/glsleditor.h
-    gui/glsleditor.cpp
+    gui/glsltextedit.h
+    gui/glsltextedit.cpp
     gui/glslhighlighter.h
     gui/glslhighlighter.cpp
     gui/linenumberarea.h

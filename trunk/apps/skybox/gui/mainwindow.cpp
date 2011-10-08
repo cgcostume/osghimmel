@@ -33,7 +33,7 @@
 #include "mainlogdispatcher.h"
 
 #include "collapsibledockwidget.h"
-#include "glsleditor.h"
+#include "glsltextedit.h"
 #include "logoutputlabel.h"
 #include "logoutputwidget.h"
 #include "qosgviewer.h"
@@ -174,7 +174,7 @@ QTextDocument *g_document;
 
 void MainWindow::initializeDockWidgets()
 {
-    m_glslEditor = new GLSLEditor();
+    m_glslEditor = new GLSLTextEdit();
     m_glslEditorDockWidget = new CollapsibleDockWidget(*m_glslEditor, this);
 
     addDockWidget(Qt::RightDockWidgetArea, m_glslEditorDockWidget);
