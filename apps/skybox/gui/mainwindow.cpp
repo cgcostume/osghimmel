@@ -33,10 +33,13 @@
 #include "mainlogdispatcher.h"
 
 #include "collapsibledockwidget.h"
-#include "glsltextedit.h"
+#include "glsleditor.h"
 #include "logoutputlabel.h"
 #include "logoutputwidget.h"
 #include "qosgviewer.h"
+
+#include "scenes/scene_spheremappedhimmel.h"
+#include "scenes/scene_cubemappedhimmel.h"
 
 #include "utils/import.h"
 
@@ -156,13 +159,10 @@ void MainWindow::initializeScene(
 
 	osg::ref_ptr<osg::Group> root = new osg::Group;
 
-	m_scene = new osg::Group;
+	m_scene = new Scene_CubeMappedHimmel();
 	root->addChild(m_scene);
 
 	view->setSceneData(root.get());
-
-//    osg::ref_ptr<osg::Node> node = importAndOptimizeNodeFromFile(QFileInfo("resources/farmhouse.3ds"));
-  //  m_scene->addChild(node);
 }
 
 
@@ -170,18 +170,18 @@ void MainWindow::initializeToolBars()
 {
 }
 
-QTextDocument *g_document;
+//QTextDocument *g_document;
 
 void MainWindow::initializeDockWidgets()
 {
-    m_glslEditor = new GLSLTextEdit();
+    m_glslEditor = new GLSLEditor();
     m_glslEditorDockWidget = new CollapsibleDockWidget(*m_glslEditor, this);
 
     addDockWidget(Qt::RightDockWidgetArea, m_glslEditorDockWidget);
 
-    g_document = new QTextDocument();
+    //g_document = new QTextDocument();
 
-    m_glslEditor->setDocument(g_document, GLSL_FRAGMENT);
+    //m_glslEditor->setDocument(g_document, GLSL_FRAGMENT);
 }
 
 

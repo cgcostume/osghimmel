@@ -28,80 +28,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#ifndef __SCENE_CUBEMAPPEDHIMMEL_H__
+#define __SCENE_CUBEMAPPEDHIMMEL_H__
 
-#include <QMainWindow>
+#include "abstracthimmelscene.h"
 
-#include <osg/Group>
 
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
+class TimeF;
 
-class Ui_MainWindow;
-
-namespace osgViewer 
+class Scene_CubeMappedHimmel : public AbstractHimmelScene
 {
-    class View;
-}
-
-
-class GLSLEditor;
-class CollapsibleDockWidget;
-
-
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    Scene_CubeMappedHimmel();
+    virtual ~Scene_CubeMappedHimmel();
 
 protected:
-    
-    // dock widgets
-    LogOutputWidget *m_logWidget;
-    CollapsibleDockWidget *m_logDockWidget;
-
-protected:
-    void initializeToolBars();
-    void initializeDockWidgets();
-
-    void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
-
-    virtual void changeEvent(QEvent *event);
-    virtual void showEvent(QShowEvent *event);
-
-protected slots:
-
-    // ui
-    void on_quitAction_triggered(bool);
-    void on_aboutAction_triggered(bool);
-
-
-private:
-    void initializeLog();
-    void uninitializeLog();
-
-
-protected:
-
-    GLSLEditor *m_glslEditor;
-    CollapsibleDockWidget *m_glslEditorDockWidget;
-
-
-private:
-
-    std::auto_ptr<Ui_MainWindow> m_ui;
-    LogOutputLabel *m_logStatusLabel;
-
-    osg::ref_ptr<osg::Group> m_scene;
+    TimeF *m_timef;
 };
 
 
-#endif // __MAINWINDOW_H__
+#endif // __SCENE_CUBEMAPPEDHIMMEL_H__

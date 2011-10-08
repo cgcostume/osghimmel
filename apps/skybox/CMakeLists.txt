@@ -32,6 +32,7 @@ SET(QT_USE_UI TRUE)
 SET(QT_USE_CORE TRUE)
 
 SET(SKYBOX_SOURCES
+    abstracthimmelscene.h
     mainlogdispatcher.h
     mainlogdispatcher.cpp
     skyboxmain.cpp
@@ -42,6 +43,9 @@ SET(SKYBOX_SOURCES
     gui/docktitlebarwidget.h
     gui/docktitlebarwidget.cpp
     gui/docktitlebarwidget.ui
+    gui/glsleditor.h
+    gui/glsleditor.cpp
+    gui/glsleditor.ui
     gui/glsltextedit.h
     gui/glsltextedit.cpp
     gui/glslhighlighter.h
@@ -62,6 +66,10 @@ SET(SKYBOX_SOURCES
     gui/qosgviewer.cpp
     gui/qosgwidget.h
     gui/qosgwidget.cpp
+    scenes/scene_cubemappedhimmel.h
+    scenes/scene_cubemappedhimmel.cpp
+    scenes/scene_spheremappedhimmel.h
+    scenes/scene_spheremappedhimmel.cpp
     utils/abstractfactory.hpp
     utils/glslsyntax.hpp
     utils/glsltypes.h

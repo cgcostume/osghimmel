@@ -54,8 +54,6 @@ GLSLTextEdit::GLSLTextEdit(QWidget *parent)
 ,   m_gotDocumentAssigned(false)
 ,   m_font(new QFont("Consolas, Courier New, Courier", 9))
 {
-    setWindowTitle("GLSL-Editor");
-
     m_highlighter = new GLSLHighlighter();
     m_lineNumberArea = new LineNumberArea(*this);
 
@@ -153,7 +151,7 @@ void GLSLTextEdit::setDocument(
 
     // setup status
 
-    m_gotDocumentAssigned = NULL != document();
+    m_gotDocumentAssigned = NULL != textdoc;
 
     setEnabled(m_gotDocumentAssigned);
 
