@@ -28,8 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSLEDITOR_H__
-#define __GLSLEDITOR_H__
+#ifndef __GLSLTEXTEDIT_H__
+#define __GLSLTEXTEDIT_H__
 
 #include "plaintextwithlinenumberareasupport.h"
 #include "utils/glsltypes.h"
@@ -44,13 +44,13 @@ class QFont;
 class QCompleter;
 
 
-class GLSLEditor : public PlainTextWithLineNumberAreaSupport
+class GLSLTextEdit : public PlainTextWithLineNumberAreaSupport
 {
     Q_OBJECT
 
 public:
-    GLSLEditor(QWidget *parent = 0);
-    virtual ~GLSLEditor();
+    GLSLTextEdit(QWidget *parent = 0);
+    virtual ~GLSLTextEdit();
 
     void setDocument(
         QTextDocument *textdoc
@@ -81,4 +81,4 @@ private:
     bool m_gotDocumentAssigned;
 };
 
-#endif // __GLSLEDITOR_H__
+#endif // __GLSLTEXTEDIT_H__
