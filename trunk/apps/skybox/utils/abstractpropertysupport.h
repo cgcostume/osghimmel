@@ -28,8 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __PROPERTYSUPPORT_H__
-#define __PROPERTYSUPPORT_H__
+#ifndef __ABSTRACTPROPERTYSUPPORT_H__
+#define __ABSTRACTPROPERTYSUPPORT_H__
 
 
 #include "utils/abstractfactory.hpp"
@@ -58,27 +58,120 @@ class QtDoubleSpinBoxFactory;
 class QSvgRenderer;
 
 
-class PropertySupport : public QObject
+class AbstractPropertySupport : public QObject
 {
     Q_OBJECT
 
 public:
-    PropertySupport();
-    ~PropertySupport();
+    AbstractPropertySupport();
+    ~AbstractPropertySupport();
 
-    // properties
+    // Properties
+
     void floodPropertyBrowser(QtAbstractPropertyBrowser *propertyBrowser);
     void clearPropertyBrowser(QtAbstractPropertyBrowser *propertyBrowser);
 
-    // special "fast-access" properties
+    // Special "fast-access" properties
+
     const QList<QtProperty*> &fastAccessProperties() const;
 
     QtIntPropertyManager *propertyIntManager() const;
     QtDoublePropertyManager *propertyDoubleManager() const;
     QtBoolPropertyManager *propertyBoolManager() const;
 
+protected slots:
+    void on_propertyChanged(QtProperty*);
+
 protected:
-	// properties
+    void initializeProperties();
+
+    virtual void propertyChanged(QtProperty *p) = 0;
+    virtual void registerProperties() = 0;
+
+    QtProperty *property(const QString &name) const;
+
+    
+    // Groups
+
+    QtProperty *createGroup(
+        const QString &groupName);
+
+    QtProperty *createGroup(
+        QtProperty &group
+    ,   const QString &groupName);
+
+
+    // Properties
+
+    QtProperty *createProperty(
+        QtProperty &group
+    ,   const QString &propertyName
+    ,   const int value
+    ,   const QStringList &values);
+
+    QtProperty *createProperty(
+        QtProperty &group
+    ,   const QString &propertyName
+    ,   const bool value);
+
+    QtProperty *createProperty(
+        QtProperty &group
+    ,   const QString &propertyName
+    ,   const int value
+    ,   const int minValue
+    ,   const int maxValue
+    ,   const int stepValue);
+
+    QtProperty *createProperty(
+        QtProperty &group
+    ,   const QString &propertyName
+    ,   const double value
+    ,   const double minValue
+    ,   const double maxValue
+    ,   const double stepValue);
+
+    QtProperty *createProperty(
+        QtProperty &group
+    ,   const QString &propertyName 
+    ,   const QSizeF &value
+    ,   const QSizeF &minValue
+    ,   const QSizeF &maxValue
+    ,   const QSizeF &stepValue);
+
+
+    void registerForFastAccess(const QString &name);
+
+
+    // Helper
+
+    const QSizeF sizeFValue(const QString &name) const;
+    void setSizeFValue(
+        const QString &name
+    ,   const QSizeF &value);
+
+    const double doubleValue(const QString &name) const;
+    void setDoubleValue(
+        const QString &name
+    ,   const double value);
+
+    const int intValue(const QString &name) const;
+    void setIntValue(
+        const QString &name
+    ,   const int value);
+
+    const bool boolValue(const QString &name) const;
+    void setBoolValue(
+        const QString &name
+    ,   const bool value);
+
+    const int enumValue(const QString &name) const;
+    void setEnumValue(
+        const QString &name
+    ,   const int value);
+
+
+protected:
+
     bool m_propertiesInitialized;
 
     QtGroupPropertyManager  *m_groupManager;
@@ -99,48 +192,6 @@ protected:
     QHash<QString, QtProperty*> m_properties;
 
     QList<QtProperty*> m_fastAccessProperties;
-
-
-protected slots:
-    void on_propertyChanged(QtProperty*);
-
-protected:
-    void initializeProperties();
-
-    virtual void propertyChanged(QtProperty *p) = 0;
-    virtual void registerProperties() = 0;
-
-    QtProperty *property(const QString &name) const;
-
-    // property stuff
-    QtProperty *createGroup(const QString &groupName);
-    QtProperty *createGroup(QtProperty &group, const QString &groupName);
-
-    QtProperty *createProperty(QtProperty &group, const QString &propertyName
-        , const int value, const QStringList &values);
-    QtProperty *createProperty(QtProperty &group, const QString &propertyName
-        , const bool value);
-    QtProperty *createProperty(QtProperty &group, const QString &propertyName
-        , const int value, const int minValue, const int maxValue, const int stepValue);
-    QtProperty *createProperty(QtProperty &group, const QString &propertyName
-        , const double value, const double minValue, const double maxValue, const double stepValue);
-    QtProperty *createProperty(QtProperty &group, const QString &propertyName 
-        , const QSizeF &value, const QSizeF &minValue, const QSizeF &maxValue, const QSizeF &stepValue);
-
-    void registerForFastAccess(const QString &name);
-
-    // property helper
-
-    const QSizeF sizeFValue(const QString &name) const;
-    void setSizeFValue(const QString &name, const QSizeF &value);
-    const double doubleValue(const QString &name) const;
-    void setDoubleValue(const QString &name, const double value);
-    const int intValue(const QString &name) const;
-    void setIntValue(const QString &name, const int value);
-    const bool boolValue(const QString &name) const;
-    void setBoolValue(const QString &name, const bool value);
-    const int enumValue(const QString &name) const;
-    void setEnumValue(const QString &name, const int value);
 };
 
-#endif // __PROPERTYSUPPORT_H__
+#endif // __ABSTRACTPROPERTYSUPPORT_H__

@@ -31,14 +31,51 @@
 #ifndef __ABSTRACTHIMMELSCENE_H__
 #define __ABSTRACTHIMMELSCENE_H__
 
-#include <osg/group>
+#include "utils/abstractpropertysupport.h"
+
+#include <osg/Group>
 
 
-class AbstractHimmelScene : public osg::Group
+namespace osg
 {
-protected:
-    AbstractHimmelScene() : osg::Group() { }
-};
+    class Camera;
+    class Viewport;
+}
 
+namespace osgViewer
+{
+    class View;
+}
+
+
+class AbstractHimmelScene 
+:   public osg::Group
+,   public AbstractPropertySupport
+{
+public:
+
+    virtual ~AbstractHimmelScene();
+
+protected:
+
+    AbstractHimmelScene(
+        osgViewer::View* view
+    ,   const QSize &viewportSize);
+
+    // AbstractPropertySupport Interface
+
+	virtual void propertyChanged(QtProperty *p);
+	virtual void registerProperties();
+
+protected:
+
+    osg::Camera *m_camera;
+    osg::Vec4 m_clearColor;
+
+    QSize m_size;
+    float m_fov;
+
+    osg::ref_ptr<osg::Viewport> m_viewport;
+};
 
 #endif // __ABSTRACTHIMMELSCENE_H__

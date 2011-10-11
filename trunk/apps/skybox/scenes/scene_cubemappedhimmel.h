@@ -39,7 +39,10 @@ class TimeF;
 class Scene_CubeMappedHimmel : public AbstractHimmelScene
 {
 public:
-    Scene_CubeMappedHimmel();
+    Scene_CubeMappedHimmel(
+        osgViewer::View* view
+    ,   const QSize &viewportSize);
+
     virtual ~Scene_CubeMappedHimmel();
 
 protected:

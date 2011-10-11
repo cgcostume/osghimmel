@@ -96,8 +96,6 @@ typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
 QOsgWidget::QOsgWidget(QWidget *parent)
 :   QWidget(parent)
 {
-    setAcceptDrops(true);
-
     createContext();
 
     setAttribute(Qt::WA_PaintOnScreen);

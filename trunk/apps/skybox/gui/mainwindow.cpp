@@ -30,6 +30,7 @@
 #include "mainwindow.h"
 #include "apps/skybox/ui_mainwindow.h"
 
+#include "utils/log.h"
 #include "mainlogdispatcher.h"
 
 #include "collapsibledockwidget.h"
@@ -38,12 +39,16 @@
 #include "logoutputwidget.h"
 #include "qosgviewer.h"
 
+#include "scenewidget.h"
+
 #include "scenes/scene_spheremappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
 
 #include "utils/import.h"
 
+
 #include <QFileInfo>
+
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>
@@ -52,17 +57,26 @@
 #include <osgGA/TerrainManipulator>
 #include <osgGA/StateSetManipulator>
 
+#include <osgUtil/Optimizer>
+
+#include <osgDB/ReadFile>
+
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
+
+#include <assert.h>
 
 
 MainWindow::MainWindow(QWidget *parent)
 :   QMainWindow(parent)
 ,   m_ui(new Ui::MainWindow)
+,   m_himmel(NULL)
 ,   m_scene(NULL)
 
 ,   m_glslEditor(NULL)
 ,   m_glslEditorDockWidget(NULL)
+,   m_sceneWidget(NULL)
+,   m_sceneDockWidget(NULL)
 {
     QCoreApplication::setOrganizationName("dm@g4t3.de");
     QCoreApplication::setApplicationName(APPLICATION_NAME);
@@ -75,10 +89,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     const QSize size(m_ui->centralWidget->size());
 
-    initializeScene(m_ui->centralWidget, size);
+    initializeScene();
     initializeManipulator(m_ui->centralWidget);
 
     initializeDockWidgets();
+
+	connect(m_ui->centralWidget, SIGNAL(mouseDrop(QList<QUrl>)),
+		this, SLOT(mouseDroped(QList<QUrl>)));
 }
 
 
@@ -88,6 +105,9 @@ MainWindow::~MainWindow()
 
     delete m_glslEditor;
     delete m_glslEditorDockWidget;
+
+    delete m_sceneWidget;
+    delete m_sceneDockWidget;
 }
 
 
@@ -126,6 +146,13 @@ void MainWindow::uninitializeLog()
 }
 
 
+void MainWindow::initializeScene()
+{
+    assert(!m_scene);
+
+    m_scene = new osg::Group();
+}
+
 void MainWindow::initializeManipulator(osgViewer::View *view)
 {
     // set up the camera manipulators.
@@ -143,32 +170,10 @@ void MainWindow::initializeManipulator(osgViewer::View *view)
 }
 
 
-void MainWindow::initializeScene(
-    osgViewer::View *view
-,   const QSize &size)
-{
-    osg::Camera* cam = view->getCamera();
-
-	cam->setViewport(new osg::Viewport(0, 0, size.width(), size.height()));
-	cam->setProjectionMatrixAsPerspective(
-		40.0f, static_cast<double>(size.width()) / static_cast<double>(size.height()), 0.1f, 8.0f);
-
-	cam->setClearColor(osg::Vec4(1.f, 1.f, 1.f, 1.f));
-
-	osg::ref_ptr<osg::Viewport> viewport = cam->getViewport();
-
-	osg::ref_ptr<osg::Group> root = new osg::Group;
-
-	m_scene = new Scene_CubeMappedHimmel();
-	root->addChild(m_scene);
-
-	view->setSceneData(root.get());
-}
-
-
 void MainWindow::initializeToolBars()
 {
 }
+
 
 //QTextDocument *g_document;
 
@@ -178,6 +183,13 @@ void MainWindow::initializeDockWidgets()
     m_glslEditorDockWidget = new CollapsibleDockWidget(*m_glslEditor, this);
 
     addDockWidget(Qt::RightDockWidgetArea, m_glslEditorDockWidget);
+
+
+    m_sceneWidget = new SceneWidget();
+    m_sceneDockWidget = new CollapsibleDockWidget(*m_sceneWidget, this);
+
+    addDockWidget(Qt::RightDockWidgetArea, m_sceneDockWidget);
+
 
     //g_document = new QTextDocument();
 
@@ -201,6 +213,27 @@ void MainWindow::changeEvent(QEvent *event)
 }
 
 
+void MainWindow::himmelChanged()
+{
+    m_ui->cubeMappedHimmelAction->setChecked(false);
+    m_ui->sphereMappedHimmelAction->setChecked(false);
+    m_ui->proceduralHimmelAction->setChecked(false);
+
+    m_himmel->addChild(m_scene.get());
+}
+
+
+void MainWindow::clearHimmel()
+{
+    if(m_himmel)
+        m_himmel->removeChild(m_scene.get());
+
+    delete m_himmel;
+    m_himmel = NULL;
+}
+
+
+
 void MainWindow::showEvent(QShowEvent *event)
 {
     QMainWindow::showEvent(event);
@@ -215,4 +248,67 @@ void MainWindow::on_quitAction_triggered(bool)
 
 void MainWindow::on_aboutAction_triggered(bool)
 {
+}
+
+
+void MainWindow::on_sphereMappedHimmelAction_triggered(bool)
+{
+    clearHimmel();
+
+    m_himmel = new Scene_SphereMappedHimmel(
+        m_ui->centralWidget, m_ui->centralWidget->size());
+
+    himmelChanged();
+
+    m_ui->sphereMappedHimmelAction->setChecked(true);
+}
+
+
+void MainWindow::on_cubeMappedHimmelAction_triggered(bool)
+{
+    clearHimmel();
+
+    m_himmel = new Scene_CubeMappedHimmel(
+        m_ui->centralWidget, m_ui->centralWidget->size());
+
+    himmelChanged();
+
+    m_ui->cubeMappedHimmelAction->setChecked(true);
+}
+
+
+void MainWindow::on_proceduralHimmelAction_triggered(bool)
+{
+    clearHimmel();
+
+    himmelChanged();
+
+    m_ui->proceduralHimmelAction->setChecked(true);
+}
+
+
+void MainWindow::mouseDroped(QList<QUrl> urlList)
+{
+	for(int i = 0; i < urlList.size(); ++i)
+	{
+		QFileInfo fileInfo(urlList.at(i).path().right(urlList.at(i).path().length() - 1));
+		bool test = fileInfo.exists();
+
+		QString source = fileInfo.absoluteFilePath();
+		const std::string c_source = source.toLatin1();
+
+		osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile(c_source);
+		if(!loadedScene) 
+            _LOG_WARNING("Load Drop Data failed", "Loading " + source + " has failed.");
+
+		else
+		{
+			// optimize the scene graph, remove redundant nodes and state etc.
+			osgUtil::Optimizer optimizer;
+			optimizer.optimize(loadedScene.get());
+
+			m_scene->removeChildren(0, m_scene->getNumChildren());
+			m_scene->addChild(loadedScene.get());
+		}
+	}
 }

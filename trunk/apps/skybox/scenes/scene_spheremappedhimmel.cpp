@@ -37,8 +37,10 @@
 #include <osgDB/ReadFile>
 
 
-Scene_SphereMappedHimmel::Scene_SphereMappedHimmel()
-:   AbstractHimmelScene()
+Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(
+    osgViewer::View* view
+,   const QSize &viewportSize)
+:   AbstractHimmelScene(view, viewportSize)
 ,   m_timef(new TimeF(0.f, 60.f))
 {
     osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel();
@@ -55,11 +57,6 @@ Scene_SphereMappedHimmel::Scene_SphereMappedHimmel()
     himmel->pushTextureUnit(2, 0.66f);
 
     addChild(himmel);
-
-
-    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("resources/knot.obj");
-
-    addChild(loadedScene.get());
 }
 
 

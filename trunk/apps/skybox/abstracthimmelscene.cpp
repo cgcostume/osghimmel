@@ -27,27 +27,69 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __SCENE_SPHEREMAPPEDHIMMEL_H__
-#define __SCENE_SPHEREMAPPEDHIMMEL_H__
-
 #include "abstracthimmelscene.h"
 
+#include <osg/Camera>
 
-class TimeF;
+#include <osgViewer/View>
 
-class Scene_SphereMappedHimmel : public AbstractHimmelScene
+namespace
 {
-public:
-    Scene_SphereMappedHimmel(
-        osgViewer::View* view
-    ,   const QSize &viewportSize);
+	// Properties
 
-    virtual ~Scene_SphereMappedHimmel();
+    static const QString GROUP_ABSTRACTSCENE (TR("Abstract Scene"));
+	static const QString GROUP_ABSTRACTHIMMEL(TR("Abstract Himmel"));
 
-protected:
-    TimeF *m_timef;
-};
+    static const QString PROPERTY_FOV(TR("Field of View"));
+
+    static const QString PROPERTY_TIME   (TR("Time"));
+    static const QString PROPERTY_SECONDS(TR("SecondsPerCycle"));
+}
 
 
-#endif // __SCENE_SPHEREMAPPEDHIMMEL_H__
+AbstractHimmelScene::AbstractHimmelScene(
+    osgViewer::View* view
+,   const QSize &viewportSize)
+:   osg::Group()
+,   AbstractPropertySupport()
+
+
+,   m_camera(NULL)
+,   m_size(viewportSize)
+,   m_fov(40.f)
+,   m_clearColor(osg::Vec4(1.f, 1.f, 1.f, 1.f))
+,   m_viewport(NULL)
+{
+    assert(view);
+
+    m_camera = view->getCamera();
+
+	m_camera->setViewport(new osg::Viewport(0, 0, m_size.width(), m_size.height()));
+	m_camera->setProjectionMatrixAsPerspective(
+		m_fov, static_cast<double>(m_size.width()) / static_cast<double>(m_size.height()), 0.1f, 8.0f);
+
+	m_camera->setClearColor(m_clearColor);
+
+	osg::ref_ptr<osg::Viewport> m_viewport = m_camera->getViewport();
+
+	view->setSceneData(this);
+}
+
+
+AbstractHimmelScene::~AbstractHimmelScene()
+{
+}
+
+
+void AbstractHimmelScene::propertyChanged(QtProperty *p)
+{
+}
+
+
+void AbstractHimmelScene::registerProperties()
+{
+    QtProperty *himmelGroup = createGroup(GROUP_ABSTRACTHIMMEL);
+
+	createProperty(*himmelGroup , PROPERTY_TIME, 0.0, 0.0, 1.0, 0.02);
+	registerForFastAccess(PROPERTY_TIME);
+}

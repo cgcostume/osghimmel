@@ -33,6 +33,7 @@ SET(QT_USE_CORE TRUE)
 
 SET(SKYBOX_SOURCES
     abstracthimmelscene.h
+    abstracthimmelscene.cpp
     mainlogdispatcher.h
     mainlogdispatcher.cpp
     skyboxmain.cpp
@@ -60,17 +61,19 @@ SET(SKYBOX_SOURCES
     gui/mainwindow.cpp
     gui/mainwindow.ui
     gui/plaintextwithlinenumberareasupport.h
-    gui/propertysupport.h
-    gui/propertysupport.cpp
     gui/qosgviewer.h
     gui/qosgviewer.cpp
     gui/qosgwidget.h
     gui/qosgwidget.cpp
+    gui/scenewidget.h
+    gui/scenewidget.cpp
     scenes/scene_cubemappedhimmel.h
     scenes/scene_cubemappedhimmel.cpp
     scenes/scene_spheremappedhimmel.h
     scenes/scene_spheremappedhimmel.cpp
     utils/abstractfactory.hpp
+    utils/abstractpropertysupport.h
+    utils/abstractpropertysupport.cpp
     utils/glslsyntax.hpp
     utils/glsltypes.h
     utils/import.h

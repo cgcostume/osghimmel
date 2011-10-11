@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "propertysupport.h"
+#include "abstractpropertysupport.h"
 
 #include <qtpropertybrowser/QtProperty>
 #include <qtpropertybrowser/QtAbstractPropertyBrowser>
@@ -43,7 +43,7 @@
 #include <qtpropertybrowser/QtDoubleSpinBoxFactory>
 
 
-PropertySupport::PropertySupport()
+AbstractPropertySupport::AbstractPropertySupport()
 :   m_propertiesInitialized(false)
 ,   m_groupManager(NULL)
 ,   m_intManager(NULL)
@@ -60,7 +60,7 @@ PropertySupport::PropertySupport()
 }
 
 
-PropertySupport::~PropertySupport()
+AbstractPropertySupport::~AbstractPropertySupport()
 {
     delete m_groupManager;
     delete m_intManager;
@@ -78,32 +78,32 @@ PropertySupport::~PropertySupport()
 
 
 
-QtProperty *PropertySupport::property(const QString &name) const
+QtProperty *AbstractPropertySupport::property(const QString &name) const
 {
     assert(m_properties.contains(name));
     return m_properties[name];
 }
 
 
-QtIntPropertyManager *PropertySupport::propertyIntManager() const
+QtIntPropertyManager *AbstractPropertySupport::propertyIntManager() const
 {
     return m_intManager;
 }
 
 
-QtDoublePropertyManager *PropertySupport::propertyDoubleManager() const
+QtDoublePropertyManager *AbstractPropertySupport::propertyDoubleManager() const
 {
     return m_doubleManager;
 }
 
 
-QtBoolPropertyManager *PropertySupport::propertyBoolManager() const
+QtBoolPropertyManager *AbstractPropertySupport::propertyBoolManager() const
 {
     return m_boolManager;
 }
 
 
-QtProperty *PropertySupport::createGroup(const QString &groupName)
+QtProperty *AbstractPropertySupport::createGroup(const QString &groupName)
 {
     assert(m_groupManager);
 
@@ -114,7 +114,7 @@ QtProperty *PropertySupport::createGroup(const QString &groupName)
 }
 
 
-QtProperty *PropertySupport::createGroup(QtProperty &group, const QString &groupName)
+QtProperty *AbstractPropertySupport::createGroup(QtProperty &group, const QString &groupName)
 {
     assert(m_groupManager);
 
@@ -125,7 +125,7 @@ QtProperty *PropertySupport::createGroup(QtProperty &group, const QString &group
 }
 
 
-QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
+QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
 	const int value, const QStringList &values)
 {
     m_properties.insert(propertyName, m_enumManager->addProperty(propertyName));
@@ -140,7 +140,7 @@ QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &pr
 }
 
 
-QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
+QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
 	const bool value)
 {
     m_properties.insert(propertyName, m_boolManager->addProperty(propertyName));
@@ -154,7 +154,7 @@ QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &pr
 }
 
 
-QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
+QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
 	const double value, const double minValue, const double maxValue, const double stepValue)
 {
     m_properties.insert(propertyName, m_doubleManager->addProperty(propertyName));
@@ -170,7 +170,7 @@ QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &pr
 }
 
 
-QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
+QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
 	const QSizeF &value, const QSizeF &minValue, const QSizeF &maxValue, const QSizeF &stepValue)
 {
     m_properties.insert(propertyName, m_sizeFManager->addProperty(propertyName));
@@ -188,7 +188,7 @@ QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &pr
 }
 
 
-QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
+QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
 	const int value, const int minValue, const int maxValue, const int stepValue)
 {
     m_properties.insert(propertyName, m_intManager->addProperty(propertyName));
@@ -204,13 +204,13 @@ QtProperty *PropertySupport::createProperty(QtProperty &group, const QString &pr
 }
 
 
-void PropertySupport::registerForFastAccess(const QString &name)
+void AbstractPropertySupport::registerForFastAccess(const QString &name)
 {
     m_fastAccessProperties.append(property(name));
 }
 
 
-void PropertySupport::initializeProperties()
+void AbstractPropertySupport::initializeProperties()
 {
     if(!m_propertiesInitialized)
     {
@@ -234,7 +234,7 @@ void PropertySupport::initializeProperties()
 }
 
 
-void PropertySupport::floodPropertyBrowser(QtAbstractPropertyBrowser *propertyBrowser)
+void AbstractPropertySupport::floodPropertyBrowser(QtAbstractPropertyBrowser *propertyBrowser)
 {
     assert(m_propertiesInitialized);
 
@@ -264,7 +264,7 @@ void PropertySupport::floodPropertyBrowser(QtAbstractPropertyBrowser *propertyBr
 }
 
 
-void PropertySupport::clearPropertyBrowser(QtAbstractPropertyBrowser *propertyBrowser)
+void AbstractPropertySupport::clearPropertyBrowser(QtAbstractPropertyBrowser *propertyBrowser)
 {
     assert(m_propertiesInitialized);
 
@@ -292,82 +292,82 @@ void PropertySupport::clearPropertyBrowser(QtAbstractPropertyBrowser *propertyBr
 }
 
 
-const QList<QtProperty*> &PropertySupport::fastAccessProperties() const
+const QList<QtProperty*> &AbstractPropertySupport::fastAccessProperties() const
 {
     return m_fastAccessProperties;
 }
 
 
-void PropertySupport::on_propertyChanged(QtProperty *p)
+void AbstractPropertySupport::on_propertyChanged(QtProperty *p)
 {
     propertyChanged(p);
 }
 
 
-const double PropertySupport::doubleValue(const QString &name) const
+const double AbstractPropertySupport::doubleValue(const QString &name) const
 {
     assert(m_properties.contains(name));
     return m_doubleManager->value(m_properties[name]);
 }
 
 
-void PropertySupport::setDoubleValue(const QString &name, const double value)
+void AbstractPropertySupport::setDoubleValue(const QString &name, const double value)
 {
     assert(m_properties.contains(name));
     m_doubleManager->setValue(m_properties[name], value);
 }
 
 
-const int PropertySupport::intValue(const QString &name) const
+const int AbstractPropertySupport::intValue(const QString &name) const
 {
     assert(m_properties.contains(name));
     return m_intManager->value(m_properties[name]);
 }
 
 
-void PropertySupport::setIntValue(const QString &name, const int value)
+void AbstractPropertySupport::setIntValue(const QString &name, const int value)
 {
     assert(m_properties.contains(name));
     m_intManager->setValue(m_properties[name], value);
 }
 
 
-const int PropertySupport::enumValue(const QString &name) const
+const int AbstractPropertySupport::enumValue(const QString &name) const
 {
 	assert(m_properties.contains(name));
 	return m_enumManager->value(m_properties[name]);
 }
 
 
-void PropertySupport::setEnumValue(const QString &name, const int value)
+void AbstractPropertySupport::setEnumValue(const QString &name, const int value)
 {
     assert(m_properties.contains(name));
     m_enumManager->setValue(m_properties[name], value);
 }
 
 
-const bool PropertySupport::boolValue(const QString &name) const
+const bool AbstractPropertySupport::boolValue(const QString &name) const
 {
     assert(m_properties.contains(name));
     return m_boolManager->value(m_properties[name]);
 }
 
 
-void PropertySupport::setBoolValue(const QString &name, const bool value)
+void AbstractPropertySupport::setBoolValue(const QString &name, const bool value)
 {
     assert(m_properties.contains(name));
     m_boolManager->setValue(m_properties[name], value);
 }
 
 
-const QSizeF PropertySupport::sizeFValue(const QString &name) const
+const QSizeF AbstractPropertySupport::sizeFValue(const QString &name) const
 {
     assert(m_properties.contains(name));
     return m_sizeFManager->value(m_properties[name]);
 }
 
 
-void PropertySupport::setSizeFValue(const QString &name, const QSizeF &value)
+void AbstractPropertySupport::setSizeFValue(const QString &name, const QSizeF &value)
 {
     assert(m_properties.contains(name));
     m_sizeFManager->setValue(m_properties[name], value);
