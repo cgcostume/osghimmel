@@ -28,26 +28,30 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SCENE_SPHEREMAPPEDHIMMEL_H__
-#define __SCENE_SPHEREMAPPEDHIMMEL_H__
-
-#include "abstracthimmelscene.h"
+#ifndef __SCENEWIDGET_H__
+#define __SCENEWIDGET_H__
 
 
-class TimeF;
+#include <QWidget>
 
-class Scene_SphereMappedHimmel : public AbstractHimmelScene
+class AbstractHimmelScene;
+class QtTreePropertyBrowser;
+
+
+class SceneWidget : public QWidget
 {
-public:
-    Scene_SphereMappedHimmel(
-        osgViewer::View* view
-    ,   const QSize &viewportSize);
+	Q_OBJECT
 
-    virtual ~Scene_SphereMappedHimmel();
+public:
+	SceneWidget(QWidget* parent = NULL);
+	virtual ~SceneWidget();
+
+	void setScene(AbstractHimmelScene *scene);
 
 protected:
-    TimeF *m_timef;
+	AbstractHimmelScene *m_scene;
+
+	QtTreePropertyBrowser *m_propertyBrowser;
 };
 
-
-#endif // __SCENE_SPHEREMAPPEDHIMMEL_H__
+#endif __SCENEWIDGET_H__

@@ -33,21 +33,32 @@
 
 #include <QMainWindow>
 
-#include <osg/Group>
-
-class LogOutputWidget;
-class LogOutputLabel;
-class CollapsibleDockWidget;
-
 class Ui_MainWindow;
+
+#include <osg/ref_ptr>
+
+#include <QUrl>
+#include <QList>
 
 namespace osgViewer 
 {
     class View;
 }
 
+namespace osg
+{
+    class Group;
+}
+
+
+class LogOutputWidget;
+class LogOutputLabel;
 
 class GLSLEditor;
+class SceneWidget;
+
+class AbstractHimmelScene;
+
 class CollapsibleDockWidget;
 
 
@@ -66,22 +77,30 @@ protected:
     CollapsibleDockWidget *m_logDockWidget;
 
 protected:
+    void initializeScene();
+
     void initializeToolBars();
     void initializeDockWidgets();
 
     void initializeManipulator(osgViewer::View *viewer);
-    void initializeScene(
-        osgViewer::View *view
-    ,   const QSize &size);
 
     virtual void changeEvent(QEvent *event);
     virtual void showEvent(QShowEvent *event);
 
+    void clearHimmel();
+    void himmelChanged();
+
 protected slots:
+
+    void mouseDroped(QList<QUrl> urlList);
 
     // ui
     void on_quitAction_triggered(bool);
     void on_aboutAction_triggered(bool);
+
+    void on_sphereMappedHimmelAction_triggered(bool);
+    void on_cubeMappedHimmelAction_triggered(bool);
+    void on_proceduralHimmelAction_triggered(bool);
 
 
 private:
@@ -94,12 +113,16 @@ protected:
     GLSLEditor *m_glslEditor;
     CollapsibleDockWidget *m_glslEditorDockWidget;
 
+    SceneWidget *m_sceneWidget;
+    CollapsibleDockWidget *m_sceneDockWidget;
+
 
 private:
 
     std::auto_ptr<Ui_MainWindow> m_ui;
     LogOutputLabel *m_logStatusLabel;
 
+    AbstractHimmelScene *m_himmel;
     osg::ref_ptr<osg::Group> m_scene;
 };
 

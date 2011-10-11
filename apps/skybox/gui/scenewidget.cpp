@@ -27,27 +27,56 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __SCENE_SPHEREMAPPEDHIMMEL_H__
-#define __SCENE_SPHEREMAPPEDHIMMEL_H__
+#include "scenewidget.h"
 
 #include "abstracthimmelscene.h"
 
+#include <QVBoxLayout>
 
-class TimeF;
+#include <qtpropertybrowser/QtTreePropertyBrowser>
 
-class Scene_SphereMappedHimmel : public AbstractHimmelScene
+
+// EffectPropertyWidget
+
+SceneWidget::SceneWidget(QWidget *parent)
+:	QWidget(parent)
+,   m_scene(NULL)
+,   m_propertyBrowser(NULL)
 {
-public:
-    Scene_SphereMappedHimmel(
-        osgViewer::View* view
-    ,   const QSize &viewportSize);
+    setWindowTitle("Properties");
 
-    virtual ~Scene_SphereMappedHimmel();
+	// setup property browser and stuff
+	m_propertyBrowser = new QtTreePropertyBrowser(this);
+	m_propertyBrowser->setResizeMode(QtTreePropertyBrowser::Interactive);
+	m_propertyBrowser->setStyleSheet("QTreeView { alternate-background-color: #e6ebf2; background-color: #f2f4f8; }");
+	m_propertyBrowser->setAlternatingRowColors(true);
 
-protected:
-    TimeF *m_timef;
-};
+	// setup ui
+	setLayout(new QVBoxLayout(this));
+	layout()->setSpacing(4);
+	layout()->setMargin(4);
+
+	layout()->addWidget(m_propertyBrowser);
+
+	setDisabled(true);
+}
 
 
-#endif // __SCENE_SPHEREMAPPEDHIMMEL_H__
+SceneWidget::~SceneWidget()
+{
+
+}
+
+
+void SceneWidget::setScene(AbstractHimmelScene *scene)
+{
+	if(m_scene)
+		m_scene->clearPropertyBrowser(m_propertyBrowser);
+
+	m_scene = scene;
+
+	setDisabled(m_scene == NULL);
+
+	if(m_scene)
+		m_scene->floodPropertyBrowser(m_propertyBrowser);
+}

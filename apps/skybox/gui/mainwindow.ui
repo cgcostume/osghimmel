@@ -11,6 +11,12 @@
    </rect>
   </property>
   <widget class="QOsgViewer" name="centralWidget">
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <property name="acceptDrops">
+    <bool>true</bool>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="spacing">
      <number>0</number>
@@ -36,6 +42,12 @@
     <property name="title">
      <string>&amp;Canvas</string>
     </property>
+    <addaction name="cubeMappedHimmelAction"/>
+    <addaction name="sphereMappedHimmelAction"/>
+    <addaction name="proceduralHimmelAction"/>
+    <addaction name="separator"/>
+    <addaction name="insert3DObjectFromFileAction"/>
+    <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
@@ -242,6 +254,55 @@
   <action name="createNewBrushAction">
    <property name="text">
     <string>&amp;Create new Brush...</string>
+   </property>
+  </action>
+  <action name="actionAsd">
+   <property name="text">
+    <string>asd</string>
+   </property>
+  </action>
+  <action name="cubeMappedHimmelAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;CubeMapped Himmel</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="sphereMappedHimmelAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;SphereMapped Himmel</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="proceduralHimmelAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Procedural Himmel</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="insert3DObjectFromFileAction">
+   <property name="text">
+    <string>&amp;Insert 3D-Object from File ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>
