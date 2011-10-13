@@ -48,7 +48,8 @@
 
 
 #include <QFileInfo>
-
+#include <QFileDialog>
+#include <QSettings>
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>
@@ -65,6 +66,11 @@
 #include <osgViewer/ViewerEventHandlers>
 
 #include <assert.h>
+
+namespace
+{
+    const QString SETTINGS_GROUP_COMMON_GUI("common");
+}
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -148,10 +154,13 @@ void MainWindow::uninitializeLog()
 
 void MainWindow::initializeScene()
 {
+    m_ui->centralWidget->setEnabled(false);
+
     assert(!m_scene);
 
     m_scene = new osg::Group();
 }
+
 
 void MainWindow::initializeManipulator(osgViewer::View *view)
 {
@@ -219,7 +228,10 @@ void MainWindow::himmelChanged()
     m_ui->sphereMappedHimmelAction->setChecked(false);
     m_ui->proceduralHimmelAction->setChecked(false);
 
-    m_himmel->addChild(m_scene.get());
+    if(m_himmel)
+        m_himmel->addChild(m_scene.get());
+
+    m_ui->centralWidget->setEnabled(NULL != m_himmel);
 }
 
 
@@ -287,28 +299,72 @@ void MainWindow::on_proceduralHimmelAction_triggered(bool)
 }
 
 
+const bool MainWindow::insert3DObjectFromFile(const QFileInfo &fileInfo)
+{
+    assert(m_scene);
+
+    QString source = fileInfo.absoluteFilePath();
+    const std::string c_source = source.toLatin1();
+
+    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile(c_source);
+    if(!loadedScene)
+    {
+        _LOG_WARNING("Load Drop Data failed", "Loading " + source + " has failed.");
+        return false;
+    }
+
+    // optimize the scene graph, remove redundant nodes and state etc.
+    osgUtil::Optimizer optimizer;
+    optimizer.optimize(loadedScene.get());
+
+    m_scene->addChild(loadedScene.get());
+    return true;
+}
+
+
+void MainWindow::remove3DObjectsFromScene()
+{
+    assert(m_scene);
+
+    m_scene->removeChildren(0, m_scene->getNumChildren());
+}
+
+
+void MainWindow::on_insert3DObjectFromFileAction_triggered(bool)
+{
+    static const QString SETTINGS_KEY_LAST_PATH("Last3DObjectFromFilePath");
+
+    QSettings s;
+    s.beginGroup(SETTINGS_GROUP_COMMON_GUI);
+    QString last3DObjectFromFilePath(s.value(SETTINGS_KEY_LAST_PATH).toString());
+    s.endGroup();
+
+    const QStringList fileNames(QFileDialog::getOpenFileNames(
+        this, TR("Insert 3D Objects from File(s)"), last3DObjectFromFilePath));
+
+    foreach(const QString &fileName, fileNames)
+    {
+        if(insert3DObjectFromFile(QFileInfo(fileName)))
+            last3DObjectFromFilePath = QFileInfo(fileName).absolutePath();
+    }
+
+    s.beginGroup(SETTINGS_GROUP_COMMON_GUI);
+    s.setValue(SETTINGS_KEY_LAST_PATH, last3DObjectFromFilePath);
+    s.endGroup();
+}
+
+
+void MainWindow::on_clearSceneAction_triggered(bool)
+{
+    remove3DObjectsFromScene();
+}
+
+
 void MainWindow::mouseDroped(QList<QUrl> urlList)
 {
 	for(int i = 0; i < urlList.size(); ++i)
 	{
 		QFileInfo fileInfo(urlList.at(i).path().right(urlList.at(i).path().length() - 1));
-		bool test = fileInfo.exists();
-
-		QString source = fileInfo.absoluteFilePath();
-		const std::string c_source = source.toLatin1();
-
-		osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile(c_source);
-		if(!loadedScene) 
-            _LOG_WARNING("Load Drop Data failed", "Loading " + source + " has failed.");
-
-		else
-		{
-			// optimize the scene graph, remove redundant nodes and state etc.
-			osgUtil::Optimizer optimizer;
-			optimizer.optimize(loadedScene.get());
-
-			m_scene->removeChildren(0, m_scene->getNumChildren());
-			m_scene->addChild(loadedScene.get());
-		}
+        insert3DObjectFromFile(fileInfo);
 	}
 }

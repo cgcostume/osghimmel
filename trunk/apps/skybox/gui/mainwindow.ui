@@ -47,6 +47,7 @@
     <addaction name="proceduralHimmelAction"/>
     <addaction name="separator"/>
     <addaction name="insert3DObjectFromFileAction"/>
+    <addaction name="clearSceneAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
@@ -299,10 +300,18 @@
   </action>
   <action name="insert3DObjectFromFileAction">
    <property name="text">
-    <string>&amp;Insert 3D-Object from File ...</string>
+    <string>&amp;Insert 3D-Objects from File ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="clearSceneAction">
+   <property name="text">
+    <string>Clea&amp;r Scene</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>
