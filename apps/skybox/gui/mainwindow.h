@@ -40,6 +40,8 @@ class Ui_MainWindow;
 #include <QUrl>
 #include <QList>
 
+class QFileInfo;
+
 namespace osgViewer 
 {
     class View;
@@ -90,6 +92,9 @@ protected:
     void clearHimmel();
     void himmelChanged();
 
+    const bool insert3DObjectFromFile(const QFileInfo &fileInfo);
+    void remove3DObjectsFromScene();
+
 protected slots:
 
     void mouseDroped(QList<QUrl> urlList);
@@ -102,11 +107,13 @@ protected slots:
     void on_cubeMappedHimmelAction_triggered(bool);
     void on_proceduralHimmelAction_triggered(bool);
 
+    void on_insert3DObjectFromFileAction_triggered(bool);
+    void on_clearSceneAction_triggered(bool);
+
 
 private:
     void initializeLog();
     void uninitializeLog();
-
 
 protected:
 
