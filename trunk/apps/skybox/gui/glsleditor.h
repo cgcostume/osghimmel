@@ -51,7 +51,7 @@ signals:
 public slots:
 
 protected:
-    std::auto_ptr<Ui_GLSLEditor> _ui;
+    std::auto_ptr<Ui_GLSLEditor> m_ui;
 };
 
 #endif // __GLSLEDITOR_H__

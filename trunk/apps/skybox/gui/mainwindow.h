@@ -41,6 +41,8 @@ class Ui_MainWindow;
 #include <QList>
 
 class QFileInfo;
+class QLabel;
+class QTimer;
 
 namespace osgViewer 
 {
@@ -50,16 +52,20 @@ namespace osgViewer
 namespace osg
 {
     class Group;
+    class Camera;
 }
 
 
 class LogOutputWidget;
 class LogOutputLabel;
 
+class DateTimeWidget;
 class GLSLEditor;
-class SceneWidget;
+class PropertyWidget;
 
 class AbstractHimmelScene;
+
+class TimeF;
 
 class CollapsibleDockWidget;
 
@@ -99,6 +105,8 @@ protected slots:
 
     void mouseDroped(QList<QUrl> urlList);
 
+    void me_timeout();
+
     // ui
     void on_quitAction_triggered(bool);
     void on_aboutAction_triggered(bool);
@@ -117,20 +125,33 @@ private:
 
 protected:
 
+    QTimer *m_timer;
+
+    QLabel *m_dateTimeLabel;
+    QLabel *m_timefLabel;
+
+    DateTimeWidget *m_dateTimeWidget;
+    CollapsibleDockWidget *m_dateTimeDockWidget;
+
     GLSLEditor *m_glslEditor;
     CollapsibleDockWidget *m_glslEditorDockWidget;
 
-    SceneWidget *m_sceneWidget;
-    CollapsibleDockWidget *m_sceneDockWidget;
-
+    PropertyWidget *m_propertyWidget;
+    CollapsibleDockWidget *m_propertyDockWidget;
 
 private:
 
     std::auto_ptr<Ui_MainWindow> m_ui;
     LogOutputLabel *m_logStatusLabel;
 
-    AbstractHimmelScene *m_himmel;
+    TimeF *m_timef;
+
+    osg::ref_ptr<AbstractHimmelScene> m_himmel;
+
+    osg::ref_ptr<osg::Group> m_root;
     osg::ref_ptr<osg::Group> m_scene;
+
+    osg::Camera *m_camera;
 };
 
 

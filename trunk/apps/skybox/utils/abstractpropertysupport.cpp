@@ -62,6 +62,13 @@ AbstractPropertySupport::AbstractPropertySupport()
 
 AbstractPropertySupport::~AbstractPropertySupport()
 {
+    QSet<QtAbstractPropertyBrowser*> pbs(m_propertyBrowsers);   // copy, since clear removes it from set
+
+    foreach(QtAbstractPropertyBrowser *propertyBrowser, pbs)
+        clearPropertyBrowser(propertyBrowser);
+
+    assert(m_propertyBrowsers.isEmpty());
+
     delete m_groupManager;
     delete m_intManager;
     delete m_doubleManager;
@@ -241,6 +248,8 @@ void AbstractPropertySupport::floodPropertyBrowser(QtAbstractPropertyBrowser *pr
     if(!propertyBrowser)
         return;
 
+    m_propertyBrowsers.insert(propertyBrowser);
+
     connect(m_enumManager, SIGNAL(valueChanged(QtProperty*, int)),
         this, SLOT(on_propertyChanged(QtProperty*)));
     connect(m_boolManager, SIGNAL(valueChanged(QtProperty*, bool)),
@@ -270,6 +279,8 @@ void AbstractPropertySupport::clearPropertyBrowser(QtAbstractPropertyBrowser *pr
 
     if(!propertyBrowser)
         return;
+
+    m_propertyBrowsers.remove(propertyBrowser);
 
     disconnect(m_enumManager, SIGNAL(valueChanged(QtProperty*, int)),
         this, SLOT(on_propertyChanged(QtProperty*)));

@@ -34,19 +34,24 @@
 #include "abstracthimmelscene.h"
 
 
-class TimeF;
+class CubeMappedHimmel;
 
-class Scene_CubeMappedHimmel : public AbstractHimmelScene
+class Scene_CubeMappedHimmel 
+:   public AbstractHimmelScene
 {
 public:
-    Scene_CubeMappedHimmel(
-        osgViewer::View* view
-    ,   const QSize &viewportSize);
+    Scene_CubeMappedHimmel(osg::Camera *camera);
 
     virtual ~Scene_CubeMappedHimmel();
 
+    virtual AbstractHimmel *himmel();
+
 protected:
-    TimeF *m_timef;
+
+	virtual void registerSpecializedProperties();
+
+protected:
+    osg::ref_ptr<CubeMappedHimmel> m_himmel;
 };
 
 

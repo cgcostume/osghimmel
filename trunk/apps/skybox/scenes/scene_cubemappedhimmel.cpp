@@ -30,27 +30,33 @@
 #include "scene_cubemappedhimmel.h"
 
 #include "include/cubemappedhimmel.h"
-#include "include/timef.h"
 
 #include <osg/TextureCubeMap>
 
 #include <osgDB/ReadFile>
 
 
-Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(
-    osgViewer::View* view
-,   const QSize &viewportSize)
-:   AbstractHimmelScene(view, viewportSize)
-,   m_timef(new TimeF(0.f, 60.f))
+namespace
 {
-    osg::ref_ptr<CubeMappedHimmel> himmel = new CubeMappedHimmel();
+	// Properties
 
-    himmel->assignTime(m_timef, true);
-    himmel->setTransitionDuration(0.2f);
+    static const QString GROUP_CUBEMAPPED(TR("Cube Mapped"));
 
-    osg::TextureCubeMap *tcm0 = himmel->getOrCreateTextureCubeMap(0);
-    osg::TextureCubeMap *tcm1 = himmel->getOrCreateTextureCubeMap(1);
-    osg::TextureCubeMap *tcm2 = himmel->getOrCreateTextureCubeMap(2);
+    static const QString PROPERTY_TEST1  (TR("Test1"));
+    static const QString PROPERTY_TEST2  (TR("Test2"));
+}
+
+Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
+:   AbstractHimmelScene(camera)
+,   m_himmel(NULL)
+{
+    m_himmel = new CubeMappedHimmel();
+
+    m_himmel->setTransitionDuration(0.2f);
+
+    osg::TextureCubeMap *tcm0 = m_himmel->getOrCreateTextureCubeMap(0);
+    osg::TextureCubeMap *tcm1 = m_himmel->getOrCreateTextureCubeMap(1);
+    osg::TextureCubeMap *tcm2 = m_himmel->getOrCreateTextureCubeMap(2);
 
     // px = lf; nx = rt; py = dn; ny = up; pz = ft; nz = bk    <- common skybox mapping (lhs to rhs)
 
@@ -75,14 +81,32 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(
     tcm2->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_2_pz.tga"));
     tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_2_nz.tga"));
 
-    himmel->pushTextureUnit(0, 0.00f);
-    himmel->pushTextureUnit(1, 0.33f);
-    himmel->pushTextureUnit(2, 0.66f);
+    m_himmel->pushTextureUnit(0, 0.00f);
+    m_himmel->pushTextureUnit(1, 0.33f);
+    m_himmel->pushTextureUnit(2, 0.66f);
 
-    addChild(himmel);
+    addChild(m_himmel);
 }
 
 
 Scene_CubeMappedHimmel::~Scene_CubeMappedHimmel()
 {
+}
+
+
+AbstractHimmel *Scene_CubeMappedHimmel::himmel()
+{
+    return m_himmel;
+}
+
+
+void Scene_CubeMappedHimmel::registerSpecializedProperties()
+{
+    QtProperty *cubeGroup = createGroup(GROUP_CUBEMAPPED);
+
+	createProperty(*cubeGroup , PROPERTY_TEST1, 0.0, 0.0, 1.0, 0.02);
+	registerForFastAccess(PROPERTY_TEST1);
+
+	createProperty(*cubeGroup , PROPERTY_TEST2, 0.0, 0.0, 1.0, 0.02);
+	registerForFastAccess(PROPERTY_TEST2);
 }

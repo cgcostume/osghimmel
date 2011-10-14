@@ -45,6 +45,11 @@ QOsgViewer::QOsgViewer(QWidget *parent)
 }
 
 
+QOsgViewer::~QOsgViewer()
+{
+}
+
+
 void QOsgViewer::initialize()
 {
     setCameraManipulator(new osgGA::TrackballManipulator);

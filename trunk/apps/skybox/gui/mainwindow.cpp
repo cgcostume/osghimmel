@@ -34,22 +34,26 @@
 #include "mainlogdispatcher.h"
 
 #include "collapsibledockwidget.h"
+#include "datetimewidget.h"
 #include "glsleditor.h"
 #include "logoutputlabel.h"
 #include "logoutputwidget.h"
 #include "qosgviewer.h"
 
-#include "scenewidget.h"
+#include "propertywidget.h"
 
 #include "scenes/scene_spheremappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
 
 #include "utils/import.h"
 
+#include "include/timef.h"
+
 
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QSettings>
+#include <QTimer>
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>
@@ -78,11 +82,19 @@ MainWindow::MainWindow(QWidget *parent)
 ,   m_ui(new Ui::MainWindow)
 ,   m_himmel(NULL)
 ,   m_scene(NULL)
+,   m_root(NULL)
+,   m_timef(NULL)
+,   m_camera(NULL)
 
+,   m_timer(NULL)
+,   m_dateTimeLabel(NULL)
+,   m_timefLabel(NULL)
+,   m_dateTimeWidget(NULL)
+,   m_dateTimeDockWidget(NULL)
 ,   m_glslEditor(NULL)
 ,   m_glslEditorDockWidget(NULL)
-,   m_sceneWidget(NULL)
-,   m_sceneDockWidget(NULL)
+,   m_propertyWidget(NULL)
+,   m_propertyDockWidget(NULL)
 {
     QCoreApplication::setOrganizationName("dm@g4t3.de");
     QCoreApplication::setApplicationName(APPLICATION_NAME);
@@ -107,13 +119,20 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    clearHimmel();
+
+    m_root->removeChild(m_scene);
+    m_scene->unref();
+
+    m_ui->centralWidget->setSceneData(NULL);
+    m_root->unref();
+
+    delete m_timer;
+
+    delete m_timef;
+    m_timef = NULL;
+
     uninitializeLog();
-
-    delete m_glslEditor;
-    delete m_glslEditorDockWidget;
-
-    delete m_sceneWidget;
-    delete m_sceneDockWidget;
 }
 
 
@@ -154,11 +173,52 @@ void MainWindow::uninitializeLog()
 
 void MainWindow::initializeScene()
 {
-    m_ui->centralWidget->setEnabled(false);
+    m_camera = m_ui->centralWidget->getCamera();
+    m_camera->setViewport(new osg::Viewport(
+        0, 0, m_ui->centralWidget->width(), m_ui->centralWidget->height()));
+    
+    m_camera->setProjectionMatrixAsPerspective(
+        40.f, static_cast<double>(m_ui->centralWidget->width()) / static_cast<double>(m_ui->centralWidget->height()), 0.1, 8.f);
+
+    m_camera->setClearColor(osg::Vec4(1.f, 1.f, 1.f, 1.f));
 
     assert(!m_scene);
 
+    m_root  = new osg::Group();
     m_scene = new osg::Group();
+
+    m_root->addChild(m_scene.get());
+    m_ui->centralWidget->setSceneData(m_root.get());
+
+    m_timef = new TimeF(time(NULL), 30.f);
+}
+
+
+void MainWindow::himmelChanged()
+{
+    m_ui->cubeMappedHimmelAction->setChecked(false);
+    m_ui->sphereMappedHimmelAction->setChecked(false);
+    m_ui->proceduralHimmelAction->setChecked(false);
+
+    if(m_himmel)
+    {
+        m_himmel->assignTime(m_timef);
+        m_root->addChild(m_himmel.get());
+    }
+
+    m_propertyWidget->assign(m_himmel);
+}
+
+
+void MainWindow::clearHimmel()
+{
+    if(m_himmel)
+    {
+        m_root->removeChild(m_himmel.get());
+
+        m_himmel->unref();
+        m_himmel = NULL;
+    }
 }
 
 
@@ -184,25 +244,42 @@ void MainWindow::initializeToolBars()
 }
 
 
-//QTextDocument *g_document;
-
 void MainWindow::initializeDockWidgets()
 {
+    // initialize further status bar items
+
+    m_dateTimeLabel = new QLabel();
+    m_ui->statusBar->addWidget(m_dateTimeLabel, 2);
+    
+    m_timefLabel = new QLabel();
+    m_ui->statusBar->addWidget(m_timefLabel, 1);
+
+
+    // setup timer for status bar updates()
+
+    m_timer = new QTimer();
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(me_timeout()));
+
+    m_timer->start(16);
+
+    // initialize widgets
+
+    m_dateTimeWidget = new DateTimeWidget(*m_timef);
+    m_dateTimeDockWidget = new CollapsibleDockWidget(*m_dateTimeWidget, this);
+
+    addDockWidget(Qt::RightDockWidgetArea, m_dateTimeDockWidget);
+
+    
+    m_propertyWidget = new PropertyWidget();
+    m_propertyDockWidget = new CollapsibleDockWidget(*m_propertyWidget, this);
+
+    addDockWidget(Qt::RightDockWidgetArea, m_propertyDockWidget);
+
+
     m_glslEditor = new GLSLEditor();
     m_glslEditorDockWidget = new CollapsibleDockWidget(*m_glslEditor, this);
 
     addDockWidget(Qt::RightDockWidgetArea, m_glslEditorDockWidget);
-
-
-    m_sceneWidget = new SceneWidget();
-    m_sceneDockWidget = new CollapsibleDockWidget(*m_sceneWidget, this);
-
-    addDockWidget(Qt::RightDockWidgetArea, m_sceneDockWidget);
-
-
-    //g_document = new QTextDocument();
-
-    //m_glslEditor->setDocument(g_document, GLSL_FRAGMENT);
 }
 
 
@@ -220,30 +297,6 @@ void MainWindow::changeEvent(QEvent *event)
         break;
     }
 }
-
-
-void MainWindow::himmelChanged()
-{
-    m_ui->cubeMappedHimmelAction->setChecked(false);
-    m_ui->sphereMappedHimmelAction->setChecked(false);
-    m_ui->proceduralHimmelAction->setChecked(false);
-
-    if(m_himmel)
-        m_himmel->addChild(m_scene.get());
-
-    m_ui->centralWidget->setEnabled(NULL != m_himmel);
-}
-
-
-void MainWindow::clearHimmel()
-{
-    if(m_himmel)
-        m_himmel->removeChild(m_scene.get());
-
-    delete m_himmel;
-    m_himmel = NULL;
-}
-
 
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -267,8 +320,7 @@ void MainWindow::on_sphereMappedHimmelAction_triggered(bool)
 {
     clearHimmel();
 
-    m_himmel = new Scene_SphereMappedHimmel(
-        m_ui->centralWidget, m_ui->centralWidget->size());
+    m_himmel = new Scene_SphereMappedHimmel(m_camera);
 
     himmelChanged();
 
@@ -280,8 +332,7 @@ void MainWindow::on_cubeMappedHimmelAction_triggered(bool)
 {
     clearHimmel();
 
-    m_himmel = new Scene_CubeMappedHimmel(
-        m_ui->centralWidget, m_ui->centralWidget->size());
+    m_himmel = new Scene_CubeMappedHimmel(m_camera);
 
     himmelChanged();
 
@@ -367,4 +418,15 @@ void MainWindow::mouseDroped(QList<QUrl> urlList)
 		QFileInfo fileInfo(urlList.at(i).path().right(urlList.at(i).path().length() - 1));
         insert3DObjectFromFile(fileInfo);
 	}
+}
+
+
+void MainWindow::me_timeout()
+{
+    assert(m_timef);
+
+    m_timefLabel->setText(QString::number(m_timef->getf(), 'f', 4));
+
+    const QDateTime dt(QDateTime::fromTime_t(m_timef->gett()));
+    m_dateTimeLabel->setText(dt.toString(Qt::ISODate));
 }

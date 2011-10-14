@@ -34,57 +34,59 @@
 #include <assert.h>
 
 
-DockTitleBarWidget::DockTitleBarWidget(QDockWidget* parent, const bool useParentIcon)
-:    QWidget(parent)
-,    _ui(new Ui_DockTitleBarWidget)
+DockTitleBarWidget::DockTitleBarWidget(
+    QDockWidget *parent
+,   const bool useParentIcon)
+:   QWidget(parent)
+,   m_ui(new Ui_DockTitleBarWidget)
 {
     assert(parent);
-    _ui->setupUi(this);
+    m_ui->setupUi(this);
 
     // 'copy' default title bar
-    _ui->closeToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarCloseButton));
-    _ui->detachToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarNormalButton));
-    _ui->collapseToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarUnshadeButton));
+    m_ui->closeToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarCloseButton));
+    m_ui->detachToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarNormalButton));
+    m_ui->collapseToolButton->setIcon(QApplication::style()->standardPixmap(QStyle::SP_TitleBarUnshadeButton));
 
     setWindowTitle(parent->windowTitle());
     if(useParentIcon)
         setWindowIcon(parent->windowIcon());
     else
-        _ui->iconLabel->setVisible(false);
+        m_ui->iconLabel->setVisible(false);
 
-    QPalette p(_ui->frame->palette());
+    QPalette p(m_ui->frame->palette());
     p.setColor(QPalette::Window, QColor("#DBDBDB"));
     p.setColor(QPalette::Foreground, QColor("#B9B9B9"));
-    _ui->frame->setPalette(p);
+    m_ui->frame->setPalette(p);
 
-    connect(_ui->closeToolButton, SIGNAL(clicked(bool)), parent, SLOT(close()));
+    connect(m_ui->closeToolButton, SIGNAL(clicked(bool)), parent, SLOT(close()));
 }
 
 
 DockTitleBarWidget::~DockTitleBarWidget()
 {    
-    disconnect(_ui->closeToolButton, SIGNAL(clicked(bool)), parent(), SLOT(close()));
+    disconnect(m_ui->closeToolButton, SIGNAL(clicked(bool)), parent(), SLOT(close()));
 }
 
 
 void DockTitleBarWidget::setWindowIcon(const QIcon &icon)
 {
-    _ui->iconLabel->setVisible(true);
-    _ui->iconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+    m_ui->iconLabel->setVisible(true);
+    m_ui->iconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
     QWidget::setWindowIcon(icon);
 }
 
 
 void DockTitleBarWidget::setWindowTitle(const QString &title)
 {
-    _ui->titleLabel->setText(title);
+    m_ui->titleLabel->setText(title);
     QWidget::setWindowTitle(title);
 }
 
 
-void DockTitleBarWidget::mouseDoubleClickEvent(QMouseEvent* event)
+void DockTitleBarWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if(_ui->collapseToolButton->isEnabled())
+    if(m_ui->collapseToolButton->isEnabled())
         emit collapse();
 }
 
@@ -103,13 +105,13 @@ void DockTitleBarWidget::on_detachToolButton_clicked(bool checked)
 
 void DockTitleBarWidget::setCollapsed(const bool collapsed)
 {
-    _ui->collapseToolButton->setIcon(QApplication::style()->standardPixmap(
+    m_ui->collapseToolButton->setIcon(QApplication::style()->standardPixmap(
         collapsed ? QStyle::SP_TitleBarUnshadeButton : QStyle::SP_TitleBarShadeButton));
 }
 
 
 void DockTitleBarWidget::setAllowCollapse(const bool allow)
 {
-    _ui->collapseToolButton->setEnabled(allow);
-    _ui->collapseToolButton->setVisible(allow);
+    m_ui->collapseToolButton->setEnabled(allow);
+    m_ui->collapseToolButton->setVisible(allow);
 }

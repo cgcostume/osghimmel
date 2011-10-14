@@ -34,19 +34,23 @@
 #include "abstracthimmelscene.h"
 
 
-class TimeF;
+class SphereMappedHimmel;
 
 class Scene_SphereMappedHimmel : public AbstractHimmelScene
 {
 public:
-    Scene_SphereMappedHimmel(
-        osgViewer::View* view
-    ,   const QSize &viewportSize);
+    Scene_SphereMappedHimmel(osg::Camera *camera);
 
     virtual ~Scene_SphereMappedHimmel();
 
+    virtual AbstractHimmel *himmel();
+
 protected:
-    TimeF *m_timef;
+
+    virtual void registerSpecializedProperties() { }
+
+protected:
+    osg::ref_ptr<SphereMappedHimmel> m_himmel;
 };
 
 

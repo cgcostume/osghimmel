@@ -47,28 +47,30 @@ class DockTitleBarWidget
     Q_OBJECT
 
 public:
-    DockTitleBarWidget(QDockWidget* parent, const bool useParentIcon = true);
+    DockTitleBarWidget(
+        QDockWidget *parent
+    ,   const bool useParentIcon = true);
     virtual ~DockTitleBarWidget();
 
     void setAllowCollapse(const bool allow);
     void setCollapsed(const bool collapsed);
-    void setWindowIcon(const QIcon& icon);
+    void setWindowIcon(const QIcon &icon);
 
 signals:
     void detach();
     void collapse();
 
 public slots:
-    void setWindowTitle(const QString& title);
+    void setWindowTitle(const QString &title);
 
     void on_collapseToolButton_clicked(bool checked = false);
     void on_detachToolButton_clicked(bool checked = false);
 
 protected:
-    std::auto_ptr<Ui_DockTitleBarWidget> _ui;
+    std::auto_ptr<Ui_DockTitleBarWidget> m_ui;
 
 protected:
-    virtual void mouseDoubleClickEvent(QMouseEvent* event);
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
 };
 
 #endif // __DOCKTITLEBARWIDGET_H__

@@ -105,6 +105,11 @@ QOsgWidget::QOsgWidget(QWidget *parent)
 }
 
 
+QOsgWidget::~QOsgWidget()
+{
+}
+
+
 void QOsgWidget::createContext()
 {
     osg::DisplaySettings* ds = osg::DisplaySettings::instance();
