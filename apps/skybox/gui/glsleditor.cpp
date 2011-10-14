@@ -33,11 +33,18 @@
 #include <assert.h>
 
 
+QTextDocument *g_document;
+
 GLSLEditor::GLSLEditor(QWidget* parent)
 :    QWidget(parent)
-,    _ui(new Ui_GLSLEditor)
+,    m_ui(new Ui_GLSLEditor)
 {
-    _ui->setupUi(this);
+    m_ui->setupUi(this);
+
+    
+    g_document = new QTextDocument();
+
+    m_ui->glslTextEdit->setDocument(g_document, GLSL_FRAGMENT);
 }
 
 

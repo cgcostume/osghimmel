@@ -42,11 +42,9 @@ namespace osg
     class Viewport;
 }
 
-namespace osgViewer
-{
-    class View;
-}
 
+class AbstractHimmel;
+class TimeF;
 
 class AbstractHimmelScene 
 :   public osg::Group
@@ -55,27 +53,28 @@ class AbstractHimmelScene
 public:
 
     virtual ~AbstractHimmelScene();
+    
+    void assignTime(TimeF *timef);
 
 protected:
 
-    AbstractHimmelScene(
-        osgViewer::View* view
-    ,   const QSize &viewportSize);
+    AbstractHimmelScene(osg::Camera *camera);
+
+    virtual AbstractHimmel *himmel() = 0;
 
     // AbstractPropertySupport Interface
 
 	virtual void propertyChanged(QtProperty *p);
 	virtual void registerProperties();
 
+    // 
+
+    virtual void registerSpecializedProperties() = 0;
+
 protected:
 
     osg::Camera *m_camera;
-    osg::Vec4 m_clearColor;
-
-    QSize m_size;
-    float m_fov;
-
-    osg::ref_ptr<osg::Viewport> m_viewport;
+    osg::Viewport *m_viewport;
 };
 
 #endif // __ABSTRACTHIMMELSCENE_H__

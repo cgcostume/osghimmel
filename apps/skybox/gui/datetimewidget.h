@@ -27,41 +27,57 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "scene_spheremappedhimmel.h"
-
-#include "include/spheremappedhimmel.h"
-
-#include <osg/Texture2D>
-
-#include <osgDB/ReadFile>
+#pragma once
+#ifndef __DATETIMEWIDGET_H__
+#define __DATETIMEWIDGET_H__
 
 
-Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
-:   AbstractHimmelScene(camera)
-,   m_himmel(NULL)
+#include <QWidget>
+
+class Ui_DateTimeWidget;
+
+class QTimer;
+
+class TimeF;
+
+
+class DateTimeWidget 
+:    public QWidget
 {
-    m_himmel = new SphereMappedHimmel();
+    Q_OBJECT
 
-    m_himmel->setTransitionDuration(0.2f);
+public:
+    DateTimeWidget(
+        TimeF &timef
+    ,   QWidget *parent = NULL);
 
-    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sky_sphere_0.tga"));
-    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sky_sphere_1.tga"));
-    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sky_sphere_2.tga"));
+    virtual ~DateTimeWidget();
 
-    m_himmel->pushTextureUnit(0, 0.00f);
-    m_himmel->pushTextureUnit(1, 0.33f);
-    m_himmel->pushTextureUnit(2, 0.66f);
+public slots:
 
-    addChild(m_himmel);
-}
+    void cycle();
+    void pause();
 
+protected slots:
 
-Scene_SphereMappedHimmel::~Scene_SphereMappedHimmel()
-{
-}
+    void on_applyPushButton_clicked(bool checked);
+    void on_cyclePushButton_toggled(bool checked);
 
+    void on_secondsPerCycleDoubleSpinBox_valueChanged(double value);
 
-AbstractHimmel *Scene_SphereMappedHimmel::himmel()
-{
-    return m_himmel;
-}
+    void on_timeSlider_valueChanged(int value);
+
+    void me_timeout();
+
+protected:
+
+    const bool isCycling() const;
+
+protected:
+    std::auto_ptr<Ui_DateTimeWidget> m_ui;
+
+    TimeF &m_timef;
+    QTimer *m_timer;
+};
+
+#endif // __DATETIMEWIDGET_H__

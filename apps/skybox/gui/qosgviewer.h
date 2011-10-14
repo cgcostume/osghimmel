@@ -46,6 +46,8 @@ class QOsgViewer : public QOsgWidget, public osgViewer::Viewer
 public:
 
     QOsgViewer(QWidget *parent = 0);
+    virtual ~QOsgViewer();
+
     virtual void initialize();
 
     public slots:

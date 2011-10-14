@@ -39,11 +39,12 @@ TimeF::TimeF(
 ,   const float secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
+,   m_mode(M_RUNNING)
+,   m_offset(0.f)
+,   m_lastModeChangeTime(0.f)
 {
-    m_timef[1] = 0.f;
-    m_time[1]  = 0;
-
-    setf(time);
+    initialize();
+    setf(time, true);
 }
 
 
@@ -52,11 +53,20 @@ TimeF::TimeF(
 ,   const float secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
+,   m_mode(M_RUNNING)
+,   m_offset(0.f)
+,   m_lastModeChangeTime(0.f)
 {
+    initialize();
+    sett(time, true);
+}
+
+void TimeF::initialize()
+{
+    m_lastModeChangeTime = m_timer->time_s();
+
     m_timef[1] = 0.f;
     m_time[1]  = 0;
-
-    sett(time);
 }
 
 
@@ -68,9 +78,10 @@ TimeF::~TimeF()
 
 void TimeF::update()
 {
-    const float elapsed(m_timer->time_s());
+    float elapsed(M_RUNNING == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
+    elapsed -= m_offset;
 
-    if(m_secondsPerCycle)
+    if(M_RUNNING == m_mode)
     {
         const float elapsedTimef(elapsed / m_secondsPerCycle);
 
@@ -97,11 +108,32 @@ const float TimeF::getf(const bool updateFirst)
 
 
 const float TimeF::setf(
-    const float time
+    float timef
 ,   const bool forceUpdate)
 {
-    m_timef[0] = time;
-    m_time[0] = fToSeconds(time);
+    if(1.f == timef)
+        timef = 0.f;
+
+    m_timef[0] = timef;
+    m_timef[2] = m_timef[0];
+
+    const time_t seconds(fToSeconds(timef));
+    struct tm lcl(*localtime(&m_time[0]));
+
+    /*struct tm gmt(*gmtime(&m_time[0]));
+
+    const int lcls(mktime(&lcl));
+    const int gmts(mktime(&gmt));
+
+    const time_t offseth((lcls - gmts) / 3600);
+    */
+
+    lcl.tm_hour = seconds / 3600; // - offseth;
+    lcl.tm_min  = seconds % 3600 / 60;
+    lcl.tm_sec  = seconds % 60;
+
+    m_time[0] = mktime(&lcl);
+    m_time[2] = m_time[0];
 
     if(forceUpdate)
         update();
@@ -123,11 +155,13 @@ const time_t TimeF::sett(
     const time_t &time
 ,   const bool forceUpdate)
 {
-    
     m_time[0] = time;
+    m_time[2] = m_time[0];
 
     m_timef[0] = secondsTof(time);
     m_timef[0] -= static_cast<int>(m_timef[0]);
+
+    m_timef[2] = m_timef[0];
 
     if(forceUpdate)
         update();
@@ -152,4 +186,45 @@ inline const float TimeF::secondsTof(const time_t &time)
 inline const time_t TimeF::fToSeconds(const float time)
 {
     return static_cast<time_t>(time * 60.f * 60.f * 24.f);
+}
+
+
+void TimeF::run()
+{
+    if(M_PAUSING == m_mode)
+    {
+        const float t(m_timer->time_s());
+        m_offset += t - m_lastModeChangeTime;
+        m_lastModeChangeTime = t;
+    }
+    m_mode = M_RUNNING;
+
+    update();
+}
+
+
+void TimeF::pause()
+{
+    if(M_RUNNING == m_mode)
+    {
+        m_lastModeChangeTime = m_timer->time_s();
+    }
+    m_mode = M_PAUSING;
+
+    update();
+}
+ 
+
+void TimeF::reset()
+{
+    m_offset = 0.f;
+    m_lastModeChangeTime = 0.f;
+
+    m_timef[0] = m_timef[2];
+    m_time[0] = m_time[0];
+
+    delete m_timer;
+    m_timer = new osg::Timer();
+
+    update();
 }

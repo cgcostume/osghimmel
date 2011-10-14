@@ -48,6 +48,12 @@ namespace osg
 
 class TimeF
 {
+    enum e_Mode
+    {
+        M_RUNNING
+    ,   M_PAUSING
+    };
+
 public:
     TimeF(
         const float time = 0.f
@@ -62,6 +68,10 @@ public:
     // increments time appropriate to secondsPerCycle
     void update();
 
+    // osg timer manipulation
+    void run();
+    void pause();
+    void reset();
 
     inline const float getSecondsPerCycle() const
     {
@@ -79,8 +89,9 @@ public:
     }
 
     const float getf(const bool updateFirst);
+    // sets only time, date remains unchanged
     const float setf(
-        const float time
+        float time
     ,   const bool forceUpdate = false);
 
 
@@ -101,11 +112,17 @@ protected:
     static inline const float secondsTof(const time_t &time);
     static inline const time_t fToSeconds(const float time);
 
+    void initialize();
+
 protected:
     osg::Timer *m_timer;
 
-    time_t m_time[2];
-    float m_timef[2];
+    time_t m_time[3];   // [2] is for reset
+    float m_timef[3];   // [2] is for reset
+
+    e_Mode m_mode;
+    float m_lastModeChangeTime;
+    float m_offset;
 
     float m_secondsPerCycle;
 };

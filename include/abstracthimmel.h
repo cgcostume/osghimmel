@@ -34,7 +34,6 @@
 #include <osg/Transform>
 #include <osg/NodeCallback>
 
-
 class TimeF;
 class HimmelQuad;
 

@@ -44,6 +44,7 @@ class QOsgWidget : public QWidget
 
 public:
     QOsgWidget(QWidget *parent = 0);
+    virtual ~QOsgWidget();
 
     osgViewer::GraphicsWindow* getGraphicsWindow() 
     { 

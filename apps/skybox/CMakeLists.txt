@@ -41,6 +41,9 @@ SET(SKYBOX_SOURCES
     stable.cpp
     gui/collapsibledockwidget.h
     gui/collapsibledockwidget.cpp
+    gui/datetimewidget.h
+    gui/datetimewidget.cpp
+    gui/datetimewidget.ui
     gui/docktitlebarwidget.h
     gui/docktitlebarwidget.cpp
     gui/docktitlebarwidget.ui
@@ -61,12 +64,12 @@ SET(SKYBOX_SOURCES
     gui/mainwindow.cpp
     gui/mainwindow.ui
     gui/plaintextwithlinenumberareasupport.h
+    gui/propertywidget.h
+    gui/propertywidget.cpp
     gui/qosgviewer.h
     gui/qosgviewer.cpp
     gui/qosgwidget.h
     gui/qosgwidget.cpp
-    gui/scenewidget.h
-    gui/scenewidget.cpp
     scenes/scene_cubemappedhimmel.h
     scenes/scene_cubemappedhimmel.cpp
     scenes/scene_spheremappedhimmel.h

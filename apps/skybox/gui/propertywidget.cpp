@@ -27,9 +27,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "scenewidget.h"
+#include "propertywidget.h"
 
-#include "abstracthimmelscene.h"
+#include "utils/abstractpropertysupport.h"
 
 #include <QVBoxLayout>
 
@@ -38,9 +38,9 @@
 
 // EffectPropertyWidget
 
-SceneWidget::SceneWidget(QWidget *parent)
+PropertyWidget::PropertyWidget(QWidget *parent)
 :	QWidget(parent)
-,   m_scene(NULL)
+,   m_props(NULL)
 ,   m_propertyBrowser(NULL)
 {
     setWindowTitle("Properties");
@@ -62,21 +62,18 @@ SceneWidget::SceneWidget(QWidget *parent)
 }
 
 
-SceneWidget::~SceneWidget()
+PropertyWidget::~PropertyWidget()
 {
 
 }
 
 
-void SceneWidget::setScene(AbstractHimmelScene *scene)
+void PropertyWidget::assign(AbstractPropertySupport *props)
 {
-	if(m_scene)
-		m_scene->clearPropertyBrowser(m_propertyBrowser);
+	m_props = props;
 
-	m_scene = scene;
+	setDisabled(m_props == NULL);
 
-	setDisabled(m_scene == NULL);
-
-	if(m_scene)
-		m_scene->floodPropertyBrowser(m_propertyBrowser);
+	if(m_props)
+		m_props->floodPropertyBrowser(m_propertyBrowser);
 }

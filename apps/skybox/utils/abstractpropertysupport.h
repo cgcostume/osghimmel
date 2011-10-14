@@ -192,6 +192,8 @@ protected:
     QHash<QString, QtProperty*> m_properties;
 
     QList<QtProperty*> m_fastAccessProperties;
+
+    QSet<QtAbstractPropertyBrowser*> m_propertyBrowsers;
 };
 
 #endif // __ABSTRACTPROPERTYSUPPORT_H__

@@ -29,6 +29,9 @@
 
 #include "abstracthimmelscene.h"
 
+#include "include/abstracthimmel.h"
+#include "include/timef.h"
+
 #include <osg/Camera>
 
 #include <osgViewer/View>
@@ -47,32 +50,17 @@ namespace
 }
 
 
-AbstractHimmelScene::AbstractHimmelScene(
-    osgViewer::View* view
-,   const QSize &viewportSize)
+AbstractHimmelScene::AbstractHimmelScene(osg::Camera *camera)
 :   osg::Group()
 ,   AbstractPropertySupport()
 
-
-,   m_camera(NULL)
-,   m_size(viewportSize)
-,   m_fov(40.f)
-,   m_clearColor(osg::Vec4(1.f, 1.f, 1.f, 1.f))
+,   m_camera(camera)
 ,   m_viewport(NULL)
 {
-    assert(view);
+    initializeProperties();
 
-    m_camera = view->getCamera();
-
-	m_camera->setViewport(new osg::Viewport(0, 0, m_size.width(), m_size.height()));
-	m_camera->setProjectionMatrixAsPerspective(
-		m_fov, static_cast<double>(m_size.width()) / static_cast<double>(m_size.height()), 0.1f, 8.0f);
-
-	m_camera->setClearColor(m_clearColor);
-
-	osg::ref_ptr<osg::Viewport> m_viewport = m_camera->getViewport();
-
-	view->setSceneData(this);
+    assert(camera);
+    m_viewport = m_camera->getViewport();
 }
 
 
@@ -92,4 +80,13 @@ void AbstractHimmelScene::registerProperties()
 
 	createProperty(*himmelGroup , PROPERTY_TIME, 0.0, 0.0, 1.0, 0.02);
 	registerForFastAccess(PROPERTY_TIME);
+
+//   registerSpecializedProperties();
+}
+
+
+void AbstractHimmelScene::assignTime(TimeF *timef)
+{
+    if(himmel())
+        himmel()->assignTime(timef, false);
 }

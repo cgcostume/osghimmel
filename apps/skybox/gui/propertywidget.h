@@ -28,30 +28,30 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SCENEWIDGET_H__
-#define __SCENEWIDGET_H__
+#ifndef __PROPERTYWIDGET_H__
+#define __PROPERTYWIDGET_H__
 
 
 #include <QWidget>
 
-class AbstractHimmelScene;
+class AbstractPropertySupport;
 class QtTreePropertyBrowser;
 
 
-class SceneWidget : public QWidget
+class PropertyWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	SceneWidget(QWidget* parent = NULL);
-	virtual ~SceneWidget();
+	PropertyWidget(QWidget* parent = NULL);
+	virtual ~PropertyWidget();
 
-	void setScene(AbstractHimmelScene *scene);
+	void assign(AbstractPropertySupport *props);
 
 protected:
-	AbstractHimmelScene *m_scene;
+	AbstractPropertySupport *m_props;
 
 	QtTreePropertyBrowser *m_propertyBrowser;
 };
 
-#endif __SCENEWIDGET_H__
+#endif // __PROPERTYWIDGET_H__
