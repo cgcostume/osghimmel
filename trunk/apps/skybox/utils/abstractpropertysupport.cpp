@@ -133,7 +133,7 @@ QtProperty *AbstractPropertySupport::createGroup(QtProperty &group, const QStrin
 
 
 QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
-	const int value, const QStringList &values)
+    const int value, const QStringList &values)
 {
     m_properties.insert(propertyName, m_enumManager->addProperty(propertyName));
 
@@ -148,7 +148,7 @@ QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QSt
 
 
 QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
-	const bool value)
+    const bool value)
 {
     m_properties.insert(propertyName, m_boolManager->addProperty(propertyName));
 
@@ -162,7 +162,7 @@ QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QSt
 
 
 QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
-	const double value, const double minValue, const double maxValue, const double stepValue)
+    const double value, const double minValue, const double maxValue, const double stepValue)
 {
     m_properties.insert(propertyName, m_doubleManager->addProperty(propertyName));
 
@@ -178,7 +178,7 @@ QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QSt
 
 
 QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
-	const QSizeF &value, const QSizeF &minValue, const QSizeF &maxValue, const QSizeF &stepValue)
+    const QSizeF &value, const QSizeF &minValue, const QSizeF &maxValue, const QSizeF &stepValue)
 {
     m_properties.insert(propertyName, m_sizeFManager->addProperty(propertyName));
 
@@ -196,7 +196,7 @@ QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QSt
 
 
 QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
-	const int value, const int minValue, const int maxValue, const int stepValue)
+    const int value, const int minValue, const int maxValue, const int stepValue)
 {
     m_properties.insert(propertyName, m_intManager->addProperty(propertyName));
 
@@ -345,8 +345,8 @@ void AbstractPropertySupport::setIntValue(const QString &name, const int value)
 
 const int AbstractPropertySupport::enumValue(const QString &name) const
 {
-	assert(m_properties.contains(name));
-	return m_enumManager->value(m_properties[name]);
+    assert(m_properties.contains(name));
+    return m_enumManager->value(m_properties[name]);
 }
 
 

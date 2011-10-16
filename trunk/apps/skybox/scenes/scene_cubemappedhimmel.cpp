@@ -38,7 +38,7 @@
 
 namespace
 {
-	// Properties
+    // Properties
 
     static const QString GROUP_CUBEMAPPED(TR("Cube Mapped"));
 
@@ -50,6 +50,8 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
 ,   m_himmel(NULL)
 {
+    initializeProperties();
+
     m_himmel = new CubeMappedHimmel();
 
     m_himmel->setTransitionDuration(0.2f);
@@ -100,13 +102,15 @@ AbstractHimmel *Scene_CubeMappedHimmel::himmel()
 }
 
 
-void Scene_CubeMappedHimmel::registerSpecializedProperties()
+void Scene_CubeMappedHimmel::registerProperties()
 {
+    AbstractHimmelScene::registerProperties();
+
     QtProperty *cubeGroup = createGroup(GROUP_CUBEMAPPED);
 
-	createProperty(*cubeGroup , PROPERTY_TEST1, 0.0, 0.0, 1.0, 0.02);
-	registerForFastAccess(PROPERTY_TEST1);
+    createProperty(*cubeGroup , PROPERTY_TEST1, 0.0, 0.0, 1.0, 0.02);
+    registerForFastAccess(PROPERTY_TEST1);
 
-	createProperty(*cubeGroup , PROPERTY_TEST2, 0.0, 0.0, 1.0, 0.02);
-	registerForFastAccess(PROPERTY_TEST2);
+    createProperty(*cubeGroup , PROPERTY_TEST2, 0.0, 0.0, 1.0, 0.02);
+    registerForFastAccess(PROPERTY_TEST2);
 }

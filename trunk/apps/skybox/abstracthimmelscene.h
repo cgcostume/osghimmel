@@ -64,12 +64,8 @@ protected:
 
     // AbstractPropertySupport Interface
 
-	virtual void propertyChanged(QtProperty *p);
-	virtual void registerProperties();
-
-    // 
-
-    virtual void registerSpecializedProperties() = 0;
+    virtual void propertyChanged(QtProperty *p);
+    virtual void registerProperties();
 
 protected:
 

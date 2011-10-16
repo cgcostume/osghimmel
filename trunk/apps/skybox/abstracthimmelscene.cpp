@@ -38,10 +38,10 @@
 
 namespace
 {
-	// Properties
+    // Properties
 
     static const QString GROUP_ABSTRACTSCENE (TR("Abstract Scene"));
-	static const QString GROUP_ABSTRACTHIMMEL(TR("Abstract Himmel"));
+    static const QString GROUP_ABSTRACTHIMMEL(TR("Abstract Himmel"));
 
     static const QString PROPERTY_FOV(TR("Field of View"));
 
@@ -57,8 +57,6 @@ AbstractHimmelScene::AbstractHimmelScene(osg::Camera *camera)
 ,   m_camera(camera)
 ,   m_viewport(NULL)
 {
-    initializeProperties();
-
     assert(camera);
     m_viewport = m_camera->getViewport();
 }
@@ -76,12 +74,12 @@ void AbstractHimmelScene::propertyChanged(QtProperty *p)
 
 void AbstractHimmelScene::registerProperties()
 {
+    _LOG_DEBUG("%p", this);
+
     QtProperty *himmelGroup = createGroup(GROUP_ABSTRACTHIMMEL);
 
-	createProperty(*himmelGroup , PROPERTY_TIME, 0.0, 0.0, 1.0, 0.02);
-	registerForFastAccess(PROPERTY_TIME);
-
-//   registerSpecializedProperties();
+    createProperty(*himmelGroup , PROPERTY_TIME, 0.0, 0.0, 1.0, 0.02);
+    registerForFastAccess(PROPERTY_TIME);
 }
 
 

@@ -40,7 +40,7 @@ set(LIB_SOURCES
     spheremappedhimmel.cpp
     timef.cpp
     twounitschanger.cpp
-	
+    
     ${HEADER_PATH}/abstracthimmel.h
     ${HEADER_PATH}/abstractmappedhimmel.h
     ${HEADER_PATH}/cubemappedhimmel.h
@@ -75,5 +75,5 @@ add_library(osghimmel STATIC ${LIB_SOURCES})
 set_default_target_properties(osghimmel ON)
 
 if(OPTION_MAKE_SKYBOX)
-	ADD_DEFINITIONS("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
+    ADD_DEFINITIONS("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
 endif()

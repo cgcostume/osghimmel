@@ -83,6 +83,9 @@ protected slots:
     void on_propertyChanged(QtProperty*);
 
 protected:
+
+    // Since this calls register Properties, call it in the lowest subclass. And
+    // Call overloaded registerProperties from base classes.
     void initializeProperties();
 
     virtual void propertyChanged(QtProperty *p) = 0;

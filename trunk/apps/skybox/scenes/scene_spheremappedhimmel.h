@@ -47,7 +47,8 @@ public:
 
 protected:
 
-    virtual void registerSpecializedProperties() { }
+    // from AbstractPropertySupport
+    virtual void registerProperties();
 
 protected:
     osg::ref_ptr<SphereMappedHimmel> m_himmel;

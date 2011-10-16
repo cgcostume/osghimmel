@@ -37,7 +37,7 @@ template<class T>
 class AbstractFactory
 {
 public:
-	// factory interface
+    // factory interface
     static const bool reg(T *object, const QString &name);
 
     static const QStringList identifiers();
@@ -73,7 +73,7 @@ template<class T>
 T *AbstractFactory<T>::create(const QString &identifier)
 {
     if(m_registeredObjectsByIdentifier.contains(identifier))
-	    return m_registeredObjectsByIdentifier[identifier]->copy();
+        return m_registeredObjectsByIdentifier[identifier]->copy();
     return NULL;
 }
 
