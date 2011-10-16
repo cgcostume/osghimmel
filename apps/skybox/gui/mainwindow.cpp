@@ -112,8 +112,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     initializeDockWidgets();
 
-	connect(m_ui->centralWidget, SIGNAL(mouseDrop(QList<QUrl>)),
-		this, SLOT(mouseDroped(QList<QUrl>)));
+    connect(m_ui->centralWidget, SIGNAL(mouseDrop(QList<QUrl>)),
+        this, SLOT(mouseDroped(QList<QUrl>)));
 }
 
 
@@ -413,11 +413,11 @@ void MainWindow::on_clearSceneAction_triggered(bool)
 
 void MainWindow::mouseDroped(QList<QUrl> urlList)
 {
-	for(int i = 0; i < urlList.size(); ++i)
-	{
-		QFileInfo fileInfo(urlList.at(i).path().right(urlList.at(i).path().length() - 1));
+    for(int i = 0; i < urlList.size(); ++i)
+    {
+        QFileInfo fileInfo(urlList.at(i).path().right(urlList.at(i).path().length() - 1));
         insert3DObjectFromFile(fileInfo);
-	}
+    }
 }
 
 

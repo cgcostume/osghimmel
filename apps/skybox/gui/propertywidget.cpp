@@ -39,26 +39,26 @@
 // EffectPropertyWidget
 
 PropertyWidget::PropertyWidget(QWidget *parent)
-:	QWidget(parent)
+:   QWidget(parent)
 ,   m_props(NULL)
 ,   m_propertyBrowser(NULL)
 {
     setWindowTitle("Properties");
 
-	// setup property browser and stuff
-	m_propertyBrowser = new QtTreePropertyBrowser(this);
-	m_propertyBrowser->setResizeMode(QtTreePropertyBrowser::Interactive);
-	m_propertyBrowser->setStyleSheet("QTreeView { alternate-background-color: #e6ebf2; background-color: #f2f4f8; }");
-	m_propertyBrowser->setAlternatingRowColors(true);
+    // setup property browser and stuff
+    m_propertyBrowser = new QtTreePropertyBrowser(this);
+    m_propertyBrowser->setResizeMode(QtTreePropertyBrowser::Interactive);
+    m_propertyBrowser->setStyleSheet("QTreeView { alternate-background-color: #e6ebf2; background-color: #f2f4f8; }");
+    m_propertyBrowser->setAlternatingRowColors(true);
 
-	// setup ui
-	setLayout(new QVBoxLayout(this));
-	layout()->setSpacing(4);
-	layout()->setMargin(4);
+    // setup ui
+    setLayout(new QVBoxLayout(this));
+    layout()->setSpacing(4);
+    layout()->setMargin(4);
 
-	layout()->addWidget(m_propertyBrowser);
+    layout()->addWidget(m_propertyBrowser);
 
-	setDisabled(true);
+    setDisabled(true);
 }
 
 
@@ -70,10 +70,10 @@ PropertyWidget::~PropertyWidget()
 
 void PropertyWidget::assign(AbstractPropertySupport *props)
 {
-	m_props = props;
+    m_props = props;
 
-	setDisabled(m_props == NULL);
+    setDisabled(m_props == NULL);
 
-	if(m_props)
-		m_props->floodPropertyBrowser(m_propertyBrowser);
+    if(m_props)
+        m_props->floodPropertyBrowser(m_propertyBrowser);
 }

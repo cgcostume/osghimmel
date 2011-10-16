@@ -36,10 +36,19 @@
 #include <osgDB/ReadFile>
 
 
+namespace
+{
+    // Properties
+
+    static const QString GROUP_SPHEREMAPPED(TR("Sphere Mapped"));
+}
+
 Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
 ,   m_himmel(NULL)
 {
+    initializeProperties();
+
     m_himmel = new SphereMappedHimmel();
 
     m_himmel->setTransitionDuration(0.2f);
@@ -64,4 +73,12 @@ Scene_SphereMappedHimmel::~Scene_SphereMappedHimmel()
 AbstractHimmel *Scene_SphereMappedHimmel::himmel()
 {
     return m_himmel;
+}
+
+
+void Scene_SphereMappedHimmel::registerProperties()
+{
+    AbstractHimmelScene::registerProperties();
+
+    QtProperty *sphereGroup = createGroup(GROUP_SPHEREMAPPED);
 }

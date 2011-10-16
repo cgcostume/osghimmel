@@ -40,18 +40,18 @@ class QtTreePropertyBrowser;
 
 class PropertyWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	PropertyWidget(QWidget* parent = NULL);
-	virtual ~PropertyWidget();
+    PropertyWidget(QWidget* parent = NULL);
+    virtual ~PropertyWidget();
 
-	void assign(AbstractPropertySupport *props);
+    void assign(AbstractPropertySupport *props);
 
 protected:
-	AbstractPropertySupport *m_props;
+    AbstractPropertySupport *m_props;
 
-	QtTreePropertyBrowser *m_propertyBrowser;
+    QtTreePropertyBrowser *m_propertyBrowser;
 };
 
 #endif // __PROPERTYWIDGET_H__

@@ -113,7 +113,7 @@ target_link_libraries(skybox
 
 install(TARGETS skybox
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-	CONFIGURATIONS Debug Release)
+    CONFIGURATIONS Debug Release)
 
 install(FILES 
     "${QT_BINARY_DIR}/QtCored${QT_VERSION_MAJOR}.dll"

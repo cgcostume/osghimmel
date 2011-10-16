@@ -37,7 +37,7 @@ namespace
 {
     // From the "The OpenGL Shading Language 1.50 Quick Reference Card"
 
-	static QString glsl_syntax_TransparentTypes = (
+    static QString glsl_syntax_TransparentTypes = (
         "\\b("
             "void|"
             "bool|"
@@ -216,12 +216,12 @@ namespace
 
     static QString glsl_syntax_IterationAndJumps_f = (
         "\\b("
-		    "discard"
+            "discard"
         ")\\b");
 
     static QString glsl_syntax_Functions = (
         "\\b("
-		    "main"
+            "main"
         ")\\b");
 
     static QString glsl_syntax_AngleAndTrigonometryFunctions = (
