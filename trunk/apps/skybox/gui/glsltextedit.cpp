@@ -62,7 +62,7 @@ GLSLTextEdit::GLSLTextEdit(QWidget *parent)
 
     highlightCurrentLine();
 
-    setDocument(NULL, UNDEFINED);
+    setDocument(NULL, GLSL_UNDEFINED);
 }
 
 
@@ -146,7 +146,7 @@ void GLSLTextEdit::setDocument(
         setupCompleter(glsl_complete_common + glsl_complete_f);
         break;
     default:
-        setupCompleter();
+        setupCompleter(glsl_complete_common);
     }
 
     // setup status
