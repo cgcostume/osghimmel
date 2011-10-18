@@ -48,9 +48,9 @@ ShaderModifier::~ShaderModifier()
 }
 
 
-std::vector<ShaderModifier::t_identifier> ShaderModifier::getIdentifier() const
+const ShaderModifier::t_identifiers ShaderModifier::getIdentifiers() const
 {
-    std::vector<t_identifier> identifier;
+    t_identifiers identifiers;
 
     t_shaderSetsByIdentifier::const_iterator i(m_shaderSetsByIdentifier.begin());
     const t_shaderSetsByIdentifier::const_iterator ie(m_shaderSetsByIdentifier.end());
@@ -58,21 +58,23 @@ std::vector<ShaderModifier::t_identifier> ShaderModifier::getIdentifier() const
     for(; i != ie; ++i)
     {
         assert(!i->second.empty()); // shall never be empty, since identifier should be removed if no shader is attached
-        identifier.push_back(i->first);
+        identifiers.push_back(i->first);
     }
-    return identifier;
+    return identifiers;
 }
 
 
-void ShaderModifier::registerShader(
-    const t_identifier &identifier
+const ShaderModifier::t_identifier ShaderModifier::registerShader(
+    t_identifier identifier
 ,   osg::Shader *shader)
 {
     if(!shader)
     {
         osg::notify(osg::WARN) << "An attempt was made and ignored, to register an invalid shader (NULL) for identifier \"" << identifier << "\"." << std::endl;
-        return;
+        return t_identifier();
     }
+
+    identifier = makeIdentifier(identifier, shader);
 
     m_identifiersByShader[shader] = identifier;
     m_shaderSetsByIdentifier[identifier].insert(shader);
@@ -93,6 +95,38 @@ void ShaderModifier::registerShader(
         // got already modified).
         shader->setShaderSource(m_sourcesByIdentifier[identifier]);
     }
+
+    identifiersChanged();
+
+    return identifier;
+}
+
+
+const std::string ShaderModifier::makeIdentifier(
+    const t_identifier &identifier
+,   osg::Shader *shader)
+{
+    assert(shader);
+
+    char p[sizeof(long) * 8];
+    _ltoa(reinterpret_cast<long>(shader), p, 16);
+
+    char t;
+
+    switch(shader->getType())
+    {
+    case osg::Shader::FRAGMENT:
+        t = 'f'; break;
+    case osg::Shader::GEOMETRY:
+        t = 'g'; break;
+    case osg::Shader::VERTEX:
+        t = 'v'; break;
+    case osg::Shader::UNDEFINED:
+    default:
+        t = '?'; break;
+    }
+
+    return identifier + " " + t + " 0x" + p;
 }
 
 
@@ -124,6 +158,8 @@ void ShaderModifier::unregisterShader(osg::Shader *shader)
     }
 
     m_identifiersByShader.erase(shader);
+
+    identifiersChanged();
 }
 
 
@@ -189,5 +225,33 @@ void ShaderModifier::update()
             (*s)->setShaderSource(source);
     }
 }
+
+
+void ShaderModifier::registerIdentifiersChangedCallback(
+    void *object
+,   void(*callback)(void*))
+{
+    m_callbacks[object] = callback;
+}
+
+
+void ShaderModifier::unregisterIdentifiersChangedCallback(void *object)
+{
+    const t_callbacks::const_iterator i(m_callbacks.find(object));
+
+    if(i != m_callbacks.end())
+        m_callbacks.erase(object);
+}
+
+
+void ShaderModifier::identifiersChanged()
+{
+    t_callbacks::const_iterator i(m_callbacks.begin());
+    const t_callbacks::const_iterator iEnd(m_callbacks.end());
+
+    for(; i != iEnd; ++i)
+        i->second(i->first);
+}
+
 
 #endif OSGHIMMEL_ENABLE_SHADERMODIFIER
