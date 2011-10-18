@@ -75,7 +75,7 @@ void GLSLHighlighter::setLanguage(const e_GlslLanguageType language)
     m_formats.clear();
     m_patternsByFormat.clear();
 
-    if(UNDEFINED == m_language)
+    if(GLSL_UNDEFINED == m_language)
         return;
 
     QTextCharFormat *f0(new QTextCharFormat());

@@ -33,7 +33,7 @@
 
 enum e_GlslLanguageType
 {
-    UNDEFINED
+    GLSL_UNDEFINED
 ,   GLSL_COMMON
 ,   GLSL_VERTEX      
 ,   GLSL_GEOMETRY

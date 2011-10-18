@@ -54,7 +54,7 @@ public:
 
     void setDocument(
         QTextDocument *textdoc
-    ,   const e_GlslLanguageType language);
+    ,   const e_GlslLanguageType language = GLSL_UNDEFINED);
 
 protected:
     virtual void resizeEvent(QResizeEvent *event);
