@@ -57,7 +57,7 @@ namespace
         "   vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
                                                                           \
         "   return vec4(r, ra);\n"                                        \
-        "}\n"
+        "}\n\n"
 
 
     #define IMP_COMPOSE_SRC_ALPHA(MODE, COMPOSE)                          \
@@ -77,7 +77,7 @@ namespace
         "   vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
                                                                           \
         "   return vec4(r, ra);\n"                                        \
-        "}\n"
+        "}\n\n"
 }
 
 #endif // __GLSL_COMPOSE_FSF__
