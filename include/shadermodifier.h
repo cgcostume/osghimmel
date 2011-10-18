@@ -54,20 +54,26 @@ class ShaderModifier
 {
 public:
     typedef std::string t_identifier;
+    typedef std::vector<t_identifier> t_identifiers;
 
 public:
+
     ShaderModifier();
     virtual ~ShaderModifier();
+   
+    void unregisterIdentifiersChangedCallback(void *object);
+    void registerIdentifiersChangedCallback(
+        void *object
+    ,   void(*callback)(void*));
 
-#pragma NOTE("Add support for hints to external updates of shader sources.")
 
     // Returns all registered identifier.
-    std::vector<t_identifier> getIdentifier() const;
+    const t_identifiers getIdentifiers() const;
 
     // Registers a shader by an identifier and replaces its source if 
-    // already modified.
-    void registerShader(
-        const t_identifier &identifier
+    // already modified. Returns identifier that differs from given one.
+    const t_identifier registerShader(
+        t_identifier identifier
     ,   osg::Shader *shader);
 
     void unregisterShader(osg::Shader *shader);
@@ -88,6 +94,15 @@ public:
     void update();
 
 protected:
+
+    static const std::string makeIdentifier(
+        const t_identifier &identifier
+    ,   osg::Shader *shader);
+
+    void identifiersChanged();
+
+protected:
+
     typedef std::set<osg::Shader*> t_shaderSet;
     typedef std::set<t_identifier> t_identifierSet;
 
@@ -102,6 +117,10 @@ protected:
 
     // Identifiers of shaders whose source was modified and not updated yet.
     t_identifierSet m_modified;
+
+
+    typedef std::map<void*, void(*)(void*)> t_callbacks;
+    t_callbacks m_callbacks;
 };
 
 #endif // __SHADERMODIFIER_H__
