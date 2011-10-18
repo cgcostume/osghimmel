@@ -38,7 +38,7 @@ namespace
         "void quadTransform()\n"
         "{\n"
         "   gl_Position = gl_Vertex;\n"
-        "}\n"
+        "}\n\n"
     );
 }
 
