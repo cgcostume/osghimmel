@@ -36,10 +36,7 @@
 
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 #include "shadermodifier.h"
-ShaderModifier AbstractHimmel::s_shaderModifier;
-
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
@@ -82,6 +79,8 @@ AbstractHimmel::AbstractHimmel()
 
 AbstractHimmel::~AbstractHimmel()
 {
+    unmakeVertexShader();
+    unmakeFragmentShader();
 };
 
 
@@ -116,18 +115,45 @@ void AbstractHimmel::initialize()
 }
 
 
-#pragma NOTE("Implement support for shader modifier.")
-
 void AbstractHimmel::makeVertexShader()
 {
     m_vShader->setShaderSource(getVertexShaderSource());
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->registerShader(getName(), m_vShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+}
+
+
+void AbstractHimmel::unmakeVertexShader()
+{
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->unregisterShader(m_vShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
 void AbstractHimmel::makeFragmentShader()
 {
     m_fShader->setShaderSource(getFragmentShaderSource());
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->registerShader(getName(), m_fShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
+
+
+void AbstractHimmel::unmakeFragmentShader()
+{
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->unregisterShader(m_fShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+}
+
 
 
 void AbstractHimmel::update()
@@ -162,3 +188,20 @@ const float AbstractHimmel::timef() const
 
     return 0.f;
 }
+
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+ShaderModifier *AbstractHimmel::m_shaderModifier = NULL;
+
+void AbstractHimmel::setupShaderModifier(ShaderModifier *shaderModifier)
+{
+    m_shaderModifier = shaderModifier;
+}
+
+ShaderModifier *AbstractHimmel::shaderModifier()
+{  
+    return m_shaderModifier;
+}
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER

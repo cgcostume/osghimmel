@@ -37,6 +37,7 @@
 class TimeF;
 class HimmelQuad;
 
+
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 class ShaderModifier;
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
@@ -77,10 +78,8 @@ public:
     }
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    static inline ShaderModifier *shaderModifier() 
-    {
-        return &s_shaderModifier;
-    }
+    static void setupShaderModifier(ShaderModifier *shaderModifier);
+    static ShaderModifier *shaderModifier();
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
@@ -95,7 +94,10 @@ protected:
     virtual void postInitialize() { };
 
     void makeVertexShader();
+    void unmakeVertexShader();
+
     void makeFragmentShader();
+    void unmakeFragmentShader();
 
     // abstract interface
 
@@ -130,8 +132,10 @@ protected:
     HimmelQuad *m_hquad;
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    static ShaderModifier s_shaderModifier;
+private:
+    static ShaderModifier *m_shaderModifier;
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
 };
 
 #endif // __ABSTRACTHIMMEL_H__

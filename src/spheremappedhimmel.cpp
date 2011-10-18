@@ -35,6 +35,7 @@
 SphereMappedHimmel::SphereMappedHimmel()
 :   AbstractMappedHimmel()
 {
+    setName("SphereMappedHimmel");
 };
 
 
