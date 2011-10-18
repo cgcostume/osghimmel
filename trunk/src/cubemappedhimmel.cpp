@@ -35,6 +35,7 @@
 CubeMappedHimmel::CubeMappedHimmel()
 :   AbstractMappedHimmel()
 {
+    setName("CubeMappedHimmel");
 };
 
 
