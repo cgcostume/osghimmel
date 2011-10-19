@@ -34,24 +34,70 @@
 
 #include <QWidget>
 
-class Ui_GLSLEditor;
+#include "utils/glsltypes.h"
+
+#include <osg/Shader>
+
+class Ui_GlslEditor;
+
+class QTextDocument;
+
+class ShaderModifier;
 
 
-class GLSLEditor
+
+class GlslEditor
 :    public QWidget
 {
     Q_OBJECT
 
 public:
-    GLSLEditor(QWidget* parent = NULL);
-    virtual ~GLSLEditor();
+    GlslEditor(QWidget* parent = NULL);
+    virtual ~GlslEditor();
+
+    void assign(ShaderModifier *shaderModifier);
+
+    static void wrapped_identifiersChanged(void *object);
+    void identifiersChanged();
+
+protected:
+    static const e_GlslLanguageType osgShaderTypeToLanguageType(const osg::Shader::Type &type);
+
+    const bool isRegistered(const QString &identifier) const;
+
+    void unregisterIdentiferAndSource(const QString &identifier);
+    void registerIdentifierWithSource(
+        const QString &identifier
+    ,   const QString &source);
+
 
 signals:
 
 public slots:
 
+protected slots:
+    
+    void loadShaderFromIdentifier(const QString &identifier);
+    void loadNullDocument();
+
+    void documentContentsChanged();
+
+    void on_shaderComboBox_currentIndexChanged(const int index);
+
+    void on_applyPushButton_clicked(bool);
+    void on_restorePushButton_clicked(bool);
+
 protected:
-    std::auto_ptr<Ui_GLSLEditor> m_ui;
+    std::auto_ptr<Ui_GlslEditor> m_ui;
+
+    ShaderModifier *m_shaderModifier;
+
+    QMap<QString, QString> m_sourcesByIdentifier;
+    QMap<QString, QTextDocument*> m_documentsByIdentifier;
+
+    QMap<QString, bool> m_modifiedByIdentifier;
+
+    QTextDocument *m_activeDocument;
 };
 
 #endif // __GLSLEDITOR_H__

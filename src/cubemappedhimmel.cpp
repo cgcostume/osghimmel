@@ -99,12 +99,12 @@ const std::string CubeMappedHimmel::getVertexShaderSource()
         +   glsl_v_quadTransform
         +
         "smooth out vec4 m_ray;\n"
-
+        "\n"
         "void main(void)\n"
         "{\n"
         "   m_ray = quadRetrieveRay();\n"
         "   quadTransform();\n"
-        "}\n";
+        "}\n\n";
 }
 
 
@@ -120,21 +120,21 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
         +   glsl_f_blendNormalExt
         +
         "in vec4 m_ray;\n"
-
+        "\n"
         // From AbstractMappedHimmel
 
         "uniform float srcAlpha;\n"
-
+        "\n"
         "uniform samplerCube back;\n"
         "uniform samplerCube src;\n"
-
+        "\n"
         // Color Retrieval
 
         "void main(void)\n"
         "{\n"
         "   vec3 stu = normalize(m_ray.xyz);\n"
-
+        "\n"
         "   gl_FragColor = blend_normal(\n"
         "       textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
-        "}\n";
+        "}\n\n";
 }

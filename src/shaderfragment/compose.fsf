@@ -46,16 +46,16 @@ namespace
         "{\n"                                                             \
         "   vec3 b = back.rgb;\n"                                         \
         "   vec3 s = src.rgb;\n"                                          \
-                                                                          \
+        "\n"                                                              \
         "   vec3 bs = " #COMPOSE ";\n"                                    \
-                                                                          \
+        "\n"                                                              \
         "   float ba = back.a;\n"                                         \
         "   float sa = src.a;\n"                                          \
-                                                                          \
+        "\n"                                                              \
         "   float ra = ba + sa - (ba * sa);\n"                            \
-                                                                          \
+        "\n"                                                              \
         "   vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
-                                                                          \
+        "\n"                                                              \
         "   return vec4(r, ra);\n"                                        \
         "}\n\n"
 
@@ -66,16 +66,16 @@ namespace
         "{\n"                                                             \
         "   vec3 b = back.rgb;\n"                                         \
         "   vec3 s = src.rgb;\n"                                          \
-                                                                          \
+        "\n"                                                              \
         "   vec3 bs = " #COMPOSE ";\n"                                    \
-                                                                          \
+        "\n"                                                              \
         "   float ba = back.a;\n"                                         \
         "   float sa = clamp(srca, 0.0, 1.0);\n"                          \
-                                                                          \
+        "\n"                                                              \
         "   float ra = ba + sa - (ba * sa);\n"                            \
-                                                                          \
+        "\n"                                                              \
         "   vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
-                                                                          \
+        "\n"                                                              \
         "   return vec4(r, ra);\n"                                        \
         "}\n\n"
 }

@@ -39,7 +39,7 @@ HimmelQuad::HimmelQuad()
     m_quad = new osg::Geometry();
     addDrawable(m_quad);
 
-    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array();
+    osg::Vec3Array *vertices = new osg::Vec3Array();
     vertices->push_back(osg::Vec3(-1.f, -1.f, 0.f));
     vertices->push_back(osg::Vec3(-1.f,  1.f, 0.f));
     vertices->push_back(osg::Vec3( 1.f,  1.f, 0.f));

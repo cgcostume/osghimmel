@@ -74,8 +74,6 @@ void AbstractHimmelScene::propertyChanged(QtProperty *p)
 
 void AbstractHimmelScene::registerProperties()
 {
-    _LOG_DEBUG("%p", this);
-
     QtProperty *himmelGroup = createGroup(GROUP_ABSTRACTHIMMEL);
 
     createProperty(*himmelGroup , PROPERTY_TIME, 0.0, 0.0, 1.0, 0.02);

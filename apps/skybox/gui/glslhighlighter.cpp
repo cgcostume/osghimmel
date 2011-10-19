@@ -36,19 +36,19 @@
 #include <QColor>
 
 
-GLSLHighlighter::GLSLHighlighter()
+GlslHighlighter::GlslHighlighter()
 :   QSyntaxHighlighter(static_cast<QWidget*>(NULL))
 ,   m_language(GLSL_COMMON)
 {
 }
 
 
-GLSLHighlighter::~GLSLHighlighter()
+GlslHighlighter::~GlslHighlighter()
 {
 }
 
 
-void GLSLHighlighter::createAndAppendRules(
+void GlslHighlighter::createAndAppendRules(
     const QString &pattern
 ,   QTextCharFormat *format)
 {
@@ -56,7 +56,7 @@ void GLSLHighlighter::createAndAppendRules(
 }
 
 
-void GLSLHighlighter::setDocument(
+void GlslHighlighter::setDocument(
     QTextDocument *textdoc
 ,   const e_GlslLanguageType language)
 {
@@ -66,7 +66,7 @@ void GLSLHighlighter::setDocument(
 };
 
 
-void GLSLHighlighter::setLanguage(const e_GlslLanguageType language)
+void GlslHighlighter::setLanguage(const e_GlslLanguageType language)
 {
     m_language = language;
 
@@ -129,7 +129,7 @@ void GLSLHighlighter::setLanguage(const e_GlslLanguageType language)
 }
 
 
-void GLSLHighlighter::highlightBlock(const QString &text)
+void GlslHighlighter::highlightBlock(const QString &text)
 {
     t_patternsByFormat::const_iterator f(m_patternsByFormat.begin());
     const t_patternsByFormat::const_iterator fe(m_patternsByFormat.end());
