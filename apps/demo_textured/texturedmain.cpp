@@ -179,8 +179,8 @@ void initializeScene(osgViewer::View &view)
 
     view.setSceneData(root.get());
 
-    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("resources/knot.obj");
-    g_scene->addChild(loadedScene.get());
+//    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("resources/knot.obj");
+//    g_scene->addChild(loadedScene.get());
 }
 
 
