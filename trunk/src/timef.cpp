@@ -65,8 +65,13 @@ void TimeF::initialize()
 {
     m_lastModeChangeTime = m_timer->time_s();
 
+    m_timef[0] = 0.f;
     m_timef[1] = 0.f;
+    m_timef[2] = 0.f;
+
+    m_time[0]  = 0;
     m_time[1]  = 0;
+    m_time[2]  = 0;
 }
 
 
