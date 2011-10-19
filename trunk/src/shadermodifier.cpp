@@ -34,7 +34,6 @@
 
 #include <assert.h>
 
-#include <osg/Shader>
 #include <osg/Notify>
 
 
@@ -74,6 +73,9 @@ const ShaderModifier::t_identifier ShaderModifier::registerShader(
         return t_identifier();
     }
 
+    // Note that the identifier contains the shader type, thus
+    // only shaders of same type can be accessed with same identifiers.
+
     identifier = makeIdentifier(identifier, shader);
 
     m_identifiersByShader[shader] = identifier;
@@ -102,31 +104,46 @@ const ShaderModifier::t_identifier ShaderModifier::registerShader(
 }
 
 
+const osg::Shader::Type ShaderModifier::getType(const t_identifier &identifier) const
+{
+    // Take the first in set and use its Type.
+    
+    const t_shaderSetsByIdentifier::const_iterator i(m_shaderSetsByIdentifier.find(identifier));
+    if(i != m_shaderSetsByIdentifier.end())
+    {
+        const t_shaderSet &ss(i->second);
+        return (*ss.begin())->getType();
+    }
+
+    return osg::Shader::UNDEFINED;   
+}
+
+
 const std::string ShaderModifier::makeIdentifier(
     const t_identifier &identifier
 ,   osg::Shader *shader)
 {
     assert(shader);
 
-    char p[sizeof(long) * 8];
-    _ltoa(reinterpret_cast<long>(shader), p, 16);
+//    char p[sizeof(long) * 8];
+//    _ltoa(reinterpret_cast<long>(shader), p, 16);
 
-    char t;
+    std::string t;
 
     switch(shader->getType())
     {
     case osg::Shader::FRAGMENT:
-        t = 'f'; break;
+        t = " ::fragment"; break;
     case osg::Shader::GEOMETRY:
-        t = 'g'; break;
+        t = " ::geometry"; break;
     case osg::Shader::VERTEX:
-        t = 'v'; break;
+        t = " ::vertex";   break;
     case osg::Shader::UNDEFINED:
     default:
-        t = '?'; break;
+        t = " ::?"; break;
     }
 
-    return identifier + " " + t + " 0x" + p;
+    return identifier + " " + t; // + " 0x" + p;
 }
 
 

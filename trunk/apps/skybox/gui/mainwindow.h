@@ -60,7 +60,7 @@ class LogOutputWidget;
 class LogOutputLabel;
 
 class DateTimeWidget;
-class GLSLEditor;
+class GlslEditor;
 class PropertyWidget;
 
 class AbstractHimmelScene;
@@ -133,7 +133,7 @@ protected:
     DateTimeWidget *m_dateTimeWidget;
     CollapsibleDockWidget *m_dateTimeDockWidget;
 
-    GLSLEditor *m_glslEditor;
+    GlslEditor *m_glslEditor;
     CollapsibleDockWidget *m_glslEditorDockWidget;
 
     PropertyWidget *m_propertyWidget;

@@ -34,7 +34,7 @@
 #include "plaintextwithlinenumberareasupport.h"
 #include "utils/glsltypes.h"
 
-class GLSLHighlighter;
+class GlslHighlighter;
 class LineNumberArea;
 
 class QKeyEvent;
@@ -44,17 +44,19 @@ class QFont;
 class QCompleter;
 
 
-class GLSLTextEdit : public PlainTextWithLineNumberAreaSupport
+class GlslTextEdit : public PlainTextWithLineNumberAreaSupport
 {
     Q_OBJECT
 
 public:
-    GLSLTextEdit(QWidget *parent = 0);
-    virtual ~GLSLTextEdit();
+    GlslTextEdit(QWidget *parent = 0);
+    virtual ~GlslTextEdit();
 
     void setDocument(
         QTextDocument *textdoc
     ,   const e_GlslLanguageType language = GLSL_UNDEFINED);
+
+    QTextDocument *createDocument();
 
 protected:
     virtual void resizeEvent(QResizeEvent *event);
@@ -73,7 +75,7 @@ protected slots:
 private:
     QFont *m_font;
 
-    GLSLHighlighter *m_highlighter;
+    GlslHighlighter *m_highlighter;
     QCompleter *m_completer;
 
     LineNumberArea *m_lineNumberArea;

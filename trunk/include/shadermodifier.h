@@ -40,10 +40,7 @@
 #include <set>
 #include <vector>
 
-namespace osg 
-{
-    class Shader; 
-}
+#include <osg/Shader>
 
 
 // Allows manipulation of shader sources registered elsewhere. 
@@ -81,6 +78,8 @@ public:
 
     // manipulation
 
+    const osg::Shader::Type getType(const t_identifier &identifier) const;
+
     const std::string getSource(const t_identifier &identifier) const;
 
     // All shaders sources related to identifier get replaced. Update is
@@ -107,6 +106,7 @@ protected:
     typedef std::set<t_identifier> t_identifierSet;
 
     typedef std::map<t_identifier, std::string> t_sourcesByIdentifier;
+    typedef std::map<t_identifier, osg::Shader::Type> t_typesByIdentifier;
     typedef std::map<t_identifier, t_shaderSet> t_shaderSetsByIdentifier;
     typedef std::map<osg::Shader*, t_identifier> t_identifiersByShader;
 

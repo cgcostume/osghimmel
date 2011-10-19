@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GLSLEditor</class>
- <widget class="QWidget" name="GLSLEditor">
+ <class>GlslEditor</class>
+ <widget class="QWidget" name="GlslEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>335</width>
-    <height>300</height>
+    <width>366</width>
+    <height>267</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,46 +20,40 @@
    <property name="spacing">
     <number>4</number>
    </property>
-   <item row="0" column="0" colspan="4">
-    <widget class="QComboBox" name="shaderComboBox"/>
+   <item row="0" column="0">
+    <widget class="QComboBox" name="shaderComboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
-   <item row="1" column="0" colspan="4">
-    <widget class="GLSLTextEdit" name="glslTextEdit"/>
-   </item>
-   <item row="2" column="0">
+   <item row="0" column="1">
     <widget class="QPushButton" name="restorePushButton">
      <property name="text">
       <string>&amp;Restore</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>41</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="copyPushButton">
-     <property name="text">
-      <string> &amp;Copy To ClipBoard </string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
+   <item row="0" column="2">
     <widget class="QPushButton" name="applyPushButton">
      <property name="text">
       <string>&amp;Apply</string>
      </property>
+     <property name="shortcut">
+      <string>F5</string>
+     </property>
      <property name="default">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="GlslTextEdit" name="glslTextEdit">
+     <property name="lineWrapMode">
+      <enum>QPlainTextEdit::NoWrap</enum>
      </property>
     </widget>
    </item>
@@ -67,7 +61,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GLSLTextEdit</class>
+   <class>GlslTextEdit</class>
    <extends>QPlainTextEdit</extends>
    <header>gui/glsltextedit.h</header>
   </customwidget>
@@ -76,7 +70,6 @@
   <tabstop>shaderComboBox</tabstop>
   <tabstop>glslTextEdit</tabstop>
   <tabstop>restorePushButton</tabstop>
-  <tabstop>copyPushButton</tabstop>
   <tabstop>applyPushButton</tabstop>
  </tabstops>
  <resources/>

@@ -99,12 +99,12 @@ const std::string SphereMappedHimmel::getVertexShaderSource()
     +   glsl_v_quadTransform
     +
         "smooth out vec4 m_ray;\n"
-
+        "\n"
         "void main(void)\n"
         "{\n"
         "   m_ray = quadRetrieveRay();\n"
         "   quadTransform();\n"
-        "}\n";
+        "}\n\n";
 }
 
 
@@ -120,30 +120,30 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
     +   glsl_f_blendNormalExt
     +
         "in vec4 m_ray;\n"
-
+        "\n"
         // From AbstractMappedHimmel
 
         "uniform float srcAlpha;\n"
-
+        "\n"
         "uniform sampler2D back;\n"
         "uniform sampler2D src;\n"
-
+        "\n"
         // Color Retrieval
 
         "const float c_PI       = 3.1415926535897932384626433832795;\n"
-
+        "\n"
         "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
         "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
-
+        "\n"
         "void main(void)\n"
         "{\n"
         "   vec3 stu = normalize(m_ray.xyz);\n"
         "   vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(stu.z) * c_2OverPi);\n"
-
+        "\n"
 //        "   if(uv.y < 0.0)\n"
 //        "       discard;\n"
-
+//        "\n"
         "   gl_FragColor = blend_normal(\n"
         "       texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
-        "}\n";
+        "}\n\n";
 }

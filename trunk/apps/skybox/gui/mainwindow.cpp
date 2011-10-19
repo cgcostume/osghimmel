@@ -48,6 +48,7 @@
 #include "utils/import.h"
 
 #include "include/timef.h"
+#include "include/shadermodifier.h"
 
 
 #include <QFileInfo>
@@ -112,6 +113,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     initializeDockWidgets();
 
+#pragma NOTE("Add layout store/restore support for mainwindow and dockwidgets.")
+
     connect(m_ui->centralWidget, SIGNAL(mouseDrop(QList<QUrl>)),
         this, SLOT(mouseDroped(QList<QUrl>)));
 }
@@ -121,11 +124,13 @@ MainWindow::~MainWindow()
 {
     clearHimmel();
 
-    m_root->removeChild(m_scene);
-    m_scene->unref();
-
     m_ui->centralWidget->setSceneData(NULL);
-    m_root->unref();
+
+    m_root->removeChild(m_scene.get());
+
+    m_root = NULL;
+    m_scene = NULL;
+
 
     delete m_timer;
 
@@ -215,8 +220,6 @@ void MainWindow::clearHimmel()
     if(m_himmel)
     {
         m_root->removeChild(m_himmel.get());
-
-        m_himmel->unref();
         m_himmel = NULL;
     }
 }
@@ -256,7 +259,7 @@ void MainWindow::initializeDockWidgets()
 
 
     // setup timer for status bar updates()
-
+    
     m_timer = new QTimer();
     connect(m_timer, SIGNAL(timeout()), this, SLOT(me_timeout()));
 
@@ -276,7 +279,7 @@ void MainWindow::initializeDockWidgets()
     addDockWidget(Qt::RightDockWidgetArea, m_propertyDockWidget);
 
 
-    m_glslEditor = new GLSLEditor();
+    m_glslEditor = new GlslEditor();
     m_glslEditorDockWidget = new CollapsibleDockWidget(*m_glslEditor, this);
 
     addDockWidget(Qt::RightDockWidgetArea, m_glslEditorDockWidget);
@@ -365,8 +368,8 @@ const bool MainWindow::insert3DObjectFromFile(const QFileInfo &fileInfo)
     }
 
     // optimize the scene graph, remove redundant nodes and state etc.
-    osgUtil::Optimizer optimizer;
-    optimizer.optimize(loadedScene.get());
+//    osgUtil::Optimizer optimizer;
+//    optimizer.optimize(loadedScene.get());
 
     m_scene->addChild(loadedScene.get());
     return true;

@@ -112,7 +112,7 @@ void StdLogOutput::print(const LogEntry &entry)
 
 
 FileLogOutput::FileLogOutput(const QString &filename)
-:    m_opened(false)
+:   m_opened(false)
 ,   m_stream(NULL)
 {
     m_file = new QFile(filename);

@@ -45,12 +45,12 @@ class QColor;
 class QStringList;
 
 
-class GLSLHighlighter : public QSyntaxHighlighter
+class GlslHighlighter : public QSyntaxHighlighter
 {
 public:
 
-    GLSLHighlighter();
-    virtual ~GLSLHighlighter();
+    GlslHighlighter();
+    virtual ~GlslHighlighter();
 
     void setDocument(
         QTextDocument *textdoc

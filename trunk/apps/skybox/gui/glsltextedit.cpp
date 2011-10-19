@@ -46,7 +46,7 @@
 #include <assert.h>
 
 
-GLSLTextEdit::GLSLTextEdit(QWidget *parent) 
+GlslTextEdit::GlslTextEdit(QWidget *parent) 
 :   PlainTextWithLineNumberAreaSupport(parent)
 ,   m_highlighter(NULL)
 ,   m_completer(NULL)
@@ -54,7 +54,7 @@ GLSLTextEdit::GLSLTextEdit(QWidget *parent)
 ,   m_gotDocumentAssigned(false)
 ,   m_font(new QFont("Consolas, Courier New, Courier", 9))
 {
-    m_highlighter = new GLSLHighlighter();
+    m_highlighter = new GlslHighlighter();
     m_lineNumberArea = new LineNumberArea(*this);
 
     connect(this, SIGNAL(cursorPositionChanged()),
@@ -66,7 +66,7 @@ GLSLTextEdit::GLSLTextEdit(QWidget *parent)
 }
 
 
-GLSLTextEdit::~GLSLTextEdit()
+GlslTextEdit::~GlslTextEdit()
 {
     delete m_highlighter;
     delete m_completer;
@@ -78,7 +78,7 @@ GLSLTextEdit::~GLSLTextEdit()
 
 
 
-void GLSLTextEdit::resizeEvent(QResizeEvent *e)
+void GlslTextEdit::resizeEvent(QResizeEvent *e)
 {
     QPlainTextEdit::resizeEvent(e);
 
@@ -89,7 +89,7 @@ void GLSLTextEdit::resizeEvent(QResizeEvent *e)
 }
 
 
-void GLSLTextEdit::highlightCurrentLine()
+void GlslTextEdit::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
@@ -110,27 +110,31 @@ void GLSLTextEdit::highlightCurrentLine()
 }
 
 
-void GLSLTextEdit::setDocument(
+QTextDocument *GlslTextEdit::createDocument()
+{
+    QTextDocument *textdoc(new QTextDocument());
+
+    QPlainTextDocumentLayout* layout = new QPlainTextDocumentLayout(textdoc);
+    textdoc->setDocumentLayout(layout);
+
+    textdoc->setDefaultFont(*m_font);
+
+    return textdoc;
+}
+
+
+void GlslTextEdit::setDocument(
     QTextDocument *textdoc
 ,   const e_GlslLanguageType language)
 {
-    clear();
-
-    if(textdoc)
-    {
-        textdoc->setDefaultFont(*m_font);
- 
-        QPlainTextDocumentLayout* layout = new QPlainTextDocumentLayout(textdoc);
-        textdoc->setDocumentLayout(layout);
-    }
-
     QPlainTextEdit::setDocument(textdoc);
+
     setTabStopWidth(QFontMetrics(*m_font).width(QLatin1Char('0')) * 4);
 
     // setup highlighter
 
     assert(m_highlighter);
-    m_highlighter->setDocument(document(), language);
+    m_highlighter->setDocument(textdoc, language);
 
     // setup completer
 
@@ -160,7 +164,7 @@ void GLSLTextEdit::setDocument(
 }
 
 
-void GLSLTextEdit::setupCompleter(const QStringList &strings)
+void GlslTextEdit::setupCompleter(const QStringList &strings)
 {
     delete m_completer;
     m_completer = NULL;
@@ -178,7 +182,7 @@ void GLSLTextEdit::setupCompleter(const QStringList &strings)
 }
 
 
-void GLSLTextEdit::insertCompletion(const QString &completion)
+void GlslTextEdit::insertCompletion(const QString &completion)
 {
     assert(m_completer);
     assert(m_completer->widget() == this);
@@ -196,7 +200,7 @@ void GLSLTextEdit::insertCompletion(const QString &completion)
 }
 
 
-void GLSLTextEdit::focusInEvent(QFocusEvent *event)
+void GlslTextEdit::focusInEvent(QFocusEvent *event)
 {
     if (m_completer)
         m_completer->setWidget(this);
@@ -205,7 +209,7 @@ void GLSLTextEdit::focusInEvent(QFocusEvent *event)
 }
 
 
-QString GLSLTextEdit::textUnderCursor() const
+QString GlslTextEdit::textUnderCursor() const
 {
     QTextCursor tc(textCursor());
 
@@ -216,7 +220,7 @@ QString GLSLTextEdit::textUnderCursor() const
 
 // modified from  http://www.trinitydesktop.org/docs/qt4/tools-customcompleter.html
 
-void GLSLTextEdit::keyPressEvent(QKeyEvent *event)
+void GlslTextEdit::keyPressEvent(QKeyEvent *event)
 {
     if(m_completer && m_completer->popup()->isVisible()) 
     {
