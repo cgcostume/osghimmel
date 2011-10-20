@@ -37,7 +37,7 @@ namespace
     (
         "vec4 quadRetrieveRay()\n"
         "{\n"
-        "   return gl_ProjectionMatrixInverse * gl_Vertex * gl_ModelViewMatrix;\n"
+        "    return gl_ProjectionMatrixInverse * gl_Vertex * gl_ModelViewMatrix;\n"
         "}\n\n"
     );
 }

@@ -60,7 +60,6 @@ protected:
 
     // AbstractHimmel interface
 
-    virtual const std::string getVertexShaderSource();
     virtual const std::string getFragmentShaderSource();
 
 protected:

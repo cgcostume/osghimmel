@@ -88,25 +88,7 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 // VertexShader
 
-#include "shaderfragment/version.vsf"
-#include "shaderfragment/quadretrieveray.vsf"
-#include "shaderfragment/quadtransform.vsf"
-
-const std::string PolarMappedHimmel::getVertexShaderSource()
-{
-    return glsl_v_version
-
-    +   glsl_v_quadRetrieveRay
-    +   glsl_v_quadTransform
-    +
-        "smooth out vec4 m_ray;\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "   m_ray = quadRetrieveRay();\n"
-        "   quadTransform();\n"
-        "}\n\n";
-}
+// -> specified in AbstractMappedHimmel
 
 
 // FragmentShader

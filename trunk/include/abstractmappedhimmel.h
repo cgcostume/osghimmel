@@ -68,6 +68,11 @@ protected:
 
     virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const = 0;
 
+
+    // AbstractHimmel interface
+
+    virtual const std::string getVertexShaderSource();
+
 protected:
 
     TwoUnitsChanger m_changer;
