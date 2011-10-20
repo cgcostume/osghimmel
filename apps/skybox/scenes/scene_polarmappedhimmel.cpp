@@ -27,46 +27,60 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "scene_polarmappedhimmel.h"
 
-#pragma once
-#ifndef __SPHEREMAPPEDHIMMEL_H__
-#define __SPHEREMAPPEDHIMMEL_H__
+#include "include/polarmappedhimmel.h"
 
-#include "abstractmappedhimmel.h"
+#include <osg/Texture2D>
 
-#include <map>
+#include <osgDB/ReadFile>
 
-namespace osg
+
+namespace
 {
-    class Texture2D;
+    // Properties
+
+    static const QString GROUP_POLARMAPPED(TR("Polar Mapped"));
+}
+
+Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
+:   AbstractHimmelScene(camera)
+,   m_himmel(NULL)
+{
+    initializeProperties();
+
+    m_himmel = new PolarMappedHimmel();
+
+    m_himmel->setTransitionDuration(0.1f);
+
+    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_00.jpg"));
+    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_01.jpg"));
+    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_02.jpg"));
+    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_03.jpg"));
+
+    m_himmel->pushTextureUnit(0, 0.00f);
+    m_himmel->pushTextureUnit(1, 0.25f);
+    m_himmel->pushTextureUnit(2, 0.50f);
+    m_himmel->pushTextureUnit(3, 0.75f);
+
+    addChild(m_himmel);
 }
 
 
-class SphereMappedHimmel : public AbstractMappedHimmel
+Scene_PolarMappedHimmel::~Scene_PolarMappedHimmel()
 {
-public:
-    SphereMappedHimmel();
-    virtual ~SphereMappedHimmel();
-
-    // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
-
-protected:
-
-    // AbstractMappedHimmel interface
-
-    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
+}
 
 
-    // AbstractHimmel interface
+AbstractHimmel *Scene_PolarMappedHimmel::himmel()
+{
+    return m_himmel;
+}
 
-    virtual const std::string getVertexShaderSource();
-    virtual const std::string getFragmentShaderSource();
 
-protected:
+void Scene_PolarMappedHimmel::registerProperties()
+{
+    AbstractHimmelScene::registerProperties();
 
-    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
-    t_tex2DById m_tex2DsById;
-};
-
-#endif // __SPHEREMAPPEDHIMMEL_H__
+    QtProperty *sphereGroup = createGroup(GROUP_POLARMAPPED);
+}

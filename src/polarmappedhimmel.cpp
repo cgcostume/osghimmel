@@ -27,24 +27,24 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "spheremappedhimmel.h"
+#include "polarmappedhimmel.h"
 
 #include <osg/Texture2D>
 
 
-SphereMappedHimmel::SphereMappedHimmel()
+PolarMappedHimmel::PolarMappedHimmel()
 :   AbstractMappedHimmel()
 {
-    setName("SphereMappedHimmel");
+    setName("PolarMappedHimmel");
 };
 
 
-SphereMappedHimmel::~SphereMappedHimmel()
+PolarMappedHimmel::~PolarMappedHimmel()
 {
 };
 
 
-osg::Texture2D* SphereMappedHimmel::getOrCreateTexture2D(const GLint textureUnit)
+osg::Texture2D* PolarMappedHimmel::getOrCreateTexture2D(const GLint textureUnit)
 {
     // Retrieve an existing texture.
 
@@ -78,7 +78,7 @@ osg::Texture2D* SphereMappedHimmel::getOrCreateTexture2D(const GLint textureUnit
 }
 
 
-osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint textureUnit) const
+osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureUnit) const
 {
     const t_tex2DById::const_iterator tex2Di(m_tex2DsById.find(textureUnit));
     return tex2Di == m_tex2DsById.end() ? NULL : tex2Di->second;
@@ -91,7 +91,7 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 #include "shaderfragment/quadretrieveray.vsf"
 #include "shaderfragment/quadtransform.vsf"
 
-const std::string SphereMappedHimmel::getVertexShaderSource()
+const std::string PolarMappedHimmel::getVertexShaderSource()
 {
     return glsl_v_version
 
@@ -113,7 +113,7 @@ const std::string SphereMappedHimmel::getVertexShaderSource()
 #include "shaderfragment/version.fsf"
 #include "shaderfragment/blend_normal.fsf"
 
-const std::string SphereMappedHimmel::getFragmentShaderSource()
+const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
 
@@ -121,6 +121,7 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
     +
         "in vec4 m_ray;\n"
         "\n"
+
         // From AbstractMappedHimmel
 
         "uniform float srcAlpha;\n"
@@ -128,10 +129,9 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "uniform sampler2D back;\n"
         "uniform sampler2D src;\n"
         "\n"
+
         // Color Retrieval
 
-        "const float c_PI       = 3.1415926535897932384626433832795;\n"
-        "\n"
         "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
         "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
         "\n"
@@ -140,9 +140,6 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "   vec3 stu = normalize(m_ray.xyz);\n"
         "   vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(stu.z) * c_2OverPi);\n"
         "\n"
-//        "   if(uv.y < 0.0)\n"
-//        "       discard;\n"
-//        "\n"
         "   gl_FragColor = blend_normal(\n"
         "       texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
         "}\n\n";

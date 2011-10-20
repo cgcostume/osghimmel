@@ -27,58 +27,32 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "scene_spheremappedhimmel.h"
+#pragma once
+#ifndef __SCENE_POLARMAPPEDHIMMEL_H__
+#define __SCENE_POLARMAPPEDHIMMEL_H__
 
-#include "include/spheremappedhimmel.h"
-
-#include <osg/Texture2D>
-
-#include <osgDB/ReadFile>
+#include "abstracthimmelscene.h"
 
 
-namespace
+class PolarMappedHimmel;
+
+class Scene_PolarMappedHimmel : public AbstractHimmelScene
 {
-    // Properties
+public:
+    Scene_PolarMappedHimmel(osg::Camera *camera);
 
-    static const QString GROUP_SPHEREMAPPED(TR("Sphere Mapped"));
-}
+    virtual ~Scene_PolarMappedHimmel();
 
-Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
-:   AbstractHimmelScene(camera)
-,   m_himmel(NULL)
-{
-    initializeProperties();
+    virtual AbstractHimmel *himmel();
 
-    m_himmel = new SphereMappedHimmel();
+protected:
 
-    m_himmel->setTransitionDuration(0.2f);
+    // from AbstractPropertySupport
+    virtual void registerProperties();
 
-    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sky_sphere_0.tga"));
-    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sky_sphere_1.tga"));
-    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sky_sphere_2.tga"));
-
-    m_himmel->pushTextureUnit(0, 0.00f);
-    m_himmel->pushTextureUnit(1, 0.33f);
-    m_himmel->pushTextureUnit(2, 0.66f);
-
-    addChild(m_himmel);
-}
+protected:
+    osg::ref_ptr<PolarMappedHimmel> m_himmel;
+};
 
 
-Scene_SphereMappedHimmel::~Scene_SphereMappedHimmel()
-{
-}
-
-
-AbstractHimmel *Scene_SphereMappedHimmel::himmel()
-{
-    return m_himmel;
-}
-
-
-void Scene_SphereMappedHimmel::registerProperties()
-{
-    AbstractHimmelScene::registerProperties();
-
-    QtProperty *sphereGroup = createGroup(GROUP_SPHEREMAPPED);
-}
+#endif // __SCENE_POLARMAPPEDHIMMEL_H__

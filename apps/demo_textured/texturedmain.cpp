@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "include/spheremappedhimmel.h"
+#include "include/polarmappedhimmel.h"
 #include "include/cubemappedhimmel.h"
 #include "include/timef.h"
 
@@ -51,8 +51,8 @@
 
 enum e_Demo
 {
-    D_SphereMappedHimmel = 0
-,   D_CubeMappedHimmel   = 1
+    D_PolarMappedHimmel = 0
+,   D_CubeMappedHimmel  = 1
 };
 
 
@@ -66,8 +66,8 @@ std::map<e_Demo, osg::ref_ptr<AbstractHimmel> > g_himmelsByDemo;
 
 void activateDemo(e_Demo demo)
 {
-    g_himmelsByDemo[D_SphereMappedHimmel]->setNodeMask(D_SphereMappedHimmel == demo);
-    g_himmelsByDemo[D_CubeMappedHimmel]  ->setNodeMask(D_CubeMappedHimmel   == demo);
+    g_himmelsByDemo[D_PolarMappedHimmel]->setNodeMask(D_PolarMappedHimmel == demo);
+    g_himmelsByDemo[D_CubeMappedHimmel] ->setNodeMask(D_CubeMappedHimmel  == demo);
 }
 
 
@@ -100,9 +100,9 @@ public:
 };
 
 
-osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
+osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel();
+    osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel();
 
     himmel->assignTime(g_timef, true);
     himmel->setTransitionDuration(0.2f);
@@ -171,8 +171,8 @@ void initializeScene(osgViewer::View &view)
     g_scene = new osg::Group;
     root->addChild(g_scene);
 
-    g_himmelsByDemo[D_SphereMappedHimmel] = createSphereMappedDemo();
-    root->addChild(g_himmelsByDemo[D_SphereMappedHimmel]);
+    g_himmelsByDemo[D_PolarMappedHimmel] = createPolarMappedDemo();
+    root->addChild(g_himmelsByDemo[D_PolarMappedHimmel]);
 
     g_himmelsByDemo[D_CubeMappedHimmel] = createCubeMappedDemo();
     root->addChild(g_himmelsByDemo[D_CubeMappedHimmel]);
@@ -188,10 +188,10 @@ void initializeManipulators(osgViewer::View &view)
 {
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
 
-    keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
-    keyswitchManipulator->addMatrixManipulator('2', "Flight",    new osgGA::FlightManipulator());
-    keyswitchManipulator->addMatrixManipulator('3', "Drive",     new osgGA::DriveManipulator());
-    keyswitchManipulator->addMatrixManipulator('4', "Terrain",   new osgGA::TerrainManipulator());
+    keyswitchManipulator->addMatrixManipulator('1', "Terrain",   new osgGA::TerrainManipulator());
+    keyswitchManipulator->addMatrixManipulator('2', "Trackball", new osgGA::TrackballManipulator());
+    keyswitchManipulator->addMatrixManipulator('3', "Flight",    new osgGA::FlightManipulator());
+    keyswitchManipulator->addMatrixManipulator('4', "Drive",     new osgGA::DriveManipulator());
 
     view.setCameraManipulator(keyswitchManipulator.get());
 }
@@ -200,7 +200,7 @@ void initializeManipulators(osgViewer::View &view)
 int main(int argc, char* argv[])
 {
     osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
-    osg::notify(osg::NOTICE) << "Use [space] to switch sphere and cube mapping." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [space] to cycle mapping techniques." << std::endl;
 
     osg::ArgumentParser psr(&argc, argv);
     osgViewer::Viewer viewer(psr);
@@ -210,8 +210,8 @@ int main(int argc, char* argv[])
     // Setup default demo.
     g_demo = D_CubeMappedHimmel;
 
-    while (psr.read("--sphere")) 
-        g_demo = D_SphereMappedHimmel;
+    while (psr.read("--polar")) 
+        g_demo = D_PolarMappedHimmel;
 
     while (psr.read("--cube")) 
         g_demo = D_CubeMappedHimmel;
