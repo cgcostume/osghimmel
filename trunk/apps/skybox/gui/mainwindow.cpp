@@ -42,7 +42,7 @@
 
 #include "propertywidget.h"
 
-#include "scenes/scene_spheremappedhimmel.h"
+#include "scenes/scene_polarmappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
 
 #include "utils/import.h"
@@ -202,7 +202,7 @@ void MainWindow::initializeScene()
 void MainWindow::himmelChanged()
 {
     m_ui->cubeMappedHimmelAction->setChecked(false);
-    m_ui->sphereMappedHimmelAction->setChecked(false);
+    m_ui->polarMappedHimmelAction->setChecked(false);
     m_ui->proceduralHimmelAction->setChecked(false);
 
     if(m_himmel)
@@ -230,10 +230,10 @@ void MainWindow::initializeManipulator(osgViewer::View *view)
     // set up the camera manipulators.
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
 
-    keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
-    keyswitchManipulator->addMatrixManipulator('2', "Flight",    new osgGA::FlightManipulator());
-    keyswitchManipulator->addMatrixManipulator('3', "Drive",     new osgGA::DriveManipulator());
-    keyswitchManipulator->addMatrixManipulator('4', "Terrain",   new osgGA::TerrainManipulator());
+    keyswitchManipulator->addMatrixManipulator('1', "Terrain",   new osgGA::TerrainManipulator());
+    keyswitchManipulator->addMatrixManipulator('2', "Trackball", new osgGA::TrackballManipulator());
+    keyswitchManipulator->addMatrixManipulator('3', "Flight",    new osgGA::FlightManipulator());
+    keyswitchManipulator->addMatrixManipulator('4', "Drive",     new osgGA::DriveManipulator());
 
     m_ui->centralWidget->setCameraManipulator(keyswitchManipulator.get());
 
@@ -319,15 +319,15 @@ void MainWindow::on_aboutAction_triggered(bool)
 }
 
 
-void MainWindow::on_sphereMappedHimmelAction_triggered(bool)
+void MainWindow::on_polarMappedHimmelAction_triggered(bool)
 {
     clearHimmel();
 
-    m_himmel = new Scene_SphereMappedHimmel(m_camera);
+    m_himmel = new Scene_PolarMappedHimmel(m_camera);
 
     himmelChanged();
 
-    m_ui->sphereMappedHimmelAction->setChecked(true);
+    m_ui->polarMappedHimmelAction->setChecked(true);
 }
 
 

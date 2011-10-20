@@ -43,7 +43,7 @@
      <string>&amp;Canvas</string>
     </property>
     <addaction name="cubeMappedHimmelAction"/>
-    <addaction name="sphereMappedHimmelAction"/>
+    <addaction name="polarMappedHimmelAction"/>
     <addaction name="proceduralHimmelAction"/>
     <addaction name="separator"/>
     <addaction name="insert3DObjectFromFileAction"/>
@@ -273,15 +273,15 @@
     <string>Ctrl+Shift+C</string>
    </property>
   </action>
-  <action name="sphereMappedHimmelAction">
+  <action name="polarMappedHimmelAction">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;SphereMapped Himmel</string>
+    <string>&amp;PolarMapped Himmel</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+P</string>
    </property>
   </action>
   <action name="proceduralHimmelAction">

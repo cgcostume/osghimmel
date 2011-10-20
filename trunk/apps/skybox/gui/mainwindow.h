@@ -111,7 +111,7 @@ protected slots:
     void on_quitAction_triggered(bool);
     void on_aboutAction_triggered(bool);
 
-    void on_sphereMappedHimmelAction_triggered(bool);
+    void on_polarMappedHimmelAction_triggered(bool);
     void on_cubeMappedHimmelAction_triggered(bool);
     void on_proceduralHimmelAction_triggered(bool);
 

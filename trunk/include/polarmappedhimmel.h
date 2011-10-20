@@ -27,32 +27,46 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+
 #pragma once
-#ifndef __SCENE_SPHEREMAPPEDHIMMEL_H__
-#define __SCENE_SPHEREMAPPEDHIMMEL_H__
+#ifndef __POLARMAPPEDHIMMEL_H__
+#define __POLARMAPPEDHIMMEL_H__
 
-#include "abstracthimmelscene.h"
+#include "abstractmappedhimmel.h"
+
+#include <map>
+
+namespace osg
+{
+    class Texture2D;
+}
 
 
-class SphereMappedHimmel;
-
-class Scene_SphereMappedHimmel : public AbstractHimmelScene
+class PolarMappedHimmel : public AbstractMappedHimmel
 {
 public:
-    Scene_SphereMappedHimmel(osg::Camera *camera);
+    PolarMappedHimmel();
+    virtual ~PolarMappedHimmel();
 
-    virtual ~Scene_SphereMappedHimmel();
+    // Use this helper to work with pre-configured textures.
+    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
 
-    virtual AbstractHimmel *himmel();
+protected:
+
+    // AbstractMappedHimmel interface
+
+    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
+
+
+    // AbstractHimmel interface
+
+    virtual const std::string getVertexShaderSource();
+    virtual const std::string getFragmentShaderSource();
 
 protected:
 
-    // from AbstractPropertySupport
-    virtual void registerProperties();
-
-protected:
-    osg::ref_ptr<SphereMappedHimmel> m_himmel;
+    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
+    t_tex2DById m_tex2DsById;
 };
 
-
-#endif // __SCENE_SPHEREMAPPEDHIMMEL_H__
+#endif // __SPHEREMAPPEDHIMMEL_H__
