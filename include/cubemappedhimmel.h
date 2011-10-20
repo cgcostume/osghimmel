@@ -40,6 +40,8 @@ namespace osg
     class TextureCubeMap;
 }
 
+// uses method presented by Greene, Ned in "Environment 
+// Mapping and Other Applications of World Projections" 1986
 
 class CubeMappedHimmel : public AbstractMappedHimmel
 {
