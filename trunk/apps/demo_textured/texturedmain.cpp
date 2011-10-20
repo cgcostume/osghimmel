@@ -102,18 +102,20 @@ public:
 
 osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel();
+    osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_HALF);
 
     himmel->assignTime(g_timef, true);
-    himmel->setTransitionDuration(0.2f);
+    himmel->setTransitionDuration(0.05f);
 
-    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sky_sphere_0.tga"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sky_sphere_1.tga"));
-    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sky_sphere_2.tga"));
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_0.tga"));
+    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_1.tga"));
+    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_2.tga"));
+    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_3.tga"));
 
     himmel->pushTextureUnit(0, 0.00f);
-    himmel->pushTextureUnit(1, 0.33f);
-    himmel->pushTextureUnit(2, 0.66f);
+    himmel->pushTextureUnit(1, 0.25f);
+    himmel->pushTextureUnit(2, 0.50f);
+    himmel->pushTextureUnit(3, 0.75f);
 
     return himmel;
 }
