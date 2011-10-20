@@ -41,6 +41,8 @@ namespace osg
     class Texture2D;
 }
 
+// uses method presented by Blinn, James F. and Newell, Martin E.
+// in "Texture and reflection in computer generated images" 1976
 
 class PolarMappedHimmel : public AbstractMappedHimmel
 {
