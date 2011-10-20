@@ -87,25 +87,7 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 
 // VertexShader
 
-#include "shaderfragment/version.vsf"
-#include "shaderfragment/quadretrieveray.vsf"
-#include "shaderfragment/quadtransform.vsf"
-
-const std::string CubeMappedHimmel::getVertexShaderSource()
-{
-    return glsl_v_version
-
-        +   glsl_v_quadRetrieveRay
-        +   glsl_v_quadTransform
-        +
-        "smooth out vec4 m_ray;\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "   m_ray = quadRetrieveRay();\n"
-        "   quadTransform();\n"
-        "}\n\n";
-}
+// -> specified in AbstractMappedHimmel
 
 
 // FragmentShader
@@ -132,9 +114,9 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
 
         "void main(void)\n"
         "{\n"
-        "   vec3 stu = normalize(m_ray.xyz);\n"
+        "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-        "   gl_FragColor = blend_normal(\n"
-        "       textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
+        "    gl_FragColor = blend_normal(\n"
+        "        textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
         "}\n\n";
 }
