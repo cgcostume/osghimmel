@@ -32,8 +32,9 @@
 #include <osg/Texture2D>
 
 
-PolarMappedHimmel::PolarMappedHimmel()
+PolarMappedHimmel::PolarMappedHimmel(const e_MappingMode &mappingMode)
 :   AbstractMappedHimmel()
+,   m_mappingMode(mappingMode)
 {
     setName("PolarMappedHimmel");
 };
@@ -132,15 +133,22 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
 
         // Color Retrieval
 
+    +   (mappingMode() == MM_HALF ? 
         "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
+    :   "const float c_1OverPi  = 0.3183098861837906715377675267450;\n")
+    +   
         "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
         "\n"
         "void main(void)\n"
         "{\n"
-        "   vec3 stu = normalize(m_ray.xyz);\n"
-        "   vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(stu.z) * c_2OverPi);\n"
+        "    vec3 stu = normalize(m_ray.xyz);\n"
+
+    +   (mappingMode() == MM_HALF ? 
+        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);\n"
+    :   "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);\n")
+    +
         "\n"
-        "   gl_FragColor = blend_normal(\n"
-        "       texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
+        "    gl_FragColor = blend_normal(\n"
+        "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
         "}\n\n";
 }

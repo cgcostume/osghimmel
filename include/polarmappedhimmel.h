@@ -45,11 +45,24 @@ namespace osg
 class PolarMappedHimmel : public AbstractMappedHimmel
 {
 public:
-    PolarMappedHimmel();
+    enum e_MappingMode 
+    {
+        MM_FULL
+    ,   MM_HALF
+    };
+
+public:
+
+    PolarMappedHimmel(const e_MappingMode &mappingMode);
     virtual ~PolarMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
     osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
+
+    inline const e_MappingMode mappingMode() const
+    {
+        return m_mappingMode;
+    }
 
 protected:
 
@@ -67,6 +80,8 @@ protected:
 
     typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
     t_tex2DById m_tex2DsById;
+
+    e_MappingMode m_mappingMode;
 };
 
 #endif // __SPHEREMAPPEDHIMMEL_H__
