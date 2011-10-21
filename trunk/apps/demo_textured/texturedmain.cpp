@@ -199,14 +199,10 @@ osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
     himmel->setTransitionDuration(0.05f);
 
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
-    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
-    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
+    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sphere_gen_2.jpg"));
 
     himmel->pushTextureUnit(0, 0.00f);
-    himmel->pushTextureUnit(1, 0.25f);
-    himmel->pushTextureUnit(2, 0.50f);
-    himmel->pushTextureUnit(3, 0.75f);
+    himmel->pushTextureUnit(1, 0.50f);
 
     return himmel;
 }

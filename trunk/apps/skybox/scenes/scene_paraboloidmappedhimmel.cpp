@@ -51,17 +51,15 @@ Scene_ParaboloidMappedHimmel::Scene_ParaboloidMappedHimmel(osg::Camera *camera)
 
     m_himmel = new ParaboloidMappedHimmel();
 
-    m_himmel->setTransitionDuration(0.1f);
+    m_himmel->setTransitionDuration(0.05f);
 
-    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_pho_0.jpg"));
-    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
-    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_pho_2.jpg"));
-    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/paraboloid_pho_3.jpg"));
+    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
+    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_pho_3.jpg"));
+    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_gen_2.jpg"));
 
     m_himmel->pushTextureUnit(0, 0.00f);
-    m_himmel->pushTextureUnit(1, 0.25f);
-    m_himmel->pushTextureUnit(2, 0.50f);
-    m_himmel->pushTextureUnit(3, 0.75f);
+    m_himmel->pushTextureUnit(1, 0.33f);
+    m_himmel->pushTextureUnit(2, 0.66f);
 
     addChild(m_himmel);
 }

@@ -57,8 +57,8 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
     m_himmel->setTransitionDuration(0.2f);
 
     osg::TextureCubeMap *tcm0 = m_himmel->getOrCreateTextureCubeMap(0);
-    osg::TextureCubeMap *tcm1 = m_himmel->getOrCreateTextureCubeMap(1);
-    osg::TextureCubeMap *tcm2 = m_himmel->getOrCreateTextureCubeMap(2);
+    //osg::TextureCubeMap *tcm1 = m_himmel->getOrCreateTextureCubeMap(1);
+    //osg::TextureCubeMap *tcm2 = m_himmel->getOrCreateTextureCubeMap(2);
 
     // px = lf; nx = rt; py = dn; ny = up; pz = ft; nz = bk    <- common skybox mapping (lhs to rhs)
 
@@ -85,9 +85,7 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
     tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_2_nz.tga"));
     */
 
-    osg::Image *img0 = osgDB::readImageFile("resources/noise1k.png");
-    osg::Image *img1 = osgDB::readImageFile("resources/noise4k.png");
-    osg::Image *img2 = osgDB::readImageFile("resources/noise8k.png");
+    osg::Image *img0 = osgDB::readImageFile("resources/noise8k.png");
 
     tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, img0);
     tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, img0);
@@ -96,24 +94,7 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
     tcm0->setImage(osg::TextureCubeMap::POSITIVE_Z, img0);
     tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Z, img0);
 
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_X, img1);
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_X, img1);
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Y, img1);
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Y, img1);
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Z, img1);
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Z, img1);
-
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_X, img2);
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_X, img2);
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Y, img2);
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Y, img2);
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Z, img2);
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, img2);
-
-
     m_himmel->pushTextureUnit(0, 0.00f);
-    m_himmel->pushTextureUnit(1, 0.33f);
-    m_himmel->pushTextureUnit(2, 0.66f);
 
     addChild(m_himmel);
 }

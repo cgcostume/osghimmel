@@ -50,21 +50,13 @@ Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
 
     m_himmel = new SphereMappedHimmel(SphereMappedHimmel::MM_TOWARDS_NEG_Y);
 
-    m_himmel->setTransitionDuration(0.02f);
+    m_himmel->setTransitionDuration(0.05f);
 
     m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
-    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sphere_gen_1.jpg"));
-    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sphere_gen_2.jpg"));
-    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/sphere_gen_3.jpg"));
-    m_himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/sphere_gen_4.jpg"));
-    m_himmel->getOrCreateTexture2D(5)->setImage(osgDB::readImageFile("resources/sphere_gen_5.jpg"));
+    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sphere_gen_2.jpg"));
 
     m_himmel->pushTextureUnit(0, 0.0f);
-    m_himmel->pushTextureUnit(1, 0.1f);
-    m_himmel->pushTextureUnit(2, 0.2f);
-    m_himmel->pushTextureUnit(3, 0.3f);
-    m_himmel->pushTextureUnit(4, 0.4f);
-    m_himmel->pushTextureUnit(5, 0.5f);
+    m_himmel->pushTextureUnit(1, 0.5f);
 
     addChild(m_himmel);
 }
