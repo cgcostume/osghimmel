@@ -135,10 +135,4 @@ void Scene_CubeMappedHimmel::registerProperties()
     AbstractHimmelScene::registerProperties();
 
     QtProperty *cubeGroup = createGroup(GROUP_CUBEMAPPED);
-
-    createProperty(*cubeGroup , PROPERTY_TEST1, 0.0, 0.0, 1.0, 0.02);
-    registerForFastAccess(PROPERTY_TEST1);
-
-    createProperty(*cubeGroup , PROPERTY_TEST2, 0.0, 0.0, 1.0, 0.02);
-    registerForFastAccess(PROPERTY_TEST2);
 }

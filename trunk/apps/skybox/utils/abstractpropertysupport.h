@@ -35,6 +35,7 @@
 #include "utils/abstractfactory.hpp"
 
 #include <QLabel>
+#include <QString>
 #include <QGraphicsItem>
 #include <QPainterPath>
 #include <QComboBox>
@@ -88,7 +89,10 @@ protected:
     // Call overloaded registerProperties from base classes.
     void initializeProperties();
 
-    virtual void propertyChanged(QtProperty *p) = 0;
+    virtual void propertyChanged(
+        QtProperty *p
+    ,   const QString &name) = 0;
+
     virtual void registerProperties() = 0;
 
     QtProperty *property(const QString &name) const;
