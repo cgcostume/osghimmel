@@ -31,8 +31,9 @@
 
 #include "include/polarmappedhimmel.h"
 
-#include <osg/Texture2D>
+#include <qtpropertybrowser/qtvariantproperty.h>
 
+#include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
 
@@ -41,6 +42,9 @@ namespace
     // Properties
 
     static const QString GROUP_POLARMAPPED(TR("Polar Mapped"));
+
+    static const QString PROPERTY_HBAND_SCALE    (TR("H-Band Scale"));
+    static const QString PROPERTY_HBAND_THICKNESS(TR("H-Band Thickness"));
 }
 
 Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
@@ -93,4 +97,18 @@ void Scene_PolarMappedHimmel::registerProperties()
     AbstractHimmelScene::registerProperties();
 
     QtProperty *polarGroup = createGroup(GROUP_POLARMAPPED);
+
+    createProperty(*polarGroup, PROPERTY_HBAND_SCALE, 0.1, 0.0, 1.0, 0.02);
+    createProperty(*polarGroup, PROPERTY_HBAND_THICKNESS, 0.05, 0.0, 1.0, 0.01);
+}
+
+
+void Scene_PolarMappedHimmel::propertyChanged(
+    QtProperty *p
+,   const QString &name)
+{
+         if(PROPERTY_HBAND_SCALE == name)
+        m_himmel->setHBandScale(doubleValue(PROPERTY_HBAND_SCALE));
+    else if(PROPERTY_HBAND_THICKNESS == name)
+        m_himmel->setHBandThickness(doubleValue(PROPERTY_HBAND_THICKNESS));
 }

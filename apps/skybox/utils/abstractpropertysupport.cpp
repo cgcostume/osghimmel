@@ -311,7 +311,7 @@ const QList<QtProperty*> &AbstractPropertySupport::fastAccessProperties() const
 
 void AbstractPropertySupport::on_propertyChanged(QtProperty *p)
 {
-    propertyChanged(p);
+    propertyChanged(p, p->propertyName());
 }
 
 

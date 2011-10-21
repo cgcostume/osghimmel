@@ -61,10 +61,18 @@ public:
     // Use this helper to work with pre-configured textures.
     osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
 
-    inline const e_MappingMode mappingMode() const
+    inline const e_MappingMode getMappingMode() const
     {
         return m_mappingMode;
     }
+
+    // setter
+
+    const float setHBandScale(const float scale);
+    const float getHBandScale() const;
+
+    const float setHBandThickness(const float thickness);
+    const float getHBandThickness() const;
 
 protected:
 
@@ -84,9 +92,10 @@ protected:
 
     e_MappingMode m_mappingMode;
 
-    osg::ref_ptr<osg::Uniform> u_hbandScale; // float
-    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
+    osg::ref_ptr<osg::Uniform> u_hbandScale;     // float
+    osg::ref_ptr<osg::Uniform> u_hbandThickness; // float
 
+    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
     osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
 };
 

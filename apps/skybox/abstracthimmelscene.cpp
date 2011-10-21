@@ -40,13 +40,7 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_ABSTRACTSCENE (TR("Abstract Scene"));
     static const QString GROUP_ABSTRACTHIMMEL(TR("Abstract Himmel"));
-
-    static const QString PROPERTY_FOV(TR("Field of View"));
-
-    static const QString PROPERTY_TIME   (TR("Time"));
-    static const QString PROPERTY_SECONDS(TR("SecondsPerCycle"));
 }
 
 
@@ -67,7 +61,9 @@ AbstractHimmelScene::~AbstractHimmelScene()
 }
 
 
-void AbstractHimmelScene::propertyChanged(QtProperty *p)
+void AbstractHimmelScene::propertyChanged(
+    QtProperty *p
+,   const QString &name)
 {
 }
 
@@ -75,9 +71,6 @@ void AbstractHimmelScene::propertyChanged(QtProperty *p)
 void AbstractHimmelScene::registerProperties()
 {
     QtProperty *himmelGroup = createGroup(GROUP_ABSTRACTHIMMEL);
-
-    createProperty(*himmelGroup , PROPERTY_TIME, 0.0, 0.0, 1.0, 0.02);
-    registerForFastAccess(PROPERTY_TIME);
 }
 
 

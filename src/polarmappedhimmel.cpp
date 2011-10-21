@@ -37,14 +37,16 @@ PolarMappedHimmel::PolarMappedHimmel(const e_MappingMode &mappingMode)
 :   AbstractMappedHimmel()
 ,   m_mappingMode(mappingMode)
 
-,   u_hbandScale(new osg::Uniform("hbandScale",   0.125f))
-,   u_hbandColor(new osg::Uniform("hbandColor",   osg::Vec4(0.55f, 0.65f, 0.65f, 1.f)))
-,   u_bottomColor(new osg::Uniform("hbottomColor", osg::Vec4(0.08f, 0.12f, 0.20f, 1.f)))
+,   u_hbandScale(    new osg::Uniform("hbandScale",     0.125f))
+,   u_hbandThickness(new osg::Uniform("hbandThickness", 0.005f))
+,   u_hbandColor(    new osg::Uniform("hbandColor",     osg::Vec4(0.55f, 0.65f, 0.65f, 1.f)))
+,   u_bottomColor(   new osg::Uniform("hbottomColor",   osg::Vec4(0.08f, 0.12f, 0.20f, 1.f)))
 
 {
     setName("PolarMappedHimmel");
 
     getOrCreateStateSet()->addUniform(u_hbandScale);
+    getOrCreateStateSet()->addUniform(u_hbandThickness);
     getOrCreateStateSet()->addUniform(u_hbandColor);
     getOrCreateStateSet()->addUniform(u_bottomColor);
 };
@@ -108,7 +110,7 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
-    switch(mappingMode())
+    switch(getMappingMode())
     {
     case MM_HALF:
 
@@ -131,6 +133,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
 
             // support horizon band for half polar maps.
             "uniform float hbandScale = 1.f;\n"
+            "uniform float hbandThickness = 0.05f;\n"
             "\n"
             "uniform vec4 hbottomColor;\n"
             "uniform vec4 hbandColor;\n"
@@ -150,7 +153,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
             "    else\n"
             "        fc = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
             "\n"
-            "    float b = abs(stu.z / hbandScale);\n"
+            "    float b = abs(stu.z / hbandScale) - hbandThickness;\n"
 	        "    b = 1.0 - b; b *= b * b;\n" // use fast inversed cubed interpolation
             "\n"
             "    gl_FragColor = blend_normal(hbandColor, fc, clamp(0.0, 1.0 - b, 1.0));\n"
@@ -193,4 +196,36 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
     }
 
     return "";
+}
+
+
+const float PolarMappedHimmel::setHBandScale(const float scale)
+{
+    u_hbandScale->set(scale);
+    return getHBandScale();
+}
+
+
+const float PolarMappedHimmel::getHBandScale() const
+{
+    float hbandScale;
+    u_hbandScale->get(hbandScale);
+
+    return hbandScale;
+}
+
+
+const float PolarMappedHimmel::setHBandThickness(const float thickness)
+{
+    u_hbandThickness->set(thickness);
+    return getHBandThickness();
+}
+
+
+const float PolarMappedHimmel::getHBandThickness() const
+{
+    float hbandThickness;
+    u_hbandThickness->get(hbandThickness);
+
+    return hbandThickness;
 }
