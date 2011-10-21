@@ -45,6 +45,7 @@
 #include "scenes/scene_polarmappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
 #include "scenes/scene_paraboloidmappedhimmel.h"
+#include "scenes/scene_spheremappedhimmel.h"
 
 #include "utils/import.h"
 
@@ -184,7 +185,7 @@ void MainWindow::initializeScene()
         0, 0, m_ui->centralWidget->width(), m_ui->centralWidget->height()));
     
     m_camera->setProjectionMatrixAsPerspective(
-        40.f, static_cast<double>(m_ui->centralWidget->width()) / static_cast<double>(m_ui->centralWidget->height()), 0.1, 8.f);
+        45.f, static_cast<double>(m_ui->centralWidget->width()) / static_cast<double>(m_ui->centralWidget->height()), 0.1, 8.f);
 
     m_camera->setClearColor(osg::Vec4(1.f, 1.f, 1.f, 1.f));
 
@@ -205,6 +206,8 @@ void MainWindow::himmelChanged()
     m_ui->cubeMappedHimmelAction->setChecked(false);
     m_ui->polarMappedHimmelAction->setChecked(false);
     m_ui->paraboloidMappedHimmelAction->setChecked(false);
+    m_ui->sphereMappedHimmelAction->setChecked(false);
+
     m_ui->proceduralHimmelAction->setChecked(false);
 
     if(m_himmel)
@@ -341,7 +344,6 @@ void MainWindow::on_cubeMappedHimmelAction_triggered(bool)
 }
 
 
-
 void MainWindow::on_paraboloidMappedHimmelAction_triggered(bool)
 {
     clearHimmel();
@@ -349,6 +351,16 @@ void MainWindow::on_paraboloidMappedHimmelAction_triggered(bool)
     himmelChanged();
 
     m_ui->paraboloidMappedHimmelAction->setChecked(true);
+}
+
+
+void MainWindow::on_sphereMappedHimmelAction_triggered(bool)
+{
+    clearHimmel();
+    m_himmel = new Scene_SphereMappedHimmel(m_camera);
+    himmelChanged();
+
+    m_ui->sphereMappedHimmelAction->setChecked(true);
 }
 
 

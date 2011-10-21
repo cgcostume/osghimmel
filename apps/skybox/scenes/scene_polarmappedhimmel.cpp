@@ -31,8 +31,6 @@
 
 #include "include/polarmappedhimmel.h"
 
-#include <qtpropertybrowser/qtvariantproperty.h>
-
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 

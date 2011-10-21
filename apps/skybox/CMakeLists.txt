@@ -76,6 +76,8 @@ SET(SKYBOX_SOURCES
     scenes/scene_paraboloidmappedhimmel.cpp
     scenes/scene_polarmappedhimmel.h
     scenes/scene_polarmappedhimmel.cpp
+    scenes/scene_spheremappedhimmel.h
+    scenes/scene_spheremappedhimmel.cpp
     utils/abstractfactory.hpp
     utils/abstractpropertysupport.h
     utils/abstractpropertysupport.cpp
