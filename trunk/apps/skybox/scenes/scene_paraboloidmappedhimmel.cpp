@@ -27,9 +27,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "scene_polarmappedhimmel.h"
+#include "scene_paraboloidmappedhimmel.h"
 
-#include "include/polarmappedhimmel.h"
+#include "include/paraboloidmappedhimmel.h"
 
 #include <osg/Texture2D>
 
@@ -40,57 +40,47 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_POLARMAPPED(TR("Polar Mapped"));
+    static const QString GROUP_PARABOLOIDMAPPED(TR("Paraboloid Mapped"));
 }
 
-Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
+Scene_ParaboloidMappedHimmel::Scene_ParaboloidMappedHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
 ,   m_himmel(NULL)
 {
     initializeProperties();
 
-    m_himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_HALF);
+    m_himmel = new ParaboloidMappedHimmel();
 
-    m_himmel->setTransitionDuration(0.01f);
+    m_himmel->setTransitionDuration(0.1f);
 
-    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_pho_0.jpg"));
-    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
-    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_pho_2.jpg"));
-    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_3.jpg"));
-    m_himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_4.jpg"));
-    m_himmel->getOrCreateTexture2D(5)->setImage(osgDB::readImageFile("resources/polar_half_pho_5.jpg"));
-    m_himmel->getOrCreateTexture2D(6)->setImage(osgDB::readImageFile("resources/polar_half_pho_6.jpg"));
-    m_himmel->getOrCreateTexture2D(7)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
-//    m_himmel->getOrCreateTexture2D(8)->setImage(osgDB::readImageFile("resources/polar_half_gen_8.jpg"));
+    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_pho_0.jpg"));
+    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
+    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_pho_2.jpg"));
+    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/paraboloid_pho_3.jpg"));
 
-    m_himmel->pushTextureUnit(0, 0.0f);
-    m_himmel->pushTextureUnit(1, 0.1f);
-    m_himmel->pushTextureUnit(2, 0.2f);
-    m_himmel->pushTextureUnit(3, 0.3f);
-    m_himmel->pushTextureUnit(4, 0.4f);
-    m_himmel->pushTextureUnit(5, 0.5f);
-    m_himmel->pushTextureUnit(6, 0.6f);
-    m_himmel->pushTextureUnit(7, 0.7f);
-//    m_himmel->pushTextureUnit(8, 0.8f);
+    m_himmel->pushTextureUnit(0, 0.00f);
+    m_himmel->pushTextureUnit(1, 0.25f);
+    m_himmel->pushTextureUnit(2, 0.50f);
+    m_himmel->pushTextureUnit(3, 0.75f);
 
     addChild(m_himmel);
 }
 
 
-Scene_PolarMappedHimmel::~Scene_PolarMappedHimmel()
+Scene_ParaboloidMappedHimmel::~Scene_ParaboloidMappedHimmel()
 {
 }
 
 
-AbstractHimmel *Scene_PolarMappedHimmel::himmel()
+AbstractHimmel *Scene_ParaboloidMappedHimmel::himmel()
 {
     return m_himmel;
 }
 
 
-void Scene_PolarMappedHimmel::registerProperties()
+void Scene_ParaboloidMappedHimmel::registerProperties()
 {
     AbstractHimmelScene::registerProperties();
 
-    QtProperty *polarGroup = createGroup(GROUP_POLARMAPPED);
+    QtProperty *paraboloidGroup = createGroup(GROUP_PARABOLOIDMAPPED);
 }

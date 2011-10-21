@@ -113,6 +113,7 @@ protected slots:
 
     void on_polarMappedHimmelAction_triggered(bool);
     void on_cubeMappedHimmelAction_triggered(bool);
+    void on_paraboloidMappedHimmelAction_triggered(bool);
     void on_proceduralHimmelAction_triggered(bool);
 
     void on_insert3DObjectFromFileAction_triggered(bool);

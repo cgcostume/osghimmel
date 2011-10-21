@@ -44,6 +44,7 @@
 
 #include "scenes/scene_polarmappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
+#include "scenes/scene_paraboloidmappedhimmel.h"
 
 #include "utils/import.h"
 
@@ -203,6 +204,7 @@ void MainWindow::himmelChanged()
 {
     m_ui->cubeMappedHimmelAction->setChecked(false);
     m_ui->polarMappedHimmelAction->setChecked(false);
+    m_ui->paraboloidMappedHimmelAction->setChecked(false);
     m_ui->proceduralHimmelAction->setChecked(false);
 
     if(m_himmel)
@@ -322,9 +324,7 @@ void MainWindow::on_aboutAction_triggered(bool)
 void MainWindow::on_polarMappedHimmelAction_triggered(bool)
 {
     clearHimmel();
-
     m_himmel = new Scene_PolarMappedHimmel(m_camera);
-
     himmelChanged();
 
     m_ui->polarMappedHimmelAction->setChecked(true);
@@ -334,12 +334,21 @@ void MainWindow::on_polarMappedHimmelAction_triggered(bool)
 void MainWindow::on_cubeMappedHimmelAction_triggered(bool)
 {
     clearHimmel();
-
     m_himmel = new Scene_CubeMappedHimmel(m_camera);
-
     himmelChanged();
 
     m_ui->cubeMappedHimmelAction->setChecked(true);
+}
+
+
+
+void MainWindow::on_paraboloidMappedHimmelAction_triggered(bool)
+{
+    clearHimmel();
+    m_himmel = new Scene_ParaboloidMappedHimmel(m_camera);
+    himmelChanged();
+
+    m_ui->paraboloidMappedHimmelAction->setChecked(true);
 }
 
 
