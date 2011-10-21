@@ -99,7 +99,7 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
 
-        +   glsl_f_blendNormalExt
+//        +   glsl_f_blendNormalExt // using mix
         +
         "in vec4 m_ray;\n"
         "\n"
@@ -116,7 +116,7 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-        "    gl_FragColor = blend_normal(\n"
-        "        textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
+        "    gl_FragColor = mix(\n"
+        "        textureCube(back, stu), textureCube(src, stu), clamp(0.0, srcAlpha, 1.0));\n"
         "}\n\n";
 }

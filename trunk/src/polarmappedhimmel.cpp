@@ -31,12 +31,22 @@
 
 #include <osg/Texture2D>
 
+#include <assert.h>
 
 PolarMappedHimmel::PolarMappedHimmel(const e_MappingMode &mappingMode)
 :   AbstractMappedHimmel()
 ,   m_mappingMode(mappingMode)
+
+,   u_hbandScale(new osg::Uniform("hbandScale",   0.125f))
+,   u_hbandColor(new osg::Uniform("hbandColor",   osg::Vec4(0.55f, 0.65f, 0.65f, 1.f)))
+,   u_bottomColor(new osg::Uniform("hbottomColor", osg::Vec4(0.08f, 0.12f, 0.20f, 1.f)))
+
 {
     setName("PolarMappedHimmel");
+
+    getOrCreateStateSet()->addUniform(u_hbandScale);
+    getOrCreateStateSet()->addUniform(u_hbandColor);
+    getOrCreateStateSet()->addUniform(u_bottomColor);
 };
 
 
@@ -98,39 +108,89 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_f_version
+    switch(mappingMode())
+    {
+    case MM_HALF:
 
-    +   glsl_f_blendNormalExt
-    +
-        "in vec4 m_ray;\n"
-        "\n"
+        return glsl_f_version
 
-        // From AbstractMappedHimmel
+        +   glsl_f_blendNormalExt
+        +
+            "in vec4 m_ray;\n"
+            "\n"
 
-        "uniform float srcAlpha;\n"
-        "\n"
-        "uniform sampler2D back;\n"
-        "uniform sampler2D src;\n"
-        "\n"
+            // From AbstractMappedHimmel
 
-        // Color Retrieval
+            "uniform float srcAlpha;\n"
+            "\n"
+            "uniform sampler2D back;\n"
+            "uniform sampler2D src;\n"
+            "\n"
 
-    +   (mappingMode() == MM_HALF ? 
-        "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
-    :   "const float c_1OverPi  = 0.3183098861837906715377675267450;\n")
-    +   
-        "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "    vec3 stu = normalize(m_ray.xyz);\n"
+            // Color Retrieval
 
-    +   (mappingMode() == MM_HALF ? 
-        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);\n"
-    :   "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);\n")
-    +
-        "\n"
-        "    gl_FragColor = blend_normal(\n"
-        "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
-        "}\n\n";
+            // support horizon band for half polar maps.
+            "uniform float hbandScale = 1.f;\n"
+            "\n"
+            "uniform vec4 hbottomColor;\n"
+            "uniform vec4 hbandColor;\n"
+            "\n"
+            "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
+            "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
+            "\n"
+            "void main(void)\n"
+            "{\n"
+            "    vec3 stu = normalize(m_ray.xyz);\n"
+            "\n"
+            "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);\n"
+            "\n"
+            "    vec4 fc; // fragmentcolor\n"
+            "    if(stu.z < 0.0)\n"
+		    "        fc = hbottomColor;\n"
+            "    else\n"
+            "        fc = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
+            "\n"
+            "    float b = abs(stu.z / hbandScale);\n"
+	        "    b = 1.0 - b; b *= b * b;\n" // use fast inversed cubed interpolation
+            "\n"
+            "    gl_FragColor = blend_normal(hbandColor, fc, clamp(0.0, 1.0 - b, 1.0));\n"
+            "}\n\n";
+
+
+    case MM_FULL:
+
+        return glsl_f_version
+
+//        +   glsl_f_blendNormalExt // using mix
+        +
+            "in vec4 m_ray;\n"
+            "\n"
+
+            // From AbstractMappedHimmel
+
+            "uniform float srcAlpha;\n"
+            "\n"
+            "uniform sampler2D back;\n"
+            "uniform sampler2D src;\n"
+            "\n"
+
+            // Color Retrieval
+
+            "const float c_1OverPi  = 0.3183098861837906715377675267450;\n"
+            "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
+            "\n"
+            "void main(void)\n"
+            "{\n"
+            "    vec3 stu = normalize(m_ray.xyz);\n"
+            "\n"
+            "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);\n"
+            "\n"
+            "    gl_FragColor = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
+            "}\n\n";
+
+    default:
+        assert(false);
+    }
+
+    return "";
 }

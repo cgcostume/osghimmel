@@ -41,16 +41,16 @@ namespace
 
 AbstractMappedHimmel::AbstractMappedHimmel()
 :   AbstractHimmel()
-,   m_srcAlpha(new osg::Uniform("srcAlpha", 0.f))
-,   m_back    (new osg::Uniform("back", BACK_TEXTURE_INDEX))
-,   m_src     (new osg::Uniform("src",  SRC_TEXTURE_INDEX))
+,   u_srcAlpha(new osg::Uniform("srcAlpha", 0.f))
+,   u_back    (new osg::Uniform("back", BACK_TEXTURE_INDEX))
+,   u_src     (new osg::Uniform("src",  SRC_TEXTURE_INDEX))
 
 ,   m_activeBackUnit(std::numeric_limits<GLint>::max())
 ,   m_activeSrcUnit( std::numeric_limits<GLint>::max())
 {
-    getOrCreateStateSet()->addUniform(m_srcAlpha);
-    getOrCreateStateSet()->addUniform(m_back);
-    getOrCreateStateSet()->addUniform(m_src);
+    getOrCreateStateSet()->addUniform(u_srcAlpha);
+    getOrCreateStateSet()->addUniform(u_back);
+    getOrCreateStateSet()->addUniform(u_src);
 };
 
 
@@ -67,7 +67,7 @@ void AbstractMappedHimmel::update()
 
     const float t(timef());
 
-    m_srcAlpha->set(m_changer.getSrcAlpha(t));
+    u_srcAlpha->set(m_changer.getSrcAlpha(t));
 
     // Avoid unnecessary unit switches.
 

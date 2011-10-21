@@ -83,6 +83,11 @@ protected:
     t_tex2DById m_tex2DsById;
 
     e_MappingMode m_mappingMode;
+
+    osg::ref_ptr<osg::Uniform> u_hbandScale; // float
+    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
+
+    osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
 };
 
 #endif // __SPHEREMAPPEDHIMMEL_H__

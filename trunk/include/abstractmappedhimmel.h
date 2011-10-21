@@ -77,10 +77,10 @@ protected:
 
     TwoUnitsChanger m_changer;
 
-    osg::ref_ptr<osg::Uniform> m_back; // type depends on subclasses
-    osg::ref_ptr<osg::Uniform> m_src;  // type depends on subclasses
+    osg::ref_ptr<osg::Uniform> u_back; // type depends on subclasses
+    osg::ref_ptr<osg::Uniform> u_src;  // type depends on subclasses
 
-    osg::ref_ptr<osg::Uniform> m_srcAlpha; // float
+    osg::ref_ptr<osg::Uniform> u_srcAlpha; // float
 
     GLint m_activeBackUnit;
     GLint m_activeSrcUnit;
