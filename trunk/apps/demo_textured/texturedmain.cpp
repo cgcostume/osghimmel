@@ -136,6 +136,7 @@ osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
     himmel->setTransitionDuration(0.2f);
 
     osg::TextureCubeMap *tcm0 = himmel->getOrCreateTextureCubeMap(0);
+    /*
     osg::TextureCubeMap *tcm1 = himmel->getOrCreateTextureCubeMap(1);
     osg::TextureCubeMap *tcm2 = himmel->getOrCreateTextureCubeMap(2);
 
@@ -161,10 +162,20 @@ osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
     tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_2_ny.tga"));
     tcm2->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_2_pz.tga"));
     tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_2_nz.tga"));
+    */
+
+    osg::Image *img0 = osgDB::readImageFile("resources/noise1k.png");
+
+    tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, img0);
+    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, img0);
+    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Y, img0);
+    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Y, img0);
+    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Z, img0);
+    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Z, img0);
 
     himmel->pushTextureUnit(0, 0.00f);
-    himmel->pushTextureUnit(1, 0.33f);
-    himmel->pushTextureUnit(2, 0.66f);
+    //himmel->pushTextureUnit(1, 0.33f);
+    //himmel->pushTextureUnit(2, 0.66f);
 
     return himmel;
 }

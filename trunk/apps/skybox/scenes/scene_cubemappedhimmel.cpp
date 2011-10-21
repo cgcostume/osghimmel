@@ -41,9 +41,6 @@ namespace
     // Properties
 
     static const QString GROUP_CUBEMAPPED(TR("Cube Mapped"));
-
-    static const QString PROPERTY_TEST1  (TR("Test1"));
-    static const QString PROPERTY_TEST2  (TR("Test2"));
 }
 
 Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
@@ -85,7 +82,7 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
     tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_2_nz.tga"));
     */
 
-    osg::Image *img0 = osgDB::readImageFile("resources/noise8k.png");
+    osg::Image *img0 = osgDB::readImageFile("resources/noise1k.png");
 
     tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, img0);
     tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, img0);
