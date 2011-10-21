@@ -29,6 +29,7 @@
 
 #include "include/polarmappedhimmel.h"
 #include "include/cubemappedhimmel.h"
+#include "include/paraboloidmappedhimmel.h"
 #include "include/timef.h"
 
 #include <osgViewer/Viewer>
@@ -51,8 +52,9 @@
 
 enum e_Demo
 {
-    D_PolarMappedHimmel = 0
-,   D_CubeMappedHimmel  = 1
+    D_PolarMappedHimmel       = 0
+,   D_CubeMappedHimmel        = 1
+,   D_ParaboloidMappedHimmel  = 2
 };
 
 
@@ -66,8 +68,9 @@ std::map<e_Demo, osg::ref_ptr<AbstractHimmel> > g_himmelsByDemo;
 
 void activateDemo(e_Demo demo)
 {
-    g_himmelsByDemo[D_PolarMappedHimmel]->setNodeMask(D_PolarMappedHimmel == demo);
-    g_himmelsByDemo[D_CubeMappedHimmel] ->setNodeMask(D_CubeMappedHimmel  == demo);
+    g_himmelsByDemo[D_PolarMappedHimmel]     ->setNodeMask(D_PolarMappedHimmel      == demo);
+    g_himmelsByDemo[D_CubeMappedHimmel]      ->setNodeMask(D_CubeMappedHimmel       == demo);
+    g_himmelsByDemo[D_ParaboloidMappedHimmel]->setNodeMask(D_ParaboloidMappedHimmel == demo);
 }
 
 
@@ -86,7 +89,7 @@ public:
             {
                 if (ea.getKey()==osgGA::GUIEventAdapter::KEY_Space)
                 {
-                    g_demo = static_cast<e_Demo>((g_demo + 1) % 2);
+                    g_demo = static_cast<e_Demo>((g_demo + 1) % 3);
                     activateDemo(g_demo);
                 }
             }
@@ -163,6 +166,27 @@ osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
 }
 
 
+osg::ref_ptr<AbstractHimmel> createParaboloidMappedDemo()
+{
+    osg::ref_ptr<ParaboloidMappedHimmel> himmel = new ParaboloidMappedHimmel();
+
+    himmel->assignTime(g_timef, true);
+    himmel->setTransitionDuration(0.05f);
+
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_pho_0.jpg"));
+    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
+    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_pho_2.jpg"));
+    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/paraboloid_pho_3.jpg"));
+
+    himmel->pushTextureUnit(0, 0.00f);
+    himmel->pushTextureUnit(1, 0.25f);
+    himmel->pushTextureUnit(2, 0.50f);
+    himmel->pushTextureUnit(3, 0.75f);
+
+    return himmel;
+}
+
+
 void initializeScene(osgViewer::View &view)
 {
     osg::Camera* cam = view.getCamera();
@@ -178,6 +202,10 @@ void initializeScene(osgViewer::View &view)
 
     g_himmelsByDemo[D_CubeMappedHimmel] = createCubeMappedDemo();
     root->addChild(g_himmelsByDemo[D_CubeMappedHimmel]);
+
+    g_himmelsByDemo[D_ParaboloidMappedHimmel] = createParaboloidMappedDemo();
+    root->addChild(g_himmelsByDemo[D_ParaboloidMappedHimmel]);
+
 
     view.setSceneData(root.get());
 
@@ -218,6 +246,8 @@ int main(int argc, char* argv[])
     while (psr.read("--cube")) 
         g_demo = D_CubeMappedHimmel;
 
+    while (psr.read("--paraboloid")) 
+        g_demo = D_ParaboloidMappedHimmel;
 
     initializeManipulators(viewer);
     initializeScene(viewer);

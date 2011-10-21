@@ -29,8 +29,8 @@
 
 
 #pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
+#ifndef __PARABOLOIDMAPPEDHIMMEL_H__
+#define __PARABOLOIDMAPPEDHIMMEL_H__
 
 #include "abstractmappedhimmel.h"
 
@@ -41,30 +41,15 @@ namespace osg
     class Texture2D;
 }
 
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
 
-class PolarMappedHimmel : public AbstractMappedHimmel
+class ParaboloidMappedHimmel : public AbstractMappedHimmel
 {
 public:
-    enum e_MappingMode 
-    {
-        MM_FULL
-    ,   MM_HALF
-    };
-
-public:
-
-    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_HALF);
-    virtual ~PolarMappedHimmel();
+    ParaboloidMappedHimmel();
+    virtual ~ParaboloidMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
     osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
-
-    inline const e_MappingMode mappingMode() const
-    {
-        return m_mappingMode;
-    }
 
 protected:
 
@@ -81,13 +66,6 @@ protected:
 
     typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
     t_tex2DById m_tex2DsById;
-
-    e_MappingMode m_mappingMode;
-
-    osg::ref_ptr<osg::Uniform> u_hbandScale; // float
-    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
-
-    osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
 };
 
-#endif // __SPHEREMAPPEDHIMMEL_H__
+#endif // __PARABOLOIDMAPPEDHIMMEL_H__

@@ -72,6 +72,8 @@ SET(SKYBOX_SOURCES
     gui/qosgwidget.cpp
     scenes/scene_cubemappedhimmel.h
     scenes/scene_cubemappedhimmel.cpp
+    scenes/scene_paraboloidmappedhimmel.h
+    scenes/scene_paraboloidmappedhimmel.cpp
     scenes/scene_polarmappedhimmel.h
     scenes/scene_polarmappedhimmel.cpp
     utils/abstractfactory.hpp
