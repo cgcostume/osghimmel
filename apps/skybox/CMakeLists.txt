@@ -93,11 +93,12 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${QT_INCLUDES})
     
-if(MSVC)
-    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
-else(MSVC)
-    add_executable(skybox       ${QT4_SOURCES} ${SKYBOX_SOURCES})
-endif()
+#if(MSVC)
+#    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
+#else(MSVC)
+    # use console
+    add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
+#endif()
 
 set_default_target_properties(skybox ON)
 
