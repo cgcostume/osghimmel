@@ -27,77 +27,63 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "scene_spheremappedhimmel.h"
 
-#pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
+#include "include/spheremappedhimmel.h"
 
-#include "abstractmappedhimmel.h"
+#include <osg/Texture2D>
+#include <osgDB/ReadFile>
 
-#include <map>
 
-namespace osg
+namespace
 {
-    class Texture2D;
+    // Properties
+
+    static const QString GROUP_SPHEREMAPPED(TR("Sphere Mapped"));
 }
 
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
-
-class PolarMappedHimmel : public AbstractMappedHimmel
+Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
+:   AbstractHimmelScene(camera)
+,   m_himmel(NULL)
 {
-public:
+    initializeProperties();
 
-    enum e_MappingMode 
-    {
-        MM_FULL
-    ,   MM_HALF
-    };
+    m_himmel = new SphereMappedHimmel(SphereMappedHimmel::MM_TOWARDS_NEG_Y);
 
-public:
+    m_himmel->setTransitionDuration(0.02f);
 
-    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_HALF);
-    virtual ~PolarMappedHimmel();
+    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
+    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sphere_gen_1.jpg"));
+    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/sphere_gen_2.jpg"));
+    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/sphere_gen_3.jpg"));
+    m_himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/sphere_gen_4.jpg"));
+    m_himmel->getOrCreateTexture2D(5)->setImage(osgDB::readImageFile("resources/sphere_gen_5.jpg"));
 
-    // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
+    m_himmel->pushTextureUnit(0, 0.0f);
+    m_himmel->pushTextureUnit(1, 0.1f);
+    m_himmel->pushTextureUnit(2, 0.2f);
+    m_himmel->pushTextureUnit(3, 0.3f);
+    m_himmel->pushTextureUnit(4, 0.4f);
+    m_himmel->pushTextureUnit(5, 0.5f);
 
-    inline const e_MappingMode getMappingMode() const
-    {
-        return m_mappingMode;
-    }
-
-    // setter
-
-    const float setHBandScale(const float scale);
-    const float getHBandScale() const;
-
-    const float setHBandThickness(const float thickness);
-    const float getHBandThickness() const;
-
-protected:
-
-    // AbstractMappedHimmel interface
-
-    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
+    addChild(m_himmel);
+}
 
 
-    // AbstractHimmel interface
+Scene_SphereMappedHimmel::~Scene_SphereMappedHimmel()
+{
+}
 
-    virtual const std::string getFragmentShaderSource();
 
-protected:
+AbstractHimmel *Scene_SphereMappedHimmel::himmel()
+{
+    return m_himmel;
+}
 
-    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
-    t_tex2DById m_tex2DsById;
 
-    e_MappingMode m_mappingMode;
+void Scene_SphereMappedHimmel::registerProperties()
+{
+    AbstractHimmelScene::registerProperties();
 
-    osg::ref_ptr<osg::Uniform> u_hbandScale;     // float
-    osg::ref_ptr<osg::Uniform> u_hbandThickness; // float
-
-    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
-    osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
-};
-
-#endif // __SPHEREMAPPEDHIMMEL_H__
+    QtProperty *sphereGroup = createGroup(GROUP_SPHEREMAPPED);
+}

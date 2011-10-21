@@ -27,77 +27,32 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
+#ifndef __SCENE_SPHEREMAPPEDHIMMEL_H__
+#define __SCENE_SPHEREMAPPEDHIMMEL_H__
 
-#include "abstractmappedhimmel.h"
+#include "abstracthimmelscene.h"
 
-#include <map>
 
-namespace osg
-{
-    class Texture2D;
-}
+class SphereMappedHimmel;
 
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
-
-class PolarMappedHimmel : public AbstractMappedHimmel
+class Scene_SphereMappedHimmel : public AbstractHimmelScene
 {
 public:
+    Scene_SphereMappedHimmel(osg::Camera *camera);
 
-    enum e_MappingMode 
-    {
-        MM_FULL
-    ,   MM_HALF
-    };
+    virtual ~Scene_SphereMappedHimmel();
 
-public:
-
-    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_HALF);
-    virtual ~PolarMappedHimmel();
-
-    // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
-
-    inline const e_MappingMode getMappingMode() const
-    {
-        return m_mappingMode;
-    }
-
-    // setter
-
-    const float setHBandScale(const float scale);
-    const float getHBandScale() const;
-
-    const float setHBandThickness(const float thickness);
-    const float getHBandThickness() const;
+    virtual AbstractHimmel *himmel();
 
 protected:
 
-    // AbstractMappedHimmel interface
-
-    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
-
-
-    // AbstractHimmel interface
-
-    virtual const std::string getFragmentShaderSource();
+    // from AbstractPropertySupport
+    virtual void registerProperties();
 
 protected:
-
-    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
-    t_tex2DById m_tex2DsById;
-
-    e_MappingMode m_mappingMode;
-
-    osg::ref_ptr<osg::Uniform> u_hbandScale;     // float
-    osg::ref_ptr<osg::Uniform> u_hbandThickness; // float
-
-    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
-    osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
+    osg::ref_ptr<SphereMappedHimmel> m_himmel;
 };
 
-#endif // __SPHEREMAPPEDHIMMEL_H__
+
+#endif // __SCENE_SPHEREMAPPEDHIMMEL_H__

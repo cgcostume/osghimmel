@@ -45,6 +45,8 @@
     <addaction name="cubeMappedHimmelAction"/>
     <addaction name="polarMappedHimmelAction"/>
     <addaction name="paraboloidMappedHimmelAction"/>
+    <addaction name="sphereMappedHimmelAction"/>
+    <addaction name="separator"/>
     <addaction name="proceduralHimmelAction"/>
     <addaction name="separator"/>
     <addaction name="insert3DObjectFromFileAction"/>
@@ -320,10 +322,18 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>ParaboloidMapped Himmel</string>
+    <string>Para&amp;boloidMapped Himmel</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+B</string>
+   </property>
+  </action>
+  <action name="sphereMappedHimmelAction">
+   <property name="text">
+    <string>&amp;Sphere-Mapped Himmel</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>

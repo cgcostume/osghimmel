@@ -29,8 +29,8 @@
 
 
 #pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
+#ifndef __SPHEREMAPPEDHIMMEL_H__
+#define __SPHEREMAPPEDHIMMEL_H__
 
 #include "abstractmappedhimmel.h"
 
@@ -41,23 +41,22 @@ namespace osg
     class Texture2D;
 }
 
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
+// uses method presented by Miller, Gene S. and Hoffman, Robert C. in "Illumination 
+// and Reflection Maps: Simulated Objects in Simulated and Real Environments" 1984
 
-class PolarMappedHimmel : public AbstractMappedHimmel
+class SphereMappedHimmel : public AbstractMappedHimmel
 {
 public:
 
-    enum e_MappingMode 
+    enum e_MappingMode
     {
-        MM_FULL
-    ,   MM_HALF
+        MM_TOWARDS_NEG_Y
+    ,   MM_TOWARDS_POS_Z
     };
 
 public:
-
-    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_HALF);
-    virtual ~PolarMappedHimmel();
+    SphereMappedHimmel(const e_MappingMode &mappingMode);
+    virtual ~SphereMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
     osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
@@ -66,14 +65,6 @@ public:
     {
         return m_mappingMode;
     }
-
-    // setter
-
-    const float setHBandScale(const float scale);
-    const float getHBandScale() const;
-
-    const float setHBandThickness(const float thickness);
-    const float getHBandThickness() const;
 
 protected:
 
@@ -92,12 +83,6 @@ protected:
     t_tex2DById m_tex2DsById;
 
     e_MappingMode m_mappingMode;
-
-    osg::ref_ptr<osg::Uniform> u_hbandScale;     // float
-    osg::ref_ptr<osg::Uniform> u_hbandThickness; // float
-
-    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
-    osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
 };
 
 #endif // __SPHEREMAPPEDHIMMEL_H__

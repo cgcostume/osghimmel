@@ -41,6 +41,11 @@ namespace osg
     class Texture2D;
 }
 
+// uses method presented by Heidrich, Wolfgang and Seidel, 
+// Hans-Peter in "View-independent environment maps" 1998
+
+// Dual-Paraboloid not supported yet...
+// The map is mapped towards +z (top).
 
 class ParaboloidMappedHimmel : public AbstractMappedHimmel
 {
