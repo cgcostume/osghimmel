@@ -51,7 +51,7 @@ Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
 {
     initializeProperties();
 
-    m_himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_HALF);
+    m_himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half);
 
     m_himmel->setTransitionDuration(0.01f);
 

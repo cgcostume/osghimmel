@@ -43,7 +43,7 @@ TwoUnitsChanger::TwoUnitsChanger()
 ,   m_src(0)
 ,   m_srcAlpha(0.f)
 
-,   m_interpolationMethod(IM_LINEAR)
+,   m_interpolationMethod(IM_Linear)
 {
 }
 

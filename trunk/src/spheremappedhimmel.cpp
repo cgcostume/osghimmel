@@ -120,11 +120,11 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
 
-    +   (getMappingMode() == MM_TOWARDS_POS_Z ?
-        // MM_TOWARDS_POS_Z
+    +   (getMappingMode() == MM_TowardsPosZ ?
+        // MM_TowardsPosZ
         "    float m = 2.0 * sqrt(stu.x * stu.x + stu.y * stu.y + (stu.z + 1.0) * (stu.z + 1.0));\n"
         "    vec2 uv = vec2(-stu.x / m + 0.5, stu.y / m + 0.5);\n"
-        // MM_TOWARDS_NEG_Y
+        // MM_TowardsNegY
     :   "    float m = 2.0 * sqrt(stu.x * stu.x + stu.z * stu.z + (-stu.y + 1.0) * (-stu.y + 1.0));\n"
         "    vec2 uv = vec2(-stu.x / m + 0.5, stu.z / m + 0.5);\n")
     +

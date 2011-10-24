@@ -50,13 +50,13 @@ public:
 
     enum e_MappingMode 
     {
-        MM_FULL
-    ,   MM_HALF
+        MM_Full
+    ,   MM_Half
     };
 
 public:
 
-    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_HALF);
+    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_Half);
     virtual ~PolarMappedHimmel();
 
     // Use this helper to work with pre-configured textures.

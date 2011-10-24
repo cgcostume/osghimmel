@@ -109,7 +109,7 @@ public:
 
 osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_HALF);
+    osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half);
 
     himmel->assignTime(g_timef, true);
     himmel->setTransitionDuration(0.05f);
@@ -204,7 +204,7 @@ osg::ref_ptr<AbstractHimmel> createParaboloidMappedDemo()
 
 osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
 {
-    osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel(SphereMappedHimmel::MM_TOWARDS_NEG_Y);
+    osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel(SphereMappedHimmel::MM_TowardsNegY);
 
     himmel->assignTime(g_timef, true);
     himmel->setTransitionDuration(0.05f);

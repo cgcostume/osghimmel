@@ -54,7 +54,7 @@ public:
 
     void setDocument(
         QTextDocument *textdoc
-    ,   const e_GlslLanguageType language = GLSL_UNDEFINED);
+    ,   const e_GlslLanguageType language = GLSLT_Undefined);
 
     QTextDocument *createDocument();
 

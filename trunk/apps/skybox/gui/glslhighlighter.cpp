@@ -38,7 +38,7 @@
 
 GlslHighlighter::GlslHighlighter()
 :   QSyntaxHighlighter(static_cast<QWidget*>(NULL))
-,   m_language(GLSL_COMMON)
+,   m_language(GLSLT_Common)
 {
 }
 
@@ -75,7 +75,7 @@ void GlslHighlighter::setLanguage(const e_GlslLanguageType language)
     m_formats.clear();
     m_patternsByFormat.clear();
 
-    if(GLSL_UNDEFINED == m_language)
+    if(GLSLT_Undefined == m_language)
         return;
 
     QTextCharFormat *f0(new QTextCharFormat());
@@ -111,14 +111,14 @@ void GlslHighlighter::setLanguage(const e_GlslLanguageType language)
 
     switch(m_language)
     {
-    case GLSL_VERTEX:
+    case GLSLT_Vertex:
         createAndAppendRules(glsl_syntax_BuiltIn_v,                 f2);
         break;
-    case GLSL_GEOMETRY:
+    case GLSLT_Geometry:
         createAndAppendRules(glsl_syntax_BuiltIn_g,                 f2);
         createAndAppendRules(glsl_syntax_Functions_g,               f3);
         break;
-    case GLSL_FRAGMENT:
+    case GLSLT_Fragment:
         createAndAppendRules(glsl_syntax_BuiltIn_f,                 f2);
         createAndAppendRules(glsl_syntax_IterationAndJumps_f,       f0);
         createAndAppendRules(glsl_syntax_DerivativeFunctions_f,     f3);

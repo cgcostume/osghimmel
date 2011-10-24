@@ -56,49 +56,49 @@
 
 enum e_InterpolationMethod
 {
-    IM_LINEAR
-,   IM_SMOOTHSTEP
-,   IM_SMOOTHSTEP2
-,   IM_SMOOTHSTEP3
-,   IM_SMOOTHERSTEP // Ken Perlin
-,   IM_SQUARED
-,   IM_INVSQUARED
-,   IM_CUBED
-,   IM_INVCUBED
-,   IM_SIN          // strong in, soft out
-,   IM_INVSIN       // soft in, strong out
+    IM_Linear
+,   IM_SmoothStep
+,   IM_SmoothStep2
+,   IM_SmoothStep3
+,   IM_SmootherStep // Ken Perlin
+,   IM_Squared
+,   IM_InvSquared
+,   IM_Cubed
+,   IM_InvCubed
+,   IM_Sin          // strong in, soft out
+,   IM_InvSin       // soft in, strong out
 };
 
 
 template<typename T>
 inline const T interpolate(
     const T t
-,   const e_InterpolationMethod function = IM_LINEAR)
+,   const e_InterpolationMethod function = IM_Linear)
 {
     switch(function)
     {
-    case IM_SMOOTHSTEP:
+    case IM_SmoothStep:
         return interpolate_smoothstep(t);
-    case IM_SMOOTHSTEP2:
+    case IM_SmoothStep2:
         return interpolate_smoothstep2(t);
-    case IM_SMOOTHSTEP3:
+    case IM_SmoothStep3:
         return interpolate_smoothstep3(t);
-    case IM_SMOOTHERSTEP:
+    case IM_SmootherStep:
         return interpolate_smootherstep(t);
-    case IM_SQUARED:
+    case IM_Squared:
         return interpolate_squared(t);
-    case IM_INVSQUARED:
+    case IM_InvSquared:
         return interpolate_invsquared(t);
-    case IM_CUBED:
+    case IM_Cubed:
         return interpolate_cubed(t);
-    case IM_INVCUBED:
+    case IM_InvCubed:
         return interpolate_invcubed(t);
-    case IM_SIN:
+    case IM_Sin:
         return static_cast<T>(interpolate_sin(t));
-    case IM_INVSIN:
+    case IM_InvSin:
         return static_cast<T>(interpolate_invsin(t));
     default:
-    case IM_LINEAR:
+    case IM_Linear:
         return interpolate_linear(t);
     }
 }

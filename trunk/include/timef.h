@@ -50,8 +50,8 @@ class TimeF
 {
     enum e_Mode
     {
-        M_RUNNING
-    ,   M_PAUSING
+        M_Running
+    ,   M_Pausing
     };
 
 public:
