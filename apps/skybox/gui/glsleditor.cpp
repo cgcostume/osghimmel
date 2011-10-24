@@ -204,14 +204,14 @@ const e_GlslLanguageType GlslEditor::osgShaderTypeToLanguageType(const osg::Shad
     switch(type)
     {
     case osg::Shader::VERTEX:
-        return GLSL_VERTEX;
+        return GLSLT_Vertex;
     case osg::Shader::GEOMETRY:
-        return GLSL_GEOMETRY;
+        return GLSLT_Geometry;
     case osg::Shader::FRAGMENT:
-        return GLSL_FRAGMENT;
+        return GLSLT_Fragment;
     case osg::Shader::UNDEFINED:
     default:
-        return GLSL_UNDEFINED;
+        return GLSLT_Undefined;
     }
 }
 

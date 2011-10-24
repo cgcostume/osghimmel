@@ -62,7 +62,7 @@ GlslTextEdit::GlslTextEdit(QWidget *parent)
 
     highlightCurrentLine();
 
-    setDocument(NULL, GLSL_UNDEFINED);
+    setDocument(NULL, GLSLT_Undefined);
 }
 
 
@@ -140,13 +140,13 @@ void GlslTextEdit::setDocument(
 
     switch(language)
     {
-    case GLSL_VERTEX:
+    case GLSLT_Vertex:
         setupCompleter(glsl_complete_common + glsl_complete_v);
         break;
-    case GLSL_GEOMETRY:
+    case GLSLT_Geometry:
         setupCompleter(glsl_complete_common + glsl_complete_g);
         break;
-    case GLSL_FRAGMENT:
+    case GLSLT_Fragment:
         setupCompleter(glsl_complete_common + glsl_complete_f);
         break;
     default:

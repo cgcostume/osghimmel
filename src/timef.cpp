@@ -39,7 +39,7 @@ TimeF::TimeF(
 ,   const float secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
-,   m_mode(M_RUNNING)
+,   m_mode(M_Running)
 ,   m_offset(0.f)
 ,   m_lastModeChangeTime(0.f)
 {
@@ -53,7 +53,7 @@ TimeF::TimeF(
 ,   const float secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
-,   m_mode(M_RUNNING)
+,   m_mode(M_Running)
 ,   m_offset(0.f)
 ,   m_lastModeChangeTime(0.f)
 {
@@ -83,10 +83,10 @@ TimeF::~TimeF()
 
 void TimeF::update()
 {
-    float elapsed(M_RUNNING == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
+    float elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
     elapsed -= m_offset;
 
-    if(M_RUNNING == m_mode)
+    if(M_Running == m_mode)
     {
         const float elapsedTimef(elapsed / m_secondsPerCycle);
 
@@ -196,13 +196,13 @@ inline const time_t TimeF::fToSeconds(const float time)
 
 void TimeF::run()
 {
-    if(M_PAUSING == m_mode)
+    if(M_Pausing == m_mode)
     {
         const float t(m_timer->time_s());
         m_offset += t - m_lastModeChangeTime;
         m_lastModeChangeTime = t;
     }
-    m_mode = M_RUNNING;
+    m_mode = M_Running;
 
     update();
 }
@@ -210,11 +210,11 @@ void TimeF::run()
 
 void TimeF::pause()
 {
-    if(M_RUNNING == m_mode)
+    if(M_Running == m_mode)
     {
         m_lastModeChangeTime = m_timer->time_s();
     }
-    m_mode = M_PAUSING;
+    m_mode = M_Pausing;
 
     update();
 }

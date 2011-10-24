@@ -50,8 +50,8 @@ public:
 
     enum e_MappingMode
     {
-        MM_TOWARDS_NEG_Y
-    ,   MM_TOWARDS_POS_Z
+        MM_TowardsNegY
+    ,   MM_TowardsPosZ
     };
 
 public:

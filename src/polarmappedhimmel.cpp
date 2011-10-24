@@ -112,7 +112,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
     switch(getMappingMode())
     {
-    case MM_HALF:
+    case MM_Half:
 
         return glsl_f_version
 
@@ -160,7 +160,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
             "}\n\n";
 
 
-    case MM_FULL:
+    case MM_Full:
 
         return glsl_f_version
 

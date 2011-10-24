@@ -33,11 +33,11 @@
 
 enum e_GlslLanguageType
 {
-    GLSL_UNDEFINED
-,   GLSL_COMMON
-,   GLSL_VERTEX      
-,   GLSL_GEOMETRY
-,   GLSL_FRAGMENT
+    GLSLT_Undefined
+,   GLSLT_Common
+,   GLSLT_Vertex      
+,   GLSLT_Geometry
+,   GLSLT_Fragment
 };
 
 #endif // __GLSL_TYPES_H__
