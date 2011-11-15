@@ -85,7 +85,11 @@ void DateTimeWidget::pause()
     m_ui->timeSlider->setEnabled(true);
 
     m_timer->stop();
-    m_timef.pause();
+
+	m_timef.pause();
+	m_timef.reset();
+
+	m_timef.setf(getTimeSliderF(), true);
 }
 
 
@@ -131,10 +135,11 @@ void DateTimeWidget::on_timeSlider_valueChanged(int value)
         return;
 
     pause();
-    m_timef.reset();
+}
 
-    const float t = static_cast<float>(value - m_ui->timeSlider->minimum()) 
+
+const float DateTimeWidget::getTimeSliderF() const
+{
+    return static_cast<float>(m_ui->timeSlider->value() - m_ui->timeSlider->minimum()) 
         / (m_ui->timeSlider->maximum() - m_ui->timeSlider->minimum());
-
-    m_timef.setf(t, true);
 }
