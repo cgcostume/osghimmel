@@ -34,8 +34,17 @@
 
 ParaboloidMappedHimmel::ParaboloidMappedHimmel()
 :   AbstractMappedHimmel()
+,   u_hbandScale(    new osg::Uniform("hbandScale",     defaultHBandScale()))
+,   u_hbandThickness(new osg::Uniform("hbandThickness", defaultHBandThickness()))
+,   u_hbandColor(    new osg::Uniform("hbandColor",     defaultHBandColor()))
+,   u_bottomColor(   new osg::Uniform("hbottomColor",   defaultBottomColor()))
 {
     setName("ParaboloidMappedHimmel");
+
+    getOrCreateStateSet()->addUniform(u_hbandScale);
+    getOrCreateStateSet()->addUniform(u_hbandThickness);
+    getOrCreateStateSet()->addUniform(u_hbandColor);
+    getOrCreateStateSet()->addUniform(u_bottomColor);
 };
 
 
@@ -94,12 +103,14 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 
 #include "shaderfragment/version.fsf"
 #include "shaderfragment/blend_normal.fsf"
+#include "shaderfragment/hband.fsf"
 
 const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
 
-//    +   glsl_f_blendNormalExt // using mix
+    +   glsl_f_blendNormalExt
+    +   glsl_f_hband
     +
         "in vec4 m_ray;\n"
         "\n"
@@ -121,13 +132,84 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
         "    float m = 2.0 * (1.0 + stu.z);\n"
         "    vec2 uv = vec2(stu.x / m + 0.5, stu.y / m + 0.5);\n"
         "\n"
-        "    if(stu.z < 0.0)\n"
-        "    {\n"
-        "        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n"
-        "        return;\n"
-        "    }\n"
+        "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
         "\n"
-        "    gl_FragColor = mix(\n"
-        "        texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
+        "    gl_FragColor = hband(stu.z, fc);\n"
         "}\n\n";
+}
+
+
+const float ParaboloidMappedHimmel::setHBandScale(const float scale)
+{
+    u_hbandScale->set(scale);
+    return getHBandScale();
+}
+
+const float ParaboloidMappedHimmel::getHBandScale() const
+{
+    float hbandScale;
+    u_hbandScale->get(hbandScale);
+
+    return hbandScale;
+}
+const float ParaboloidMappedHimmel::defaultHBandScale()
+{
+    return 0.33f;
+}
+
+
+const float ParaboloidMappedHimmel::setHBandThickness(const float thickness)
+{
+    u_hbandThickness->set(thickness);
+    return getHBandThickness();
+}
+
+const float ParaboloidMappedHimmel::getHBandThickness() const
+{
+    float hbandThickness;
+    u_hbandThickness->get(hbandThickness);
+
+    return hbandThickness;
+}
+const float ParaboloidMappedHimmel::defaultHBandThickness()
+{
+    return 0.005f;
+}
+
+
+const osg::Vec4 ParaboloidMappedHimmel::setHBandColor(const osg::Vec4 &color)
+{
+	u_hbandColor->set(color);
+	return getHBandColor();
+}
+
+const osg::Vec4 ParaboloidMappedHimmel::getHBandColor() const
+{
+    osg::Vec4 hbandColor;
+    u_hbandColor->get(hbandColor);
+
+    return hbandColor;
+}
+const osg::Vec4 ParaboloidMappedHimmel::defaultHBandColor()
+{
+    return osg::Vec4(0.25f, 0.25f, 0.25f, 1.f);
+}
+
+
+const osg::Vec4 ParaboloidMappedHimmel::setBottomColor(const osg::Vec4 &color)
+{
+	u_bottomColor->set(color);
+	return getBottomColor();
+}
+
+const osg::Vec4 ParaboloidMappedHimmel::getBottomColor() const
+{
+    osg::Vec4 bottomColor;
+    u_bottomColor->get(bottomColor);
+
+    return bottomColor;
+}
+const osg::Vec4 ParaboloidMappedHimmel::defaultBottomColor()
+{
+    return osg::Vec4(0.08f, 0.08f, 0.08f, 1.f);
 }

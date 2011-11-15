@@ -66,6 +66,7 @@ set(LIB_SOURCES
     shaderfragment/blend_normal.fsf
     shaderfragment/blend_screen.fsf
     shaderfragment/compose.fsf
+	shaderfragment/hband.fsf
     shaderfragment/quadretrieveray.vsf
     shaderfragment/quadtransform.vsf
     shaderfragment/version.fsf

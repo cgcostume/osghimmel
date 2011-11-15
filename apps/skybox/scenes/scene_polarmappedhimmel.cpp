@@ -30,6 +30,7 @@
 #include "scene_polarmappedhimmel.h"
 
 #include "include/polarmappedhimmel.h"
+#include "utils/qt2osg.h"
 
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
@@ -43,6 +44,8 @@ namespace
 
     static const QString PROPERTY_HBAND_SCALE    (TR("H-Band Scale"));
     static const QString PROPERTY_HBAND_THICKNESS(TR("H-Band Thickness"));
+    static const QString PROPERTY_HBAND_COLOR    (TR("H-Band Color"));
+    static const QString PROPERTY_BOTTOM_COLOR   (TR("Bottom Color"));
 }
 
 Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
@@ -92,8 +95,10 @@ void Scene_PolarMappedHimmel::registerProperties()
 
     QtProperty *polarGroup = createGroup(GROUP_POLARMAPPED);
 
-    createProperty(*polarGroup, PROPERTY_HBAND_SCALE, 0.1, 0.0, 1.0, 0.02);
-    createProperty(*polarGroup, PROPERTY_HBAND_THICKNESS, 0.05, 0.0, 1.0, 0.01);
+    createProperty(*polarGroup, PROPERTY_HBAND_SCALE, PolarMappedHimmel::defaultHBandScale(), 0.0, 1.0, 0.02);
+    createProperty(*polarGroup, PROPERTY_HBAND_THICKNESS, PolarMappedHimmel::defaultHBandThickness(), 0.0, 1.0, 0.01);
+    createProperty(*polarGroup, PROPERTY_HBAND_COLOR,  toQColor(PolarMappedHimmel::defaultHBandColor()));
+    createProperty(*polarGroup, PROPERTY_BOTTOM_COLOR, toQColor(PolarMappedHimmel::defaultBottomColor()));
 }
 
 
@@ -105,4 +110,8 @@ void Scene_PolarMappedHimmel::propertyChanged(
         m_himmel->setHBandScale(doubleValue(PROPERTY_HBAND_SCALE));
     else if(PROPERTY_HBAND_THICKNESS == name)
         m_himmel->setHBandThickness(doubleValue(PROPERTY_HBAND_THICKNESS));
+	else if(PROPERTY_HBAND_COLOR == name)
+		m_himmel->setHBandColor(toVec4(colorValue(PROPERTY_HBAND_COLOR)));
+	else if(PROPERTY_BOTTOM_COLOR == name)
+		m_himmel->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
 }

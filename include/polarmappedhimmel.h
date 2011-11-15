@@ -71,9 +71,19 @@ public:
 
     const float setHBandScale(const float scale);
     const float getHBandScale() const;
+    static const float defaultHBandScale();
 
     const float setHBandThickness(const float thickness);
     const float getHBandThickness() const;
+    static const float defaultHBandThickness();
+
+	const osg::Vec4 setHBandColor(const osg::Vec4 &color);
+	const osg::Vec4 getHBandColor() const;
+    static const osg::Vec4 defaultHBandColor();
+
+	const osg::Vec4 setBottomColor(const osg::Vec4 &color);
+	const osg::Vec4 getBottomColor() const;
+    static const osg::Vec4 defaultBottomColor();
 
 protected:
 

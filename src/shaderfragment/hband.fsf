@@ -28,34 +28,37 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
-#define __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#ifndef __GLSL_HBAND_FSF__
+#define __GLSL_HBAND_FSF__
 
-#include "abstracthimmelscene.h"
+// The general composition of two colors is specified in these two macros:
+// The first (default) uses the alpha value of src, the other allows over-
+// writing it. The Blending function is specified via COMPOSE parameter.
 
+// e.g. IMP_COMPOSE(multiply, b * s) creates the blend_multiply function
+// that uses back * src as intermediate composition.
 
-class ParaboloidMappedHimmel;
-
-class Scene_ParaboloidMappedHimmel : public AbstractHimmelScene
+namespace 
 {
-public:
-    Scene_ParaboloidMappedHimmel(osg::Camera *camera);
+    static const std::string glsl_f_hband
+    (
+        "uniform float hbandScale = 1.f;\n"
+        "uniform float hbandThickness = 0.05f;\n"
+        "\n"
+        "uniform vec4 hbottomColor;\n"
+        "uniform vec4 hbandColor;\n"
+        "\n"
+        "vec4 hband(float z, vec4 fc)\n"
+        "{\n"
+        "   if(z < 0.0)\n"
+        "       fc = hbottomColor;\n"
+        "\n"
+        "   float b = abs(z / hbandScale) - hbandThickness;\n"
+        "   b = 1.0 - b; b *= b * b;\n"
+        "\n"
+        "   return blend_normal(hbandColor, fc, clamp(0.0, 1.0 - b, 1.0));\n"
+        "}\n\n"
+    );
+}
 
-    virtual ~Scene_ParaboloidMappedHimmel();
-
-    virtual AbstractHimmel *himmel();
-
-protected:
-
-    // from AbstractPropertySupport
-    virtual void registerProperties();
-    virtual void propertyChanged(
-        QtProperty *p
-    ,   const QString &name);
-
-protected:
-    osg::ref_ptr<ParaboloidMappedHimmel> m_himmel;
-};
-
-
-#endif // __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#endif // __GLSL_HBAND_FSF__

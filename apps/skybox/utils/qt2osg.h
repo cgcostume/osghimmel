@@ -28,34 +28,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
-#define __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#ifndef __QT2OSG_H__
+#define __IMPORT_H__
 
-#include "abstracthimmelscene.h"
+class QColor;
 
+#include <osg/Vec4>
 
-class ParaboloidMappedHimmel;
+const osg::Vec4 toVec4(const QColor &color);
+const QColor toQColor(const osg::Vec4 &color);
 
-class Scene_ParaboloidMappedHimmel : public AbstractHimmelScene
-{
-public:
-    Scene_ParaboloidMappedHimmel(osg::Camera *camera);
-
-    virtual ~Scene_ParaboloidMappedHimmel();
-
-    virtual AbstractHimmel *himmel();
-
-protected:
-
-    // from AbstractPropertySupport
-    virtual void registerProperties();
-    virtual void propertyChanged(
-        QtProperty *p
-    ,   const QString &name);
-
-protected:
-    osg::ref_ptr<ParaboloidMappedHimmel> m_himmel;
-};
-
-
-#endif // __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#endif // __IMPORT_H__

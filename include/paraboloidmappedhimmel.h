@@ -56,6 +56,24 @@ public:
     // Use this helper to work with pre-configured textures.
     osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
 
+    // setter
+
+    const float setHBandScale(const float scale);
+    const float getHBandScale() const;
+    static const float defaultHBandScale();
+
+    const float setHBandThickness(const float thickness);
+    const float getHBandThickness() const;
+    static const float defaultHBandThickness();
+
+	const osg::Vec4 setHBandColor(const osg::Vec4 &color);
+	const osg::Vec4 getHBandColor() const;
+    static const osg::Vec4 defaultHBandColor();
+
+	const osg::Vec4 setBottomColor(const osg::Vec4 &color);
+	const osg::Vec4 getBottomColor() const;
+    static const osg::Vec4 defaultBottomColor();
+
 protected:
 
     // AbstractMappedHimmel interface
@@ -71,6 +89,12 @@ protected:
 
     typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
     t_tex2DById m_tex2DsById;
+
+    osg::ref_ptr<osg::Uniform> u_hbandScale;     // float
+    osg::ref_ptr<osg::Uniform> u_hbandThickness; // float
+
+    osg::ref_ptr<osg::Uniform> u_hbandColor;  // Vec4
+    osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
 };
 
 #endif // __PARABOLOIDMAPPEDHIMMEL_H__

@@ -49,12 +49,14 @@ class QtDoublePropertyManager;
 class QtSizeFPropertyManager;
 class QtBoolPropertyManager;
 class QtEnumPropertyManager;
+class QtColorPropertyManager;
 
 class QtEnumEditorFactory;
 class QtCheckBoxFactory;
 class QtSpinBoxFactory;
 class QtDoubleSpinBoxFactory;
 class QtDoubleSpinBoxFactory;
+class QtColorEditorFactory;
 
 class QSvgRenderer;
 
@@ -145,6 +147,11 @@ protected:
     ,   const QSizeF &maxValue
     ,   const QSizeF &stepValue);
 
+    QtProperty *createProperty(
+        QtProperty &group
+    ,   const QString &propertyName
+    ,   const QColor &color);
+
 
     void registerForFastAccess(const QString &name);
 
@@ -176,6 +183,10 @@ protected:
         const QString &name
     ,   const int value);
 
+    const QColor colorValue(const QString &name) const;
+    void setColorValue(
+        const QString &name
+    ,   const QColor &value);
 
 protected:
 
@@ -188,12 +199,14 @@ protected:
     QtSizeFPropertyManager  *m_sizeFManager;
     QtBoolPropertyManager   *m_boolManager;
     QtEnumPropertyManager   *m_enumManager;
+	QtColorPropertyManager  *m_colorManager;
 
     QtEnumEditorFactory     *m_enumFactory;
     QtCheckBoxFactory       *m_boolFactory;
     QtSpinBoxFactory        *m_intFactory;
     QtDoubleSpinBoxFactory  *m_doubleFactory;
     QtDoubleSpinBoxFactory  *m_sizeFactory;
+	QtColorEditorFactory    *m_colorFactory;
 
     QList<QtProperty*> m_rootGroups;
     QHash<QString, QtProperty*> m_properties;
