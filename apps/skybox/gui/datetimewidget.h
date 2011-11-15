@@ -73,6 +73,8 @@ protected:
 
     const bool isCycling() const;
 
+	const float getTimeSliderF() const;
+
 protected:
     std::auto_ptr<Ui_DateTimeWidget> m_ui;
 
