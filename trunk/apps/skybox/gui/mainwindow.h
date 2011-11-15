@@ -44,6 +44,8 @@ class QFileInfo;
 class QLabel;
 class QTimer;
 
+class QOsgEventHandler;
+
 namespace osgViewer 
 {
     class View;
@@ -106,6 +108,7 @@ protected slots:
     void mouseDroped(QList<QUrl> urlList);
 
     void me_timeout();
+    void setCameraFov(float fov);
 
     // ui
     void on_quitAction_triggered(bool);
@@ -155,6 +158,8 @@ private:
     osg::ref_ptr<osg::Group> m_scene;
 
     osg::Camera *m_camera;
+
+    QOsgEventHandler *m_eventHandler;
 };
 
 

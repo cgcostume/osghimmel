@@ -27,35 +27,52 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
-#define __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#include "qosgeventhandler.h"
 
-#include "abstracthimmelscene.h"
-
-
-class ParaboloidMappedHimmel;
-
-class Scene_ParaboloidMappedHimmel : public AbstractHimmelScene
+QOsgEventHandler::QOsgEventHandler(const float fov)
+:   m_fov(fov)
+,   m_fovBackup(fov)
 {
-public:
-    Scene_ParaboloidMappedHimmel(osg::Camera *camera);
+}
 
-    virtual ~Scene_ParaboloidMappedHimmel();
+bool QOsgEventHandler::handle(
+    const osgGA::GUIEventAdapter &ea
+,   osgGA::GUIActionAdapter &)
+{
+    if(ea.getEventType() == osgGA::GUIEventAdapter::FRAME
+    || ea.getEventType() == osgGA::GUIEventAdapter::MOVE)
+        return false;
 
-    virtual AbstractHimmel *himmel();
+    switch(ea.getEventType())
+    {
+    case(osgGA::GUIEventAdapter::SCROLL):
+        {
+            const float f = 1.00f
+                + (ea.getScrollingMotion() == osgGA::GUIEventAdapter::SCROLL_DOWN ? -0.08f : +0.08f);
 
-protected:
+            if(m_fov * f >= 1.f && m_fov * f <= 179.f)
+                m_fov *= f;
 
-    // from AbstractPropertySupport
-    virtual void registerProperties();
-    virtual void propertyChanged(
-        QtProperty *p
-    ,   const QString &name);
+            emit fovChanged(m_fov);
 
-protected:
-    osg::ref_ptr<ParaboloidMappedHimmel> m_himmel;
-};
+            return true;
+        }
+        break;
 
+    case(osgGA::GUIEventAdapter::RELEASE):
 
-#endif // __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+        if(ea.getButton() == osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON
+        && (ea.getModKeyMask() & osgGA::GUIEventAdapter::MODKEY_CTRL) != 0)
+        {
+            m_fov = m_fovBackup;
+            emit fovChanged(m_fov);
+
+            return true;
+        }
+        break;
+
+    default:
+        break;
+    };
+    return false;
+}

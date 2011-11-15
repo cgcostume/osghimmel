@@ -66,7 +66,9 @@ SET(SKYBOX_SOURCES
     gui/plaintextwithlinenumberareasupport.h
     gui/propertywidget.h
     gui/propertywidget.cpp
-    gui/qosgviewer.h
+    gui/qosgeventhandler.h
+    gui/qosgeventhandler.cpp    
+	gui/qosgviewer.h
     gui/qosgviewer.cpp
     gui/qosgwidget.h
     gui/qosgwidget.cpp
@@ -86,7 +88,9 @@ SET(SKYBOX_SOURCES
     utils/import.h
     utils/import.cpp
     utils/log.h
-    utils/log.cpp)
+    utils/log.cpp
+    utils/qt2osg.h
+    utils/qt2osg.cpp)
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
 

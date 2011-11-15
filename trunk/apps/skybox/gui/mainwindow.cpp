@@ -38,6 +38,7 @@
 #include "glsleditor.h"
 #include "logoutputlabel.h"
 #include "logoutputwidget.h"
+#include "qosgeventhandler.h"
 #include "qosgviewer.h"
 
 #include "propertywidget.h"
@@ -77,6 +78,8 @@
 namespace
 {
     const QString SETTINGS_GROUP_COMMON_GUI("common");
+
+    const float INITIAL_CAMERA_FOV(45.f);
 }
 
 
@@ -88,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
 ,   m_root(NULL)
 ,   m_timef(NULL)
 ,   m_camera(NULL)
+,   m_eventHandler(NULL)
 
 ,   m_timer(NULL)
 ,   m_dateTimeLabel(NULL)
@@ -183,9 +187,8 @@ void MainWindow::initializeScene()
     m_camera = m_ui->centralWidget->getCamera();
     m_camera->setViewport(new osg::Viewport(
         0, 0, m_ui->centralWidget->width(), m_ui->centralWidget->height()));
-    
-    m_camera->setProjectionMatrixAsPerspective(
-        45.f, static_cast<double>(m_ui->centralWidget->width()) / static_cast<double>(m_ui->centralWidget->height()), 0.1, 8.f);
+
+    setCameraFov(INITIAL_CAMERA_FOV);
 
     m_camera->setClearColor(osg::Vec4(1.f, 1.f, 1.f, 1.f));
 
@@ -198,6 +201,13 @@ void MainWindow::initializeScene()
     m_ui->centralWidget->setSceneData(m_root.get());
 
     m_timef = new TimeF(time(NULL), 30.f);
+}
+
+
+void MainWindow::setCameraFov(float fov)
+{
+    m_camera->setProjectionMatrixAsPerspective(
+        fov, static_cast<double>(m_ui->centralWidget->width()) / static_cast<double>(m_ui->centralWidget->height()), 0.1, 8.f);
 }
 
 
@@ -244,6 +254,11 @@ void MainWindow::initializeManipulator(osgViewer::View *view)
 
     m_ui->centralWidget->addEventHandler(new osgViewer::StatsHandler);
     m_ui->centralWidget->addEventHandler(new osgViewer::ThreadingHandler);
+
+    m_eventHandler = new QOsgEventHandler(INITIAL_CAMERA_FOV);
+    connect(m_eventHandler, SIGNAL(fovChanged(float)), this, SLOT(setCameraFov(float)));
+
+    m_ui->centralWidget->addEventHandler(m_eventHandler);
 }
 
 

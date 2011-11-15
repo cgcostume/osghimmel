@@ -27,35 +27,24 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
-#define __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#include "qt2osg.h"
 
-#include "abstracthimmelscene.h"
+#include <QColor>
 
-
-class ParaboloidMappedHimmel;
-
-class Scene_ParaboloidMappedHimmel : public AbstractHimmelScene
+const osg::Vec4 toVec4(const QColor &color)
 {
-public:
-    Scene_ParaboloidMappedHimmel(osg::Camera *camera);
+    return osg::Vec4(
+        color.redF()
+    ,   color.greenF()
+    ,   color.blueF()
+    ,   color.alphaF());
+}
 
-    virtual ~Scene_ParaboloidMappedHimmel();
-
-    virtual AbstractHimmel *himmel();
-
-protected:
-
-    // from AbstractPropertySupport
-    virtual void registerProperties();
-    virtual void propertyChanged(
-        QtProperty *p
-    ,   const QString &name);
-
-protected:
-    osg::ref_ptr<ParaboloidMappedHimmel> m_himmel;
-};
-
-
-#endif // __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+const QColor toQColor(const osg::Vec4 &color)
+{
+    return QColor::fromRgbF(
+        color.r()
+    ,   color.g()
+    ,   color.b()
+    ,   color.a());
+}

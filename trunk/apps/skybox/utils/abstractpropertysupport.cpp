@@ -38,9 +38,11 @@
 #include <qtpropertybrowser/QtBoolPropertyManager>
 #include <qtpropertybrowser/QtIntPropertyManager>
 #include <qtpropertybrowser/QtEnumPropertyManager>
+#include <qtpropertybrowser/QtColorPropertyManager>
 
 #include <qtpropertybrowser/QtEnumEditorFactory>
 #include <qtpropertybrowser/QtDoubleSpinBoxFactory>
+#include <qtpropertybrowser/QtColorEditorFactory>
 
 
 AbstractPropertySupport::AbstractPropertySupport()
@@ -195,8 +197,13 @@ QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QSt
 }
 
 
-QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QString &propertyName, 
-    const int value, const int minValue, const int maxValue, const int stepValue)
+QtProperty *AbstractPropertySupport::createProperty(
+	QtProperty &group
+,	const QString &propertyName
+,	const int value
+,	const int minValue
+,	const int maxValue
+,	const int stepValue)
 {
     m_properties.insert(propertyName, m_intManager->addProperty(propertyName));
 
@@ -204,6 +211,26 @@ QtProperty *AbstractPropertySupport::createProperty(QtProperty &group, const QSt
     m_intManager->setValue(p, value);
     m_intManager->setRange(p, minValue, maxValue);
     m_intManager->setSingleStep(p, stepValue);
+
+    group.addSubProperty(p);
+
+    return p;
+}
+
+
+QtProperty *AbstractPropertySupport::createProperty(
+	QtProperty &group
+,	const QString &propertyName
+,	const QColor &value)
+{
+    m_properties.insert(propertyName, m_colorManager->addProperty(propertyName));
+
+    QtProperty *p = property(propertyName);
+	m_colorManager->setValue(p, value);
+
+	QtIntPropertyManager *intManager(m_colorManager->subIntPropertyManager());
+    intManager->setRange(p, 0, 255);
+    intManager->setSingleStep(p, 1);
 
     group.addSubProperty(p);
 
@@ -229,12 +256,14 @@ void AbstractPropertySupport::initializeProperties()
         m_sizeFManager = new QtSizeFPropertyManager();
         m_boolManager = new QtBoolPropertyManager();
         m_enumManager = new QtEnumPropertyManager();
+		m_colorManager = new QtColorPropertyManager();
 
         m_enumFactory = new QtEnumEditorFactory();
         m_boolFactory = new QtCheckBoxFactory();
         m_intFactory = new QtSpinBoxFactory();
         m_doubleFactory = new QtDoubleSpinBoxFactory();
         m_sizeFactory = new QtDoubleSpinBoxFactory();
+		m_colorFactory = new QtColorEditorFactory();
 
         registerProperties();
     }
@@ -260,12 +289,15 @@ void AbstractPropertySupport::floodPropertyBrowser(QtAbstractPropertyBrowser *pr
         this, SLOT(on_propertyChanged(QtProperty*)));
     connect(m_sizeFManager, SIGNAL(valueChanged(QtProperty*, QSizeF)),
         this, SLOT(on_propertyChanged(QtProperty*)));
+    connect(m_colorManager, SIGNAL(valueChanged(QtProperty*, QColor)),
+        this, SLOT(on_propertyChanged(QtProperty*)));
 
     propertyBrowser->setFactoryForManager(m_enumManager, m_enumFactory);
     propertyBrowser->setFactoryForManager(m_boolManager, m_boolFactory);
     propertyBrowser->setFactoryForManager(m_intManager, m_intFactory);
     propertyBrowser->setFactoryForManager(m_doubleManager, m_doubleFactory);
     propertyBrowser->setFactoryForManager(m_sizeFManager->subDoublePropertyManager(), m_sizeFactory);
+	propertyBrowser->setFactoryForManager(m_colorManager, m_colorFactory);
 
     // populate
     foreach(QtProperty *p, m_rootGroups)
@@ -282,22 +314,12 @@ void AbstractPropertySupport::clearPropertyBrowser(QtAbstractPropertyBrowser *pr
 
     m_propertyBrowsers.remove(propertyBrowser);
 
-    disconnect(m_enumManager, SIGNAL(valueChanged(QtProperty*, int)),
-        this, SLOT(on_propertyChanged(QtProperty*)));
-    disconnect(m_boolManager, SIGNAL(valueChanged(QtProperty*, bool)),
-        this, SLOT(on_propertyChanged(QtProperty*)));
-    disconnect(m_intManager, SIGNAL(valueChanged(QtProperty*, int)),
-        this, SLOT(on_propertyChanged(QtProperty*)));
-    disconnect(m_doubleManager, SIGNAL(valueChanged(QtProperty*, double)),
-        this, SLOT(on_propertyChanged(QtProperty*)));
-    disconnect(m_sizeFManager, SIGNAL(valueChanged(QtProperty*, QSizeF)),
-        this, SLOT(on_propertyChanged(QtProperty*)));
-
     propertyBrowser->unsetFactoryForManager(m_enumManager);
     propertyBrowser->unsetFactoryForManager(m_boolManager);
     propertyBrowser->unsetFactoryForManager(m_intManager);
     propertyBrowser->unsetFactoryForManager(m_doubleManager);
     propertyBrowser->unsetFactoryForManager(m_sizeFManager->subDoublePropertyManager());
+	propertyBrowser->unsetFactoryForManager(m_colorManager->subIntPropertyManager());
 
     propertyBrowser->clear();
 }
@@ -321,8 +343,9 @@ const double AbstractPropertySupport::doubleValue(const QString &name) const
     return m_doubleManager->value(m_properties[name]);
 }
 
-
-void AbstractPropertySupport::setDoubleValue(const QString &name, const double value)
+void AbstractPropertySupport::setDoubleValue(
+	const QString &name
+,	const double value)
 {
     assert(m_properties.contains(name));
     m_doubleManager->setValue(m_properties[name], value);
@@ -335,8 +358,9 @@ const int AbstractPropertySupport::intValue(const QString &name) const
     return m_intManager->value(m_properties[name]);
 }
 
-
-void AbstractPropertySupport::setIntValue(const QString &name, const int value)
+void AbstractPropertySupport::setIntValue(
+	const QString &name
+,	const int value)
 {
     assert(m_properties.contains(name));
     m_intManager->setValue(m_properties[name], value);
@@ -349,8 +373,9 @@ const int AbstractPropertySupport::enumValue(const QString &name) const
     return m_enumManager->value(m_properties[name]);
 }
 
-
-void AbstractPropertySupport::setEnumValue(const QString &name, const int value)
+void AbstractPropertySupport::setEnumValue(
+	const QString &name
+,	const int value)
 {
     assert(m_properties.contains(name));
     m_enumManager->setValue(m_properties[name], value);
@@ -363,8 +388,9 @@ const bool AbstractPropertySupport::boolValue(const QString &name) const
     return m_boolManager->value(m_properties[name]);
 }
 
-
-void AbstractPropertySupport::setBoolValue(const QString &name, const bool value)
+void AbstractPropertySupport::setBoolValue(
+	const QString &name
+,	const bool value)
 {
     assert(m_properties.contains(name));
     m_boolManager->setValue(m_properties[name], value);
@@ -377,9 +403,25 @@ const QSizeF AbstractPropertySupport::sizeFValue(const QString &name) const
     return m_sizeFManager->value(m_properties[name]);
 }
 
-
-void AbstractPropertySupport::setSizeFValue(const QString &name, const QSizeF &value)
+void AbstractPropertySupport::setSizeFValue(
+	const QString &name
+,	const QSizeF &value)
 {
     assert(m_properties.contains(name));
     m_sizeFManager->setValue(m_properties[name], value);
+}
+
+
+const QColor AbstractPropertySupport::colorValue(const QString &name) const
+{
+    assert(m_properties.contains(name));
+    return m_colorManager->value(m_properties[name]);
+}
+
+void AbstractPropertySupport::setColorValue(
+	const QString &name
+,	const QColor &value)
+{
+    assert(m_properties.contains(name));
+    m_colorManager->setValue(m_properties[name], value);
 }

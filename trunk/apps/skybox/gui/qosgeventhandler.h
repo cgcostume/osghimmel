@@ -28,34 +28,33 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
-#define __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#ifndef __QOSGEVENTHANDLER_H__
+#define __QOSGEVENTHANDLER_H__
 
-#include "abstracthimmelscene.h"
+#include <QObject>
+
+#include <osgGA/GUIEventHandler>
 
 
-class ParaboloidMappedHimmel;
-
-class Scene_ParaboloidMappedHimmel : public AbstractHimmelScene
+class QOsgEventHandler 
+:   public QObject
+,   public osgGA::GUIEventHandler
 {
+    Q_OBJECT
+
 public:
-    Scene_ParaboloidMappedHimmel(osg::Camera *camera);
+    QOsgEventHandler(const float fov);
 
-    virtual ~Scene_ParaboloidMappedHimmel();
+    virtual bool handle(
+        const osgGA::GUIEventAdapter &ea
+    ,   osgGA::GUIActionAdapter &);
 
-    virtual AbstractHimmel *himmel();
-
-protected:
-
-    // from AbstractPropertySupport
-    virtual void registerProperties();
-    virtual void propertyChanged(
-        QtProperty *p
-    ,   const QString &name);
+signals:
+    void fovChanged(float);
 
 protected:
-    osg::ref_ptr<ParaboloidMappedHimmel> m_himmel;
+    float m_fov;
+    const float m_fovBackup;
 };
 
-
-#endif // __SCENE_PARABOLOIDMAPPEDHIMMEL_H__
+#endif // __QOSGEVENTHANDLER_H__
