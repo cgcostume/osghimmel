@@ -27,70 +27,50 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include <osg/StateSet>
 
 #pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
+#ifndef __HORIZONBAND_H__
+#define __HORIZONBAND_H__
 
-#include "abstractmappedhimmel.h"
-
-#include <map>
-
-class HorizonBand;
-
-namespace osg
-{
-    class Texture2D;
-}
-
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
-
-class PolarMappedHimmel : public AbstractMappedHimmel
+class HorizonBand
 {
 public:
 
-    enum e_MappingMode 
-    {
-        MM_Full
-    ,   MM_Half
-    };
+    HorizonBand();
+    virtual ~HorizonBand();
 
-public:
+    void initialize(osg::StateSet *stateSet);
 
-    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_Half);
-    virtual ~PolarMappedHimmel();
+    const float setScale(const float scale);
+    const float getScale() const;
+    static const float defaultScale();
 
-    // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
+    const float setWidth(const float thickness);
+    const float getWidth() const;
+    static const float defaultWidth();
 
-    inline const e_MappingMode getMappingMode() const
-    {
-        return m_mappingMode;
-    }
+    const float setOffset(const float offset);
+    const float getOffset() const;
+    static const float defaultOffset();
 
-    // Use HorizonBand for horizon blending.
-    HorizonBand *hBand();
+	const osg::Vec4 setColor(const osg::Vec4 &color);
+	const osg::Vec4 getColor() const;
+    static const osg::Vec4 defaultColor();
+
+	const osg::Vec4 setBottomColor(const osg::Vec4 &color);
+	const osg::Vec4 getBottomColor() const;
+    static const osg::Vec4 defaultBottomColor();
+
+protected:
+    const osg::Vec3 getParams() const;
 
 protected:
 
-    // AbstractMappedHimmel interface
+    osg::ref_ptr<osg::Uniform> u_params;  // Vec3 { 0: Scale, 1: Width, 2: Offset }
 
-    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
-
-
-    // AbstractHimmel interface
-
-    virtual const std::string getFragmentShaderSource();
-
-protected:
-
-    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
-    t_tex2DById m_tex2DsById;
-
-    e_MappingMode m_mappingMode;
-
-    HorizonBand *m_hBand;
+    osg::ref_ptr<osg::Uniform> u_color;  // Vec4
+    osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
 };
 
-#endif // __SPHEREMAPPEDHIMMEL_H__
+#endif // __HORIZONBAND_H__

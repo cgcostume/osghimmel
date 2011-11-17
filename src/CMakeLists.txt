@@ -35,6 +35,7 @@ set(LIB_SOURCES
     abstractmappedhimmel.cpp
     cubemappedhimmel.cpp
     himmelquad.cpp
+	horizonband.cpp
     paraboloidmappedhimmel.cpp
     polarmappedhimmel.cpp
     proceduralhimmel.cpp
@@ -47,6 +48,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/abstractmappedhimmel.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/himmelquad.h
+	${HEADER_PATH}/horizonband.h
     ${HEADER_PATH}/interpolate.h
     ${HEADER_PATH}/paraboloidmappedhimmel.h
     ${HEADER_PATH}/polarmappedhimmel.h
