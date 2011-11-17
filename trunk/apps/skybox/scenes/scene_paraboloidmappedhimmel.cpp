@@ -30,6 +30,8 @@
 #include "scene_paraboloidmappedhimmel.h"
 
 #include "include/paraboloidmappedhimmel.h"
+#include "include/horizonband.h"
+
 #include "utils/qt2osg.h"
 
 #include <osg/Texture2D>
@@ -43,10 +45,13 @@ namespace
 
     static const QString GROUP_PARABOLOIDMAPPED(TR("Paraboloid Mapped"));
 
-    static const QString PROPERTY_HBAND_SCALE    (TR("H-Band Scale"));
-    static const QString PROPERTY_HBAND_THICKNESS(TR("H-Band Thickness"));
-    static const QString PROPERTY_HBAND_COLOR    (TR("H-Band Color"));
-    static const QString PROPERTY_BOTTOM_COLOR   (TR("Bottom Color"));
+    static const QString GROUP_HBAND(TR("HorizonBand"));
+
+    static const QString PROPERTY_HBAND_SCALE (TR("Scale"));
+    static const QString PROPERTY_HBAND_WIDTH (TR("Width"));
+    static const QString PROPERTY_HBAND_OFFSET(TR("Offset"));
+    static const QString PROPERTY_HBAND_COLOR (TR("Color"));
+    static const QString PROPERTY_BOTTOM_COLOR(TR("Bottom Color"));
 }
 
 Scene_ParaboloidMappedHimmel::Scene_ParaboloidMappedHimmel(osg::Camera *camera)
@@ -87,11 +92,13 @@ void Scene_ParaboloidMappedHimmel::registerProperties()
     AbstractHimmelScene::registerProperties();
 
     QtProperty *paraboloidGroup = createGroup(GROUP_PARABOLOIDMAPPED);
+    QtProperty *hbandGroup = createGroup(*paraboloidGroup, GROUP_HBAND);
 
-    createProperty(*paraboloidGroup, PROPERTY_HBAND_SCALE, ParaboloidMappedHimmel::defaultHBandScale(), 0.0, 1.0, 0.02); 
-    createProperty(*paraboloidGroup, PROPERTY_HBAND_THICKNESS, ParaboloidMappedHimmel::defaultHBandThickness(), 0.0, 1.0, 0.01);
-    createProperty(*paraboloidGroup, PROPERTY_HBAND_COLOR,  toQColor(ParaboloidMappedHimmel::defaultHBandColor()));
-    createProperty(*paraboloidGroup, PROPERTY_BOTTOM_COLOR, toQColor(ParaboloidMappedHimmel::defaultBottomColor()));
+    createProperty(*hbandGroup, PROPERTY_HBAND_SCALE, HorizonBand::defaultScale(), 0.0, 1.0, 0.02); 
+    createProperty(*hbandGroup, PROPERTY_HBAND_WIDTH, HorizonBand::defaultWidth(), 0.0, 1.0, 0.01);
+    createProperty(*hbandGroup, PROPERTY_HBAND_OFFSET, HorizonBand::defaultOffset(), -1.0, 1.0, 0.01);
+    createProperty(*hbandGroup, PROPERTY_HBAND_COLOR,  toQColor(HorizonBand::defaultColor()));
+    createProperty(*hbandGroup, PROPERTY_BOTTOM_COLOR, toQColor(HorizonBand::defaultBottomColor()));
 }
 
 
@@ -100,11 +107,13 @@ void Scene_ParaboloidMappedHimmel::propertyChanged(
 ,   const QString &name)
 {
          if(PROPERTY_HBAND_SCALE == name)
-        m_himmel->setHBandScale(doubleValue(PROPERTY_HBAND_SCALE));
-    else if(PROPERTY_HBAND_THICKNESS == name)
-        m_himmel->setHBandThickness(doubleValue(PROPERTY_HBAND_THICKNESS));
+        m_himmel->hBand()->setScale(doubleValue(PROPERTY_HBAND_SCALE));
+    else if(PROPERTY_HBAND_WIDTH == name)
+        m_himmel->hBand()->setWidth(doubleValue(PROPERTY_HBAND_WIDTH));
+    else if(PROPERTY_HBAND_OFFSET == name)
+        m_himmel->hBand()->setOffset(doubleValue(PROPERTY_HBAND_OFFSET));
 	else if(PROPERTY_HBAND_COLOR == name)
-		m_himmel->setHBandColor(toVec4(colorValue(PROPERTY_HBAND_COLOR)));
+		m_himmel->hBand()->setColor(toVec4(colorValue(PROPERTY_HBAND_COLOR)));
 	else if(PROPERTY_BOTTOM_COLOR == name)
-		m_himmel->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
+		m_himmel->hBand()->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
 }

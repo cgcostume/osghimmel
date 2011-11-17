@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "polarmappedhimmel.h"
+#include "horizonband.h"
 
 #include <osg/Texture2D>
 
@@ -36,24 +37,14 @@
 PolarMappedHimmel::PolarMappedHimmel(const e_MappingMode &mappingMode)
 :   AbstractMappedHimmel()
 ,   m_mappingMode(mappingMode)
-,   u_hbandScale(NULL)
-,   u_hbandThickness(NULL)
-,   u_hbandColor(NULL)
-,   u_bottomColor(NULL)
+,   m_hBand(NULL)
 {
     setName("PolarMappedHimmel");
 
     if(m_mappingMode == MM_Half)
     {
-        u_hbandScale     = new osg::Uniform("hbandScale",     defaultHBandScale());
-        u_hbandThickness = new osg::Uniform("hbandThickness", defaultHBandThickness());
-        u_hbandColor     = new osg::Uniform("hbandColor",     defaultHBandColor());
-        u_bottomColor    = new osg::Uniform("hbottomColor",   defaultBottomColor());
-
-        getOrCreateStateSet()->addUniform(u_hbandScale);
-        getOrCreateStateSet()->addUniform(u_hbandThickness);
-        getOrCreateStateSet()->addUniform(u_hbandColor);
-        getOrCreateStateSet()->addUniform(u_bottomColor);
+        m_hBand = new HorizonBand();
+        m_hBand->initialize(getOrCreateStateSet());
     }
 };
 
@@ -61,6 +52,12 @@ PolarMappedHimmel::PolarMappedHimmel(const e_MappingMode &mappingMode)
 PolarMappedHimmel::~PolarMappedHimmel()
 {
 };
+
+
+HorizonBand *PolarMappedHimmel::hBand()
+{
+    return m_hBand;
+}
 
 
 osg::Texture2D* PolarMappedHimmel::getOrCreateTexture2D(const GLint textureUnit)
@@ -190,80 +187,4 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
     }
 
     return "";
-}
-
-
-const float PolarMappedHimmel::setHBandScale(const float scale)
-{
-    u_hbandScale->set(scale);
-    return getHBandScale();
-}
-
-const float PolarMappedHimmel::getHBandScale() const
-{
-    float hbandScale;
-    u_hbandScale->get(hbandScale);
-
-    return hbandScale;
-}
-const float PolarMappedHimmel::defaultHBandScale()
-{
-    return 0.33f;
-}
-
-
-const float PolarMappedHimmel::setHBandThickness(const float thickness)
-{
-    u_hbandThickness->set(thickness);
-    return getHBandThickness();
-}
-
-const float PolarMappedHimmel::getHBandThickness() const
-{
-    float hbandThickness;
-    u_hbandThickness->get(hbandThickness);
-
-    return hbandThickness;
-}
-const float PolarMappedHimmel::defaultHBandThickness()
-{
-    return 0.005f;
-}
-
-
-const osg::Vec4 PolarMappedHimmel::setHBandColor(const osg::Vec4 &color)
-{
-	u_hbandColor->set(color);
-	return getHBandColor();
-}
-
-const osg::Vec4 PolarMappedHimmel::getHBandColor() const
-{
-    osg::Vec4 hbandColor;
-    u_hbandColor->get(hbandColor);
-
-    return hbandColor;
-}
-const osg::Vec4 PolarMappedHimmel::defaultHBandColor()
-{
-    return osg::Vec4(0.25f, 0.25f, 0.25f, 1.f);
-}
-
-
-const osg::Vec4 PolarMappedHimmel::setBottomColor(const osg::Vec4 &color)
-{
-	u_bottomColor->set(color);
-	return getBottomColor();
-}
-
-const osg::Vec4 PolarMappedHimmel::getBottomColor() const
-{
-    osg::Vec4 bottomColor;
-    u_bottomColor->get(bottomColor);
-
-    return bottomColor;
-}
-const osg::Vec4 PolarMappedHimmel::defaultBottomColor()
-{
-    return osg::Vec4(0.08f, 0.08f, 0.08f, 1.f);
 }
