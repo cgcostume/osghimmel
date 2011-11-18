@@ -58,7 +58,10 @@ public:
 
 public:
 
-    PolarMappedHimmel(const e_MappingMode &mappingMode = MM_Half);
+    PolarMappedHimmel(
+        const e_MappingMode &mappingMode = MM_Half
+    ,   const bool withHorizonBand = false);
+
     virtual ~PolarMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
@@ -91,6 +94,7 @@ protected:
     e_MappingMode m_mappingMode;
 
     HorizonBand *m_hBand;
+    const bool m_withHBand;
 };
 
 #endif // __SPHEREMAPPEDHIMMEL_H__

@@ -34,14 +34,17 @@
 
 #include <assert.h>
 
-PolarMappedHimmel::PolarMappedHimmel(const e_MappingMode &mappingMode)
+PolarMappedHimmel::PolarMappedHimmel(
+    const e_MappingMode &mappingMode
+,   const bool withHorizonBand)
 :   AbstractMappedHimmel()
 ,   m_mappingMode(mappingMode)
 ,   m_hBand(NULL)
+,   m_withHBand(withHorizonBand)
 {
     setName("PolarMappedHimmel");
 
-    if(m_mappingMode == MM_Half)
+    if(m_withHBand)
     {
         m_hBand = new HorizonBand();
         m_hBand->initialize(getOrCreateStateSet());
@@ -121,7 +124,8 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
         return glsl_f_version
 
         +   glsl_f_blendNormalExt
-        +   glsl_f_hband
+
+        +   (m_withHBand ? glsl_f_hband : "")
         +
             "in vec4 m_ray;\n"
             "\n"
@@ -147,7 +151,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
             "\n"
             "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
             "\n"
-            "    gl_FragColor = hband(stu.z, fc);\n"
+            "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
             "}\n\n";
 
 

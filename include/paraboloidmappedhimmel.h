@@ -52,7 +52,7 @@ namespace osg
 class ParaboloidMappedHimmel : public AbstractMappedHimmel
 {
 public:
-    ParaboloidMappedHimmel();
+    ParaboloidMappedHimmel(const bool withHorizonBand = false);
     virtual ~ParaboloidMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
@@ -78,6 +78,7 @@ protected:
     t_tex2DById m_tex2DsById;
 
     HorizonBand *m_hBand;
+    const bool m_withHBand;
 };
 
 #endif // __PARABOLOIDMAPPEDHIMMEL_H__
