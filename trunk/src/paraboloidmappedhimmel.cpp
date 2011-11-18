@@ -33,14 +33,19 @@
 #include <osg/Texture2D>
 
 
-ParaboloidMappedHimmel::ParaboloidMappedHimmel()
+ParaboloidMappedHimmel::ParaboloidMappedHimmel(
+    const bool withHorizonBand)
 :   AbstractMappedHimmel()
 ,   m_hBand(NULL)
+,   m_withHBand(withHorizonBand)
 {
     setName("ParaboloidMappedHimmel");
 
-    m_hBand = new HorizonBand();
-    m_hBand->initialize(getOrCreateStateSet());
+    if(m_withHBand)
+    {
+        m_hBand = new HorizonBand();
+        m_hBand->initialize(getOrCreateStateSet());
+    }
 };
 
 
@@ -112,7 +117,8 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
     return glsl_f_version
 
     +   glsl_f_blendNormalExt
-    +   glsl_f_hband
+
+    +   (m_withHBand ? glsl_f_hband : "")
     +
         "in vec4 m_ray;\n"
         "\n"
@@ -136,6 +142,9 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
         "\n"
         "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
         "\n"
-        "    gl_FragColor = hband(stu.z, fc);\n"
+        
+    +   (m_withHBand ? "" : "if(stu.z < 0.0) discard;\n")
+    +
+        "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
         "}\n\n";
 }

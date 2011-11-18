@@ -84,7 +84,7 @@ const float HorizonBand::getScale() const
 }
 const float HorizonBand::defaultScale()
 {
-    return 0.33f;
+    return 0.1f;
 }
 
 
@@ -104,7 +104,7 @@ const float HorizonBand::getWidth() const
 }
 const float HorizonBand::defaultWidth()
 {
-    return 0.005f;
+    return 0.0f;
 }
 
 
