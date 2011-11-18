@@ -51,48 +51,25 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
 
     m_himmel = new CubeMappedHimmel();
 
-    m_himmel->setTransitionDuration(0.2f);
+    m_himmel->setTransitionDuration(0.05f);
 
-    osg::TextureCubeMap *tcm0 = m_himmel->getOrCreateTextureCubeMap(0);
-    //osg::TextureCubeMap *tcm1 = m_himmel->getOrCreateTextureCubeMap(1);
-    //osg::TextureCubeMap *tcm2 = m_himmel->getOrCreateTextureCubeMap(2);
+    std::string name[] = { "4", "6", "9", "17", "19" };
+    osg::TextureCubeMap *tcm[5];
 
-    // px = lf; nx = rt; py = dn; ny = up; pz = ft; nz = bk    <- common skybox mapping (lhs to rhs)
+    const int n = 5;
+    for(int i = 0; i < n; ++i)
+    {
+        tcm[i] = m_himmel->getOrCreateTextureCubeMap(i);
 
-    /*
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_0_px.tga"));
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_0_nx.tga"));
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_0_py.tga"));
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_0_ny.tga"));
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_0_pz.tga"));
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_0_nz.tga"));
+        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_px.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_nx.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_py.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_ny.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_pz.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_nz.jpg"));
 
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_1_px.tga"));
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_1_nx.tga"));
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_1_py.tga"));
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_1_ny.tga"));
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_1_pz.tga"));
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_1_nz.tga"));
-
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_2_px.tga"));
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_2_nx.tga"));
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_2_py.tga"));
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_2_ny.tga"));
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_2_pz.tga"));
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_2_nz.tga"));
-    */
-
-    osg::Image *img0 = osgDB::readImageFile("resources/noise1k.png");
-
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, img0);
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, img0);
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Y, img0);
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Y, img0);
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Z, img0);
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Z, img0);
-
-    m_himmel->pushTextureUnit(0, 0.00f);
-
+      m_himmel->pushTextureUnit(i, (i * 1.f) / (n * 1.f));
+    }
     addChild(m_himmel);
 }
 
