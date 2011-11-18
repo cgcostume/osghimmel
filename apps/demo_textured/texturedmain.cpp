@@ -297,33 +297,30 @@ void initializeManipulators(osgViewer::View &view)
 int main(int argc, char* argv[])
 {
     osg::ArgumentParser arguments(&argc, argv);
+
     arguments.getApplicationUsage()->setDescription(
         arguments.getApplicationName() + " is the demo which demonstrates using of various texture mapped skies implemented in osghimmel");
 
     arguments.getApplicationUsage()->setCommandLineUsage(arguments.getApplicationName());
+
     arguments.getApplicationUsage()->addCommandLineOption("-h or --help", "Display this information.");
     arguments.getApplicationUsage()->addCommandLineOption("--polar", "Start with a himmel using polar mapped textures.");
     arguments.getApplicationUsage()->addCommandLineOption("--cube", "Start with a himmel using cube mapped textures.");
     arguments.getApplicationUsage()->addCommandLineOption("--paraboloid", "Start with a himmel using paraboloid mapped textures.");
     arguments.getApplicationUsage()->addCommandLineOption("--sphere", "Start with a himmel using sphere mapped textures.");
 
-
-    osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
-    osg::notify(osg::NOTICE) << "Use [space] to cycle mapping techniques." << std::endl;
-
     osgViewer::Viewer viewer(arguments);
-    g_view = dynamic_cast<osgViewer::View*>(&viewer);
-
-    viewer.setUpViewInWindow(128, 128, 640, 480);
-
-    // Setup default demo.
-    g_demo = D_CubeMappedHimmel;
 
     if(arguments.read("-h") || arguments.read("--help"))
     {
         arguments.getApplicationUsage()->write(std::cout);
         return 1;
     }
+
+    osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [space] to cycle mapping techniques." << std::endl;
+
+    g_demo = D_CubeMappedHimmel;
 
     while(arguments.read("--polar")) 
         g_demo = D_PolarMappedHimmel;
@@ -336,6 +333,10 @@ int main(int argc, char* argv[])
 
     while(arguments.read("--sphere")) 
         g_demo = D_SphereMappedHimmel;
+
+    g_view = dynamic_cast<osgViewer::View*>(&viewer);
+
+    viewer.setUpViewInWindow(128, 128, 640, 480);
 
     initializeManipulators(viewer);
     initializeScene();
