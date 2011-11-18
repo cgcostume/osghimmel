@@ -108,6 +108,10 @@ public:
     ,   const bool forceUpdate = false);
 
 
+    // 
+
+    const bool isRunning() const;
+
 protected:
     static inline const float secondsTof(const time_t &time);
     static inline const time_t fToSeconds(const float time);

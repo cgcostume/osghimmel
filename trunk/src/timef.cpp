@@ -86,20 +86,12 @@ void TimeF::update()
     float elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
     elapsed -= m_offset;
 
-    if(M_Running == m_mode)
-    {
-        const float elapsedTimef(elapsed / m_secondsPerCycle);
+    const float elapsedTimef(elapsed / m_secondsPerCycle);
 
-        m_timef[1] = m_timef[0] + elapsedTimef;
-        m_timef[1] -= static_cast<int>(m_timef[1]);
+    m_timef[1] = m_timef[0] + elapsedTimef;
+    m_timef[1] -= static_cast<int>(m_timef[1]);
 
-        m_time[1] = fToSeconds(elapsedTimef) + static_cast<float>(m_time[0]);
-    }
-    else
-    {
-        m_timef[1] = m_timef[0];
-        m_time[1] = m_time[0];
-    }
+    m_time[1] = fToSeconds(elapsedTimef) + static_cast<float>(m_time[0]);
 }
 
 
@@ -191,6 +183,12 @@ inline const float TimeF::secondsTof(const time_t &time)
 inline const time_t TimeF::fToSeconds(const float time)
 {
     return static_cast<time_t>(time * 60.f * 60.f * 24.f);
+}
+
+
+const bool TimeF::isRunning() const
+{
+    return M_Running == m_mode;
 }
 
 
