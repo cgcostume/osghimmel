@@ -55,7 +55,7 @@ osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->hBand()->setColor(      osg::Vec4(0.20f, 0.20f, 0.20f, 1.00f));
     himmel->hBand()->setScale(0.3f);
 
-    himmel->assignTime(g_timef, true);
+    himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);
 
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
@@ -78,7 +78,7 @@ osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
 {
     osg::ref_ptr<CubeMappedHimmel> himmel = new CubeMappedHimmel();
 
-    himmel->assignTime(g_timef, true);
+    himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);
 
     std::string name[] = { "4", "6", "9", "17", "19" };
@@ -106,7 +106,7 @@ osg::ref_ptr<AbstractHimmel> createParaboloidMappedDemo()
 {
     osg::ref_ptr<ParaboloidMappedHimmel> himmel = new ParaboloidMappedHimmel();
 
-    himmel->assignTime(g_timef, true);
+    himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);
 
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_gen_0.jpg"));
@@ -129,7 +129,7 @@ osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
 {
     osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel(SphereMappedHimmel::MM_TowardsNegY);
 
-    himmel->assignTime(g_timef, true);
+    himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);
 
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
@@ -200,12 +200,37 @@ public:
     {
         switch(ea.getEventType())
         {
+        case(osgGA::GUIEventAdapter::FRAME):
+
+            g_timef->update();
+            break;
+
         case(osgGA::GUIEventAdapter::KEYDOWN):
             {
-                if (ea.getKey()==osgGA::GUIEventAdapter::KEY_Space)
+                if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Space)
                 {
                     g_demo = static_cast<e_Demo>((g_demo + 1) % 4);
                     activateDemo(g_demo);
+                }
+                else if(ea.getKey() == 'p' || ea.getKey() == 'P')
+                {
+                    g_timef->reset();
+                    g_timef->setSecondsPerCycle(60.f);
+                }
+                else if(ea.getKey() == 'p' || ea.getKey() == 'P')
+                {
+                    if(g_timef->isRunning())
+                        g_timef->pause();
+                    else
+                        g_timef->run();
+                }
+                else if(ea.getKey() == '-')
+                {
+                    g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() + 1);
+                }
+                else if(ea.getKey() == '+')
+                {
+                    g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() - 1);
                 }
             }
             break;
@@ -319,6 +344,9 @@ int main(int argc, char* argv[])
 
     osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
     osg::notify(osg::NOTICE) << "Use [space] to cycle mapping techniques." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [p] to pause/unpause time." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [+] and [-] to increase/decrease seconds per cycle." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [r] to reset the time." << std::endl;
 
     g_demo = D_CubeMappedHimmel;
 
