@@ -31,98 +31,44 @@
 #include "include/cubemappedhimmel.h"
 #include "include/paraboloidmappedhimmel.h"
 #include "include/spheremappedhimmel.h"
+#include "include/horizonband.h"
 
 #include "include/timef.h"
 
-#include <osgViewer/Viewer>
 
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
-#include <osg/PolygonMode>
 
 #include <osgDB/ReadFile>
 
-#include <osgGA/TrackballManipulator>
-#include <osgGA/FlightManipulator>
-#include <osgGA/DriveManipulator>
-#include <osgGA/KeySwitchMatrixManipulator>
-#include <osgGA/StateSetManipulator>
-#include <osgGA/TerrainManipulator>
 
-#include <iostream>
-
-
-enum e_Demo
-{
-    D_PolarMappedHimmel       = 0
-,   D_CubeMappedHimmel        = 1
-,   D_ParaboloidMappedHimmel  = 2
-,   D_SphereMappedHimmel      = 3
-};
-
-
-osg::ref_ptr<osg::Group> g_scene = NULL;
+// scenes
 
 TimeF *g_timef(new TimeF(0.f, 60.f));
-
-e_Demo g_demo;
-std::map<e_Demo, osg::ref_ptr<AbstractHimmel> > g_himmelsByDemo;
-
-
-void activateDemo(e_Demo demo)
-{
-    g_himmelsByDemo[D_PolarMappedHimmel]     ->setNodeMask(D_PolarMappedHimmel      == demo);
-    g_himmelsByDemo[D_CubeMappedHimmel]      ->setNodeMask(D_CubeMappedHimmel       == demo);
-    g_himmelsByDemo[D_ParaboloidMappedHimmel]->setNodeMask(D_ParaboloidMappedHimmel == demo);
-    g_himmelsByDemo[D_SphereMappedHimmel]    ->setNodeMask(D_SphereMappedHimmel     == demo);
-}
-
-
-class KeyboardEventHandler : public osgGA::GUIEventHandler
-{
-public:
-    KeyboardEventHandler()
-    {
-    }
-
-    virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &)
-    {
-        switch(ea.getEventType())
-        {
-        case(osgGA::GUIEventAdapter::KEYDOWN):
-            {
-                if (ea.getKey()==osgGA::GUIEventAdapter::KEY_Space)
-                {
-                    g_demo = static_cast<e_Demo>((g_demo + 1) % 4);
-                    activateDemo(g_demo);
-                }
-            }
-            break;
-
-        default:
-            break;
-        };
-        return false;
-    }
-};
 
 
 osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
 {
-    osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half);
+    osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half, true);
+
+    himmel->hBand()->setBottomColor(osg::Vec4(0.30f, 0.30f, 0.30f, 1.00f));
+    himmel->hBand()->setColor(      osg::Vec4(0.20f, 0.20f, 0.20f, 1.00f));
+    himmel->hBand()->setScale(0.3f);
 
     himmel->assignTime(g_timef, true);
     himmel->setTransitionDuration(0.05f);
 
-    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_0.tga"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_1.tga"));
-    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_2.tga"));
-    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_3.tga"));
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
+    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
+    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
+    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
+    himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
 
-    himmel->pushTextureUnit(0, 0.00f);
-    himmel->pushTextureUnit(1, 0.25f);
-    himmel->pushTextureUnit(2, 0.50f);
-    himmel->pushTextureUnit(3, 0.75f);
+    himmel->pushTextureUnit(0, 0.0f);
+    himmel->pushTextureUnit(1, 0.2f);
+    himmel->pushTextureUnit(2, 0.4f);
+    himmel->pushTextureUnit(3, 0.6f);
+    himmel->pushTextureUnit(4, 0.8f);
 
     return himmel;
 }
@@ -133,50 +79,25 @@ osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
     osg::ref_ptr<CubeMappedHimmel> himmel = new CubeMappedHimmel();
 
     himmel->assignTime(g_timef, true);
-    himmel->setTransitionDuration(0.2f);
+    himmel->setTransitionDuration(0.05f);
 
-    osg::TextureCubeMap *tcm0 = himmel->getOrCreateTextureCubeMap(0);
-    /*
-    osg::TextureCubeMap *tcm1 = himmel->getOrCreateTextureCubeMap(1);
-    osg::TextureCubeMap *tcm2 = himmel->getOrCreateTextureCubeMap(2);
+    std::string name[] = { "4", "6", "9", "17", "19" };
+    osg::TextureCubeMap *tcm[5];
 
-    // px = lf; nx = rt; py = dn; ny = up; pz = ft; nz = bk    <- common skybox mapping (lhs to rhs)
+    const int n = 5;
+    for(int i = 0; i < n; ++i)
+    {
+        tcm[i] = himmel->getOrCreateTextureCubeMap(i);
 
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_0_px.tga"));
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_0_nx.tga"));
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_0_py.tga"));
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_0_ny.tga"));
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_0_pz.tga"));
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_0_nz.tga"));
+        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_px.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_nx.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_py.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_ny.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_pz.jpg"));
+        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_nz.jpg"));
 
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_1_px.tga"));
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_1_nx.tga"));
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_1_py.tga"));
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_1_ny.tga"));
-    tcm1->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_1_pz.tga"));
-    tcm1->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_1_nz.tga"));
-
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/sky_box_2_px.tga"));
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/sky_box_2_nx.tga"));
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/sky_box_2_py.tga"));
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/sky_box_2_ny.tga"));
-    tcm2->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/sky_box_2_pz.tga"));
-    tcm2->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/sky_box_2_nz.tga"));
-    */
-
-    osg::Image *img0 = osgDB::readImageFile("resources/noise1k.png");
-
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_X, img0);
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_X, img0);
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Y, img0);
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Y, img0);
-    tcm0->setImage(osg::TextureCubeMap::POSITIVE_Z, img0);
-    tcm0->setImage(osg::TextureCubeMap::NEGATIVE_Z, img0);
-
-    himmel->pushTextureUnit(0, 0.00f);
-    //himmel->pushTextureUnit(1, 0.33f);
-    //himmel->pushTextureUnit(2, 0.66f);
-
+      himmel->pushTextureUnit(i, (i * 1.f) / (n * 1.f));
+    }
     return himmel;
 }
 
@@ -188,15 +109,17 @@ osg::ref_ptr<AbstractHimmel> createParaboloidMappedDemo()
     himmel->assignTime(g_timef, true);
     himmel->setTransitionDuration(0.05f);
 
-    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_pho_0.jpg"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
-    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_pho_2.jpg"));
-    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/paraboloid_pho_3.jpg"));
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_gen_0.jpg"));
+    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_gen_1.jpg"));
+    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_gen_2.jpg"));
+    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/paraboloid_pho_0.jpg"));
+    himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
 
-    himmel->pushTextureUnit(0, 0.00f);
-    himmel->pushTextureUnit(1, 0.25f);
-    himmel->pushTextureUnit(2, 0.50f);
-    himmel->pushTextureUnit(3, 0.75f);
+    himmel->pushTextureUnit(0, 0.0f);
+    himmel->pushTextureUnit(1, 0.2f);
+    himmel->pushTextureUnit(2, 0.4f);
+    himmel->pushTextureUnit(3, 0.6f);
+    himmel->pushTextureUnit(4, 0.8f);
 
     return himmel;
 }
@@ -219,11 +142,119 @@ osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
 }
 
 
+// demo
 
-void initializeScene(osgViewer::View &view)
+#include <osgViewer/Viewer>
+
+#include <osg/PolygonMode>
+
+#include <osgGA/TrackballManipulator>
+#include <osgGA/FlightManipulator>
+#include <osgGA/DriveManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+#include <osgGA/StateSetManipulator>
+#include <osgGA/TerrainManipulator>
+
+#include <iostream>
+
+enum e_Demo
 {
-    osg::Camera* cam = view.getCamera();
-    cam->setProjectionMatrixAsPerspective(45.0f, 4.f / 3.f, 0.1f, 8.0f);
+    D_PolarMappedHimmel       = 0
+,   D_CubeMappedHimmel        = 1
+,   D_ParaboloidMappedHimmel  = 2
+,   D_SphereMappedHimmel      = 3
+};
+
+
+osg::ref_ptr<osg::Group> g_scene = NULL;
+
+e_Demo g_demo;
+std::map<e_Demo, osg::ref_ptr<AbstractHimmel> > g_himmelsByDemo;
+
+
+osgViewer::View *g_view = NULL;
+
+const float g_fovBackup = 60.f;
+float g_fov = g_fovBackup;
+
+
+void activateDemo(e_Demo demo)
+{
+    g_himmelsByDemo[D_PolarMappedHimmel]     ->setNodeMask(D_PolarMappedHimmel      == demo);
+    g_himmelsByDemo[D_CubeMappedHimmel]      ->setNodeMask(D_CubeMappedHimmel       == demo);
+    g_himmelsByDemo[D_ParaboloidMappedHimmel]->setNodeMask(D_ParaboloidMappedHimmel == demo);
+    g_himmelsByDemo[D_SphereMappedHimmel]    ->setNodeMask(D_SphereMappedHimmel     == demo);
+}
+
+
+void fovChanged();
+
+class KeyboardEventHandler : public osgGA::GUIEventHandler
+{
+public:
+    KeyboardEventHandler()
+    {
+    }
+
+    virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &)
+    {
+        switch(ea.getEventType())
+        {
+        case(osgGA::GUIEventAdapter::KEYDOWN):
+            {
+                if (ea.getKey()==osgGA::GUIEventAdapter::KEY_Space)
+                {
+                    g_demo = static_cast<e_Demo>((g_demo + 1) % 4);
+                    activateDemo(g_demo);
+                }
+            }
+            break;
+
+        case(osgGA::GUIEventAdapter::SCROLL):
+            {
+                const float f = 1.00f
+                    + (ea.getScrollingMotion() == osgGA::GUIEventAdapter::SCROLL_DOWN ? -0.08f : +0.08f);
+
+                if(g_fov * f >= 1.f && g_fov * f <= 179.f)
+                    g_fov *= f;
+
+                fovChanged();
+
+                return true;
+            }
+            break;
+
+        case(osgGA::GUIEventAdapter::RELEASE):
+
+            if(ea.getButton() == osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON
+            && (ea.getModKeyMask() & osgGA::GUIEventAdapter::MODKEY_CTRL) != 0)
+            {
+                g_fov = g_fovBackup;
+                fovChanged();
+
+                return true;
+            }
+            break;
+
+        default:
+            break;
+        };
+        return false;
+    }
+};
+
+
+void fovChanged()
+{
+    const double aspectRatio(g_view->getCamera()->getViewport()->aspectRatio());
+    g_view->getCamera()->setProjectionMatrixAsPerspective(g_fov, aspectRatio, 0.1f, 8.0f);
+}
+
+
+void initializeScene()
+{
+    osg::Camera* cam = g_view->getCamera();
+    fovChanged();
 
     osg::ref_ptr<osg::Group> root = new osg::Group;
 
@@ -243,10 +274,10 @@ void initializeScene(osgViewer::View &view)
     root->addChild(g_himmelsByDemo[D_SphereMappedHimmel]);
 
 
-    view.setSceneData(root.get());
+    g_view->setSceneData(root.get());
 
-//    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("resources/knot.obj");
-//    g_scene->addChild(loadedScene.get());
+    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("resources/knot.obj");
+    g_scene->addChild(loadedScene.get());
 }
 
 
@@ -265,31 +296,49 @@ void initializeManipulators(osgViewer::View &view)
 
 int main(int argc, char* argv[])
 {
+    osg::ArgumentParser arguments(&argc, argv);
+    arguments.getApplicationUsage()->setDescription(
+        arguments.getApplicationName() + " is the demo which demonstrates using of various texture mapped skies implemented in osghimmel");
+
+    arguments.getApplicationUsage()->setCommandLineUsage(arguments.getApplicationName());
+    arguments.getApplicationUsage()->addCommandLineOption("-h or --help", "Display this information.");
+    arguments.getApplicationUsage()->addCommandLineOption("--polar", "Start with a himmel using polar mapped textures.");
+    arguments.getApplicationUsage()->addCommandLineOption("--cube", "Start with a himmel using cube mapped textures.");
+    arguments.getApplicationUsage()->addCommandLineOption("--paraboloid", "Start with a himmel using paraboloid mapped textures.");
+    arguments.getApplicationUsage()->addCommandLineOption("--sphere", "Start with a himmel using sphere mapped textures.");
+
+
     osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
     osg::notify(osg::NOTICE) << "Use [space] to cycle mapping techniques." << std::endl;
 
-    osg::ArgumentParser psr(&argc, argv);
-    osgViewer::Viewer viewer(psr);
+    osgViewer::Viewer viewer(arguments);
+    g_view = dynamic_cast<osgViewer::View*>(&viewer);
 
     viewer.setUpViewInWindow(128, 128, 640, 480);
 
     // Setup default demo.
     g_demo = D_CubeMappedHimmel;
 
-    while (psr.read("--polar")) 
+    if(arguments.read("-h") || arguments.read("--help"))
+    {
+        arguments.getApplicationUsage()->write(std::cout);
+        return 1;
+    }
+
+    while(arguments.read("--polar")) 
         g_demo = D_PolarMappedHimmel;
 
-    while (psr.read("--cube")) 
+    while(arguments.read("--cube")) 
         g_demo = D_CubeMappedHimmel;
 
-    while (psr.read("--paraboloid")) 
+    while(arguments.read("--paraboloid")) 
         g_demo = D_ParaboloidMappedHimmel;
 
-    while (psr.read("--sphere")) 
+    while(arguments.read("--sphere")) 
         g_demo = D_SphereMappedHimmel;
 
     initializeManipulators(viewer);
-    initializeScene(viewer);
+    initializeScene();
 
     activateDemo(g_demo);
 
