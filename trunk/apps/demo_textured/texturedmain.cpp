@@ -145,6 +145,7 @@ osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
 // demo
 
 #include <osgViewer/Viewer>
+#include <osg/MatrixTransform>
 
 #include <osg/PolygonMode>
 
@@ -166,7 +167,7 @@ enum e_Demo
 };
 
 
-osg::ref_ptr<osg::Group> g_scene = NULL;
+osg::ref_ptr<osg::MatrixTransform> g_scene;
 
 e_Demo g_demo;
 std::map<e_Demo, osg::ref_ptr<AbstractHimmel> > g_himmelsByDemo;
@@ -276,33 +277,212 @@ void fovChanged()
 }
 
 
-void initializeScene()
+osg::Group *createHimmelScene()
 {
-    osg::Camera* cam = g_view->getCamera();
-    fovChanged();
-
-    osg::ref_ptr<osg::Group> root = new osg::Group;
-
-    g_scene = new osg::Group;
-    root->addChild(g_scene);
+    osg::Group *group = new osg::Group;
 
     g_himmelsByDemo[D_PolarMappedHimmel] = createPolarMappedDemo();
-    root->addChild(g_himmelsByDemo[D_PolarMappedHimmel]);
+    group->addChild(g_himmelsByDemo[D_PolarMappedHimmel]);
 
     g_himmelsByDemo[D_CubeMappedHimmel] = createCubeMappedDemo();
-    root->addChild(g_himmelsByDemo[D_CubeMappedHimmel]);
+    group->addChild(g_himmelsByDemo[D_CubeMappedHimmel]);
 
     g_himmelsByDemo[D_ParaboloidMappedHimmel] = createParaboloidMappedDemo();
-    root->addChild(g_himmelsByDemo[D_ParaboloidMappedHimmel]);
+    group->addChild(g_himmelsByDemo[D_ParaboloidMappedHimmel]);
 
     g_himmelsByDemo[D_SphereMappedHimmel] = createSphereMappedDemo();
-    root->addChild(g_himmelsByDemo[D_SphereMappedHimmel]);
+    group->addChild(g_himmelsByDemo[D_SphereMappedHimmel]);
+
+    return group;
+}
 
 
-    g_view->setSceneData(root.get());
+// render to cube map code
 
-    osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile("resources/knot.obj");
-    g_scene->addChild(loadedScene.get());
+#include <osg/TexMat>
+#include <osg/TexGenNode>
+#include <osg/Material>
+
+osg::Node *createReflector()
+{
+    osg::Node *node = osgDB::readNodeFile("resources/knot.obj");
+
+    osg::ref_ptr<osg::Material> m = new osg::Material;
+    m->setColorMode(osg::Material::DIFFUSE);
+    m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
+
+    node->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
+
+    return node;
+}
+  
+class UpdateCameraAndTexGenCallback : public osg::NodeCallback
+{
+    public:
+        typedef std::vector< osg::ref_ptr<osg::Camera> >  t_Cameras;
+
+        UpdateCameraAndTexGenCallback(
+            osg::NodePath &reflectorNodePath
+        ,   t_Cameras &cameras)
+        :   m_reflectorNodePath(reflectorNodePath)
+        ,   m_cameras(cameras)
+        {
+        }
+       
+        virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
+        {
+            traverse(node, nv);
+
+            // compute the position of the center of the reflector subgraph
+            osg::Matrixd worldToLocal = osg::computeWorldToLocal(m_reflectorNodePath);
+            osg::BoundingSphere bs = m_reflectorNodePath.back()->getBound();
+
+            osg::Vec3 position = bs.center();
+
+            typedef std::pair<osg::Vec3, osg::Vec3> ImageData;
+            const ImageData id[] =
+            {
+                ImageData( osg::Vec3( 1,  0,  0), osg::Vec3( 0, -1,  0))
+            ,   ImageData( osg::Vec3(-1,  0,  0), osg::Vec3( 0, -1,  0))
+            ,   ImageData( osg::Vec3( 0,  1,  0), osg::Vec3( 0,  0,  1))
+            ,   ImageData( osg::Vec3( 0, -1,  0), osg::Vec3( 0,  0, -1))
+            ,   ImageData( osg::Vec3( 0,  0,  1), osg::Vec3( 0, -1,  0))
+            ,   ImageData( osg::Vec3( 0,  0, -1), osg::Vec3( 0, -1,  0)) 
+            };
+
+            for(unsigned int i = 0;  i < 6 && i < m_cameras.size(); ++i)
+            {
+                osg::Matrix localOffset;
+                localOffset.makeLookAt(position, position + id[i].first, id[i].second);
+
+                osg::Matrix viewMatrix = worldToLocal * localOffset;
+            
+                m_cameras[i]->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
+                m_cameras[i]->setProjectionMatrixAsFrustum(-1.0, 1.0, -1.0, 1.0, 1.0, 10000.0);
+                m_cameras[i]->setViewMatrix(viewMatrix);
+            }
+        }
+
+    protected:
+        virtual ~UpdateCameraAndTexGenCallback() 
+        {
+        }
+
+        osg::NodePath   m_reflectorNodePath;        
+        t_Cameras       m_cameras;
+};
+
+
+class TexMatCullCallback : public osg::NodeCallback
+{
+    public:
+    
+        TexMatCullCallback(osg::TexMat *texmat)
+        :   m_texmat(texmat)
+        {
+        }
+       
+        virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
+        {
+            traverse(node, nv);
+
+            osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
+            if(cv)
+            {
+                const osg::Quat quat = cv->getModelViewMatrix()->getRotate();
+                m_texmat->setMatrix(osg::Matrix::rotate(quat.inverse()));
+            }
+        }
+        
+    protected:
+        osg::ref_ptr<osg::TexMat> m_texmat;
+};
+
+
+osg::Group *createScene(
+    osg::Node *scene
+,   osg::Node *reflector
+,   const unsigned int unit
+,   const unsigned int texSize)
+{
+    osg::Group* group = new osg::Group;
+
+    // Set up cube map.
+    
+    osg::TextureCubeMap *texture = new osg::TextureCubeMap;
+    texture->setTextureSize(texSize, texSize);
+
+    texture->setInternalFormat(GL_RGB);
+
+    texture->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+    texture->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+    texture->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+
+    texture->setFilter(osg::TextureCubeMap::MIN_FILTER, osg::TextureCubeMap::LINEAR);
+    texture->setFilter(osg::TextureCubeMap::MAG_FILTER, osg::TextureCubeMap::LINEAR);
+
+    // Set up the render to texture cameras.
+
+    UpdateCameraAndTexGenCallback::t_Cameras cameras;
+
+    for(unsigned int i = 0; i < 6; ++i)
+    {
+        osg::Camera* camera = new osg::Camera;
+
+        camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        camera->setViewport(0, 0, texSize, texSize);
+        camera->setRenderOrder(osg::Camera::PRE_RENDER);
+
+        // Tell the camera to use OpenGL frame buffer object where supported.
+        camera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+
+        // Attach the texture and use it as the color buffer.
+        camera->attach(osg::Camera::COLOR_BUFFER, texture, 0, i);
+
+        camera->addChild(scene);
+        group->addChild(camera);
+
+        cameras.push_back(camera);
+    }
+
+
+    // create the texgen node to project the tex coords onto the subgraph:
+    osg::TexGenNode* texgenNode = new osg::TexGenNode;
+
+    texgenNode->getTexGen()->setMode(osg::TexGen::REFLECTION_MAP);
+    texgenNode->setTextureUnit(unit);
+
+    group->addChild(texgenNode);
+
+    // set the reflected subgraph so that it uses the texture and tex gen settings.    
+    {
+        osg::Node* reflectorNode = reflector;
+        group->addChild(reflectorNode);
+
+        osg::StateSet* stateset = reflectorNode->getOrCreateStateSet();
+        stateset->setTextureAttributeAndModes(unit,texture,osg::StateAttribute::ON);
+        stateset->setTextureMode(unit,GL_TEXTURE_GEN_S,osg::StateAttribute::ON);
+        stateset->setTextureMode(unit,GL_TEXTURE_GEN_T,osg::StateAttribute::ON);
+        stateset->setTextureMode(unit,GL_TEXTURE_GEN_R,osg::StateAttribute::ON);
+        stateset->setTextureMode(unit,GL_TEXTURE_GEN_Q,osg::StateAttribute::ON);
+
+        osg::TexMat* texmat = new osg::TexMat;
+        stateset->setTextureAttributeAndModes(unit, texmat, osg::StateAttribute::ON);
+        
+        reflectorNode->setCullCallback(new TexMatCullCallback(texmat));
+    }
+    
+    // add the reflector scene to draw just as normal
+    group->addChild(scene);
+    
+    osg::NodePath nodeList;
+    nodeList.push_back(reflector);
+
+    // set an update callback to keep moving the camera and tex gen in the right direction.
+    group->setUpdateCallback(new UpdateCameraAndTexGenCallback(nodeList, cameras));
+
+    return group;
 }
 
 
@@ -367,7 +547,22 @@ int main(int argc, char* argv[])
     viewer.setUpViewInWindow(128, 128, 640, 480);
 
     initializeManipulators(viewer);
-    initializeScene();
+    
+
+    osg::Camera* cam = g_view->getCamera();
+    fovChanged();
+
+
+    g_scene = new osg::MatrixTransform;
+
+    osg::ref_ptr<osg::Group> himmel = createHimmelScene();
+
+    osg::ref_ptr<osg::Group> scene = createScene(
+        himmel.get(), createReflector(), 0, 128);
+
+    g_scene->addChild(scene.get());
+    g_view->setSceneData(g_scene.get());
+
 
     activateDemo(g_demo);
 
