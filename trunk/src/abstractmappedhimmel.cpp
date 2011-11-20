@@ -143,7 +143,7 @@ const std::string AbstractMappedHimmel::getVertexShaderSource()
         +   glsl_v_quadRetrieveRay
         +   glsl_v_quadTransform
         +
-        "smooth out vec4 m_ray;\n"
+        "out vec4 m_ray;\n"
         "\n"
         "void main(void)\n"
         "{\n"
