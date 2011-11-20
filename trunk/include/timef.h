@@ -121,12 +121,13 @@ protected:
 protected:
     osg::Timer *m_timer;
 
-    time_t m_time[3];   // [2] is for reset
-    float m_timef[3];   // [2] is for reset
+    time_t m_time[3]; // [2] is for reset
+    float m_timef[3]; // [2] is for reset
+
+    float m_offset;
 
     e_Mode m_mode;
     float m_lastModeChangeTime;
-    float m_offset;
 
     float m_secondsPerCycle;
 };
