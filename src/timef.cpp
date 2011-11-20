@@ -80,26 +80,18 @@ TimeF::~TimeF()
     delete m_timer;
 }
 
+#include <osg/notify>
 
 void TimeF::update()
 {
-    float elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
-    elapsed -= m_offset;
+    const float elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
 
-    if(M_Running == m_mode)
-    {
-        const float elapsedTimef(elapsed / m_secondsPerCycle);
+    const float elapsedTimef(elapsed / m_secondsPerCycle);
 
-        m_timef[1] = m_timef[0] + elapsedTimef;
-        m_timef[1] -= static_cast<int>(m_timef[1]);
+    m_timef[1] = m_timef[0] + elapsedTimef + m_offset;
+    m_timef[1] -= static_cast<int>(m_timef[1]);
 
-        m_time[1] = fToSeconds(elapsedTimef) + static_cast<float>(m_time[0]);
-    }
-    else
-    {
-        m_timef[1] = m_timef[0];
-        m_time[1] = m_time[0];
-    }
+    m_time[1] = fToSeconds(elapsedTimef) + static_cast<float>(m_time[0]);
 }
 
 
@@ -121,6 +113,8 @@ const float TimeF::setf(
 
     m_timef[0] = timef;
     m_timef[2] = m_timef[0];
+
+    m_offset = 0;
 
     const time_t seconds(fToSeconds(timef));
     struct tm lcl(*localtime(&m_time[0]));
@@ -168,6 +162,8 @@ const time_t TimeF::sett(
 
     m_timef[2] = m_timef[0];
 
+    m_offset = 0;
+
     if(forceUpdate)
         update();
 
@@ -177,7 +173,18 @@ const time_t TimeF::sett(
 
 const float TimeF::setSecondsPerCycle(const float secondsPerCycle)
 {
+    // intepret elapsed seconds within new cycle time
+    const float elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
+
+    m_offset += elapsed / m_secondsPerCycle;
+
+    m_lastModeChangeTime = 0;
+
     m_secondsPerCycle = secondsPerCycle;
+    m_timer->setStartTick();
+
+    osg::notify(osg::NOTICE) << m_offset << std::endl;
+
     return getSecondsPerCycle();
 }
 
@@ -205,12 +212,11 @@ void TimeF::run()
     if(M_Pausing == m_mode)
     {
         const float t(m_timer->time_s());
-        m_offset += t - m_lastModeChangeTime;
-        m_lastModeChangeTime = t;
-    }
-    m_mode = M_Running;
+        m_offset -= (t - m_lastModeChangeTime) / m_secondsPerCycle;
 
-    update();
+        m_mode = M_Running;
+        update();
+    }
 }
 
 
@@ -219,10 +225,10 @@ void TimeF::pause()
     if(M_Running == m_mode)
     {
         m_lastModeChangeTime = m_timer->time_s();
-    }
-    m_mode = M_Pausing;
 
-    update();
+        m_mode = M_Pausing;
+        update();
+    }
 }
  
 
