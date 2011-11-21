@@ -1,0 +1,25 @@
+#summary The documentation home with table of contents.
+
+= Documentation of osghimmel =
+
+Using osghimmel is supposed to be as simple as possible without interfering with your scenegraph structure.
+
+== Table of Contents ==
+
+  * 1. *[ Himmel Time]*
+  * 2. *[ Himmel Node Structure]*
+  * 3. *[ Texture Mapped Himmel]*
+   * 3.1. [ Using Multiple Textures]
+   * 3.2. [ Projections]
+   * 3.3. [ Horizon Band]
+   * 3.4. [ Rotation around Zenith]
+  * 4. *[ Procedural Himmel]*
+   * 4.1. [ Atmosphere]
+   * 4.2. [ Sun]
+   * 4.3. [ Moon]
+  * 5. *Utils*
+   * 5.1. [ Environment Map]
+  * 6. *Applications*
+   * 6.1. [ Skybox]
+
+
