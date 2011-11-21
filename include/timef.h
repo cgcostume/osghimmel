@@ -94,6 +94,7 @@ public:
         float time
     ,   const bool forceUpdate = false);
 
+    const float getNonModf(const bool updateFirst = false);
 
     // time in seconds from initial time
 
