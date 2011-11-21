@@ -1,0 +1,62 @@
+
+// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are met:
+//   * Redistributions of source code must retain the above copyright notice, 
+//     this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright 
+//     notice, this list of conditions and the following disclaimer in the 
+//     documentation and/or other materials provided with the distribution.
+//   * Neither the name of the Computer Graphics Systems Group at the 
+//     Hasso-Plattner-Institute (HPI), Germany nor the names of its 
+//     contributors may be used to endorse or promote products derived from 
+//     this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+// POSSIBILITY OF SUCH DAMAGE.
+
+#pragma once
+#ifndef __GLSL_HBAND_FSF__
+#define __GLSL_HBAND_FSF__
+
+// The general composition of two colors is specified in these two macros:
+// The first (default) uses the alpha value of src, the other allows over-
+// writing it. The Blending function is specified via COMPOSE parameter.
+
+// e.g. IMP_COMPOSE(multiply, b * s) creates the blend_multiply function
+// that uses back * src as intermediate composition.
+
+namespace 
+{
+    static const std::string glsl_f_hband
+    (
+        "uniform vec3 hbandParams;\n"   // { 0: Scale, 1: Width, 2: Offset }
+        "\n"
+        "uniform vec4 hbandBottomColor;\n"
+        "uniform vec4 hbandColor;\n"
+        "\n"
+        "vec4 hband(float z, vec4 fc)\n"
+        "{\n"
+        "   if(z < hbandParams[2])\n"
+        "       fc = hbandBottomColor;\n"
+        "\n"
+        "   float b = abs((z - hbandParams[2]) / hbandParams[0]) - hbandParams[1];\n"
+        "\n"
+        "   return blend_normal(hbandColor, fc, smoothstep(0.0, 1.0, b));\n"
+        "}\n\n"
+    );
+}
+
+#endif // __GLSL_HBAND_FSF__
