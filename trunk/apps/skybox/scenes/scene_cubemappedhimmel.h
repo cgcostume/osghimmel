@@ -50,6 +50,9 @@ protected:
 
     // from AbstractPropertySupport
     virtual void registerProperties();
+    virtual void propertyChanged(
+        QtProperty *p
+    ,   const QString &name);
 
 protected:
     osg::ref_ptr<CubeMappedHimmel> m_himmel;
