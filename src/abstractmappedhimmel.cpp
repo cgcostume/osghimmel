@@ -53,7 +53,7 @@ AbstractMappedHimmel::AbstractMappedHimmel()
 ,   m_activeSrcUnit( std::numeric_limits<GLint>::max())
 
 ,   m_razTransform(new osg::MatrixTransform())
-,   m_razDirection(RAZD_NorthWestSouthEast)
+,   m_razDirection(RD_NorthWestSouthEast)
 ,   m_razTimef(new TimeF())
 {
     getOrCreateStateSet()->addUniform(u_srcAlpha);
@@ -79,7 +79,7 @@ void AbstractMappedHimmel::update()
 
     // Update rotation around zenith.
 
-    const float razd(m_razDirection == RAZD_NorthWestSouthEast ? 1.f : -1.f);
+    const float razd(m_razDirection == RD_NorthWestSouthEast ? 1.f : -1.f);
     m_razTransform->setMatrix(
         osg::Matrix::rotate(razd * m_razTimef->getf(true) * osg::PI * 2.f
     ,   osg::Vec3(0.f, 0.f, 1.f)));
@@ -167,13 +167,13 @@ const float AbstractMappedHimmel::getSecondsPerRAZ() const
 }
 
 
-void AbstractMappedHimmel::setRAZDirection(const RAZDirection razDirection)
+void AbstractMappedHimmel::setRazDirection(const e_RazDirection razDirection)
 {
     m_razDirection = razDirection;
 }
 
  
-const AbstractMappedHimmel::RAZDirection AbstractMappedHimmel::getRAZDirection() const
+const AbstractMappedHimmel::e_RazDirection AbstractMappedHimmel::getRazDirection() const
 {
     return m_razDirection;
 }
