@@ -28,6 +28,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "abstractmappedhimmel.h"
+#include "timef.h"
+#include "himmelquad.h"
+
+#include <osg/MatrixTransform>
 
 #include <assert.h>
 #include <limits.h>
@@ -47,15 +51,25 @@ AbstractMappedHimmel::AbstractMappedHimmel()
 
 ,   m_activeBackUnit(std::numeric_limits<GLint>::max())
 ,   m_activeSrcUnit( std::numeric_limits<GLint>::max())
+
+,   m_razTransform(new osg::MatrixTransform())
+,   m_razDirection(RAZD_NorthWestSouthEast)
+,   m_razTimef(new TimeF())
 {
     getOrCreateStateSet()->addUniform(u_srcAlpha);
     getOrCreateStateSet()->addUniform(u_back);
     getOrCreateStateSet()->addUniform(u_src);
+
+    // Encapsulate hQuad into MatrixTransform.
+
+    m_razTransform->addChild(m_hquad);
+    addChild(m_razTransform.get());
 };
 
 
 AbstractMappedHimmel::~AbstractMappedHimmel()
 {
+    delete m_razTimef;
 };
 
 
@@ -63,10 +77,18 @@ void AbstractMappedHimmel::update()
 {
     AbstractHimmel::update();
 
+    // Update rotation around zenith.
+
+    const float razd(m_razDirection == RAZD_NorthWestSouthEast ? 1.f : -1.f);
+    m_razTransform->setMatrix(
+        osg::Matrix::rotate(razd * m_razTimef->getf(true) * osg::PI * 2.f
+    ,   osg::Vec3(0.f, 0.f, 1.f)));
+
     // Update two texture status for arbitrary blending (e.g. normal).
 
     const float t(timef());
 
+    // update texture change
     u_srcAlpha->set(m_changer.getSrcAlpha(t));
 
     // Avoid unnecessary unit switches.
@@ -85,8 +107,6 @@ void AbstractMappedHimmel::update()
         assert(srcUnit == m_activeSrcUnit);
     }
 }
-
-#include <osg/Notify>
 
 
 inline void AbstractMappedHimmel::assignBackUnit(const GLint textureUnit)
@@ -121,12 +141,41 @@ void AbstractMappedHimmel::setTransitionDuration(const float duration)
     m_changer.setTransitionDuration(duration);
 }
 
+const float AbstractMappedHimmel::getTransitionDuration() const
+{
+    return m_changer.getTransitionDuration();
+}
+
 
 void AbstractMappedHimmel::pushTextureUnit(
     const GLint textureUnit
 ,   const float time)
 {
     m_changer.pushUnit(textureUnit, time);
+}
+
+
+void AbstractMappedHimmel::setSecondsPerRAZ(const float secondsPerRAZ)
+{
+    m_razTimef->setSecondsPerCycle(secondsPerRAZ);
+}
+
+
+const float AbstractMappedHimmel::getSecondsPerRAZ() const
+{
+    return m_razTimef->getSecondsPerCycle();
+}
+
+
+void AbstractMappedHimmel::setRAZDirection(const RAZDirection razDirection)
+{
+    m_razDirection = razDirection;
+}
+
+ 
+const AbstractMappedHimmel::RAZDirection AbstractMappedHimmel::getRAZDirection() const
+{
+    return m_razDirection;
 }
 
 

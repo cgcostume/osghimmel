@@ -34,8 +34,24 @@
 #include "abstracthimmel.h"
 #include "twounitschanger.h"
 
+class TimeF;
+
+namespace osg
+{
+    class MatrixTransform;
+}
+
+
 class AbstractMappedHimmel : public AbstractHimmel
 {
+public:
+
+    enum RAZDirection
+    {
+        RAZD_NorthWestSouthEast
+    ,   RAZD_NorthEastSouthWest
+    };
+
 public:
 
     AbstractMappedHimmel();
@@ -43,11 +59,19 @@ public:
 
     // This call gets redirected to a TwoUnitsChanger instance (see comment there).
     void setTransitionDuration(const float duration);
+    const float getTransitionDuration() const;
 
     // This call gets redirected to a TwoUnitsChanger instance  (see comment there).
     void pushTextureUnit(
         const GLint textureUnit
     ,   const float time = 1.f);
+
+    // RAZ = time dependent Rotation around Zenith - this is independent from himmels' timef.
+    void setSecondsPerRAZ(const float secondsPerRAZ); // reasonable values should be around 1000+
+    const float getSecondsPerRAZ() const;
+
+    void setRAZDirection(const RAZDirection razDirection);
+    const RAZDirection getRAZDirection() const;
 
 protected:
 
@@ -84,6 +108,11 @@ protected:
 
     GLint m_activeBackUnit;
     GLint m_activeSrcUnit;
+
+    osg::ref_ptr<osg::MatrixTransform> m_razTransform;
+    RAZDirection m_razDirection;
+
+    TimeF *m_razTimef;    
 };
 
 #endif // __ABSTRACTMAPPEDHIMMEL_H__

@@ -71,8 +71,6 @@ AbstractHimmel::AbstractHimmel()
     setupNode(stateSet);
     setupProgram(stateSet);
 
-    addChild(m_hquad);
-
     setUpdateCallback(new HimmelNodeCallback);
 };
 
