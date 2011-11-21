@@ -57,7 +57,7 @@ private:
 
 public:
 
-    AbstractHimmel();
+    AbstractHimmel(); // Inheriting constructors should add m_hQuad as child as desired.
     virtual ~AbstractHimmel();
 
     // The timef gets updated but takes no ownership.
