@@ -67,7 +67,7 @@ public:
     ,   const float time = 1.f);
 
     // RAZ = time dependent Rotation around Zenith - this is independent from himmels' timef.
-    void setSecondsPerRAZ(const float secondsPerRAZ); // reasonable values should be around 1000+
+    void setSecondsPerRAZ(const float secondsPerRAZ); // reasonable values should be around 2000+
     const float getSecondsPerRAZ() const;
 
     void setRazDirection(const e_RazDirection razDirection);

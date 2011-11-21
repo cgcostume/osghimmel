@@ -64,7 +64,7 @@ Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
     m_himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half, true);
 
     m_himmel->setTransitionDuration(0.05f);
-    m_himmel->setSecondsPerRAZ(1000.f);
+    m_himmel->setSecondsPerRAZ(2000.f);
 
     m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
@@ -99,7 +99,7 @@ void Scene_PolarMappedHimmel::registerProperties()
 
     QtProperty *polarGroup = createGroup(GROUP_POLARMAPPED);
     
-    createProperty(*polarGroup, PROPERTY_RAZSPEED, 1000.0, 0.0, 99999.0, 10.0); 
+    createProperty(*polarGroup, PROPERTY_RAZSPEED, 2000.0, 0.0, 99999.0, 10.0); 
 
     QtProperty *hbandGroup = createGroup(*polarGroup, GROUP_HBAND);
 
