@@ -1,4 +1,4 @@
-Related references, some of which were used for implementation.
+#summary Related references, some of which were used for implementation.
 
 = References =
 
