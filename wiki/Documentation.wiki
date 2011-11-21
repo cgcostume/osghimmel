@@ -1,4 +1,4 @@
-#summary Documentations' home with Table of Contents.
+#summary Starting point of the documentation with Table of Contents.
 
 = Documentation of osghimmel =
 
