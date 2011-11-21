@@ -1,3 +1,5 @@
+#summary Summary of how to build osghimmel and where to find required resources.
+
 I (dm) am developing osghimmel with CMake 2.8.5, OSG 2.8.5 and Qt 4.8.0. Usually i prefer to build x64 binaries and since all mentioned libs and tools above are opensource, i build them my self. To bypass building third party libs yourself, this wikipage provides build instructions and lists available binary resources for each of them.
 
 = CMake instructions =
