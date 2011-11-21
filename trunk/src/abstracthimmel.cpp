@@ -34,6 +34,8 @@
 
 #include <osg/Depth>
 
+#include <osgUtil/CullVisitor>
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 #include "shadermodifier.h"
@@ -80,6 +82,30 @@ AbstractHimmel::~AbstractHimmel()
     unmakeVertexShader();
     unmakeFragmentShader();
 };
+
+
+bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
+{
+    osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
+    if(cv)
+    {
+        osg::Vec3 eyePointLocal = cv->getEyeLocal();
+        matrix.preMultTranslate(eyePointLocal);
+    }
+    return true;
+}
+
+
+bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
+{
+    osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
+    if(cv)
+    {
+        osg::Vec3 eyePointLocal = cv->getEyeLocal();
+        matrix.preMultTranslate(-eyePointLocal);
+    }
+    return true;
+}
 
 
 void AbstractHimmel::setupNode(osg::StateSet* stateSet)

@@ -46,10 +46,10 @@ class AbstractMappedHimmel : public AbstractHimmel
 {
 public:
 
-    enum RAZDirection
+    enum e_RazDirection
     {
-        RAZD_NorthWestSouthEast
-    ,   RAZD_NorthEastSouthWest
+        RD_NorthWestSouthEast
+    ,   RD_NorthEastSouthWest
     };
 
 public:
@@ -70,8 +70,8 @@ public:
     void setSecondsPerRAZ(const float secondsPerRAZ); // reasonable values should be around 1000+
     const float getSecondsPerRAZ() const;
 
-    void setRAZDirection(const RAZDirection razDirection);
-    const RAZDirection getRAZDirection() const;
+    void setRazDirection(const e_RazDirection razDirection);
+    const e_RazDirection getRazDirection() const;
 
 protected:
 
@@ -110,7 +110,7 @@ protected:
     GLint m_activeSrcUnit;
 
     osg::ref_ptr<osg::MatrixTransform> m_razTransform;
-    RAZDirection m_razDirection;
+    e_RazDirection m_razDirection;
 
     TimeF *m_razTimef;    
 };

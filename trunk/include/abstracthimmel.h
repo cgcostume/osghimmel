@@ -46,6 +46,7 @@ class ShaderModifier;
 class AbstractHimmel : public osg::Transform
 {
 private:
+
     // This callback calls update.
     class HimmelNodeCallback : public osg::NodeCallback 
     {
@@ -76,6 +77,15 @@ public:
     {
         return m_autoUpdateTime;
     }
+
+    // From osg::Transform:
+
+    // Get the transformation matrix which moves from local coords to world coords.
+    virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const;
+
+    // Get the transformation matrix which moves from world coords to local coords.
+    virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const;
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
     static void setupShaderModifier(ShaderModifier *shaderModifier);
