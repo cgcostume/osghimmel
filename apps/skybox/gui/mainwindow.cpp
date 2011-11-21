@@ -79,7 +79,7 @@ namespace
 {
     const QString SETTINGS_GROUP_COMMON_GUI("common");
 
-    const float INITIAL_CAMERA_FOV(45.f);
+    const float INITIAL_CAMERA_FOV(60.f);
 }
 
 
