@@ -80,18 +80,17 @@ TimeF::~TimeF()
     delete m_timer;
 }
 
-#include <osg/notify>
 
 void TimeF::update()
 {
     const float elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
 
-    const float elapsedTimef(elapsed / m_secondsPerCycle);
+    const float elapsedTimef(m_secondsPerCycle > 0.f ? elapsed / m_secondsPerCycle : 0.f);
 
     m_timef[1] = m_timef[0] + elapsedTimef + m_offset;
     m_timef[1] -= static_cast<int>(m_timef[1]);
 
-    m_time[1] = fToSeconds(elapsedTimef) + static_cast<float>(m_time[0]);
+    m_time[1] = fToSeconds(elapsedTimef + m_offset) + static_cast<float>(m_time[0]);
 }
 
 
@@ -141,6 +140,12 @@ const float TimeF::setf(
 }
 
 
+const float TimeF::getNonModf(const bool updateFirst)
+{
+    return secondsTof(gett(updateFirst));
+}
+
+
 const time_t TimeF::gett(const bool updateFirst)
 {
     if(updateFirst)
@@ -176,14 +181,13 @@ const float TimeF::setSecondsPerCycle(const float secondsPerCycle)
     // intepret elapsed seconds within new cycle time
     const float elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
 
-    m_offset += elapsed / m_secondsPerCycle;
+    if(m_secondsPerCycle > 0.f)
+        m_offset += elapsed / m_secondsPerCycle;
 
     m_lastModeChangeTime = 0;
 
     m_secondsPerCycle = secondsPerCycle;
     m_timer->setStartTick();
-
-    osg::notify(osg::NOTICE) << m_offset << std::endl;
 
     return getSecondsPerCycle();
 }
@@ -212,7 +216,9 @@ void TimeF::run()
     if(M_Pausing == m_mode)
     {
         const float t(m_timer->time_s());
-        m_offset -= (t - m_lastModeChangeTime) / m_secondsPerCycle;
+
+        if(m_secondsPerCycle > 0.f)
+            m_offset -= (t - m_lastModeChangeTime) / m_secondsPerCycle;
 
         m_mode = M_Running;
         update();
