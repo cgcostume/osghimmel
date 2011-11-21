@@ -45,6 +45,8 @@ namespace
 
     static const QString GROUP_PARABOLOIDMAPPED(TR("Paraboloid Mapped"));
 
+    static const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
+
     static const QString GROUP_HBAND(TR("HorizonBand"));
 
     static const QString PROPERTY_HBAND_SCALE (TR("Scale"));
@@ -96,6 +98,9 @@ void Scene_ParaboloidMappedHimmel::registerProperties()
     AbstractHimmelScene::registerProperties();
 
     QtProperty *paraboloidGroup = createGroup(GROUP_PARABOLOIDMAPPED);
+
+    createProperty(*paraboloidGroup, PROPERTY_RAZSPEED, 0.0, 0.0, 99999.0, 10.0); 
+
     QtProperty *hbandGroup = createGroup(*paraboloidGroup, GROUP_HBAND);
 
     createProperty(*hbandGroup, PROPERTY_HBAND_SCALE, HorizonBand::defaultScale(), 0.0, 1.0, 0.02); 
@@ -110,7 +115,10 @@ void Scene_ParaboloidMappedHimmel::propertyChanged(
     QtProperty *p
 ,   const QString &name)
 {
-         if(PROPERTY_HBAND_SCALE == name)
+        if(PROPERTY_RAZSPEED == name)
+        m_himmel->setSecondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+
+    else if(PROPERTY_HBAND_SCALE == name)
         m_himmel->hBand()->setScale(doubleValue(PROPERTY_HBAND_SCALE));
     else if(PROPERTY_HBAND_WIDTH == name)
         m_himmel->hBand()->setWidth(doubleValue(PROPERTY_HBAND_WIDTH));

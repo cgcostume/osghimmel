@@ -58,6 +58,8 @@ osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);
 
+    himmel->setSecondsPerRAZ(1000.f);
+
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
     himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
@@ -213,7 +215,7 @@ public:
                     g_demo = static_cast<e_Demo>((g_demo + 1) % 4);
                     activateDemo(g_demo);
                 }
-                else if(ea.getKey() == 'p' || ea.getKey() == 'P')
+                else if(ea.getKey() == 'r' || ea.getKey() == 'R')
                 {
                     g_timef->reset();
                     g_timef->setSecondsPerCycle(60.f);
@@ -231,7 +233,8 @@ public:
                 }
                 else if(ea.getKey() == '+')
                 {
-                    g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() - 1);
+                    if(g_timef->getSecondsPerCycle() - 1 > 0.f)
+                        g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() - 1);
                 }
             }
             break;
@@ -306,6 +309,12 @@ osg::Group *createHimmelScene()
 osg::Node *createReflector()
 {
     osg::Node *node = osgDB::readNodeFile("resources/knot.obj");
+
+    if(!node)
+    {
+        osg::notify(osg::WARN) << "Mesh \"resources/knot.obj\" not found." << std::endl;
+        return NULL;
+    }
 
     osg::ref_ptr<osg::Material> m = new osg::Material;
     m->setColorMode(osg::Material::DIFFUSE);
@@ -527,6 +536,7 @@ int main(int argc, char* argv[])
     osg::notify(osg::NOTICE) << "Use [p] to pause/unpause time." << std::endl;
     osg::notify(osg::NOTICE) << "Use [+] and [-] to increase/decrease seconds per cycle." << std::endl;
     osg::notify(osg::NOTICE) << "Use [r] to reset the time." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [mouse wheel] to change field of view." << std::endl;
 
     g_demo = D_CubeMappedHimmel;
 
@@ -557,10 +567,17 @@ int main(int argc, char* argv[])
 
     osg::ref_ptr<osg::Group> himmel = createHimmelScene();
 
-    osg::ref_ptr<osg::Group> scene = createScene(
-        himmel.get(), createReflector(), 0, 128);
+    osg::Node *reflector(createReflector());
+    if(reflector)
+    {
+        osg::ref_ptr<osg::Group> scene = createScene(
+            himmel.get(), reflector, 0, 128);
 
-    g_scene->addChild(scene.get());
+        g_scene->addChild(scene.get());
+    }
+    else
+        g_scene->addChild(himmel.get());
+
     g_view->setSceneData(g_scene.get());
 
 

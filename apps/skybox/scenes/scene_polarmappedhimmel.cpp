@@ -44,6 +44,8 @@ namespace
 
     static const QString GROUP_POLARMAPPED(TR("Polar Mapped"));
 
+    static const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
+
     static const QString GROUP_HBAND(TR("HorizonBand"));
 
     static const QString PROPERTY_HBAND_SCALE (TR("Scale"));
@@ -62,6 +64,7 @@ Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
     m_himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half, true);
 
     m_himmel->setTransitionDuration(0.05f);
+    m_himmel->setSecondsPerRAZ(1000.f);
 
     m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
@@ -95,6 +98,9 @@ void Scene_PolarMappedHimmel::registerProperties()
     AbstractHimmelScene::registerProperties();
 
     QtProperty *polarGroup = createGroup(GROUP_POLARMAPPED);
+    
+    createProperty(*polarGroup, PROPERTY_RAZSPEED, 1000.0, 0.0, 99999.0, 10.0); 
+
     QtProperty *hbandGroup = createGroup(*polarGroup, GROUP_HBAND);
 
     createProperty(*hbandGroup, PROPERTY_HBAND_SCALE, HorizonBand::defaultScale(), 0.0, 1.0, 0.02);
@@ -109,7 +115,10 @@ void Scene_PolarMappedHimmel::propertyChanged(
     QtProperty *p
 ,   const QString &name)
 {
-         if(PROPERTY_HBAND_SCALE == name)
+        if(PROPERTY_RAZSPEED == name)
+        m_himmel->setSecondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+
+    else if(PROPERTY_HBAND_SCALE == name)
         m_himmel->hBand()->setScale(doubleValue(PROPERTY_HBAND_SCALE));
     else if(PROPERTY_HBAND_WIDTH == name)
         m_himmel->hBand()->setWidth(doubleValue(PROPERTY_HBAND_WIDTH));
@@ -120,3 +129,4 @@ void Scene_PolarMappedHimmel::propertyChanged(
 	else if(PROPERTY_BOTTOM_COLOR == name)
 		m_himmel->hBand()->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
 }
+

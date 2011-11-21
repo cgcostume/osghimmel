@@ -40,6 +40,8 @@ namespace
     // Properties
 
     static const QString GROUP_SPHEREMAPPED(TR("Sphere Mapped"));
+
+    static const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
 }
 
 Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
@@ -78,4 +80,15 @@ void Scene_SphereMappedHimmel::registerProperties()
     AbstractHimmelScene::registerProperties();
 
     QtProperty *sphereGroup = createGroup(GROUP_SPHEREMAPPED);
+
+    createProperty(*sphereGroup, PROPERTY_RAZSPEED, 0.0, 0.0, 99999.0, 10.0); 
+}
+
+
+void Scene_SphereMappedHimmel::propertyChanged(
+    QtProperty *p
+,   const QString &name)
+{
+    if(PROPERTY_RAZSPEED == name)
+        m_himmel->setSecondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
 }
