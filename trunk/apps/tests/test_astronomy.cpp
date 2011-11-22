@@ -31,7 +31,9 @@
 #include "test_astronomy.h"
 #include "test.h"
 
-#include "include/astronomy.h"
+#include "include/mathmacros.h"
+#include "include/atime.h"
+#include "include/julianday.h"
 
 
 void test_aTime();
@@ -40,6 +42,16 @@ void test_jd();
 
 void test_astronomy()
 {
+    // Check if int cast truncates.
+    ASSERT_EQ( 1, static_cast<int>( 1.66));
+    ASSERT_EQ( 1, static_cast<int>( 1.33));
+    ASSERT_EQ(-1, static_cast<int>(-1.33));
+    ASSERT_EQ(-1, static_cast<int>(-1.66));
+
+    // Check decimal hours.
+    ASSERT_EQ(0.81, _hour(19, 26, 24));
+
+    // Run Tests.
     test_aTime();
     test_jd();
 
@@ -49,16 +61,76 @@ void test_astronomy()
 
 void test_aTime()
 {
-    // 
-    t_aTime aTime0(2000, 1, 1.81);
+    // Test decimal day time.
+    t_aTime aTime0(1957, 10, 4.81);
 
-    ASSERT_EQ( 1, aTime0.day);
+    ASSERT_EQ( 4, aTime0.day);
     ASSERT_EQ(19, aTime0.hour);
     ASSERT_EQ(26, aTime0.minute);
     ASSERT_EQ(24, aTime0.second);
+
+    // Test decimal day time:.
+    t_aTime aTime1(2000, 1, 1);
+
+    ASSERT_EQ( 1, aTime1.day);
+    ASSERT_EQ( 0, aTime1.hour);
+    ASSERT_EQ( 0, aTime1.minute);
+    ASSERT_EQ( 0, aTime1.second);
 }
 
 
 void test_jd()
 {
+    // Times from "Astronomical Algorithms" - Chapter 7
+
+    // Test some dates.
+
+    // Standard equinox (decimal day time).
+    ASSERT_EQ( 2436116.31,jd(t_aTime(1957, 10,  4.81)));
+    ASSERT_EQ( 1842713.0, jd(t_aTime( 333,  1, 27, 12, 0, 0)));
+    
+    // Test some dates.
+    ASSERT_EQ( 2451545.0, jd(t_aTime( 2000,  1,  1.5)));
+    ASSERT_EQ( 2446822.5, jd(t_aTime( 1987,  1, 27.0)));
+    ASSERT_EQ( 2446966.0, jd(t_aTime( 1987,  6, 19.5)));
+    ASSERT_EQ( 2447187.5, jd(t_aTime( 1988,  1, 27.0)));
+    ASSERT_EQ( 2447332.0, jd(t_aTime( 1988,  6, 19.5)));
+    ASSERT_EQ( 2443259.9, jd(t_aTime( 1977,  4, 26.4)));
+    ASSERT_EQ( 2415020.5, jd(t_aTime( 1900,  1,  1.0)));
+    ASSERT_EQ( 2305447.5, jd(t_aTime( 1600,  1,  1.0)));
+    ASSERT_EQ( 2305812.5, jd(t_aTime( 1600, 12, 31.0)));
+    ASSERT_EQ( 2026871.8, jd(t_aTime(  837,  4, 10.3)));
+    ASSERT_EQ( 1356001.0, jd(t_aTime(-1000,  7, 12.5)));
+    ASSERT_EQ( 1355866.5, jd(t_aTime(-1000,  2, 29.0)));
+    ASSERT_EQ( 1355671.4, jd(t_aTime(-1001,  8, 17.9)));
+    ASSERT_EQ(       0.0, jd(t_aTime(-4712,  1,  1.5)));
+
+
+    // Times from WikiPedia
+    ASSERT_EQ(1721423.5000, jd(t_aTime(   1,  1,  1,  0,  0,  0)));
+    ASSERT_EQ(1842713.0000, jd(t_aTime( 333,  1, 27, 12,  0,  0)));
+    // Check Calendar Swap.
+    ASSERT_EQ(2299160.5000, jd(t_aTime(1582, 10,  4, 24,  0,  0)));
+    ASSERT_EQ(2299160.5000, jd(t_aTime(1582, 10, 15,  0,  0,  0)));
+    // Check from http://www.stjarnhimlen.se/comp/tutorial.html.
+    ASSERT_EQ(2448000.5000, jd(t_aTime(1990,  4, 19,  0,  0,  0))); 
+
+    // Test some dates.
+    ASSERT_EQ(2415020.5000, jd(t_aTime(1900,  1,  1,  0,  0,  0))); 
+    ASSERT_EQ(2447893.0000, jd(t_aTime(1990,  1,  1, 12,  0,  0))); 
+    ASSERT_EQ(2447893.2500, jd(t_aTime(1990,  1,  1, 18,  0,  0))); 
+
+    // Standard Equinox.
+    ASSERT_EQ(2451545.0000, jd(t_aTime(2000,  1,  1, 12,  0,  0))); 
+
+    ASSERT_EQ(2453750.1875, jd(t_aTime(2006,  1, 14, 16, 30,  0))); 
+    ASSERT_EQ(2455281.1875, jd(t_aTime(2010,  3, 25, 16, 30,  0))); 
+
+    // Check undefined days.
+    ASSERT_EQ(      0.0000, jd(t_aTime(1582, 10,  5,  0,  0,  0))); 
+    ASSERT_EQ(      0.0000, jd(t_aTime(1582, 10, 14,  0,  0,  0))); 
+
+
+    // Test mjd;
+    ASSERT_EQ(       0.0, mjd(t_aTime(1858, 11, 17.0)));
 }

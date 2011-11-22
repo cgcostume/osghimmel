@@ -49,6 +49,9 @@ namespace
     do { test_failed(file); \
     \
     std::stringstream stream; \
+    \
+    stream.setf (std::ios::fixed, std::ios::floatfield); \
+    \
     stream << "FAILED:  " << expectedExpr.c_str() << " == " << actualExpr \
            << " -> " << expected << " " << operatorExpr << " " << actual \
            << std::endl << "in " << file << "(" << line << ")"; \
@@ -101,7 +104,7 @@ void Test::report(const std::string &file)
     }
     else
         std::cout << std::endl << "--------" << std::endl 
-            << "REPORT:  All Tests Passed." << std::endl << std::endl;
+            << "REPORT:  All " << succeeded << " Tests Passed." << std::endl << std::endl;
 }
 
 

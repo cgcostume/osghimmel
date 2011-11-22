@@ -27,15 +27,56 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "julianday.h"
+#include "mathmacros.h"
 
-#include "test_astronomy.h"
-
-#include <iostream>
+#include <assert.h>
 
 
-int main(int argc, char* argv[])
+const t_julianDate jd(t_aTime aTime)
 {
-    test_astronomy();
+    assert(aTime.month > 0);
 
-    return 0;
+    if(aTime.month < 3)
+    {
+        // "If the date is in January or February, it is concidered to
+        // be 13th or 14th month of the preceding year."
+
+        --aTime.year;
+        aTime.month += 12;
+    }
+
+    // TODO: from "A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.
+    // "Local time is GMT with a zone correction. Terrestrial Time (TT)
+    // is essentially the time kept by atomic clocks. As it is not corrected
+    // for the slowing of the Earth’s rotation, it gains on GMT by about 
+    // a second per year. The current difference T is about 64 sec in 2000.
+    // It should be added to s in all equations for precise computation..."
+
+    unsigned int s = aTime.second;
+
+    const long double h(_hour(aTime.hour, aTime.minute, s));
+
+    signed int b = 0;
+
+    const signed int i = aTime.year * 10000 + aTime.month * 100 + aTime.day;
+    if(i >= 15821015)
+    {
+        // gregorian calendar
+        const signed int a = static_cast<signed int>(aTime.year * 0.01);
+        b = 2 - a + static_cast<signed int>(a * 0.25);
+    }
+    else if(i > 15821004)
+        return 0.0; // The gregorian calender follows with 15. on the 4. 
+                    // julian oktober in 1582 - poor people who missed a birthday these days :P
+
+    return static_cast<int>(365.25 * (aTime.year + 4716)) 
+        + static_cast<int>(30.6001 * (aTime.month + 1)) + aTime.day + h + b - 1524.5;
+}
+
+
+// Modified Julian Date.
+const t_julianDate mjd(t_aTime aTime)
+{
+    return jd(aTime) - 2400000.5;
 }

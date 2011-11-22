@@ -27,15 +27,79 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#pragma once
+#ifndef __MATHMACROS_H__
+#define __MATHMACROS_H__
 
-#include "test_astronomy.h"
+#include <math.h>
 
-#include <iostream>
+#define _PI 3.1415926535897932384626433832795
+#define _PI2  _PI * 2.00
+#define _PI_2 _PI * 0.50
+#define _PI4  _PI * 4.00
+#define _PI_4 _PI * 0.25
+
+#define _abs(v) \
+    ((v < 0) ? -static_cast<int>(v) : static_cast<int>(v))
+
+#define _mod(a, m) \
+    (a - m * _abs(a / m))
+
+#define _fract(x) \
+    (x - _abs(x))
+
+#define _degrees(rad) \
+    (rad * 180.0 / _PI)
+
+#define _radians(deg) \
+    (deg * _PI / 180.0)
+
+#define _decimal(deg, min, sec) \
+    (deg + min / 60.0 + sec / 3600.0)
+
+#define _sind(deg) \
+    (sin(_radians(deg)))
+
+#define _cosd(deg) \
+    (cos(_radians(deg)))
+
+#define _tand(deg) \
+    (tan(_radians(deg)))
+
+#define _asind(rad) \
+    (_degrees(asin(rad)))
+
+#define _acosd(rad) \
+    (_degrees(acos(rad)))
+
+#define _atand(rad) \
+    (_degrees(atan(rad)))
+
+#define _atan2d(x, y) \
+    (_degrees(atan2(x, y)))
+
+// normalizes an angle to between 0 and 2PI radians
+#define _rev(rad) \
+    (rad - floor(rad / _PI2) * _PI2)
+
+// normalizes an angle to between 0 and 360 degrees
+#define _revd(deg) \
+    (deg - floor(deg / 360.0) * 360.0)
+
+// cube root (e.g. needed for parabolic orbits)
+#define _cbrt(x) \
+    ((x > 0.0) ? exp(log(x) / 3.0) : ((x < 0.0) ? -cbrt(-x) : 0.0))
+
+#define _rightascd(deg, min, sec) \
+    ((_decimal(deg, min, sec) * 15.0)
+
+#define _rightasc(deg, min, sec) \
+    (_radians(_rightascd(deg, min, sec)))
+
+#define _hour(h, m, s) \
+    (h / 24.0 + m / 1440.0 + s / 86400.0)
+
+// When using powers, try to use Horner's Method
 
 
-int main(int argc, char* argv[])
-{
-    test_astronomy();
-
-    return 0;
-}
+#endif // __MATHMACROS_H__

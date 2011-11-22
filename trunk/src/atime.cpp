@@ -27,15 +27,68 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "atime.h"
+#include "mathmacros.h"
 
-#include "test_astronomy.h"
-
-#include <iostream>
+#include <assert.h>
 
 
-int main(int argc, char* argv[])
+s_AstronomicalTime::s_AstronomicalTime(
+    const short year
+,   const short month
+,   const short day
+,   const short hour
+,   const short minute
+,   const short second
+,   const short gmtOffset)
+:   year(year)
+,   month(month)
+,   day(day)
+,   hour(hour)
+,   minute(minute)
+,   second(second)
+,   gmtOffset(gmtOffset)
 {
-    test_astronomy();
+}
 
-    return 0;
+
+s_AstronomicalTime::s_AstronomicalTime(
+    const short year
+,   const short month
+,   const long double day
+,   const short gmtOffset)
+:   year(year)
+,   month(month)
+,   day(static_cast<unsigned short>(day))
+,   gmtOffset(gmtOffset)
+{
+    const long double h = _fract(day) * 24.0;
+    const long double m = _fract(h) * 60.0;
+    const long double s = _fract(m) * 60.001;
+
+    this->hour   = static_cast<short>(h);
+    this->minute = static_cast<short>(m);
+    this->second = static_cast<short>(s);
+}
+
+
+s_AstronomicalTime::s_AstronomicalTime(const time_t &t)
+{
+    struct tm local, utc;
+
+    localtime_s(&local, &t);
+    gmtime_s(&utc, &t);
+
+    year   = 1900 + local.tm_year;
+    month  = 1 + local.tm_mon;
+    day    = local.tm_mday;
+    hour   = local.tm_hour;
+    minute = local.tm_min;
+    second = local.tm_sec;
+
+    gmtOffset = local.tm_hour - utc.tm_hour;
+
+    // Daylight saving time should not be concidered here -> julian time functions ignore this.
+    //if(local.tm_isdst)
+    //  hourUT += 1;
 }
