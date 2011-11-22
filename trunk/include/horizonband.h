@@ -33,6 +33,15 @@
 #ifndef __HORIZONBAND_H__
 #define __HORIZONBAND_H__
 
+// Some texture projections (polar mapping with MM_Half and paraboloid mapping)
+// discard the lower hemisphere, resulting in a hard edge to gl clear color. 
+// To avoid this, these himmels offer a gradient called HorizonBand. This is 
+// given by scale, width, and offset as well as a color and a bottom color. 
+// The scale is in `[`0;1`[`, with 1.0 overlapping the skies vertical 180 degrees. 
+// Width specifies the vertical region uniformly filled with color. Currently 
+// smoothstep blending is used for the gradient, but inv_squared interpolation 
+// yields good results too.
+
 class HorizonBand
 {
 public:

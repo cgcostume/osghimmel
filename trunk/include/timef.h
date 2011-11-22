@@ -38,13 +38,12 @@ namespace osg
     class Timer;
 }
 
-//! Encapsulates scaled time: Seconds starting on a user-defined point in 
-//  time on the one hand and a float time in the range [0;1] on the other.
-
-//  The secondsPerCycle parameter specifies in how many seconds one cycle 
-//  [0;1] completes and starts over again. Further more it specifies the 
-//  duration of a 24 hours day for the t time (gett). This, however is not
-//  cyclic, but from the initialized time.
+// TimeF manages an osg::Timer and features an interface for floating time
+// in the closed interval [0;1] representing a full day and standard c 
+// time (time_t) simultaneously. The time updates have to be requested 
+// explicitly, thus simplifying usage between multiple recipients.
+// The time starts cycling automatically, but can also be paused, stopped, 
+// or set to a specific value.
 
 class TimeF
 {
@@ -55,6 +54,7 @@ class TimeF
     };
 
 public:
+    
     TimeF(
         const float time = 0.f
     ,   const float secondsPerCycle = 0.f);
@@ -65,13 +65,15 @@ public:
 
     ~TimeF();
 
-    // increments time appropriate to secondsPerCycle
+    // Increments time appropriate to secondsPerCycle.
     void update();
 
-    // osg timer manipulation
-    void run();
-    void pause();
-    void reset();
+    // Cycling manipulation - does not tamper the time.
+
+    void start(const bool forceUpdate = false);
+    void pause(const bool forceUpdate = false);
+    void reset(const bool forceUpdate = false); // Resets the time to initial value (secondsPerCycle remain unchanged).
+    void stop (const bool forceUpdate = false); // Stops and resets the time.
 
     inline const float getSecondsPerCycle() const
     {
@@ -81,23 +83,23 @@ public:
     const float setSecondsPerCycle(const float secondsPerCycle);
 
 
-    // cycling float time in the range [0;1]
-
+    // Float time in the intervall [0;1]
     inline const float getf() const
     {
         return m_timef[1];
     }
 
     const float getf(const bool updateFirst);
-    // sets only time, date remains unchanged
+
+    // Sets only time, date remains unchanged.
     const float setf(
         float time
     ,   const bool forceUpdate = false);
 
+    // Elapsed float time from initialized time.
     const float getNonModf(const bool updateFirst = false);
 
-    // time in seconds from initial time
-
+    // Time in seconds from initial time.
     inline const time_t gett() const
     {
         return m_time[1];
@@ -107,7 +109,6 @@ public:
     const time_t sett(
         const time_t &time
     ,   const bool forceUpdate = false);
-
 
     // 
 
@@ -122,8 +123,8 @@ protected:
 protected:
     osg::Timer *m_timer;
 
-    time_t m_time[3]; // [2] is for reset
-    float m_timef[3]; // [2] is for reset
+    time_t m_time[3]; // [2] is for stop
+    float m_timef[3]; // [2] is for stop
 
     float m_offset;
 
