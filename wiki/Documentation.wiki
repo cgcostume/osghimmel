@@ -4,6 +4,8 @@
 
 Using _osghimmel_ is supposed to be as simple as possible without interfering with your scenegraph structure.
 
+<wiki:toc max_depth="3" />
+
 == Himmel Time ==
 
 _TimeF_ manages an osg::Timer and features an interface for floating time in the closed interval `[`0;1`]` representing a full day and standard c time (_time_t_) simultaneously. The time updates have to be requested explicitly, thus simplifying usage between multiple recipients.
