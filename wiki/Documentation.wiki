@@ -51,7 +51,7 @@ _AbstractMappedHimmel_ features textured skies with support for essentially four
 || *Polar* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_polarmap_small.png || Best free resources available for, but provide an unnecessary amount of detail towards the zenith (due to projection) - still my favorites. Can be applied in half (_MM_Half_) or full (_MM_Full_) mode. ||
 || *Sphere* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_spheremap_small.png || Similar to Paraboloid Mapping, but instead of a hemisphere, a full sphere is mapped to the texture. The outer hemisphere is usually less detailed than the inner one. Due to floating precision, and inaccurate sampling an erroneous (singularity like) point arises opposite of the inner hemisphere. The map can be oriented towards an axis (currently _MM_TowardsNegY_ and _MM_TowardsPosZ_ are supported). || 
 
-The _TimeF_ given by superclass _AbstractHimmel_ is used only for texture transitions. An additional _Timef_ object is used internally for the timed rotation around the zenith.
+The _TimeF_ given by superclass _AbstractHimmel_ is used only for texture transitions. An additional _TimeF_ object is used internally for the timed rotation around the zenith.
 
 === Texture Transitions ===
 
@@ -72,4 +72,29 @@ himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_
 
 himmel->pushTextureUnit(0, 0.0f);
 himmel->pushTextureUnit(1, 0.5f);
+}}} 
+
+
+=== Horizon Band ===
+
+Some texture projections (polar mapping with _MM_Half_ and paraboloid mapping) discard the lower hemisphere, resulting in a hard edge to gl clear color. To avoid this, these himmels offer a gradient called _HorizonBand_. This is given by scale, width, and offset as well as a color and a bottom color. The scale is in `[`0;1`[`, with 1.0 overlapping the skies vertical 180 degrees. Width specifies the vertical region uniformly filled with color. Currently smoothstep blending is used for the gradient, but inv_squared interpolation yields good results too.
+
+Example:
+
+http://osghimmel.googlecode.com/svn/wiki/figures/horizon_band.png
+
+{{{
+// The second parameter activates the horizon band.
+osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half, true);
+
+himmel->assignTime(timef);
+
+// Values do not exactly correspond to figure.
+
+himmel->hBand()->setBottomColor(osg::Vec4(0.50f, 0.50f, 0.50f, 1.00f));
+himmel->hBand()->setColor(      osg::Vec4(0.74f, 0.80f, 0.83f, 1.00f));
+
+himmel->hBand()->setOffset(0.1f);
+himmel->hBand()->setScale( 0.7f);
+himmel->hBand()->setWidth( 0.2f);
 }}} 
