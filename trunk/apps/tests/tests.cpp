@@ -29,13 +29,13 @@
 
 
 #include "test_astronomy.h"
-
-#include <iostream>
+#include "test_twounitschanger.h"
 
 
 int main(int argc, char* argv[])
 {
     test_astronomy();
+    test_twounitschanger();
 
     return 0;
 }

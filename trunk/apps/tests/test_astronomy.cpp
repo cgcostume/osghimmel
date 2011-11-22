@@ -29,7 +29,6 @@
 
 
 #include "test_astronomy.h"
-#include "test.h"
 
 #include "include/mathmacros.h"
 #include "include/atime.h"

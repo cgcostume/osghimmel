@@ -42,6 +42,10 @@
 #define ASSERT_EQ(expected, actual) \
     Test::assert_eq(__FILE__, __LINE__, expected, #expected, actual, #actual)
 
+#define ASSERT_AB(expected, actual, max_allowed_difference) \
+    Test::assert_eq(__FILE__, __LINE__, expected, #expected, actual, #actual, max_allowed_difference)
+
+
 class Test
 {
 public:
@@ -54,7 +58,8 @@ public:
     ,   const long double expected
     ,   const std::string expected_string
     ,   const long double actual
-    ,   const std::string actual_string);
+    ,   const std::string actual_string
+    ,   const long double max_allowed_distance = 0.0);
 
 protected:
 
@@ -65,7 +70,8 @@ protected:
     ,   const T expected
     ,   const std::string &expected_string
     ,   const T actual
-    ,   const std::string &actual_string);
+    ,   const std::string &actual_string
+    ,   const T max_allowed_distance);
 
 
     static void report_true_eq();
