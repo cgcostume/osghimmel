@@ -2,22 +2,24 @@
 
 = References =
 
-Each reference is described with a few lines to help exploring them.
+<wiki:toc max_depth="3" />
 
-== System ==
 
-== Atmosphere ==
+== CubeMappedHimmel ==
 
-== Celestial Bodies ==
+Greene, N. (1986). [http://doi.ieeecomputersociety.org/10.1109/MCG.1986.276658 Environment Mapping and Other Applications of World Projections]. IEEE Computer Graphics and Applications (pp. 21-29). IEEE Computer Society.
 
-=== Sun ===
 
-=== Moon ===
+== ParaboloidMappedHimmel ==
 
-=== Stars ===
+Heidrich, W., & Seidel, H.-P. (1998). [http://doi.acm.org/10.1145/285305.285310 View-independent environment maps]. Proceedings of the ACM SIGGRAPH/EUROGRAPHICS workshop on Graphics hardware (pp. 39--ff.). ACM.
 
-== Clouds ==
 
-== Weather ==
+== PolarMappedHimmel ==
 
-== Post Processing ==
+Blinn, J. F., & Newell, M. E. (1976). [http://doi.acm.org/10.1145/360349.360353 Texture and reflection in computer generated images]. (pp. 542--547). ACM.
+
+
+== SphereMappedHimmel ==
+
+Miller, G. S., & Hoffman, R. C. (1984). [http://www.eecs.berkeley.edu/~ravir/6160/papers/illumap.pdf Illumination and Reflection Maps: Simulated Objects in Simulated and Real Environments]. ACM.
