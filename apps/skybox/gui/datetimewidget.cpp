@@ -73,7 +73,7 @@ void DateTimeWidget::cycle()
     static const int msec = 16; // > 60fps
     m_timer->start(msec);
 
-    m_timef.run();
+    m_timef.start();
 }
 
 
@@ -87,7 +87,7 @@ void DateTimeWidget::pause()
     m_timer->stop();
 
 	m_timef.pause();
-	m_timef.reset();
+	m_timef.stop();
 
 	m_timef.setf(getTimeSliderF(), true);
 }

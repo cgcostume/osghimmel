@@ -60,6 +60,7 @@ osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->setTransitionDuration(0.05f);
 
     himmel->setSecondsPerRAZ(2000.f);
+    himmel->setRazDirection(AbstractMappedHimmel::RD_NorthWestSouthEast);
 
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
@@ -221,12 +222,17 @@ public:
                     g_timef->reset();
                     g_timef->setSecondsPerCycle(60.f);
                 }
+                else if(ea.getKey() == 's' || ea.getKey() == 'S')
+                {
+                    g_timef->stop();
+                    g_timef->setSecondsPerCycle(60.f);
+                }
                 else if(ea.getKey() == 'p' || ea.getKey() == 'P')
                 {
                     if(g_timef->isRunning())
                         g_timef->pause();
                     else
-                        g_timef->run();
+                        g_timef->start();
                 }
                 else if(ea.getKey() == '-')
                 {
@@ -432,8 +438,8 @@ int main(int argc, char* argv[])
     osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
     osg::notify(osg::NOTICE) << "Use [space] to cycle mapping techniques." << std::endl;
     osg::notify(osg::NOTICE) << "Use [p] to pause/unpause time." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [r] or [s] to reset or stop the time." << std::endl;
     osg::notify(osg::NOTICE) << "Use [+] and [-] to increase/decrease seconds per cycle." << std::endl;
-    osg::notify(osg::NOTICE) << "Use [r] to reset the time." << std::endl;
     osg::notify(osg::NOTICE) << "Use [mouse wheel] to change field of view." << std::endl;
 
     g_demo = D_PolarMappedHimmel;

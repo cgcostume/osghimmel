@@ -211,34 +211,38 @@ const bool TimeF::isRunning() const
 }
 
 
-void TimeF::run()
+void TimeF::start(const bool forceUpdate)
 {
-    if(M_Pausing == m_mode)
-    {
-        const float t(m_timer->time_s());
+    if(M_Pausing != m_mode)
+        return;
 
-        if(m_secondsPerCycle > 0.f)
-            m_offset -= (t - m_lastModeChangeTime) / m_secondsPerCycle;
+    const float t(m_timer->time_s());
 
-        m_mode = M_Running;
+    if(m_secondsPerCycle > 0.f)
+        m_offset -= (t - m_lastModeChangeTime) / m_secondsPerCycle;
+
+    m_mode = M_Running;
+
+    if(forceUpdate)
         update();
-    }
 }
 
 
-void TimeF::pause()
+void TimeF::pause(const bool forceUpdate)
 {
-    if(M_Running == m_mode)
-    {
-        m_lastModeChangeTime = m_timer->time_s();
+    if(M_Running != m_mode)
+        return;
 
-        m_mode = M_Pausing;
+    m_lastModeChangeTime = m_timer->time_s();
+
+    m_mode = M_Pausing;
+
+    if(forceUpdate)
         update();
-    }
 }
  
 
-void TimeF::reset()
+void TimeF::reset(const bool forceUpdate)
 {
     m_offset = 0.f;
     m_lastModeChangeTime = 0.f;
@@ -249,5 +253,13 @@ void TimeF::reset()
     delete m_timer;
     m_timer = new osg::Timer();
 
-    update();
+    if(forceUpdate)
+        update();
+}
+
+
+void TimeF::stop(const bool forceUpdate)
+{
+    pause();
+    reset(forceUpdate);
 }
