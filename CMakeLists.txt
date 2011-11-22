@@ -170,7 +170,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
 
 option(OPTION_MAKE_DEMOS "Make Demos" ON)
 option(OPTION_MAKE_SKYBOX "Make SkyBox - Sandbox for osgHimmel (requires Qt)" ON)
-
+option(OPTION_MAKE_TESTS "Make Tests" ON)
 
 # 3rdp and resources
 

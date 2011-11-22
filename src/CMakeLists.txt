@@ -33,6 +33,7 @@ set(LIB_SOURCES
 
     abstracthimmel.cpp
     abstractmappedhimmel.cpp
+    astronomy.cpp
     cubemappedhimmel.cpp
     himmelenvmap.cpp
     himmelquad.cpp
@@ -44,9 +45,10 @@ set(LIB_SOURCES
     spheremappedhimmel.cpp
     timef.cpp
     twounitschanger.cpp
-    
+
     ${HEADER_PATH}/abstracthimmel.h
     ${HEADER_PATH}/abstractmappedhimmel.h
+    ${HEADER_PATH}/astronomy.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h
