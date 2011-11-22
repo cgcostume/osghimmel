@@ -1,12 +1,10 @@
 #summary Documentation of osghimmel.
 
-= Documentation of osghimmel =
-
 Using _osghimmel_ is supposed to be as simple as possible without interfering with your scenegraph structure.
 
 <wiki:toc max_depth="3" />
 
-== Himmel Time ==
+= Himmel Time =
 
 _TimeF_ manages an osg::Timer and features an interface for floating time in the closed interval `[`0;1`]` representing a full day and standard c time (_time_t_) simultaneously. The time updates have to be requested explicitly, thus simplifying usage between multiple recipients.
 
@@ -26,7 +24,7 @@ The time starts cycling automatically, but can also be paused, stopped, or set t
 
 
 
-== Texture Mapped Himmel ==
+= Texture Mapped Himmel =
 
 _AbstractMappedHimmel_ features textured skies with support for essentially four common texture projections:
 
@@ -37,7 +35,7 @@ _AbstractMappedHimmel_ features textured skies with support for essentially four
 
 The _TimeF_ given by superclass _AbstractHimmel_ is used only for texture transitions. An additional _TimeF_ object is used internally for the timed rotation around the zenith.
 
-=== Texture Transitions ===
+== Texture Transitions ==
 
 When assigning textures to an _AbstractMappedHimmel_ instance, a float time has to be specified, that is used for internal keypoints. Keypoints define point in times where one texture gets replaced (abruptly or by smooth fading) by the following one. The transition duration can be specified in floating time and should be smaller than the minimum time distance between two adjacent keypoints.
 
@@ -61,7 +59,7 @@ himmel->pushTextureUnit(1, 0.5f);
 }}} 
 
 
-=== Horizon Band ===
+== Horizon Band ==
 
 Some texture projections (polar mapping with _MM_Half_ and paraboloid mapping) discard the lower hemisphere, resulting in a hard edge to gl clear color. To avoid this, these himmels offer a gradient called _HorizonBand_. This is given by scale, width, and offset as well as a color and a bottom color. The scale is in `[`0;1`[`, with 1.0 overlapping the skies vertical 180 degrees. Width specifies the vertical region uniformly filled with color. Currently smoothstep blending is used for the gradient, but inv_squared interpolation yields good results too.
 
@@ -88,7 +86,7 @@ himmel->hBand()->setWidth( 0.2f);
 }}} 
 
 
-=== Rotation around Zenith  ===
+== Rotation around Zenith  ==
 
 Rotation around Zenith (RaZ), if used discreetly, can greatly influence the dynamic of a scene, by slightly rotating the given texture mapped himmel around the up vector. It accesses its own _TimeF_ object and thereby remains independent from the himmels timef, which in case of the _AbstractMappedHimmel_ is used for texture transitions. The speed of the rotation can be specified in seconds per RaZ, and the direction by an enum (RD_NorthEastSouthWest and RD_NorthWestSouthEast were used to avoid misinterpretations of CW and CCW).
 
