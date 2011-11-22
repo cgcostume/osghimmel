@@ -30,6 +30,7 @@
 
 #include "test.h"
 
+#include <math.h>
 #include <iostream>
 #include <sstream>
 
@@ -147,9 +148,10 @@ const bool Test::assert_eq_t(
 ,   const T expected
 ,   const std::string &expected_string
 ,   const T actual
-,   const std::string &actual_string)
+,   const std::string &actual_string
+,   const T max_allowed_distance)
 {
-    const bool success(expected == actual);
+    const bool success(max_allowed_distance ? abs(expected - actual) < max_allowed_distance : expected == actual);
 
     if(success)
         REPORT_TRUE_EQ(file);
@@ -166,8 +168,9 @@ const bool Test::assert_eq(
 ,   const long double expected
 ,   const std::string expected_string
 ,   const long double actual
-,   const std::string actual_string)
+,   const std::string actual_string
+,   const long double max_allowed_distance)
 {
-    return assert_eq_t<double>(file, line, expected, expected_string, actual, actual_string);
+    return assert_eq_t<double>(file, line, expected, expected_string, actual, actual_string, max_allowed_distance);
 }
 

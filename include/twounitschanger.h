@@ -61,8 +61,8 @@ public:
 
 
     // Append a time range using the given texture unit. Example: If you
-    // add unit 0 at time 0.2 and unit 1 at 0.8, then with a blendDurationf
-    // of 0.1 the following blending will occur:
+    // add unit 0 at time 0.2 and unit 1 at 0.8, then with a 
+    // transitionDuration of 0.1 the following blending will occur:
 
     // time  0.0  0.1  0.2  0.3  0.4  0.5  0.6  0.7  0.8  0.9  1.0/0.0
     // unit   1    1   1/0   0    0    0    0    0   0/1   1    1
