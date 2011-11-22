@@ -29,8 +29,8 @@
 
 set(TESTS_SOURCES
 	tests.cpp
-	abstracttest.cpp
-	abstracttest.h
+	test.cpp
+	test.h
 	test_astronomy.cpp
 	test_astronomy.h)
 

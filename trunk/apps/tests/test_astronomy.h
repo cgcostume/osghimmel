@@ -32,25 +32,6 @@
 #ifndef __TEST_ASTRONOMY_H__
 #define __TEST_ASTRONOMY_H__
 
-
-#include "abstracttest.h"
-
-class test_Astronomy : public AbstractTest
-{
-public:
-
-    test_Astronomy();
-    virtual ~test_Astronomy();
-
-    virtual const bool initialize();
-    virtual const bool run() const;
-
-    virtual const std::string identifier() const;
-
-protected:
-
-
-protected:
-};
+void test_astronomy();
 
 #endif // __TEST_ASTRONOMY_H__

@@ -28,12 +28,71 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include "abstracttest.h"
+#pragma once
+#ifndef __TEST_H__
+#define __TEST_H__
 
-#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
 
+#define TEST_REPORT() \
+    Test::report(__FILE__);
 
-void AbstractTest::tested(const bool succeed) const
+#define ASSERT_EQ(expected, actual) \
+    Test::assert_eq(__FILE__, __LINE__, expected, #expected, actual, #actual)
+
+class Test
 {
-    std::cout << (succeed ? "." : "#");
+public:
+
+    static void report(const std::string &file);
+
+    static const bool assert_eq(
+        const std::string file
+    ,   const int line
+    ,   const long double expected
+    ,   const std::string expected_string
+    ,   const long double actual
+    ,   const std::string actual_string);
+
+protected:
+
+    template<typename T>
+    static const bool assert_eq_t(
+        const std::string file
+    ,   const int line
+    ,   const T expected
+    ,   const std::string &expected_string
+    ,   const T actual
+    ,   const std::string &actual_string);
+
+
+    static void report_true_eq();
+    static void report_false_eq(
+        const std::string file
+    ,   const int line
+    ,   const std::string &expectedExpr
+    ,   const std::string &expected
+    ,   const std::string &actualExpr
+    ,   const std::string &actual);
+
+    static void test(const std::string &file);
+
+    static void test_succeeded(const std::string &file);
+    static void test_failed(const std::string &file);
+
+protected:
+
+    typedef std::vector<std::string> t_report;
+    typedef std::map<std::string, t_report> t_reportsByFile;
+
+    typedef std::map<std::string, unsigned int> t_intByFile;
+
+    static t_reportsByFile s_reportsByFile;
+
+    static t_intByFile s_succeeded;
+    static t_intByFile s_failed;
 };
+
+#endif // __TEST_H__
