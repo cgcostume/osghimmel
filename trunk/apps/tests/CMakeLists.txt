@@ -26,16 +26,23 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
-  
-if(OPTION_MAKE_DEMOS)
-    add_subdirectory("demo_computed")
-    add_subdirectory("demo_textured")
-endif()
-    
-if(OPTION_MAKE_SKYBOX AND QT4_FOUND)
-    add_subdirectory("skybox")
-endif()
 
-if(OPTION_MAKE_TESTS)
-    add_subdirectory("tests")
-endif()
+set(TESTS_SOURCES
+	tests.cpp
+	abstracttest.cpp
+	abstracttest.h
+	test_astronomy.cpp
+	test_astronomy.h)
+
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${TESTS_SOURCES})
+    
+message(STATUS "add executable: tests")
+
+add_executable(tests ${TESTS_SOURCES})
+set_default_target_properties(tests OFF)
+
+target_link_libraries(tests
+    osghimmel)
+
+install(TARGETS tests
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
