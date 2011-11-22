@@ -29,31 +29,36 @@
 
 
 #include "test_astronomy.h"
+#include "test.h"
+
+#include "include/astronomy.h"
 
 
-test_Astronomy::test_Astronomy()
+void test_aTime();
+void test_jd();
+
+
+void test_astronomy()
 {
+    test_aTime();
+    test_jd();
+
+    TEST_REPORT();
 }
 
 
-test_Astronomy::~test_Astronomy()
+void test_aTime()
 {
+    // 
+    t_aTime aTime0(2000, 1, 1.81);
+
+    ASSERT_EQ( 1, aTime0.day);
+    ASSERT_EQ(19, aTime0.hour);
+    ASSERT_EQ(26, aTime0.minute);
+    ASSERT_EQ(24, aTime0.second);
 }
 
 
-const bool test_Astronomy::initialize()
+void test_jd()
 {
-    return true;
-}
-
-
-const bool test_Astronomy::run() const
-{
-    return true;
-}
-
-
-const std::string test_Astronomy::identifier() const
-{
-    return "test_Astronomy";
 }

@@ -28,63 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include "abstracttest.h"
-
 #include "test_astronomy.h"
 
 
-#include <iostream>
-#include <vector>
-
-
-typedef std::vector<AbstractTest*> t_tests;
-
 int main(int argc, char* argv[])
 {
-    t_tests tests;
-    tests.push_back(new test_Astronomy());
-
-    t_tests initFailed;
-    t_tests runFailed;
-
-    t_tests::const_iterator i;
-    t_tests::const_iterator iEnd;
-
-
-    iEnd = tests.end();
-    for(i = tests.begin(); i != iEnd; ++i)
-    {
-        if(!(*i)->initialize())
-        {
-            initFailed.push_back(*i);
-            continue;
-        }
-
-        if(!(*i)->run())
-        {
-            runFailed.push_back(*i); 
-            continue;
-        }
-    }
-
-
-    if(initFailed.size() + runFailed.size() > 0)
-    {
-        std::cout << std::endl << std::endl << "test(s) failed:" << std::endl;
-
-        iEnd = initFailed.end();
-        for(i = initFailed.begin(); i != iEnd; ++i)
-            std::cout << "Initialization of " << (*i)->identifier() << " has failed" << std::endl;
-
-        iEnd = runFailed.end();
-        for(i = runFailed.begin(); i != iEnd; ++i)
-            std::cout << (*i)->identifier() << " failed" << std::endl;    
-
-        std::cout << std::endl << std::endl << initFailed.size() + runFailed.size() << " test(s) failed" << std::endl << std::endl;
-    }
-    else
-        std::cout << std::endl << std::endl << "All tests did successfully run." << std::endl << std::endl;
-
+    test_astronomy();
 
     return 0;
 }
