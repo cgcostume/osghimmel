@@ -1,26 +1,8 @@
-#summary Starting point of the documentation with Table of Contents.
+#summary Documentation of osghimmel.
 
 = Documentation of osghimmel =
 
 Using _osghimmel_ is supposed to be as simple as possible without interfering with your scenegraph structure.
-
-== Table of Contents ==
-
-  * 1. *[ Himmel Time]*
-  * 3. *[ Texture Mapped Himmel]*
-   * 3.1. [ Using Multiple Textures]
-   * 3.2. [ Projections]
-   * 3.3. [ Horizon Band]
-   * 3.4. [ Rotation around Zenith]
-  * 4. *[ Procedural Himmel]*
-   * 4.1. [ Atmosphere]
-   * 4.2. [ Sun]
-   * 4.3. [ Moon]
-  * 5. *Utils*
-   * 5.1. [ Environment Map]
-  * 6. *Applications*
-   * 6.1. [ Skybox]
-
 
 == Himmel Time ==
 
@@ -57,9 +39,9 @@ The _TimeF_ given by superclass _AbstractHimmel_ is used only for texture transi
 
 When assigning textures to an _AbstractMappedHimmel_ instance, a float time has to be specified, that is used for internal keypoints. Keypoints define point in times where one texture gets replaced (abruptly or by smooth fading) by the following one. The transition duration can be specified in floating time and should be smaller than the minimum time distance between two adjacent keypoints.
 
-Example:
-
 http://osghimmel.googlecode.com/svn/wiki/figures/texture_transitions.png
+
+Code Fragment:
 
 {{{
 osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half);
@@ -72,6 +54,8 @@ himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_
 
 himmel->pushTextureUnit(0, 0.0f);
 himmel->pushTextureUnit(1, 0.5f);
+
+...
 }}} 
 
 
@@ -79,9 +63,9 @@ himmel->pushTextureUnit(1, 0.5f);
 
 Some texture projections (polar mapping with _MM_Half_ and paraboloid mapping) discard the lower hemisphere, resulting in a hard edge to gl clear color. To avoid this, these himmels offer a gradient called _HorizonBand_. This is given by scale, width, and offset as well as a color and a bottom color. The scale is in `[`0;1`[`, with 1.0 overlapping the skies vertical 180 degrees. Width specifies the vertical region uniformly filled with color. Currently smoothstep blending is used for the gradient, but inv_squared interpolation yields good results too.
 
-Example:
-
 http://osghimmel.googlecode.com/svn/wiki/figures/horizon_band.png
+
+Code Fragment:
 
 {{{
 // The second parameter activates the horizon band.
@@ -97,4 +81,25 @@ himmel->hBand()->setColor(      osg::Vec4(0.74f, 0.80f, 0.83f, 1.00f));
 himmel->hBand()->setOffset(0.1f);
 himmel->hBand()->setScale( 0.7f);
 himmel->hBand()->setWidth( 0.2f);
+
+...
+}}} 
+
+
+=== Rotation around Zenith  ===
+
+Rotation around Zenith (RaZ), if used discreetly, can greatly influence the dynamic of a scene, by slightly rotating the given texture mapped himmel around the up vector. It accesses its own _TimeF_ object and thereby remains independent from the himmels timef, which in case of the _AbstractMappedHimmel_ is used for texture transitions. The speed of the rotation can be specified in seconds per RaZ, and the direction by an enum (RD_NorthEastSouthWest and RD_NorthWestSouthEast were used to avoid misinterpretations of CW and CCW).
+
+Code Fragment:
+
+{{{
+osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half);
+
+himmel->assignTime(timef);
+
+// reasonable values should be around 2000+
+himmel->setSecondsPerRAZ(2000.f);
+himmel->setRazDirection(AbstractMappedHimmel::RD_NorthWestSouthEast);
+
+...
 }}} 
