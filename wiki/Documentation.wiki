@@ -31,7 +31,7 @@ The time starts cycling automatically, but can also be paused, stopped, or set t
 _AbstractMappedHimmel_ features textured skies with support for essentially four common texture projections:
 
 || *Cube* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_cubemap_small.png || Features the best detail so far, but cube edges can be spotted. ||
-|| *Paraboloid* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_paraboloidmap_small.png || Typically utilizes 360 photographs where the full horizon is mapped into one picture. Features good information density distribution. ||
+|| *Paraboloid* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_paraboloidmap_small.png || Typically utilizes 360 photographs where the full horizon is mapped into one picture (checkout Fisheye lenses). Features good information density distribution. ||
 || *Polar* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_polarmap_small.png || Best free resources available for, but provide an unnecessary amount of detail towards the zenith (due to projection) - still my favorites. Can be applied in half (_MM_Half_) or full (_MM_Full_) mode. ||
 || *Sphere* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_spheremap_small.png || Similar to Paraboloid Mapping, but instead of a hemisphere, a full sphere is mapped to the texture. The outer hemisphere is usually less detailed than the inner one. Due to floating precision, and inaccurate sampling an erroneous (singularity like) point arises opposite of the inner hemisphere. The map can be oriented towards an axis (currently _MM_TowardsNegY_ and _MM_TowardsPosZ_ are supported). || 
 
