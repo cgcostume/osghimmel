@@ -2,12 +2,11 @@
 
 = Documentation of osghimmel =
 
-Using osghimmel is supposed to be as simple as possible without interfering with your scenegraph structure.
+Using _osghimmel_ is supposed to be as simple as possible without interfering with your scenegraph structure.
 
 == Table of Contents ==
 
   * 1. *[ Himmel Time]*
-  * 2. *[ Himmel Node Structure]*
   * 3. *[ Texture Mapped Himmel]*
    * 3.1. [ Using Multiple Textures]
    * 3.2. [ Projections]
@@ -21,3 +20,22 @@ Using osghimmel is supposed to be as simple as possible without interfering with
    * 5.1. [ Environment Map]
   * 6. *Applications*
    * 6.1. [ Skybox]
+
+
+== Himmel Time ==
+
+_TimeF_ manages an osg::Timer and features an interface for floating time in the closed interval `[`0;1`]` representing a full day and standard c time (_time_t_) simultaneously. The time updates have to be requested explicitly, thus simplifying usage between multiple recipients.
+
+Each instance of _AbstractHimmel_ requires a _TimeF_ instance. 
+
+{{{
+TimeF *timef = new TimeF(0.f, 60.f); // one minute for cycling a day
+himmel->assignTime(timef);
+
+...
+
+timef->update();
+
+}}}
+
+The time starts cycling automatically, but can also be paused, stopped, or set to a specific value. Seconds per Cycle specify the duration of one day in seconds and is used while running. It can be changed at any time without tampering the time.
