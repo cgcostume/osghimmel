@@ -6,7 +6,7 @@ Using _osghimmel_ is supposed to be as simple as possible without interfering wi
 
 = Himmel Time =
 
-`TimeF` manages an osg::Timer and features an interface for floating time in the closed interval `[`0;1`]` representing a full day and standard c time (`time_t`) simultaneously. The time updates have to be requested explicitly, thus simplifying usage between multiple recipients.
+`TimeF` manages an `osg::Timer` and features an interface for floating time in the closed interval `[`0;1`]` representing a full day and standard c time (`time_t`) simultaneously. The time updates have to be requested explicitly, thus simplifying usage between multiple recipients.
 
 Each instance of `AbstractHimmel` requires a `TimeF` instance. 
 
