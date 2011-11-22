@@ -33,9 +33,43 @@ TimeF *timef = new TimeF(0.f, 60.f); // one minute for cycling a day
 himmel->assignTime(timef);
 
 ...
-
 timef->update();
 
 }}}
 
 The time starts cycling automatically, but can also be paused, stopped, or set to a specific value. Seconds per Cycle specify the duration of one day in seconds and is used while running. It can be changed at any time without tampering the time.
+
+
+
+
+== Texture Mapped Himmel ==
+
+_AbstractMappedHimmel_ features textured skies with support for essentially four common texture projections:
+
+|| *Cube* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_cubemap_small.png || Features the best detail so far, but cube edges can be spotted. ||
+|| *Paraboloid* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_paraboloidmap_small.png || Typically utilizes 360 photographs where the full horizon is mapped into one picture. Features good information density distribution. ||
+|| *Polar* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_polarmap_small.png || Best free resources available for, but provide an unnecessary amount of detail towards the zenith (due to projection) - still my favorites. Can be applied in half (_MM_Half_) or full (_MM_Full_) mode. ||
+|| *Sphere* Mapping || http://osghimmel.googlecode.com/svn/wiki/figures/example_spheremap_small.png || Similar to Paraboloid Mapping, but instead of a hemisphere, a full sphere is mapped to the texture. The outer hemisphere is usually less detailed than the inner one. Due to floating precision, and inaccurate sampling an erroneous (singularity like) point arises opposite of the inner hemisphere. The map can be oriented towards an axis (currently _MM_TowardsNegY_ and _MM_TowardsPosZ_ are supported). || 
+
+The _TimeF_ given by superclass _AbstractHimmel_ is used only for texture transitions. An additional _Timef_ object is used internally for the timed rotation around the zenith.
+
+=== Texture Transitions ===
+
+When assigning textures to an _AbstractMappedHimmel_ instance, a float time has to be specified, that is used for internal keypoints. Keypoints define point in times where one texture gets replaced (abruptly or by smooth fading) by the following one. The transition duration can be specified in floating time and should be smaller than the minimum time distance between two adjacent keypoints.
+
+Example:
+
+http://osghimmel.googlecode.com/svn/wiki/figures/texture_transitions.png
+
+{{{
+osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half);
+
+himmel->assignTime(timef);
+himmel->setTransitionDuration(0.4f);
+
+himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
+himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
+
+himmel->pushTextureUnit(0, 0.0f);
+himmel->pushTextureUnit(1, 0.5f);
+}}} 
