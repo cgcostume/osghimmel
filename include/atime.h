@@ -27,4 +27,54 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "astronomy.h"
+#pragma once
+#ifndef __ASTRONOMICAL_TIME_H__
+#define __ASTRONOMICAL_TIME_H__
+
+#include <time.h>
+
+typedef struct s_AstronomicalTime
+{
+    s_AstronomicalTime(
+        const short year
+    ,   const short month
+    ,   const short day
+    ,   const short hour
+    ,   const short minute
+    ,   const short second
+    ,   const short gmtOffset = 0);
+
+
+    s_AstronomicalTime::s_AstronomicalTime(
+        const short year
+    ,   const short month
+    ,   const long double day
+    ,   const short gmtOffset = 0);
+
+    s_AstronomicalTime(const time_t &t);
+
+
+    const bool operator==(const s_AstronomicalTime &other) const
+    {
+        return other.year   == year
+            && other.month  == month
+            && other.day    == day
+            && other.hour   == hour
+            && other.minute == minute
+            && other.second == second;
+    }
+
+public:
+
+    short year;
+    short month;
+    short day;
+    short hour;
+    short minute;
+    short second;
+
+    short gmtOffset;
+
+} t_aTime;
+
+#endif // __ASTRONOMICAL_TIME_H__

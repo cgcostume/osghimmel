@@ -33,11 +33,12 @@ set(LIB_SOURCES
 
     abstracthimmel.cpp
     abstractmappedhimmel.cpp
-    astronomy.cpp
+	atime.cpp
     cubemappedhimmel.cpp
     himmelenvmap.cpp
     himmelquad.cpp
     horizonband.cpp
+	julianday.cpp
     paraboloidmappedhimmel.cpp
     polarmappedhimmel.cpp
     proceduralhimmel.cpp
@@ -48,12 +49,14 @@ set(LIB_SOURCES
 
     ${HEADER_PATH}/abstracthimmel.h
     ${HEADER_PATH}/abstractmappedhimmel.h
-    ${HEADER_PATH}/astronomy.h
+    ${HEADER_PATH}/atime.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/horizonband.h
     ${HEADER_PATH}/interpolate.h
+	${HEADER_PATH}/julianday.h
+	${HEADER_PATH}/mathmacros.h
     ${HEADER_PATH}/paraboloidmappedhimmel.h
     ${HEADER_PATH}/polarmappedhimmel.h
     ${HEADER_PATH}/pragmanote.h
