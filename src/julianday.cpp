@@ -56,7 +56,7 @@ const t_julianDay jd(t_aTime aTime)
 
     unsigned int s = aTime.second;
 
-    const long double h(_hour(aTime.hour, aTime.minute, s));
+    const long double h(_day(aTime.hour, aTime.minute, s));
 
     signed int b = 0;
 

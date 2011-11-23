@@ -27,89 +27,35 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __MATHMACROS_H__
-#define __MATHMACROS_H__
 
-#include <math.h>
+#include "test_math.h"
 
-#define _PI 3.1415926535897932384626433832795
-#define _PI2  _PI * 2.00
-#define _PI_2 _PI * 0.50
-#define _PI4  _PI * 4.00
-#define _PI_4 _PI * 0.25
-
-#define _abs(v) \
-    ((v < 0) ? -(v) : (v))
-
-#define _int(v) \
-    (static_cast<int>(v))
-
-#define _short(v) \
-    (static_cast<short>(v))
-
-#define _mod(a, m) \
-    ((a) - (m) * (_int((a) / (m)) - (a < 0 ? 1 : 0)))
-
-#define _frac(x) \
-    ((x) - _int(x))
-
-#define _deg(rad) \
-    ((rad) * 180.0 / _PI)
-
-#define _rad(deg) \
-    ((deg) * _PI / 180.0)
-
-#define _decimal(deg, min, sec) \
-    ((deg) + (min) / 60.0 + (sec) / 3600.0)
-
-#define _sind(deg) \
-    (sin(_rad(deg)))
-
-#define _cosd(deg) \
-    (cos(_rad(deg)))
-
-#define _tand(deg) \
-    (tan(_rad(deg)))
-
-#define _asind(rad) \
-    (_deg(asin(rad)))
-
-#define _acosd(rad) \
-    (_deg(acos(rad)))
-
-#define _atand(rad) \
-    (_deg(atan(rad)))
-
-#define _atan2d(x, y) \
-    (_deg(atan2(x, y)))
-
-// normalizes an angle to between 0 and 2PI radians
-#define _rev(rad) \
-    ((rad) - floor((rad) / _PI2) * _PI2)
-
-// normalizes an angle to between 0 and 360 degrees
-#define _revd(deg) \
-    ((deg) - floor((deg) / 360.0) * 360.0)
-
-// cube root (e.g. needed for parabolic orbits)
-#define _cbrt(x) \
-    ((x > 0.0) ? exp(log(x) / 3.0) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
-
-#define _rightascd(deg, min, sec) \
-    ((_decimal(deg, min, sec) * 15.0)
-
-#define _rightasc(deg, min, sec) \
-    (_rad(_rightascd(deg, min, sec)))
-
-#define _day(h, m, s) \
-    (_hour(h, m, s) / 24.0)
-
-#define _hour(h, m, s) \
-    ((h) + ((m) + (s) / 60.0) / 60.0)
+#include "include/mathmacros.h"
 
 
-// When using powers, try to use Horner's Method
+void test_math()
+{
+    // Check if int cast truncates.
+    ASSERT_EQ( 1, static_cast<int>( 1.66));
+    ASSERT_EQ( 1, static_cast<int>( 1.33));
+    ASSERT_EQ(-1, static_cast<int>(-1.33));
+    ASSERT_EQ(-1, static_cast<int>(-1.66));
+
+    // Check decimal hours.
+    ASSERT_EQ(0.81, _day(19, 26, 24));
 
 
-#endif // __MATHMACROS_H__
+    ASSERT_EQ(1.0, _mod( 1.0, 3.0));
+    ASSERT_EQ(1.5, _mod( 1.5, 3.0));
+    ASSERT_EQ(2.9999, _mod( 2.9999, 3.0));
+
+    ASSERT_EQ(0.0, _mod( 3.0, 3.0));
+    ASSERT_EQ(0.0, _mod( 0.0, 1.0));
+    ASSERT_EQ(0.5, _mod( 1.5, 1.0));
+    ASSERT_EQ(0.5, _mod(-1.5, 1.0));
+    ASSERT_EQ(0.4, _mod(-0.6, 1.0));
+
+    ASSERT_EQ(10.0, _mod(1234, 24.0));
+
+    TEST_REPORT();
+}

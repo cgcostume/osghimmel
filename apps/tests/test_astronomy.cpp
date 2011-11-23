@@ -33,26 +33,20 @@
 #include "include/mathmacros.h"
 #include "include/atime.h"
 #include "include/julianday.h"
+#include "include/sideraltime.h"
 
 
 void test_aTime();
 void test_jd();
+void test_sideralTime();
 
 
 void test_astronomy()
 {
-    // Check if int cast truncates.
-    ASSERT_EQ( 1, static_cast<int>( 1.66));
-    ASSERT_EQ( 1, static_cast<int>( 1.33));
-    ASSERT_EQ(-1, static_cast<int>(-1.33));
-    ASSERT_EQ(-1, static_cast<int>(-1.66));
-
-    // Check decimal hours.
-    ASSERT_EQ(0.81, _hour(19, 26, 24));
-
     // Run Tests.
     test_aTime();
     test_jd();
+    test_sideralTime();
 
     TEST_REPORT();
 }
@@ -172,6 +166,12 @@ void test_jd()
     ASSERT_EQ(  12, aTime2.second);
 
     ASSERT_EQ(28.63, aTime2.decimalDay());
+}
 
 
+
+void test_sideralTime()
+{
+    ASSERT_AB(_hour(13, 10, 46.3668), siderealTime(t_aTime(1987, 4, 10,  0,  0, 0)), 0.00000001);
+    ASSERT_AB(_hour( 8, 34, 57.0896), siderealTime(t_aTime(1987, 4, 10, 19, 21, 0)), 0.00000001);
 }
