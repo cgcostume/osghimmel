@@ -28,12 +28,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "julianday.h"
+
 #include "mathmacros.h"
 
 #include <assert.h>
 
 
-const t_julianDate jd(t_aTime aTime)
+const t_julianDay jd(t_aTime aTime)
 {
     assert(aTime.month > 0);
 
@@ -75,15 +76,31 @@ const t_julianDate jd(t_aTime aTime)
 }
 
 
+const t_julianDay jdUT(const t_aTime &aTime)
+{
+    return jd(0 == aTime.gmtOffset ? aTime : makeUT(aTime));
+}
+
+
+const t_julianDay jd0UT(t_aTime aTime)
+{
+    aTime.second = 0;
+    aTime.minute = 0;
+    aTime.hour   = 0;
+
+    return jd(0 == aTime.gmtOffset ? aTime : makeUT(aTime));
+}
+
+
 // Modified Julian Date.
-const t_julianDate mjd(t_aTime aTime)
+const t_julianDay mjd(t_aTime aTime)
 {
     return jd(aTime) - 2400000.5;
 }
 
 
 const t_aTime makeTime(
-    t_julianDate julianDate
+    t_julianDay julianDate
 ,   const short GMTOffset)
 {
     assert(julianDate >= 0.0);
@@ -119,4 +136,39 @@ const t_aTime makeTime(
     const short second = _short(s);
 
     return t_aTime(year, month, day, hour, minute, second, GMTOffset);
+}
+
+
+const t_aTime makeUT(const t_aTime &aTime)
+{
+    return makeTime(jd(aTime) - aTime.gmtOffset / 24.0, 0);
+}
+
+
+// http://en.wikipedia.org/wiki/Equatorial_coordinate_system
+// Over long periods of time, precession and nutation effects alter the Earth's orbit and thus 
+// the apparent location of the stars. Likewise, proper motion of the stars themselves will affect 
+// their coordinates as seen from Earth. When considering observations separated by long intervals, 
+// it is necessary to specify an epoch (frequently J2000.0, for older data B1950.0) when specifying 
+// coordinates of planets, stars, galaxies, etc.
+const t_julianDay standardEquinox()
+{
+    return 2451545.0; // 2451543.5 was used by http://www.stjarnhimlen.se/comp/tutorial.html
+}
+
+
+const t_julianDay jdSinceSE(const t_julianDay jd)
+{
+    return jd - standardEquinox();
+}
+
+
+const t_julianDay jCenturiesSinceSE(const t_julianDay jd)
+{
+    // Even if google says that 1 century has currently 36 524.2199 days, 
+    // the julian century is explicitly defined as 36525 days...
+
+    // Used in http://en.wikipedia.org/wiki/Julian_year_(astronomy) and 
+    // "Astronomical Algorithms"
+    return jdSinceSE(jd) / 36525.0; 
 }

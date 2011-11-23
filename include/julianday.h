@@ -33,13 +33,27 @@
 
 #include "atime.h"
 
-typedef long double t_julianDate;
+typedef long double t_julianDay;
 
-const t_julianDate jd(t_aTime aTime);
-const t_julianDate mjd(t_aTime aTime);
+const t_julianDay jd(t_aTime aTime);
+
+const t_julianDay jdUT(const t_aTime &aTime);
+const t_julianDay jd0UT(t_aTime aTime);
+
+const t_julianDay mjd(t_aTime aTime);
+
 
 const t_aTime makeTime(
-    t_julianDate julianDate
+    t_julianDay julianDate
 ,   const short GMTOffset = 0);
+
+const t_aTime makeUT(const t_aTime &aTime);
+
+
+const t_julianDay standardEquinox();
+
+const t_julianDay jdSinceSE(const t_julianDay jd);
+const t_julianDay jCenturiesSinceSE(const t_julianDay jd);
+
 
 #endif // __JULIANDAY_H__
