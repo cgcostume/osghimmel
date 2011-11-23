@@ -96,5 +96,5 @@ s_AstronomicalTime::s_AstronomicalTime(const time_t &t)
 
 const long double s_AstronomicalTime::decimalDay() const
 {
-    return day + _hour(hour, minute, second);
+    return day + _day(hour, minute, second);
 }
