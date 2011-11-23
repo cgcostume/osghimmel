@@ -51,7 +51,8 @@ namespace
     \
     std::stringstream stream; \
     \
-    stream.setf (std::ios::fixed, std::ios::floatfield); \
+    stream.setf(std::ios::fixed, std::ios::floatfield); \
+    stream.precision(20); \
     \
     stream << "FAILED:  " << expectedExpr.c_str() << " == " << actualExpr \
            << " -> " << expected << " " << operatorExpr << " " << actual \

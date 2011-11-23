@@ -59,19 +59,19 @@ const t_julianDate jd(t_aTime aTime)
 
     signed int b = 0;
 
-    const signed int i = aTime.year * 10000 + aTime.month * 100 + aTime.day;
+    const int i = aTime.year * 10000 + aTime.month * 100 + aTime.day;
     if(i >= 15821015)
     {
         // gregorian calendar
-        const signed int a = static_cast<signed int>(aTime.year * 0.01);
-        b = 2 - a + static_cast<signed int>(a * 0.25);
+        const signed int a = _int(aTime.year * 0.01);
+        b = 2 - a + _int(a * 0.25);
     }
     else if(i > 15821004)
         return 0.0; // The gregorian calender follows with 15. on the 4. 
                     // julian oktober in 1582 - poor people who missed a birthday these days :P
 
-    return static_cast<int>(365.25 * (aTime.year + 4716)) 
-        + static_cast<int>(30.6001 * (aTime.month + 1)) + aTime.day + h + b - 1524.5;
+    return _int(365.25 * (aTime.year + 4716)) 
+        + _int(30.600001 * (aTime.month + 1)) + aTime.day + h + b - 1524.5;
 }
 
 
@@ -79,4 +79,44 @@ const t_julianDate jd(t_aTime aTime)
 const t_julianDate mjd(t_aTime aTime)
 {
     return jd(aTime) - 2400000.5;
+}
+
+
+const t_aTime makeTime(
+    t_julianDate julianDate
+,   const short GMTOffset)
+{
+    assert(julianDate >= 0.0);
+
+    julianDate += 0.5;
+
+    const int z = _int(julianDate);
+    const long double f = _frac(julianDate);
+
+    long int a(z); // julian
+    if(z >= 2299161) // gregorian
+    {
+        const int g = _int((z - 1867216.25) / 36524.25);
+        a = z + 1 + g - _int(g / 4);
+    }
+
+    const int b = _int(a + 1524);
+    const int c = _int((b - 122.1) / 365.25);
+    const int d = _int(365.25 * c);
+    const int e = _int((b - d) / 30.600001);
+
+
+    const short day    = b - d - _int(30.600001 * e);
+    const short month  = e < 14 ? e - 1 : e - 13;
+    const short year   = month > 2 ? c - 4716 : c - 4715;
+
+    const long double h = f * 24.0;
+    const long double m = _frac(h) * 60.0;
+    const long double s = _frac(m) * 60.0001;
+
+    const short hour   = _short(h);
+    const short minute = _short(m);
+    const short second = _short(s);
+
+    return t_aTime(year, month, day, hour, minute, second, GMTOffset);
 }

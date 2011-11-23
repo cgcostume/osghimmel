@@ -132,4 +132,46 @@ void test_jd()
 
     // Test mjd;
     ASSERT_EQ(       0.0, mjd(t_aTime(1858, 11, 17.0)));
+
+
+
+
+    // Test julianday to aTime.
+
+    t_aTime aTime0 = makeTime(2436116.31);
+    
+    ASSERT_EQ(1957, aTime0.year);
+    ASSERT_EQ(  10, aTime0.month);
+    ASSERT_EQ(   4, aTime0.day);
+    ASSERT_EQ(  19, aTime0.hour);
+    ASSERT_EQ(  26, aTime0.minute);
+    ASSERT_EQ(  24, aTime0.second);
+
+    ASSERT_AB(4.81, aTime0.decimalDay(), 0.000000001);
+
+
+    t_aTime aTime1 = makeTime(1842713.0);
+    
+    ASSERT_EQ( 333, aTime1.year);
+    ASSERT_EQ(   1, aTime1.month);
+    ASSERT_EQ(  27, aTime1.day);
+    ASSERT_EQ(  12, aTime1.hour);
+    ASSERT_EQ(   0, aTime1.minute);
+    ASSERT_EQ(   0, aTime1.second);
+
+    ASSERT_EQ(27.5, aTime1.decimalDay());
+
+
+    t_aTime aTime2 = makeTime(1507900.13);
+    
+    ASSERT_EQ(-584, aTime2.year);
+    ASSERT_EQ(   5, aTime2.month);
+    ASSERT_EQ(  28, aTime2.day);
+    ASSERT_EQ(  15, aTime2.hour);
+    ASSERT_EQ(   7, aTime2.minute);
+    ASSERT_EQ(  12, aTime2.second);
+
+    ASSERT_EQ(28.63, aTime2.decimalDay());
+
+
 }

@@ -54,6 +54,9 @@ typedef struct s_AstronomicalTime
     s_AstronomicalTime(const time_t &t);
 
 
+    const long double decimalDay() const;
+
+
     const bool operator==(const s_AstronomicalTime &other) const
     {
         return other.year   == year
