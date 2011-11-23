@@ -39,7 +39,7 @@ void test_twounitschanger()
 
     // Test case shown in documentation on wiki.
 
-    tuc.setTransitionDuration(0.4);
+    tuc.setTransitionDuration(0.4f);
     tuc.pushUnit(0, 0.0f);
     tuc.pushUnit(1, 0.5f);
 
@@ -51,17 +51,17 @@ void test_twounitschanger()
     ASSERT_EQ(1, tuc.getSrcUnit(0.3f));
     ASSERT_EQ(0, tuc.getSrcUnit(0.7f));
 
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.8), 0.0001);
-    ASSERT_AB(0.25, tuc.getSrcAlpha(0.9), 0.0001);
-    ASSERT_AB(0.50, tuc.getSrcAlpha(0.0), 0.0001);
-    ASSERT_AB(0.75, tuc.getSrcAlpha(0.1), 0.0001);
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.2), 0.0001);
+    ASSERT_AB(0.00, tuc.getSrcAlpha(0.8f), 0.0001);
+    ASSERT_AB(0.25, tuc.getSrcAlpha(0.9f), 0.0001);
+    ASSERT_AB(0.50, tuc.getSrcAlpha(0.0f), 0.0001);
+    ASSERT_AB(0.75, tuc.getSrcAlpha(0.1f), 0.0001);
+    ASSERT_AB(0.00, tuc.getSrcAlpha(0.2f), 0.0001);
 
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.3), 0.0001);
-    ASSERT_AB(0.25, tuc.getSrcAlpha(0.4), 0.0001);
-    ASSERT_AB(0.50, tuc.getSrcAlpha(0.5), 0.0001);
-    ASSERT_AB(0.75, tuc.getSrcAlpha(0.6), 0.0001);
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.7), 0.0001);
+    ASSERT_AB(0.00, tuc.getSrcAlpha(0.3f), 0.0001);
+    ASSERT_AB(0.25, tuc.getSrcAlpha(0.4f), 0.0001);
+    ASSERT_AB(0.50, tuc.getSrcAlpha(0.5f), 0.0001);
+    ASSERT_AB(0.75, tuc.getSrcAlpha(0.6f), 0.0001);
+    ASSERT_AB(0.00, tuc.getSrcAlpha(0.7f), 0.0001);
 
     TEST_REPORT();
 }

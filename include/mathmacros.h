@@ -45,10 +45,13 @@
 #define _int(v) \
     (static_cast<int>(v))
 
+#define _short(v) \
+    (static_cast<short>(v))
+
 #define _mod(a, m) \
     (a - m * _abs(a / m))
 
-#define _fract(x) \
+#define _frac(x) \
     (x - _int(x))
 
 #define _degrees(rad) \
@@ -100,7 +103,7 @@
     (_radians(_rightascd(deg, min, sec)))
 
 #define _hour(h, m, s) \
-    (h / 24.0 + m / 1440.0 + s / 86400.0)
+    ((h + (m + s / 60.0) / 60.0) / 24.0)
 
 // When using powers, try to use Horner's Method
 

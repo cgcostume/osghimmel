@@ -38,5 +38,8 @@ typedef long double t_julianDate;
 const t_julianDate jd(t_aTime aTime);
 const t_julianDate mjd(t_aTime aTime);
 
+const t_aTime makeTime(
+    t_julianDate julianDate
+,   const short GMTOffset = 0);
 
 #endif // __JULIANDAY_H__

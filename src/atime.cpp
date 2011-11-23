@@ -62,13 +62,13 @@ s_AstronomicalTime::s_AstronomicalTime(
 ,   day(static_cast<unsigned short>(day))
 ,   gmtOffset(gmtOffset)
 {
-    const long double h = _fract(day) * 24.0;
-    const long double m = _fract(h) * 60.0;
-    const long double s = _fract(m) * 60.001;
+    const long double h = _frac(day) * 24.0;
+    const long double m = _frac(h) * 60.0;
+    const long double s = _frac(m) * 60.001;
 
-    this->hour   = static_cast<short>(h);
-    this->minute = static_cast<short>(m);
-    this->second = static_cast<short>(s);
+    this->hour   = _short(h);
+    this->minute = _short(m);
+    this->second = _short(s);
 }
 
 
@@ -91,4 +91,10 @@ s_AstronomicalTime::s_AstronomicalTime(const time_t &t)
     // Daylight saving time should not be concidered here -> julian time functions ignore this.
     //if(local.tm_isdst)
     //  hourUT += 1;
+}
+
+
+const long double s_AstronomicalTime::decimalDay() const
+{
+    return day + _hour(hour, minute, second);
 }
