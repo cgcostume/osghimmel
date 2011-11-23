@@ -40,7 +40,7 @@
 #define _PI_4 _PI * 0.25
 
 #define _abs(v) \
-    ((v < 0) ? -v : v)
+    ((v < 0) ? -(v) : (v))
 
 #define _int(v) \
     (static_cast<int>(v))
@@ -49,19 +49,19 @@
     (static_cast<short>(v))
 
 #define _mod(a, m) \
-    (a - m * _abs(a / m))
+    ((a) - (m) * (_int((a) / (m)) - (a < 0 ? 1 : 0)))
 
 #define _frac(x) \
-    (x - _int(x))
+    ((x) - _int(x))
 
 #define _degrees(rad) \
-    (rad * 180.0 / _PI)
+    ((rad) * 180.0 / _PI)
 
 #define _radians(deg) \
-    (deg * _PI / 180.0)
+    ((deg) * _PI / 180.0)
 
 #define _decimal(deg, min, sec) \
-    (deg + min / 60.0 + sec / 3600.0)
+    ((deg) + (min) / 60.0 + (sec) / 3600.0)
 
 #define _sind(deg) \
     (sin(_radians(deg)))
@@ -86,15 +86,15 @@
 
 // normalizes an angle to between 0 and 2PI radians
 #define _rev(rad) \
-    (rad - floor(rad / _PI2) * _PI2)
+    ((rad) - floor((rad) / _PI2) * _PI2)
 
 // normalizes an angle to between 0 and 360 degrees
 #define _revd(deg) \
-    (deg - floor(deg / 360.0) * 360.0)
+    ((deg) - floor((deg) / 360.0) * 360.0)
 
 // cube root (e.g. needed for parabolic orbits)
 #define _cbrt(x) \
-    ((x > 0.0) ? exp(log(x) / 3.0) : ((x < 0.0) ? -cbrt(-x) : 0.0))
+    ((x > 0.0) ? exp(log(x) / 3.0) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
 
 #define _rightascd(deg, min, sec) \
     ((_decimal(deg, min, sec) * 15.0)
@@ -103,7 +103,7 @@
     (_radians(_rightascd(deg, min, sec)))
 
 #define _hour(h, m, s) \
-    ((h + (m + s / 60.0) / 60.0) / 24.0)
+    (((h) + ((m) + (s) / 60.0) / 60.0) / 24.0)
 
 // When using powers, try to use Horner's Method
 
