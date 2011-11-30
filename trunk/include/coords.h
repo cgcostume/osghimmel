@@ -44,13 +44,6 @@ struct s_HorizontalCoords;
 struct s_GalacticCoords;
 
 
-const long double longitudeNutation(const t_julianDay jd);
-const long double obliquityNutation(const t_julianDay jd);
-
-const long double meanObliquity(const t_julianDay jd);
-const long double trueObliquity(const t_julianDay jd);
-
-
 // http://en.wikipedia.org/wiki/Equatorial_coordinate_system
 
 typedef struct s_EquatorialCoords 

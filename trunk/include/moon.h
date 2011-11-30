@@ -33,7 +33,8 @@
 
 #include "julianday.h"
 
-const long double moon_meanAnomaly(const t_julianDay jd);
+const long double moon_meanAnomaly(const t_julianDay t);
+const long double moon_meanOrbitLongitude(const t_julianDay t);
 
 
 #endif // __MOON_H__

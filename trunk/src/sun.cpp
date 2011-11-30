@@ -28,19 +28,90 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "sun.h"
+#include "earth.h"
+#include "moon.h"
+
 #include "mathmacros.h"
 
 #include <assert.h>
 
 
-const long double sun_meanAnomaly(const t_julianDay jd)
+const long double sun_meanAnomaly(const t_julianDay t)
 {
-    const t_julianDay T(jCenturiesSinceSE(jd));
+    const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double M = 357.52772
-        + T * (+  35999.050340
-        + T * (+      0.0001603
-        + T * (+ 1.0 / 300000.0)));
+    //const long double M = 357.52772
+    //    + T * (+  35999.050340
+    //    + T * (-      0.0001603
+    //    + T * (- 1.0 / 300000.0)));
+
+    const long double M = 357.52910
+        + T * (+ 35999.05030
+        + T * (-     0.0001559
+        + T * (-     0.00000048)));
+
+    // another suggestion (seems insuficient) from 
+    // http://wlym.com/~animations/ceres/calculatingposition/eccentric.html
+    //const long double M = 357.528 + 0.9856003 * t;
 
     return _revd(M);
+}
+
+
+const long double sun_meanLongitude(const t_julianDay t)
+{
+    const t_julianDay T(jCenturiesSinceSE(t));
+
+    const long double L0 = 280.46645
+        + T * (+ 36000.76983  
+        + T * (+     0.0003032));
+
+    return _revd(L0);
+}
+
+
+const long double sun_center(const t_julianDay t)
+{
+    const t_julianDay T(jCenturiesSinceSE(t));
+    
+    const long double M = _rad(sun_meanAnomaly(t));
+
+    const long double C = 
+        + (1.914600 - T * (0.004817 - T * 0.000014)) * sin(M)
+        + (0.019993 - T *  0.000101) * sin(2.0 * M)
+        +  0.000290 * sin(3.0 * M);
+
+    return C;
+}
+
+
+const long double sun_trueAnomaly(const t_julianDay t)
+{
+    return sun_meanAnomaly(t) + sun_center(t); // v = M + C
+}
+
+
+// True geometric longitude referred to the mean equinox of the date.
+const long double sun_trueLongitude(const t_julianDay t)
+{
+    return sun_meanLongitude(t) + sun_center(t); // Θ
+}
+
+
+const t_equCoords sun_apparentPosition(const t_julianDay t)
+{
+    t_equCoords equ;
+
+    const t_julianDay T(jCenturiesSinceSE(t));
+
+    const long double Ω = _rad(moon_meanOrbitLongitude(t));
+    const long double ε = _rad(earth_trueObliquity(t) + 0.00256 * cos(Ω));
+    const long double λ = _rad(sun_trueLongitude(t) - 0.00569 - 0.00478 * sin(Ω));
+
+    const long double sinλ = sin(λ);
+
+    equ.right_ascension = _revd(_deg(atan2(cos(ε) * sinλ, cos(λ))));
+    equ.declination = _deg(asin(sin(ε) * sinλ));
+
+    return equ;
 }
