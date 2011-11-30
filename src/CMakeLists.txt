@@ -36,6 +36,7 @@ set(LIB_SOURCES
 	atime.cpp
 	coords.cpp
     cubemappedhimmel.cpp
+	earth.cpp
     himmelenvmap.cpp
     himmelquad.cpp
     horizonband.cpp
@@ -56,6 +57,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/atime.h
 	${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
+	${HEADER_PATH}/earth.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/horizonband.h

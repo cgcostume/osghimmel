@@ -35,8 +35,10 @@
 #include "include/julianday.h"
 #include "include/sideraltime.h"
 #include "include/coords.h"
+
 #include "include/moon.h"
 #include "include/sun.h"
+#include "include/earth.h"
 
 
 void test_aTime();
@@ -183,19 +185,40 @@ void test_sideralTime()
 
 void test_coords()
 {
+    t_julianDay t;
+
     // Test nutation and obliquity.
 
-    const t_julianDay t = jd(t_aTime(1987, 4, 10, 0, 0, 0));
+    t = jd(t_aTime(1987,  4, 10, 0, 0, 0));
 
-    ASSERT_AB(-0.127296372348, jCenturiesSinceSE(t),          0.00000001);
-    ASSERT_AB(_decimal(23, 26, 27.407), meanObliquity(t),     0.0000001);
+    ASSERT_AB(-0.127296372348, jCenturiesSinceSE(t),            0.00000001);
+    ASSERT_AB(_decimal(23, 26, 27.407), earth_meanObliquity(t), 0.000001);
 
-    ASSERT_AB(_decimal( 0,  0,  9.443), obliquityNutation(t), 0.00005);
-    ASSERT_AB(_decimal(23, 26, 36.850), trueObliquity(t),     0.00005);
+    ASSERT_AB(_decimal( 0,  0,  9.443), earth_obliquityNutation(t), 0.00005);
+    ASSERT_AB(_decimal(23, 26, 36.850), earth_trueObliquity(t),     0.00005);
 
-    ASSERT_AB(_decimal( 0,  0, -3.788), longitudeNutation(t), 0.00005);
+    ASSERT_AB(_decimal( 0,  0, -3.788), earth_longitudeNutation(t), 0.00005);
+
+    ASSERT_AB(229.27840, moon_meanAnomaly(t),  0.00002);
 
 
-    ASSERT_AB(_decimal( 94.9792, 0, 0), sun_meanAnomaly(t),   0.00005);
-    ASSERT_AB(_decimal(229.2784, 0, 0), moon_meanAnomaly(t),  0.00005);
+    t = jd(t_aTime(1992, 10, 13, 0, 0, 0));
+
+    ASSERT_AB(-0.072183436, jCenturiesSinceSE(t), 0.00000001);
+
+    ASSERT_AB(201.80719, sun_meanLongitude(t),   0.00001);
+    ASSERT_AB(278.99396, sun_meanAnomaly(t),     0.00001);
+    ASSERT_AB( -1.89732, sun_center(t),          0.00001);
+    ASSERT_AB(199.90987, sun_trueLongitude(t),   0.00001);
+    ASSERT_AB( 23.44023, earth_meanObliquity(t), 0.000001);
+
+    ASSERT_AB(0.99766, earth_sunDistance(t),     0.00001);
+
+    ASSERT_AB(0.016711651, earth_orbitEccentricity(t), 0.00000001);
+
+
+    t_equCoords equ = sun_apparentPosition(t);
+
+    ASSERT_AB( 13.225388, _hours(equ.right_ascension), 0.00005);
+    ASSERT_AB(- 7.78507 , equ.declination,             0.00005);
 }

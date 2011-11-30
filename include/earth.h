@@ -28,20 +28,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SUN_H__
-#define __SUN_H__
+#ifndef __EARTH_H__
+#define __EARTH_H__
 
 #include "julianday.h"
-#include "coords.h"
 
-const long double sun_meanAnomaly(const t_julianDay t);
-const long double sun_meanLongitude(const t_julianDay t);
+const long double earth_orbitEccentricity(const t_julianDay t);
+const long double earth_sunDistance(const t_julianDay t);
 
-const long double sun_center(const t_julianDay t);
+const long double earth_longitudeNutation(const t_julianDay t);
+const long double earth_obliquityNutation(const t_julianDay t);
 
-const long double sun_trueAnomaly(const t_julianDay t);
-const long double sun_trueLongitude(const t_julianDay t);
+const long double earth_meanObliquity(const t_julianDay t);
+const long double earth_trueObliquity(const t_julianDay t);
 
-const t_equCoords sun_apparentPosition(const t_julianDay t);
-
-#endif // __SUN_H__
+#endif // __EARTH_H__

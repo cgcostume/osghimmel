@@ -60,8 +60,10 @@
 #define _rad(deg) \
     ((deg) * _PI / 180.0)
 
-#define _decimal(deg, min, sec) \
-    ((deg) + (min) / 60.0 + (sec) / 3600.0)
+// same as _hour
+// note: if h is negative use -_decimal(d, m, s) instead of _decimal(-d, m, s)
+#define _decimal(d, m, s) \
+    ((d) + ((m) + (s) / 60.0) / 60.0)
 
 #define _sind(deg) \
     (sin(_rad(deg)))
@@ -105,11 +107,12 @@
 #define _day(h, m, s) \
     (_hour(h, m, s) / 24.0)
 
+// note: if h is negative use -_hour(h, m, s) instead of _hour(-h, m, s)
 #define _hour(h, m, s) \
     ((h) + ((m) + (s) / 60.0) / 60.0)
 
-#define _hours(t) \
-    (_mod(t / 15.0, 24.0))
+#define _hours(d) \
+    (_mod(d / 15.0, 24.0))
 
 // When using powers, try to use Horner's Method
 

@@ -33,9 +33,9 @@
 #include <assert.h>
 
 
-const long double moon_meanAnomaly(const t_julianDay jd)
+const long double moon_meanAnomaly(const t_julianDay t)
 {
-    const t_julianDay T(jCenturiesSinceSE(jd));
+    const t_julianDay T(jCenturiesSinceSE(t));
 
     const long double M = 134.96298 
         + T * (+ 477198.867398
@@ -43,4 +43,17 @@ const long double moon_meanAnomaly(const t_julianDay jd)
         + T * (+ 1.0 / 56250.0)));
 
     return _revd(M);
+}
+
+
+const long double moon_meanOrbitLongitude(const t_julianDay t)
+{
+    const t_julianDay T(jCenturiesSinceSE(t));
+
+    const long double Ω = 125.04452 
+        + T * (- 1934.136261
+        + T * (+    0.0020708
+        + T * (+ 1.0 / 450000.0)));
+
+    return _revd(Ω);
 }

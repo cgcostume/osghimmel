@@ -57,5 +57,11 @@ void test_math()
 
     ASSERT_EQ(10.0, _mod(1234, 24.0));
 
+    ASSERT_EQ(13.225388, _hours(198.38082));
+    ASSERT_AB(_hour(13, 13, 31.4), _hours( 198.38082), 0.000001);
+    ASSERT_AB(_hour(13, 13, 31.4), _hours(-161.61918), 0.000001);
+
+    ASSERT_AB(-7.78507, -_decimal(7, 47, 06), 0.0001);
+
     TEST_REPORT();
 }
