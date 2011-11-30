@@ -108,6 +108,8 @@
 #define _hour(h, m, s) \
     ((h) + ((m) + (s) / 60.0) / 60.0)
 
+#define _hours(t) \
+    (_mod(t / 15.0, 24.0))
 
 // When using powers, try to use Horner's Method
 

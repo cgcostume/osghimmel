@@ -151,9 +151,35 @@ const t_aTime makeUT(const t_aTime &aTime)
 // their coordinates as seen from Earth. When considering observations separated by long intervals, 
 // it is necessary to specify an epoch (frequently J2000.0, for older data B1950.0) when specifying 
 // coordinates of planets, stars, galaxies, etc.
+
 const t_julianDay standardEquinox()
 {
-    return 2451545.0; // 2451543.5 was used by http://www.stjarnhimlen.se/comp/tutorial.html
+    return j2000();
+}
+
+
+const t_julianDay j2000()
+{
+    return 2451545.0; // 2000 January 1 noon TT
+    // 2451543.5 was used by http://www.stjarnhimlen.se/comp/tutorial.html
+}
+
+
+const t_julianDay j2050()
+{
+    return 2469807.5; // 2050 January 1 noon TT
+}
+
+
+const t_julianDay b1900()
+{
+    return 2415020.3135; // 1900 January 0.8135 TT
+}
+
+
+const t_julianDay b1950()
+{
+    return 2433282.4235; // 1950 January 0.9235 TT
 }
 
 
@@ -163,7 +189,7 @@ const t_julianDay jdSinceSE(const t_julianDay jd)
 }
 
 
-const t_julianDay jCenturiesSinceSE(const t_julianDay jd)
+const t_julianDay jCenturiesSinceSE(const t_julianDay jd)   // T
 {
     // Even if google says that 1 century has currently 36 524.2199 days, 
     // the julian century is explicitly defined as 36525 days...

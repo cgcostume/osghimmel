@@ -34,11 +34,15 @@
 #include "include/atime.h"
 #include "include/julianday.h"
 #include "include/sideraltime.h"
+#include "include/coords.h"
+#include "include/moon.h"
+#include "include/sun.h"
 
 
 void test_aTime();
 void test_jd();
 void test_sideralTime();
+void test_coords();
 
 
 void test_astronomy()
@@ -47,6 +51,7 @@ void test_astronomy()
     test_aTime();
     test_jd();
     test_sideralTime();
+    test_coords();
 
     TEST_REPORT();
 }
@@ -169,9 +174,28 @@ void test_jd()
 }
 
 
-
 void test_sideralTime()
 {
     ASSERT_AB(_hour(13, 10, 46.3668), siderealTime(t_aTime(1987, 4, 10,  0,  0, 0)), 0.00000001);
     ASSERT_AB(_hour( 8, 34, 57.0896), siderealTime(t_aTime(1987, 4, 10, 19, 21, 0)), 0.00000001);
+}
+
+
+void test_coords()
+{
+    // Test nutation and obliquity.
+
+    const t_julianDay t = jd(t_aTime(1987, 4, 10, 0, 0, 0));
+
+    ASSERT_AB(-0.127296372348, jCenturiesSinceSE(t),          0.00000001);
+    ASSERT_AB(_decimal(23, 26, 27.407), meanObliquity(t),     0.0000001);
+
+    ASSERT_AB(_decimal( 0,  0,  9.443), obliquityNutation(t), 0.00005);
+    ASSERT_AB(_decimal(23, 26, 36.850), trueObliquity(t),     0.00005);
+
+    ASSERT_AB(_decimal( 0,  0, -3.788), longitudeNutation(t), 0.00005);
+
+
+    ASSERT_AB(_decimal( 94.9792, 0, 0), sun_meanAnomaly(t),   0.00005);
+    ASSERT_AB(_decimal(229.2784, 0, 0), moon_meanAnomaly(t),  0.00005);
 }

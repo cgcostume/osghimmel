@@ -33,7 +33,7 @@
 
 #include "atime.h"
 
-// The sideral time at the meridian of Greenwich.
+// The mean sideral time, Greenwich hour angle of the mean vernal point.
 const long double siderealTime(const t_aTime &aTime);
 
 #endif // __SIDERALTIME_H__

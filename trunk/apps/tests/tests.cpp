@@ -32,7 +32,6 @@
 #include "test_astronomy.h"
 #include "test_twounitschanger.h"
 
-
 int main(int argc, char* argv[])
 {
     test_math();

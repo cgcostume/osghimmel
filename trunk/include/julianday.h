@@ -52,8 +52,13 @@ const t_aTime makeUT(const t_aTime &aTime);
 
 const t_julianDay standardEquinox();
 
-const t_julianDay jdSinceSE(const t_julianDay jd);
-const t_julianDay jCenturiesSinceSE(const t_julianDay jd);
+const t_julianDay j2000();
+const t_julianDay b1900();
+const t_julianDay b1950();
+
+
+const t_julianDay jdSinceSE(const t_julianDay jd); // JDE
+const t_julianDay jCenturiesSinceSE(const t_julianDay jd); // T
 
 
 #endif // __JULIANDAY_H__
