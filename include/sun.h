@@ -1,5 +1,5 @@
-
-// Copyright (c) 2011, Daniel M�ller <dm@g4t3.de>
+﻿
+// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -27,21 +27,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "sideraltime.h"
+#pragma once
+#ifndef __SUN_H__
+#define __SUN_H__
 
 #include "julianday.h"
-#include "mathmacros.h"
+
+const long double sun_meanAnomaly(const t_julianDay jd);
 
 
-const long double siderealTime(const t_aTime &aTime)
-{
-    const t_aTime gmt(makeUT(aTime));
-    const t_julianDay JD(jdUT(gmt));
-
-    const long double T(jCenturiesSinceSE(JD));
-    const long double t = 
-        280.46061837 + 360.98564736629 * (jdSinceSE(JD))
-        + T * T * (0.000387933 - T / 38710000.0);
-
-    return _hours(t);
-}
+#endif // __SUN_H__

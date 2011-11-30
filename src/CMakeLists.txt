@@ -34,23 +34,27 @@ set(LIB_SOURCES
     abstracthimmel.cpp
     abstractmappedhimmel.cpp
 	atime.cpp
+	coords.cpp
     cubemappedhimmel.cpp
     himmelenvmap.cpp
     himmelquad.cpp
     horizonband.cpp
 	julianday.cpp
+	moon.cpp
     paraboloidmappedhimmel.cpp
     polarmappedhimmel.cpp
     proceduralhimmel.cpp
     shadermodifier.cpp
 	sideraltime.cpp
     spheremappedhimmel.cpp
+	sun.cpp
     timef.cpp
     twounitschanger.cpp
 
     ${HEADER_PATH}/abstracthimmel.h
     ${HEADER_PATH}/abstractmappedhimmel.h
     ${HEADER_PATH}/atime.h
+	${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h
@@ -58,6 +62,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/interpolate.h
 	${HEADER_PATH}/julianday.h
 	${HEADER_PATH}/mathmacros.h
+	${HEADER_PATH}/moon.h
     ${HEADER_PATH}/paraboloidmappedhimmel.h
     ${HEADER_PATH}/polarmappedhimmel.h
     ${HEADER_PATH}/pragmanote.h
@@ -65,6 +70,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/shadermodifier.h
 	${HEADER_PATH}/sideraltime.h
     ${HEADER_PATH}/spheremappedhimmel.h
+	${HEADER_PATH}/sun.h
     ${HEADER_PATH}/timef.h
     ${HEADER_PATH}/twounitschanger.h
 
