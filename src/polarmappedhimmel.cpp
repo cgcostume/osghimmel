@@ -36,11 +36,12 @@
 
 PolarMappedHimmel::PolarMappedHimmel(
     const e_MappingMode &mappingMode
-,   const bool withHorizonBand)
-:   AbstractMappedHimmel()
+,   const bool horizonBand
+,   const bool fakeSun)
+:   AbstractMappedHimmel(fakeSun)
 ,   m_mappingMode(mappingMode)
 ,   m_hBand(NULL)
-,   m_withHBand(withHorizonBand)
+,   m_withHBand(horizonBand)
 {
     setName("PolarMappedHimmel");
 
@@ -78,6 +79,8 @@ osg::Texture2D* PolarMappedHimmel::getOrCreateTexture2D(const GLint textureUnit)
 
     newTex2D->setUnRefImageDataAfterApply(true);
 
+    newTex2D->setInternalFormat(GL_RGBA);
+
     newTex2D->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
     newTex2D->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 
@@ -114,6 +117,7 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 #include "shaderfragment/version.fsf"
 #include "shaderfragment/blend_normal.fsf"
 #include "shaderfragment/hband.fsf"
+#include "shaderfragment/fakesun.fsf"
 
 const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
@@ -121,70 +125,77 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
     {
     case MM_Half:
 
-        return glsl_f_version
+    return glsl_f_version
 
-        +   glsl_f_blendNormalExt
+    +   glsl_f_blendNormalExt
 
-        +   (m_withHBand ? glsl_f_hband : "")
-        +
-            "in vec4 m_ray;\n"
-            "\n"
+    +   (m_withFakeSun ? glsl_f_fakesun : "")
+    +   (m_withHBand ? glsl_f_hband : "")
+    +
+        "in vec4 m_ray;\n"
+        "\n"
 
-            // From AbstractMappedHimmel
+        // From AbstractMappedHimmel
 
-            "uniform float srcAlpha;\n"
-            "\n"
-            "uniform sampler2D back;\n"
-            "uniform sampler2D src;\n"
-            "\n"
+        "uniform float srcAlpha;\n"
+        "\n"
+        "uniform sampler2D back;\n"
+        "uniform sampler2D src;\n"
+        "\n"
 
-            // Color Retrieval
+        // Color Retrieval
 
-            "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
-            "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
-            "\n"
-            "void main(void)\n"
-            "{\n"
-            "    vec3 stu = normalize(m_ray.xyz);\n"
-            "\n"
-            "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);\n"
-            "\n"
-            "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
-            "\n"
-            "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
-            "}\n\n";
+        "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
+        "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
+        "\n"
+        "void main(void)\n"
+        "{\n"
+        "    vec3 stu = normalize(m_ray.xyz);\n"
+        "\n"
+        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);\n"
+        "\n"
+        "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
+    +   (m_withFakeSun ? "fc += fakeSun(fc.a);\n" : "")
+    +
+        "\n"
+        "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
+        "}\n\n";
 
 
     case MM_Full:
 
-        return glsl_f_version
+    return glsl_f_version
 
-//        +   glsl_f_blendNormalExt // using mix
-        +
-            "in vec4 m_ray;\n"
-            "\n"
+//  +   glsl_f_blendNormalExt // using mix
 
-            // From AbstractMappedHimmel
+    +   (m_withFakeSun ? glsl_f_fakesun : "")
+    +
+        "in vec4 m_ray;\n"
+        "\n"
 
-            "uniform float srcAlpha;\n"
-            "\n"
-            "uniform sampler2D back;\n"
-            "uniform sampler2D src;\n"
-            "\n"
+        // From AbstractMappedHimmel
 
-            // Color Retrieval
+        "uniform float srcAlpha;\n"
+        "\n"
+        "uniform sampler2D back;\n"
+        "uniform sampler2D src;\n"
+        "\n"
 
-            "const float c_1OverPi  = 0.3183098861837906715377675267450;\n"
-            "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
-            "\n"
-            "void main(void)\n"
-            "{\n"
-            "    vec3 stu = normalize(m_ray.xyz);\n"
-            "\n"
-            "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);\n"
-            "\n"
-            "    gl_FragColor = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
-            "}\n\n";
+        // Color Retrieval
+
+        "const float c_1OverPi  = 0.3183098861837906715377675267450;\n"
+        "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
+        "\n"
+        "void main(void)\n"
+        "{\n"
+        "    vec3 stu = normalize(m_ray.xyz);\n"
+        "\n"
+        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);\n"
+        "\n"
+        "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
+        "\n"
+        "    gl_FragColor = " + (m_withFakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
+        "}\n\n";
 
     default:
         assert(false);

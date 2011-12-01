@@ -55,7 +55,10 @@ public:
     };
 
 public:
-    SphereMappedHimmel(const e_MappingMode &mappingMode);
+    SphereMappedHimmel(
+        const e_MappingMode &mappingMode
+    ,   const bool fakeSun = false);
+
     virtual ~SphereMappedHimmel();
 
     // Use this helper to work with pre-configured textures.

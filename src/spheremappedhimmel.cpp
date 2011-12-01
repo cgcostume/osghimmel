@@ -32,8 +32,10 @@
 #include <osg/Texture2D>
 
 
-SphereMappedHimmel::SphereMappedHimmel(const e_MappingMode &mappingMode)
-:   AbstractMappedHimmel()
+SphereMappedHimmel::SphereMappedHimmel(
+    const e_MappingMode &mappingMode
+,   const bool fakeSun)
+:   AbstractMappedHimmel(fakeSun)
 ,   m_mappingMode(mappingMode)
 {
     setName("SphereMappedHimmel");
@@ -95,12 +97,15 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 #include "shaderfragment/version.fsf"
 #include "shaderfragment/blend_normal.fsf"
+#include "shaderfragment/fakesun.fsf"
 
 const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
 
-//    +   glsl_f_blendNormalExt // using mix
+//  +   glsl_f_blendNormalExt // using mix
+
+    +   (m_withFakeSun ? glsl_f_fakesun : "")
     +
         "in vec4 m_ray;\n"
         "\n"
@@ -129,7 +134,9 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "    vec2 uv = vec2(-stu.x / m + 0.5, stu.z / m + 0.5);\n")
     +
         "\n"
-        "    gl_FragColor = mix(\n"
+        "    vec4 fc = mix(\n"
         "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
+        "\n"
+        "    gl_FragColor = " + (m_withFakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
         "}\n\n";
 }

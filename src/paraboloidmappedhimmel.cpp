@@ -34,10 +34,11 @@
 
 
 ParaboloidMappedHimmel::ParaboloidMappedHimmel(
-    const bool withHorizonBand)
-:   AbstractMappedHimmel()
+    const bool horizonBand
+,   const bool fakeSun)
+:   AbstractMappedHimmel(fakeSun)
 ,   m_hBand(NULL)
-,   m_withHBand(withHorizonBand)
+,   m_withHBand(horizonBand)
 {
     setName("ParaboloidMappedHimmel");
 
@@ -111,13 +112,15 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 #include "shaderfragment/version.fsf"
 #include "shaderfragment/blend_normal.fsf"
 #include "shaderfragment/hband.fsf"
+#include "shaderfragment/fakesun.fsf"
 
 const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
 
     +   glsl_f_blendNormalExt
-
+    
+    +   (m_withFakeSun ? glsl_f_fakesun : "")
     +   (m_withHBand ? glsl_f_hband : "")
     +
         "in vec4 m_ray;\n"
@@ -140,9 +143,10 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
         "    float m = 2.0 * (1.0 + stu.z);\n"
         "    vec2 uv = vec2(stu.x / m + 0.5, stu.y / m + 0.5);\n"
         "\n"
-        "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), clamp(0.0, srcAlpha, 1.0));\n"
+        "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
+    +   (m_withFakeSun ? "fc += fakeSun(fc.a);\n" : "")
+    +
         "\n"
-        
     +   (m_withHBand ? "" : "if(stu.z < 0.0) discard;\n")
     +
         "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"

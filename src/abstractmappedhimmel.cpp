@@ -43,11 +43,17 @@ namespace
 }
 
 
-AbstractMappedHimmel::AbstractMappedHimmel()
+AbstractMappedHimmel::AbstractMappedHimmel(
+    const bool fakeSun)
 :   AbstractHimmel()
-,   u_srcAlpha(new osg::Uniform("srcAlpha", 0.f))
-,   u_back    (new osg::Uniform("back", BACK_TEXTURE_INDEX))
-,   u_src     (new osg::Uniform("src",  SRC_TEXTURE_INDEX))
+,   u_srcAlpha  (new osg::Uniform("srcAlpha", 0.f))
+,   u_back      (new osg::Uniform("back", BACK_TEXTURE_INDEX))
+,   u_src       (new osg::Uniform("src",  SRC_TEXTURE_INDEX))
+
+,   u_razInverse(NULL)
+,   u_sun(NULL)
+,   u_sunCoeffs(NULL)
+,   u_sunScale(NULL)
 
 ,   m_activeBackUnit(std::numeric_limits<GLint>::max())
 ,   m_activeSrcUnit( std::numeric_limits<GLint>::max())
@@ -55,10 +61,27 @@ AbstractMappedHimmel::AbstractMappedHimmel()
 ,   m_razTransform(new osg::MatrixTransform())
 ,   m_razDirection(RD_NorthWestSouthEast)
 ,   m_razTimef(new TimeF())
+
+,   m_withFakeSun(fakeSun)
 {
     getOrCreateStateSet()->addUniform(u_srcAlpha);
     getOrCreateStateSet()->addUniform(u_back);
     getOrCreateStateSet()->addUniform(u_src);
+
+    if(m_withFakeSun)
+    {
+        u_razInverse = new osg::Uniform("razInverse", osg::Matrix());
+
+        u_sun       = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 1.0));
+        u_sunCoeffs = new osg::Uniform("sunCoeffs", defaultSunCoeffs());
+        u_sunScale  = new osg::Uniform("sunScale", 1.f);
+
+        getOrCreateStateSet()->addUniform(u_razInverse);
+        
+        getOrCreateStateSet()->addUniform(u_sun);
+        getOrCreateStateSet()->addUniform(u_sunCoeffs);
+        getOrCreateStateSet()->addUniform(u_sunScale);
+    }
 
     // Encapsulate hQuad into MatrixTransform.
 
@@ -83,6 +106,9 @@ void AbstractMappedHimmel::update()
     m_razTransform->setMatrix(
         osg::Matrix::rotate(razd * m_razTimef->getf(true) * osg::PI * 2.f
     ,   osg::Vec3(0.f, 0.f, 1.f)));
+
+    if(u_razInverse)
+        u_razInverse->set(osg::Matrix::inverse(m_razTransform->getMatrix()));
 
     // Update two texture status for arbitrary blending (e.g. normal).
 
@@ -179,6 +205,42 @@ const AbstractMappedHimmel::e_RazDirection AbstractMappedHimmel::getRazDirection
 }
 
 
+const float AbstractMappedHimmel::setSunScale(const float scale)
+{
+    u_sunScale->set(scale);
+    return getSunScale();
+}
+
+const float AbstractMappedHimmel::getSunScale() const
+{
+    float sunScale;
+    u_sunScale->get(sunScale);
+
+    return sunScale;
+}
+
+
+const osg::Vec4 AbstractMappedHimmel::setSunCoeffs(const osg::Vec4 &coeffs)
+{
+    u_sunCoeffs->set(coeffs);
+    return getSunCoeffs();
+}
+
+const osg::Vec4 AbstractMappedHimmel::getSunCoeffs() const
+{
+    osg::Vec4 coeffs;
+    u_sunCoeffs->get(coeffs);
+
+    return coeffs;
+}
+const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
+{
+    return osg::Vec4(0.63, 0.58, 0.49, 1.0);
+}
+
+
+
+
 // VertexShader
 
 #include "shaderfragment/version.vsf"
@@ -192,11 +254,16 @@ const std::string AbstractMappedHimmel::getVertexShaderSource()
         +   glsl_v_quadRetrieveRay
         +   glsl_v_quadTransform
         +
+        "uniform mat4 razInverse;\n"
+        "\n"
         "out vec4 m_ray;\n"
+        "out vec4 m_rayFixed;\n"
         "\n"
         "void main(void)\n"
         "{\n"
         "    m_ray = quadRetrieveRay();\n"
+        "    m_rayFixed = m_ray * razInverse;\n"
+        "\n"
         "    quadTransform();\n"
         "}\n\n";
 }

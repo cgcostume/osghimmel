@@ -32,8 +32,9 @@
 #include <osg/TextureCubeMap>
 
 
-CubeMappedHimmel::CubeMappedHimmel()
-:   AbstractMappedHimmel()
+CubeMappedHimmel::CubeMappedHimmel(
+    const bool fakeSun)
+:   AbstractMappedHimmel(fakeSun)
 {
     setName("CubeMappedHimmel");
 };
@@ -57,6 +58,8 @@ osg::TextureCubeMap* CubeMappedHimmel::getOrCreateTextureCubeMap(const GLint tex
     osg::ref_ptr<osg::TextureCubeMap> newTCM(new osg::TextureCubeMap);
 
     newTCM->setUnRefImageDataAfterApply(true);
+
+    newTCM->setInternalFormat(GL_RGBA);
 
     newTCM->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
     newTCM->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
@@ -94,13 +97,16 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 
 #include "shaderfragment/version.fsf"
 #include "shaderfragment/blend_normal.fsf"
+#include "shaderfragment/fakesun.fsf"
 
 const std::string CubeMappedHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
 
-//        +   glsl_f_blendNormalExt // using mix
-        +
+//  +   glsl_f_blendNormalExt // using mix
+    
+    +   (m_withFakeSun ? glsl_f_fakesun : "")
+    +
         "in vec4 m_ray;\n"
         "\n"
         // From AbstractMappedHimmel
@@ -116,7 +122,9 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-        "    gl_FragColor = mix(\n"
-        "        textureCube(back, stu), textureCube(src, stu), clamp(0.0, srcAlpha, 1.0));\n"
+        "    vec4 fc = mix(\n"
+        "        textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
+        "\n"
+        "    gl_FragColor = " + (m_withFakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
         "}\n\n";
 }

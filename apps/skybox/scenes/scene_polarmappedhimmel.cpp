@@ -42,9 +42,12 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_POLARMAPPED(TR("Polar Mapped"));
+    static const QString GROUP_POLARMAPPED (TR("Polar Mapped"));
 
-    static const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
+    static const QString PROPERTY_RAZSPEED (TR("RAZ Speed"));
+
+    static const QString PROPERTY_SUNSCALE (TR("Sun Scale"));
+    static const QString PROPERTY_SUNCOEFFS(TR("Sun Coeffs"));
 
     static const QString GROUP_HBAND(TR("HorizonBand"));
 
@@ -61,13 +64,13 @@ Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
 {
     initializeProperties();
 
-    m_himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half, true);
+    m_himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half, true, true);
 
     m_himmel->setTransitionDuration(0.05f);
     m_himmel->setSecondsPerRAZ(2000.f);
 
     m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
-    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
+    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("D:/polar_half_art_2.png"));
     m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
     m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
     m_himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
@@ -100,6 +103,8 @@ void Scene_PolarMappedHimmel::registerProperties()
     QtProperty *polarGroup = createGroup(GROUP_POLARMAPPED);
     
     createProperty(*polarGroup, PROPERTY_RAZSPEED, 2000.0, 0.0, 99999.0, 10.0); 
+    createProperty(*polarGroup, PROPERTY_SUNSCALE, 1.0, 0.0, 8.0, 0.02); 
+    createProperty(*polarGroup, PROPERTY_SUNCOEFFS, toQColor(AbstractMappedHimmel::defaultSunCoeffs())); 
 
     QtProperty *hbandGroup = createGroup(*polarGroup, GROUP_HBAND);
 
@@ -128,5 +133,10 @@ void Scene_PolarMappedHimmel::propertyChanged(
 		m_himmel->hBand()->setColor(toVec4(colorValue(PROPERTY_HBAND_COLOR)));
 	else if(PROPERTY_BOTTOM_COLOR == name)
 		m_himmel->hBand()->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
+
+    else if(PROPERTY_SUNSCALE == name)
+        m_himmel->setSunScale(doubleValue(PROPERTY_SUNSCALE));
+    else if(PROPERTY_SUNCOEFFS == name)
+        m_himmel->setSunCoeffs(toVec4(colorValue(PROPERTY_SUNCOEFFS)));
 }
 

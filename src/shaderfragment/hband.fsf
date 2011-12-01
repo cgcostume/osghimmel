@@ -49,12 +49,12 @@ namespace
         "\n"
         "vec4 hband(float z, vec4 fc)\n"
         "{\n"
-        "   if(z < hbandParams[2])\n"
-        "       fc = hbandBottomColor;\n"
+        "    if(z < hbandParams[2])\n"
+        "        fc = hbandBottomColor;\n"
         "\n"
-        "   float b = abs((z - hbandParams[2]) / hbandParams[0]) - hbandParams[1];\n"
+        "    float b = abs((z - hbandParams[2]) / hbandParams[0]) - hbandParams[1];\n"
         "\n"
-        "   return blend_normal(hbandColor, fc, smoothstep(0.0, 1.0, b));\n"
+        "    return blend_normal(hbandColor, fc, smoothstep(0.0, 1.0, b));\n"
         "}\n\n"
     );
 }

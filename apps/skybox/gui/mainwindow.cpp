@@ -46,6 +46,7 @@
 #include "scenes/scene_polarmappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
 #include "scenes/scene_paraboloidmappedhimmel.h"
+#include "scenes/scene_proceduralhimmel.h"
 #include "scenes/scene_spheremappedhimmel.h"
 
 #include "utils/import.h"
@@ -382,7 +383,7 @@ void MainWindow::on_sphereMappedHimmelAction_triggered(bool)
 void MainWindow::on_proceduralHimmelAction_triggered(bool)
 {
     clearHimmel();
-
+    m_himmel = new Scene_ProceduralHimmel(m_camera);
     himmelChanged();
 
     m_ui->proceduralHimmelAction->setChecked(true);
