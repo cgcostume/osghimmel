@@ -27,29 +27,50 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __PROCEDURALHIMMEL_H__
-#define __PROCEDURALHIMMEL_H__
+#include "scene_proceduralhimmel.h"
 
-#include "abstracthimmel.h"
+#include "include/proceduralhimmel.h"
 
 
-class ProceduralHimmel : public AbstractHimmel
+namespace
 {
-public:
+    // Properties
 
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
+    static const QString GROUP_PROCEDURAL(TR("Procedrual"));
+}
 
-protected:
+Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
+:   AbstractHimmelScene(camera)
+,   m_himmel(NULL)
+{
+    initializeProperties();
 
-    // abstract interface
+    m_himmel = new ProceduralHimmel();
+    addChild(m_himmel);
+}
 
-    virtual const std::string getVertexShaderSource();
-    virtual const std::string getFragmentShaderSource();
 
-protected:
+Scene_ProceduralHimmel::~Scene_ProceduralHimmel()
+{
+}
 
-};
 
-#endif // __PROCEDURALHIMMEL_H__
+AbstractHimmel *Scene_ProceduralHimmel::himmel()
+{
+    return m_himmel;
+}
+
+
+void Scene_ProceduralHimmel::registerProperties()
+{
+    AbstractHimmelScene::registerProperties();
+
+    QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
+}
+
+
+void Scene_ProceduralHimmel::propertyChanged(
+    QtProperty *p
+,   const QString &name)
+{
+}

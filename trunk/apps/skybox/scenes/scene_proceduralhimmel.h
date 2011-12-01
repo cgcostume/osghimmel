@@ -28,28 +28,34 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __PROCEDURALHIMMEL_H__
-#define __PROCEDURALHIMMEL_H__
+#ifndef __SCENE_PROCEDURALHIMMEL_H__
+#define __SCENE_PROCEDURALHIMMEL_H__
 
-#include "abstracthimmel.h"
+#include "abstracthimmelscene.h"
 
 
-class ProceduralHimmel : public AbstractHimmel
+class ProceduralHimmel;
+
+class Scene_ProceduralHimmel : public AbstractHimmelScene
 {
 public:
+    Scene_ProceduralHimmel(osg::Camera *camera);
 
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
+    virtual ~Scene_ProceduralHimmel();
 
-protected:
-
-    // abstract interface
-
-    virtual const std::string getVertexShaderSource();
-    virtual const std::string getFragmentShaderSource();
+    virtual AbstractHimmel *himmel();
 
 protected:
 
+    // from AbstractPropertySupport
+    virtual void registerProperties();
+    virtual void propertyChanged(
+        QtProperty *p
+    ,   const QString &name);
+
+protected:
+    osg::ref_ptr<ProceduralHimmel> m_himmel;
 };
 
-#endif // __PROCEDURALHIMMEL_H__
+
+#endif // __SCENE_PROCEDURALHIMMEL_H__
