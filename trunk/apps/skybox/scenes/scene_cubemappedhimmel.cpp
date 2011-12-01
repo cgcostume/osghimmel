@@ -40,7 +40,7 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_CUBEMAPPED(TR("Cube Mapped"));
+    static const QString GROUP_CUBEMAPPED (TR("Cube Mapped"));
 
     static const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
 }

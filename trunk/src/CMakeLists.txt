@@ -88,6 +88,7 @@ set(LIB_SOURCES
 	shaderfragment/hband.fsf
     shaderfragment/quadretrieveray.vsf
     shaderfragment/quadtransform.vsf
+	shaderfragment/fakesun.fsf
     shaderfragment/version.fsf
     shaderfragment/version.vsf)
 

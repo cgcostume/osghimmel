@@ -56,7 +56,7 @@ public:
 
 public:
 
-    AbstractMappedHimmel();
+    AbstractMappedHimmel(const bool fakeSun = false);
     virtual ~AbstractMappedHimmel();
 
 
@@ -89,6 +89,14 @@ public:
     void setRazDirection(const e_RazDirection razDirection);
     const e_RazDirection getRazDirection() const;
 
+    const float setSunScale(const float scale);
+    const float getSunScale() const;
+
+    const osg::Vec4 setSunCoeffs(const osg::Vec4 &coeffs);
+    const osg::Vec4 getSunCoeffs() const;
+    static const osg::Vec4 defaultSunCoeffs();
+
+
 protected:
 
     // Inherited by AbstractHimmel. Call this first when inherited!
@@ -120,6 +128,11 @@ protected:
     osg::ref_ptr<osg::Uniform> u_back; // type depends on subclasses
     osg::ref_ptr<osg::Uniform> u_src;  // type depends on subclasses
 
+    osg::ref_ptr<osg::Uniform> u_razInverse; // inverse of the m_razTransform
+    osg::ref_ptr<osg::Uniform> u_sun;
+    osg::ref_ptr<osg::Uniform> u_sunCoeffs;
+    osg::ref_ptr<osg::Uniform> u_sunScale;
+
     osg::ref_ptr<osg::Uniform> u_srcAlpha; // float
 
     GLint m_activeBackUnit;
@@ -129,6 +142,8 @@ protected:
     e_RazDirection m_razDirection;
 
     TimeF *m_razTimef;    
+
+    const bool m_withFakeSun;
 };
 
 #endif // __ABSTRACTMAPPEDHIMMEL_H__

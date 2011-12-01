@@ -60,7 +60,8 @@ public:
 
     PolarMappedHimmel(
         const e_MappingMode &mappingMode = MM_Half
-    ,   const bool withHorizonBand = false);
+    ,   const bool horizonBand = false
+    ,   const bool fakeSun = false);
 
     virtual ~PolarMappedHimmel();
 
