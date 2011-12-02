@@ -54,6 +54,9 @@
 #define _frac(x) \
     ((x) - _int(x))
 
+#define _clamp(l, u, x) \
+    ((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
+
 #define _deg(rad) \
     ((rad) * 180.0 / _PI)
 

@@ -71,6 +71,15 @@ protected slots:
 
     void on_timeSlider_valueChanged(int value);
 
+    void on_latitudeDoubleSpinBox_valueChanged(double d);
+    void on_latitudeLineEdit_textChanged(const QString &text);
+    
+    void on_longitudeDoubleSpinBox_valueChanged(double d);
+    void on_longitudeLineEdit_textChanged(const QString &text);
+   
+    void on_presetComboBox_currentIndexChanged(int index);
+
+
     void me_timeout();
 
 protected:
@@ -79,11 +88,17 @@ protected:
 
 	const float getTimeSliderF() const;
 
+
+    static const double latitudeFromText(const QString &text);
+    static const double longitudeFromText(const QString &text);
+
 protected:
     std::auto_ptr<Ui_DateTimeWidget> m_ui;
 
     TimeF &m_timef;
     QTimer *m_timer;
+
+    bool m_presetChanged;
 };
 
 #endif // __DATETIMEWIDGET_H__
