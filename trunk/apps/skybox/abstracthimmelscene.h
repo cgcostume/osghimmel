@@ -55,6 +55,13 @@ public:
     virtual ~AbstractHimmelScene();
     
     void assignTime(TimeF *timef);
+    TimeF *timef();
+
+    
+    virtual const bool hasLocationSupport() const = 0;
+
+    virtual const double setLatitude(const double latitude);
+    virtual const double setLongitude(const double longitude);
 
 protected:
 

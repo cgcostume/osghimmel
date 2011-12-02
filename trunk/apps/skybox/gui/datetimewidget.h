@@ -40,6 +40,7 @@ class QTimer;
 class QDateTime;
 
 class TimeF;
+class AbstractHimmelScene;
 
 
 class DateTimeWidget 
@@ -53,6 +54,9 @@ public:
     ,   QWidget *parent = NULL);
 
     virtual ~DateTimeWidget();
+
+
+    void setScene(AbstractHimmelScene *scene);
 
 public slots:
 
@@ -96,6 +100,8 @@ protected:
     std::auto_ptr<Ui_DateTimeWidget> m_ui;
 
     TimeF &m_timef;
+    AbstractHimmelScene *m_scene;
+
     QTimer *m_timer;
 
     bool m_presetChanged;

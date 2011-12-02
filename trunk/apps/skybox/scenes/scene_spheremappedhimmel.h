@@ -45,6 +45,12 @@ public:
 
     virtual AbstractHimmel *himmel();
 
+    virtual const bool hasLocationSupport() const 
+    {
+        return false;
+    }
+
+
 protected:
 
     // from AbstractPropertySupport

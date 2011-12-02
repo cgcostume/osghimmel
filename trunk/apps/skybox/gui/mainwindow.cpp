@@ -348,6 +348,7 @@ void MainWindow::on_polarMappedHimmelAction_triggered(bool)
     m_himmel = new Scene_PolarMappedHimmel(m_camera);
     himmelChanged();
 
+    m_dateTimeWidget->setScene(m_himmel);
     m_ui->polarMappedHimmelAction->setChecked(true);
 }
 
@@ -358,6 +359,7 @@ void MainWindow::on_cubeMappedHimmelAction_triggered(bool)
     m_himmel = new Scene_CubeMappedHimmel(m_camera);
     himmelChanged();
 
+    m_dateTimeWidget->setScene(m_himmel);
     m_ui->cubeMappedHimmelAction->setChecked(true);
 }
 
@@ -368,6 +370,7 @@ void MainWindow::on_paraboloidMappedHimmelAction_triggered(bool)
     m_himmel = new Scene_ParaboloidMappedHimmel(m_camera);
     himmelChanged();
 
+    m_dateTimeWidget->setScene(m_himmel);
     m_ui->paraboloidMappedHimmelAction->setChecked(true);
 }
 
@@ -378,6 +381,7 @@ void MainWindow::on_sphereMappedHimmelAction_triggered(bool)
     m_himmel = new Scene_SphereMappedHimmel(m_camera);
     himmelChanged();
 
+    m_dateTimeWidget->setScene(m_himmel);
     m_ui->sphereMappedHimmelAction->setChecked(true);
 }
 
@@ -388,6 +392,7 @@ void MainWindow::on_proceduralHimmelAction_triggered(bool)
     m_himmel = new Scene_ProceduralHimmel(m_camera);
     himmelChanged();
 
+    m_dateTimeWidget->setScene(m_himmel);
     m_ui->proceduralHimmelAction->setChecked(true);
 }
 

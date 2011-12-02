@@ -29,8 +29,10 @@
 
 #include "proceduralhimmel.h"
 
+#include "mathmacros.h"
 #include "atime.h"
 #include "timef.h"
+#include "sideraltime.h"
 #include "sun.h"
 
 #include "himmelquad.h"
@@ -38,7 +40,12 @@
 
 ProceduralHimmel::ProceduralHimmel()
 :   AbstractHimmel()
+,   m_latitude(0)
+,   m_longitude(0)
+,   u_sun(new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 1.0)))
 {
+    getOrCreateStateSet()->addUniform(u_sun);
+
     addChild(m_hquad);
 };
 
@@ -52,13 +59,42 @@ void ProceduralHimmel::update()
 {
     AbstractHimmel::update();
 
-    //const t_aTime aTime(t_aTime::fromTimeF(timef()));
-    //const t_julianDay t(jd(aTime));
+    const t_aTime aTime(t_aTime::fromTimeF(*getTime()));
+    const t_julianDay t(jd(aTime));
 
-    //t_equCoords sun = sun_apparentPosition(t);
-    //sun.toHorizontal(
+
+    t_equCoords sun = sun_apparentPosition(t);
+    
+    t_horCoords hor = sun.toHorizontal(siderealTime(aTime)
+      , m_latitude, m_longitude);
+
+    osg::Vec3 v(hor.toEuclidean());
+    u_sun->set(v);
 }
 
+
+const long double ProceduralHimmel::setLatitude(const long double latitude)
+{
+    m_latitude = _clamp(-90, +90, latitude);
+    return getLatitude();
+}
+
+const long double ProceduralHimmel::getLatitude() const
+{
+    return m_latitude;
+}
+
+
+const long double ProceduralHimmel::setLongitude(const long double longitude)
+{
+    m_longitude = _clamp(-180, +180, longitude);
+    return getLongitude();
+}
+
+const long double ProceduralHimmel::getLongitude() const
+{
+    return m_longitude;
+}
 
 
 // VertexShader
@@ -93,10 +129,10 @@ const std::string ProceduralHimmel::getFragmentShaderSource()
     return glsl_f_version
 
     +
+        "uniform vec3  sun;\n"
+        "\n"
         "in vec4 m_ray;\n"
         "\n"
-
-        "const vec3 t = vec3(1.0, 0.0, 0.5);\n"
 
         // Color Retrieval
 
@@ -104,7 +140,7 @@ const std::string ProceduralHimmel::getFragmentShaderSource()
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-        "    float d = 1.0 / length(normalize(t) - stu) * 0.04;\n"
+        "    float d = 1.0 / length(normalize(sun) - stu) * 0.04;\n"
         "\n"
         "    float h = pow(1.0 - abs(stu.z), 2) * 0.8;\n"
         "\n"
