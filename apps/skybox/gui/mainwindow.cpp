@@ -51,6 +51,7 @@
 
 #include "utils/import.h"
 
+#include "include/atime.h"
 #include "include/timef.h"
 #include "include/shadermodifier.h"
 
@@ -59,6 +60,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QTimer>
+#include <QDateTime>
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>
@@ -182,7 +184,6 @@ void MainWindow::uninitializeLog()
     delete m_logStatusLabel;
 }
 
-
 void MainWindow::initializeScene()
 {
     m_camera = m_ui->centralWidget->getCamera();
@@ -201,7 +202,8 @@ void MainWindow::initializeScene()
     m_root->addChild(m_scene.get());
     m_ui->centralWidget->setSceneData(m_root.get());
 
-    m_timef = new TimeF(time(NULL), 30.f);
+    const time_t t(QDateTime::currentDateTime().toTime_t());
+    m_timef = new TimeF(t, 30.f);
 }
 
 

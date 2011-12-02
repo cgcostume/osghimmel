@@ -102,7 +102,7 @@ void Scene_PolarMappedHimmel::registerProperties()
 
     QtProperty *polarGroup = createGroup(GROUP_POLARMAPPED);
     
-    createProperty(*polarGroup, PROPERTY_RAZSPEED, 2000.0, 0.0, 99999.0, 10.0); 
+    createProperty(*polarGroup, PROPERTY_RAZSPEED, 2000.0, -99999.0, 99999.0, 10.0); 
     createProperty(*polarGroup, PROPERTY_SUNSCALE, 1.0, 0.0, 8.0, 0.02); 
     createProperty(*polarGroup, PROPERTY_SUNCOEFFS, toQColor(AbstractMappedHimmel::defaultSunCoeffs())); 
 
@@ -121,7 +121,13 @@ void Scene_PolarMappedHimmel::propertyChanged(
 ,   const QString &name)
 {
         if(PROPERTY_RAZSPEED == name)
-        m_himmel->setSecondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+    {
+        const double secondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+
+        m_himmel->setSecondsPerRAZ(secondsPerRAZ);
+        m_himmel->setRazDirection(secondsPerRAZ < 0 ? 
+            AbstractMappedHimmel::RD_NorthEastSouthWest : AbstractMappedHimmel::RD_NorthWestSouthEast);
+    }
 
     else if(PROPERTY_HBAND_SCALE == name)
         m_himmel->hBand()->setScale(doubleValue(PROPERTY_HBAND_SCALE));

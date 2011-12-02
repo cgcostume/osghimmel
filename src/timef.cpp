@@ -88,8 +88,7 @@ void TimeF::update()
 
     const long double elapsedTimef(m_secondsPerCycle > 0.f ? elapsed / m_secondsPerCycle : 0.f);
 
-    m_timef[1] = m_timef[0] + elapsedTimef + m_offset;
-    m_timef[1] -= static_cast<int>(m_timef[1]);
+    m_timef[1] = _frac(m_timef[0] + elapsedTimef + m_offset);
 
     m_time[1] = fToSeconds(elapsedTimef + m_offset) + static_cast<long double>(m_time[0]);
 }
@@ -119,7 +118,7 @@ const long double TimeF::setf(
     m_offset = 0;
 
     const time_t seconds(fToSeconds(timef));
-    struct tm lcl(*localtime(&m_time[0]));
+    struct tm lcl(*localtime(&m_time[1]));
 
     /*struct tm gmt(*gmtime(&m_time[0]));
 
@@ -136,8 +135,7 @@ const long double TimeF::setf(
     m_time[0] = mktime(&lcl);
     m_time[2] = m_time[0];
 
-    if(forceUpdate)
-        update();
+    reset(forceUpdate);
 
     return getf();
 }
@@ -165,15 +163,12 @@ const time_t TimeF::sett(
     m_time[0] = time;
     m_time[2] = m_time[0];
 
-    m_timef[0] = secondsTof(time);
-    m_timef[0] -= static_cast<int>(m_timef[0]);
-
+    m_timef[0] = _frac(secondsTof(time));
     m_timef[2] = m_timef[0];
 
     m_offset = 0;
 
-    if(forceUpdate)
-        update();
+    reset(forceUpdate);
 
     return gett();
 }
@@ -198,13 +193,13 @@ const long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 
 inline const long double TimeF::secondsTof(const time_t &time)
 {
-    return static_cast<long double>(time / (60.001f * 60.f * 24.f));
+    return static_cast<long double>(time / (60.0 * 60.0 * 24.0));
 }
 
 
 inline const time_t TimeF::fToSeconds(const long double time)
 {
-    return static_cast<time_t>(time * 60.001f * 60.f * 24.f);
+    return static_cast<time_t>(time * 60.0 * 60.0 * 24.0 + 0.1);
 }
 
 
@@ -251,7 +246,7 @@ void TimeF::reset(const bool forceUpdate)
     m_lastModeChangeTime = 0.f;
 
     m_timef[0] = m_timef[2];
-    m_time[0] = m_time[0];
+    m_time[0] = m_time[2];
 
     delete m_timer;
     m_timer = new osg::Timer();

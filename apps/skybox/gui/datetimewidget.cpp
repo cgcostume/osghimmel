@@ -87,17 +87,30 @@ void DateTimeWidget::pause()
     m_timer->stop();
 
 	m_timef.pause();
-	m_timef.stop();
-
-	m_timef.setf(getTimeSliderF(), true);
 }
 
 
-void DateTimeWidget::on_applyPushButton_clicked(bool checked)
+void DateTimeWidget::stop()
+{
+    pause();
+    m_timef.stop();
+}
+
+
+void DateTimeWidget::on_dateTimeEdit_dateTimeChanged(const QDateTime &datetime)
+{
+    if(m_ui->autoApplyPushButton->isChecked())
+        on_applyPushButton_clicked();
+}
+
+
+void DateTimeWidget::on_applyPushButton_clicked(bool)
 {
     const time_t t(m_ui->dateTimeEdit->dateTime().toTime_t());
 
+    stop();
     m_timef.sett(t, true);
+
     me_timeout();
 }
 
@@ -135,6 +148,8 @@ void DateTimeWidget::on_timeSlider_valueChanged(int value)
         return;
 
     pause();
+
+    m_timef.setf(getTimeSliderF(), true);
 }
 
 

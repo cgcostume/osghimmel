@@ -45,7 +45,7 @@
 
 // scenes
 
-TimeF *g_timef(new TimeF(0.f, 60.f));
+TimeF *g_timef(new TimeF(0.0L, 60.0L));
 
 
 osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
