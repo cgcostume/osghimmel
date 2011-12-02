@@ -28,7 +28,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "atime.h"
+
 #include "mathmacros.h"
+#include "timef.h"
 
 #include <assert.h>
 
@@ -72,29 +74,53 @@ s_AstronomicalTime::s_AstronomicalTime(
 }
 
 
-s_AstronomicalTime::s_AstronomicalTime(const time_t &t)
+const s_AstronomicalTime s_AstronomicalTime::fromTimeT(const time_t &t)
 {
     struct tm local, utc;
 
     localtime_s(&local, &t);
     gmtime_s(&utc, &t);
 
-    year   = 1900 + local.tm_year;
-    month  = 1 + local.tm_mon;
-    day    = local.tm_mday;
-    hour   = local.tm_hour;
-    minute = local.tm_min;
-    second = local.tm_sec;
-
-    gmtOffset = local.tm_hour - utc.tm_hour;
-
     // Daylight saving time should not be concidered here -> julian time functions ignore this.
     //if(local.tm_isdst)
     //  hourUT += 1;
+
+    return s_AstronomicalTime(
+        local.tm_year + 1900
+    ,   local.tm_mon + 1
+    ,   local.tm_mday
+    ,   local.tm_hour
+    ,   local.tm_min
+    ,   local.tm_sec
+    ,   local.tm_hour - utc.tm_hour);
 }
 
 
-const long double s_AstronomicalTime::decimalDay() const
+const s_AstronomicalTime s_AstronomicalTime::fromTimeF(const TimeF &t)
+{
+    return fromTimeT(t.gett());
+}
+
+
+const time_t s_AstronomicalTime::timet() const
+{
+    time_t t = 0;
+    struct tm lcl(*localtime(&t));
+
+    lcl.tm_year = year - 1900;
+    lcl.tm_mon  = month - 1;
+    lcl.tm_mday = day;
+    lcl.tm_hour = hour + gmtOffset;
+    lcl.tm_min  = minute;
+    lcl.tm_sec  = second;
+
+    t = mktime(&lcl);
+
+    return t;
+}
+
+
+const long double s_AstronomicalTime::dayf() const
 {
     return day + _day(hour, minute, second);
 }

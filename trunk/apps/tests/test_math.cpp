@@ -36,32 +36,32 @@
 void test_math()
 {
     // Check if int cast truncates.
-    ASSERT_EQ( 1, static_cast<int>( 1.66));
-    ASSERT_EQ( 1, static_cast<int>( 1.33));
-    ASSERT_EQ(-1, static_cast<int>(-1.33));
-    ASSERT_EQ(-1, static_cast<int>(-1.66));
+    ASSERT_EQ(int, 1, static_cast<int>( 1.66));
+    ASSERT_EQ(int, 1, static_cast<int>( 1.33));
+    ASSERT_EQ(int,-1, static_cast<int>(-1.33));
+    ASSERT_EQ(int,-1, static_cast<int>(-1.66));
 
     // Check decimal hours.
-    ASSERT_EQ(0.81, _day(19, 26, 24));
+    ASSERT_EQ(long double, 0.81, _day(19, 26, 24));
 
 
-    ASSERT_EQ(1.0, _mod( 1.0, 3.0));
-    ASSERT_EQ(1.5, _mod( 1.5, 3.0));
-    ASSERT_EQ(2.9999, _mod( 2.9999, 3.0));
+    ASSERT_EQ(long double, 1.0, _mod( 1.0, 3.0));
+    ASSERT_EQ(long double, 1.5, _mod( 1.5, 3.0));
+    ASSERT_EQ(long double, 2.9999, _mod( 2.9999, 3.0));
 
-    ASSERT_EQ(0.0, _mod( 3.0, 3.0));
-    ASSERT_EQ(0.0, _mod( 0.0, 1.0));
-    ASSERT_EQ(0.5, _mod( 1.5, 1.0));
-    ASSERT_EQ(0.5, _mod(-1.5, 1.0));
-    ASSERT_EQ(0.4, _mod(-0.6, 1.0));
+    ASSERT_EQ(long double, 0.0, _mod( 3.0, 3.0));
+    ASSERT_EQ(long double, 0.0, _mod( 0.0, 1.0));
+    ASSERT_EQ(long double, 0.5, _mod( 1.5, 1.0));
+    ASSERT_EQ(long double, 0.5, _mod(-1.5, 1.0));
+    ASSERT_EQ(long double, 0.4, _mod(-0.6, 1.0));
 
-    ASSERT_EQ(10.0, _mod(1234, 24.0));
+    ASSERT_EQ(long double, 10.0, _mod(1234, 24.0));
 
-    ASSERT_EQ(13.225388, _hours(198.38082));
-    ASSERT_AB(_hour(13, 13, 31.4), _hours( 198.38082), 0.000001);
-    ASSERT_AB(_hour(13, 13, 31.4), _hours(-161.61918), 0.000001);
+    ASSERT_EQ(long double, 13.225388, _hours(198.38082));
+    ASSERT_AB(long double, _hour(13, 13, 31.4), _hours( 198.38082), 0.000001);
+    ASSERT_AB(long double, _hour(13, 13, 31.4), _hours(-161.61918), 0.000001);
 
-    ASSERT_AB(-7.78507, -_decimal(7, 47, 06), 0.0001);
+    ASSERT_AB(long double, -7.78507, -_decimal(7, 47, 06), 0.0001);
 
     TEST_REPORT();
 }

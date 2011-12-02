@@ -27,88 +27,39 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "proceduralhimmel.h"
 
-#include "atime.h"
-#include "timef.h"
-#include "sun.h"
+#include "test_time.h"
 
-#include "himmelquad.h"
+#include "include/atime.h"
+#include "include/timef.h"
+#include "include/mathmacros.h"
 
+#include <time.h>
 
-ProceduralHimmel::ProceduralHimmel()
-:   AbstractHimmel()
+void test_time()
 {
-    addChild(m_hquad);
-};
+    t_aTime aTime(2011, 12, 2, 0, 42, 24);
+    time_t t = aTime.timet();
+
+    TimeF timef(t);
+
+    ASSERT_EQ(__int64, t, timef.gett());
+
+    timef.setf(0.0, true);
+    ASSERT_EQ(__int64, t - 42 * 60 - 24, timef.gett());
+    
+    timef.setf(_day( 0, 42, 24), true);
+    ASSERT_EQ(__int64, t, timef.gett());
+
+    timef.setf(_day(24, 42, 24), true);
+    ASSERT_EQ(__int64, t, timef.gett());
+
+    timef.setf(_day(0, 42, 23), true);
+    ASSERT_EQ_NOT(__int64, t, timef.gett());
+    timef.setf(_day(0, 42, 25), true);
+    ASSERT_EQ_NOT(__int64, t, timef.gett());
 
 
-ProceduralHimmel::~ProceduralHimmel()
-{
-};
 
-
-void ProceduralHimmel::update()
-{
-    AbstractHimmel::update();
-
-    //const t_aTime aTime(t_aTime::fromTimeF(timef()));
-    //const t_julianDay t(jd(aTime));
-
-    //t_equCoords sun = sun_apparentPosition(t);
-    //sun.toHorizontal(
+    TEST_REPORT();
 }
-
-
-
-// VertexShader
-
-#include "shaderfragment/version.vsf"
-#include "shaderfragment/quadretrieveray.vsf"
-#include "shaderfragment/quadtransform.vsf"
-
-const std::string ProceduralHimmel::getVertexShaderSource()
-{
-    return glsl_v_version
-
-        +   glsl_v_quadRetrieveRay
-        +   glsl_v_quadTransform
-        +
-        "out vec4 m_ray;\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "    m_ray = quadRetrieveRay();\n"
-        "    quadTransform();\n"
-        "}\n\n";
-}
-
-
-// FragmentShader
-
-#include "shaderfragment/version.fsf"
-
-const std::string ProceduralHimmel::getFragmentShaderSource()
-{
-    return glsl_f_version
-
-    +
-        "in vec4 m_ray;\n"
-        "\n"
-
-        "const vec3 t = vec3(1.0, 0.0, 0.5);\n"
-
-        // Color Retrieval
-
-        "void main(void)\n"
-        "{\n"
-        "    vec3 stu = normalize(m_ray.xyz);\n"
-        "\n"
-        "    float d = 1.0 / length(normalize(t) - stu) * 0.04;\n"
-        "\n"
-        "    float h = pow(1.0 - abs(stu.z), 2) * 0.8;\n"
-        "\n"
-        "    gl_FragColor = vec4(vec3(d + h), 1.0);\n"
-        "}\n\n";
-}
-

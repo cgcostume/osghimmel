@@ -39,11 +39,42 @@
 #define TEST_REPORT() \
     Test::report(__FILE__);
 
-#define ASSERT_EQ(expected, actual) \
-    Test::assert_eq(__FILE__, __LINE__, expected, #expected, actual, #actual)
+#define ASSERT_EQ(T, expected, actual) \
+    Test::assert_eq(__FILE__, __LINE__, static_cast<T>(expected), #expected, static_cast<T>(actual), #actual)
 
-#define ASSERT_AB(expected, actual, max_allowed_difference) \
-    Test::assert_eq(__FILE__, __LINE__, expected, #expected, actual, #actual, max_allowed_difference)
+#define ASSERT_EQ_NOT(T, expected, actual) \
+    Test::assert_eq_not(__FILE__, __LINE__, static_cast<T>(expected), #expected, static_cast<T>(actual), #actual)
+
+#define ASSERT_AB(T, expected, actual, max_allowed_difference) \
+    Test::assert_eq(__FILE__, __LINE__, static_cast<T>(expected), #expected, static_cast<T>(actual), #actual, static_cast<T>(max_allowed_difference))
+
+#define ASSERT_AB_NOT(T, expected, actual, max_allowed_difference) \
+    Test::assert_eq_not(__FILE__, __LINE__, static_cast<T>(expected), #expected, static_cast<T>(actual), #actual, static_cast<T>(max_allowed_difference))
+
+namespace
+{
+#define ASSERT_EQ_DECL(T) \
+\
+    static const bool assert_eq( \
+        const std::string file \
+    ,   const int line \
+    ,   const T expected \
+    ,   const std::string expected_string \
+    ,   const T actual \
+    ,   const std::string actual_string \
+    ,   const T max_allowed_distance = 0)
+
+#define ASSERT_EQ_NOT_DECL(T) \
+\
+    static const bool assert_eq_not( \
+        const std::string file \
+    ,   const int line \
+    ,   const T expected \
+    ,   const std::string expected_string \
+    ,   const T actual \
+    ,   const std::string actual_string \
+    ,   const T max_allowed_distance = 0)
+}
 
 
 class Test
@@ -52,19 +83,44 @@ public:
 
     static void report(const std::string &file);
 
-    static const bool assert_eq(
-        const std::string file
-    ,   const int line
-    ,   const long double expected
-    ,   const std::string expected_string
-    ,   const long double actual
-    ,   const std::string actual_string
-    ,   const long double max_allowed_distance = 0.0);
+    ASSERT_EQ_DECL(unsigned short);
+    ASSERT_EQ_NOT_DECL(unsigned short);
+
+    ASSERT_EQ_DECL(short);
+    ASSERT_EQ_NOT_DECL(short);
+
+    ASSERT_EQ_DECL(unsigned int);
+    ASSERT_EQ_NOT_DECL(unsigned int);
+
+    ASSERT_EQ_DECL(int);
+    ASSERT_EQ_NOT_DECL(int);
+
+    ASSERT_EQ_DECL(float);
+    ASSERT_EQ_NOT_DECL(float);
+
+    ASSERT_EQ_DECL(double);
+    ASSERT_EQ_NOT_DECL(double);
+
+    ASSERT_EQ_DECL(long double);
+    ASSERT_EQ_NOT_DECL(long double);
+
+    ASSERT_EQ_DECL(__int64);
+    ASSERT_EQ_NOT_DECL(__int64);
 
 protected:
 
     template<typename T>
     static const bool assert_eq_t(
+        const std::string file
+    ,   const int line
+    ,   const T expected
+    ,   const std::string &expected_string
+    ,   const T actual
+    ,   const std::string &actual_string
+    ,   const T max_allowed_distance);
+
+    template<typename T>
+    static const bool assert_eq_not_t(
         const std::string file
     ,   const int line
     ,   const T expected

@@ -27,88 +27,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "proceduralhimmel.h"
 
-#include "atime.h"
-#include "timef.h"
-#include "sun.h"
+#pragma once
+#ifndef __TEST_TIME_H__
+#define __TEST_TIME_H__
 
-#include "himmelquad.h"
+void test_time();
 
-
-ProceduralHimmel::ProceduralHimmel()
-:   AbstractHimmel()
-{
-    addChild(m_hquad);
-};
-
-
-ProceduralHimmel::~ProceduralHimmel()
-{
-};
-
-
-void ProceduralHimmel::update()
-{
-    AbstractHimmel::update();
-
-    //const t_aTime aTime(t_aTime::fromTimeF(timef()));
-    //const t_julianDay t(jd(aTime));
-
-    //t_equCoords sun = sun_apparentPosition(t);
-    //sun.toHorizontal(
-}
-
-
-
-// VertexShader
-
-#include "shaderfragment/version.vsf"
-#include "shaderfragment/quadretrieveray.vsf"
-#include "shaderfragment/quadtransform.vsf"
-
-const std::string ProceduralHimmel::getVertexShaderSource()
-{
-    return glsl_v_version
-
-        +   glsl_v_quadRetrieveRay
-        +   glsl_v_quadTransform
-        +
-        "out vec4 m_ray;\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "    m_ray = quadRetrieveRay();\n"
-        "    quadTransform();\n"
-        "}\n\n";
-}
-
-
-// FragmentShader
-
-#include "shaderfragment/version.fsf"
-
-const std::string ProceduralHimmel::getFragmentShaderSource()
-{
-    return glsl_f_version
-
-    +
-        "in vec4 m_ray;\n"
-        "\n"
-
-        "const vec3 t = vec3(1.0, 0.0, 0.5);\n"
-
-        // Color Retrieval
-
-        "void main(void)\n"
-        "{\n"
-        "    vec3 stu = normalize(m_ray.xyz);\n"
-        "\n"
-        "    float d = 1.0 / length(normalize(t) - stu) * 0.04;\n"
-        "\n"
-        "    float h = pow(1.0 - abs(stu.z), 2) * 0.8;\n"
-        "\n"
-        "    gl_FragColor = vec4(vec3(d + h), 1.0);\n"
-        "}\n\n";
-}
-
+#endif // __TEST_TIME_H__

@@ -38,11 +38,16 @@
 
 namespace
 {
+#define ABS(v) \
+    (((v) < 0) ? -(v) : (v))
 
 #define REPORT_TRUE(file) \
     do { test_succeeded(file); } while(false)
 
 #define REPORT_TRUE_EQ(file) \
+    REPORT_TRUE(file)
+
+#define REPORT_TRUE_EQ_NOT(file) \
     REPORT_TRUE(file)
 
 
@@ -54,7 +59,7 @@ namespace
     stream.setf(std::ios::fixed, std::ios::floatfield); \
     stream.precision(20); \
     \
-    stream << "FAILED:  " << expectedExpr.c_str() << " == " << actualExpr \
+    stream << "FAILED:  " << expectedExpr.c_str() << " " << operatorExpr << " " << actualExpr \
            << " -> " << expected << " " << operatorExpr << " " << actual \
            << std::endl << "in " << file << "(" << line << ")"; \
     \
@@ -62,6 +67,39 @@ namespace
 
 #define REPORT_FALSE_EQ(file, line, expected, expectedExpr, actual, actualExpr) \
     REPORT_FALSE(file, line, expected, expectedExpr, actual, actualExpr, "==")
+
+#define REPORT_FALSE_EQ_NOT(file, line, expected, expectedExpr, actual, actualExpr) \
+    REPORT_FALSE(file, line, expected, expectedExpr, actual, actualExpr, "!=")
+
+
+#define ASSERT_EQ_IMPL(T) \
+\
+const bool Test::assert_eq( \
+    const std::string file \
+,   const int line \
+,   const T expected \
+,   const std::string expected_string \
+,   const T actual \
+,   const std::string actual_string \
+,   const T max_allowed_distance) \
+{ \
+    return assert_eq_t<T>(file, line, expected, expected_string, actual, actual_string, max_allowed_distance); \
+}
+
+
+#define ASSERT_EQ_NOT_IMPL(T) \
+\
+const bool Test::assert_eq_not( \
+    const std::string file \
+,   const int line \
+,   const T expected \
+,   const std::string expected_string \
+,   const T actual \
+,   const std::string actual_string \
+,   const T max_allowed_distance) \
+{ \
+    return assert_eq_not_t<T>(file, line, expected, expected_string, actual, actual_string, max_allowed_distance); \
+}
 
 }
 
@@ -89,8 +127,7 @@ void Test::report(const std::string &file)
 
     if(failed)
     {
-        std::cout << std::endl << "--------" << std::endl 
-            << "REPORT:  " << failed << " of " << succeeded + failed 
+        std::cout << std::endl << "---- " << failed << " of " << succeeded + failed 
             << " Tests Failed." << std::endl << std::endl;
 
         // reports available
@@ -105,8 +142,7 @@ void Test::report(const std::string &file)
             std::cout << report[i] << std::endl << std::endl;
     }
     else
-        std::cout << std::endl << "--------" << std::endl 
-            << "REPORT:  All " << succeeded << " Tests Passed." << std::endl << std::endl;
+        std::cout << std::endl << "---- All " << succeeded << " Tests Passed." << std::endl << std::endl;
 }
 
 
@@ -116,8 +152,7 @@ void Test::test(const std::string &file)
     || s_failed.find(file) != s_failed.end())
     return;
     
-    std::cout << std::endl << "TEST:    " << file << "" << std::endl 
-        << "--------" << std::endl;
+    std::cout << std::endl << "---- Test " << file << "" << std::endl;
 
     s_succeeded[file] = 0;
     s_failed[file] = 0;
@@ -152,7 +187,7 @@ const bool Test::assert_eq_t(
 ,   const std::string &actual_string
 ,   const T max_allowed_distance)
 {
-    const bool success(max_allowed_distance ? abs(expected - actual) < max_allowed_distance : expected == actual);
+    const bool success(max_allowed_distance ? ABS(expected - actual) < max_allowed_distance : expected == actual);
 
     if(success)
         REPORT_TRUE_EQ(file);
@@ -163,15 +198,48 @@ const bool Test::assert_eq_t(
 }
 
 
-const bool Test::assert_eq(
+template<typename T>
+const bool Test::assert_eq_not_t(
     const std::string file
 ,   const int line
-,   const long double expected
-,   const std::string expected_string
-,   const long double actual
-,   const std::string actual_string
-,   const long double max_allowed_distance)
+,   const T expected
+,   const std::string &expected_string
+,   const T actual
+,   const std::string &actual_string
+,   const T max_allowed_distance)
 {
-    return assert_eq_t<double>(file, line, expected, expected_string, actual, actual_string, max_allowed_distance);
+    const bool success(max_allowed_distance ? ABS(expected - actual) < max_allowed_distance : expected == actual);
+
+    if(!success)
+        REPORT_TRUE_EQ_NOT(file);
+    else
+        REPORT_FALSE_EQ_NOT(file, line, expected, expected_string, actual, actual_string);
+
+    return success;
 }
+
+
+ASSERT_EQ_IMPL(unsigned short);
+ASSERT_EQ_NOT_IMPL(unsigned short);
+
+ASSERT_EQ_IMPL(short);
+ASSERT_EQ_NOT_IMPL(short);
+
+ASSERT_EQ_IMPL(unsigned int);
+ASSERT_EQ_NOT_IMPL(unsigned int);
+
+ASSERT_EQ_IMPL(int);
+ASSERT_EQ_NOT_IMPL(int);
+
+ASSERT_EQ_IMPL(float);
+ASSERT_EQ_NOT_IMPL(float);
+
+ASSERT_EQ_IMPL(double);
+ASSERT_EQ_NOT_IMPL(double);
+
+ASSERT_EQ_IMPL(long double);
+ASSERT_EQ_NOT_IMPL(long double);
+
+ASSERT_EQ_IMPL(__int64);
+ASSERT_EQ_NOT_IMPL(__int64);
 
