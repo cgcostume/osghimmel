@@ -74,3 +74,15 @@ void Scene_ProceduralHimmel::propertyChanged(
 ,   const QString &name)
 {
 }
+
+
+const double Scene_ProceduralHimmel::setLatitude(const double latitude)
+{
+    return m_himmel->setLatitude(latitude);
+}
+
+
+const double Scene_ProceduralHimmel::setLongitude(const double longitude)
+{
+    return m_himmel->setLongitude(longitude);
+}

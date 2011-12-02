@@ -29,6 +29,7 @@
 
 #include "datetimewidget.h"
 #include "apps/skybox/ui_datetimewidget.h"
+#include "abstracthimmelscene.h"
 
 #include "include/timef.h"
 #include "include/mathmacros.h"
@@ -45,9 +46,10 @@ DateTimeWidget::DateTimeWidget(
 ,   QWidget* parent)
 :   QWidget(parent)
 ,   m_ui(new Ui_DateTimeWidget)
-,   m_timef(timef)
 ,   m_timer(new QTimer())
 ,   m_presetChanged(false)
+,   m_timef(timef)
+,   m_scene(NULL)
 {
     m_ui->setupUi(this);
 
@@ -246,6 +248,12 @@ void DateTimeWidget::on_applyPushButton_clicked(bool)
     stop();
     m_timef.sett(t, true);
 
+    if(m_scene->hasLocationSupport())
+    {
+        m_scene->setLatitude(m_ui->latitudeDoubleSpinBox->value());
+        m_scene->setLongitude(m_ui->longitudeDoubleSpinBox->value());
+    }
+
     me_timeout();
 }
 
@@ -409,4 +417,23 @@ void DateTimeWidget::on_presetComboBox_currentIndexChanged(int index)
     m_ui->longitudeLineEdit->setText(temp[1]);
 
     m_presetChanged = false;
+}
+
+
+void DateTimeWidget::setScene(AbstractHimmelScene *scene)
+{
+    m_scene = scene;
+
+    const bool hasLocationSupport(scene ? scene->hasLocationSupport() : false);
+
+    m_ui->latitudeDoubleSpinBox->setEnabled(hasLocationSupport);
+    m_ui->latitudeLabel->setEnabled(hasLocationSupport);
+    m_ui->latitudeLineEdit->setEnabled(hasLocationSupport);
+
+    m_ui->longitudeDoubleSpinBox->setEnabled(hasLocationSupport);
+    m_ui->longitudeLabel->setEnabled(hasLocationSupport);
+    m_ui->longitudeLineEdit->setEnabled(hasLocationSupport);
+
+    m_ui->presetComboBox->setEnabled(hasLocationSupport);
+    m_ui->presetLabel->setEnabled(hasLocationSupport);
 }

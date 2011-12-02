@@ -69,15 +69,15 @@ const s_EclipticalCoords s_EquatorialCoords::toEcliptical(const long double obli
 {
     t_eclCoords ecl;
     
-    const long double cose(cos(obliquity));
-    const long double sine(sin(obliquity));
-    const long double sina(sin(right_ascension));
+    const long double cose(cos(_rad(obliquity)));
+    const long double sine(sin(_rad(obliquity)));
+    const long double sina(sin(_rad(right_ascension)));
 
-    ecl.latitude = atan2(
-        sina * cose + tan(declination) * sine, cos(right_ascension));
+    ecl.latitude = _deg(atan2(
+        sina * cose + tan(_rad(declination)) * sine, cos(_rad(right_ascension))));
 
-    ecl.longitude = asin(
-        sin(declination) * cose - cos(declination) * sine * sina);
+    ecl.longitude = _deg(asin(
+        sin(_rad(declination)) * cose - cos(_rad(declination)) * sine * sina));
 
     return ecl;
 }
@@ -91,17 +91,17 @@ const s_HorizontalCoords s_EquatorialCoords::toHorizontal(
     t_horCoords hor;
 
     // local hour angle: H = θ - α
-    const long double H = siderealTime - observersLongitude - right_ascension;
+    const long double H = _rad(siderealTime - observersLongitude - right_ascension);
 
     const long double cosh(cos(H));
-    const long double sinr(sin(observersLatitude));
-    const long double cosr(cos(observersLatitude));
+    const long double sinr(sin(_rad(observersLatitude)));
+    const long double cosr(cos(_rad(observersLatitude)));
 
-    hor.altitude = atan2(
-        sin(H), cosh * sinr - tan(declination) * cosr);
+    hor.altitude = _deg(atan2(
+        sin(H), cosh * sinr - tan(_rad(declination)) * cosr));
 
-    hor.azimuth = asin(
-        sinr * sin(declination) + cosr * cos(declination) * cosh);
+    hor.azimuth = _deg(asin(
+        sinr * sin(_rad(declination)) + cosr * cos(_rad(declination)) * cosh));
 
     return hor;
 }
@@ -111,15 +111,15 @@ const s_EquatorialCoords s_EclipticalCoords::toEquatorial(const long double obli
 {
     t_equCoords equ;
 
-    const long double cose(cos(obliquity));
-    const long double sine(sin(obliquity));
+    const long double cose(cos(_rad(obliquity)));
+    const long double sine(sin(_rad(obliquity)));
 
-    const long double sinl(sin(longitude));
+    const long double sinl(sin(_rad(longitude)));
 
-    equ.right_ascension = atan2(
-        sinl * cose - tan(latitude) * sine, cos(longitude));
+    equ.right_ascension = _deg(atan2(
+        sinl * cose - tan(_rad(latitude)) * sine, cos(_rad(longitude))));
 
-    equ.declination = asin(sin(latitude) * cose + cos(latitude) * sine * sinl);
+    equ.declination = _deg(asin(sin(_rad(latitude)) * cose + cos(_rad(latitude)) * sine * sinl));
 
     return equ;
 }
@@ -132,18 +132,18 @@ const s_EquatorialCoords s_HorizontalCoords::toEquatorial(
 {
     t_equCoords equ;
 
-    const long double cosa(cos(altitude));
+    const long double cosa(cos(_rad(altitude)));
 
-    const long double sinr(sin(observersLatitude));
-    const long double cosr(cos(observersLatitude));
+    const long double sinr(sin(_rad(observersLatitude)));
+    const long double cosr(cos(_rad(observersLatitude)));
 
-    const long double H = atan2(
-        sin(altitude), cosa * sinr + tan(azimuth) * cosr);
+    const long double H = _deg(atan2(
+        sin(_rad(altitude)), cosa * sinr + tan(_rad(azimuth)) * cosr));
 
     equ.right_ascension = siderealTime - observersLongitude - H;
 
-    equ.declination = asin(
-        sinr * sin(azimuth) - cosr * cos(azimuth) * cosa);
+    equ.declination = _deg(asin(
+        sinr * sin(_rad(azimuth)) - cosr * cos(_rad(azimuth)) * cosa));
 
     return equ;
 }
@@ -151,11 +151,11 @@ const s_EquatorialCoords s_HorizontalCoords::toEquatorial(
 
 const osg::Vec3d s_HorizontalCoords::toEuclidean() const
 {
-    const long double cosa(cos(altitude));
+    const long double cosa(cos(_rad(altitude)));
 
-    const double x(sin(azimuth) * cosa);
-    const double y(cos(azimuth) * cosa);
-    const double z(sin(altitude));
+    const double x(sin(_rad(azimuth)) * cosa);
+    const double y(cos(_rad(azimuth)) * cosa);
+    const double z(sin(_rad(altitude)));
 
     return osg::Vec3d(x, y, z);
 }

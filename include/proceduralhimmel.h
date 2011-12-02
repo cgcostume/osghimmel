@@ -41,6 +41,12 @@ public:
     ProceduralHimmel();
     virtual ~ProceduralHimmel();
 
+    const long double setLatitude(const long double latitude);
+    const long double getLatitude() const;
+
+    const long double setLongitude(const long double longitude);
+    const long double getLongitude() const;
+
 protected:
 
     virtual void update();
@@ -52,6 +58,10 @@ protected:
 
 protected:
 
+    long double m_latitude;
+    long double m_longitude;
+
+    osg::ref_ptr<osg::Uniform> u_sun;
 };
 
 #endif // __PROCEDURALHIMMEL_H__

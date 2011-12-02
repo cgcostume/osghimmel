@@ -79,3 +79,20 @@ void AbstractHimmelScene::assignTime(TimeF *timef)
     if(himmel())
         himmel()->assignTime(timef, false);
 }
+
+TimeF *AbstractHimmelScene::timef()
+{
+    return himmel()->getTime();
+}
+
+
+const double AbstractHimmelScene::setLatitude(const double latitude)
+{
+    return 0.0;
+}
+
+
+const double AbstractHimmelScene::setLongitude(const double longitude)
+{
+    return 0.0;
+}
