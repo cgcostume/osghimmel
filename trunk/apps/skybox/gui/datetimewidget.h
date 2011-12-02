@@ -37,6 +37,7 @@
 class Ui_DateTimeWidget;
 
 class QTimer;
+class QDateTime;
 
 class TimeF;
 
@@ -57,10 +58,13 @@ public slots:
 
     void cycle();
     void pause();
+    void stop();
 
 protected slots:
 
-    void on_applyPushButton_clicked(bool checked);
+    void on_dateTimeEdit_dateTimeChanged(const QDateTime &datetime);
+
+    void on_applyPushButton_clicked(bool checked = false);
     void on_cyclePushButton_toggled(bool checked);
 
     void on_secondsPerCycleDoubleSpinBox_valueChanged(double value);

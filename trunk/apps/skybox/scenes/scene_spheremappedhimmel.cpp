@@ -81,7 +81,7 @@ void Scene_SphereMappedHimmel::registerProperties()
 
     QtProperty *sphereGroup = createGroup(GROUP_SPHEREMAPPED);
 
-    createProperty(*sphereGroup, PROPERTY_RAZSPEED, 0.0, 0.0, 99999.0, 10.0); 
+    createProperty(*sphereGroup, PROPERTY_RAZSPEED, 0.0, -99999.0, 99999.0, 10.0); 
 }
 
 
@@ -90,5 +90,11 @@ void Scene_SphereMappedHimmel::propertyChanged(
 ,   const QString &name)
 {
     if(PROPERTY_RAZSPEED == name)
-        m_himmel->setSecondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+    {
+        const double secondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+
+        m_himmel->setSecondsPerRAZ(secondsPerRAZ);
+        m_himmel->setRazDirection(secondsPerRAZ < 0 ? 
+            AbstractMappedHimmel::RD_NorthEastSouthWest : AbstractMappedHimmel::RD_NorthWestSouthEast);
+    }
 }

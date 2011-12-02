@@ -99,7 +99,7 @@ void Scene_ParaboloidMappedHimmel::registerProperties()
 
     QtProperty *paraboloidGroup = createGroup(GROUP_PARABOLOIDMAPPED);
 
-    createProperty(*paraboloidGroup, PROPERTY_RAZSPEED, 0.0, 0.0, 99999.0, 10.0); 
+    createProperty(*paraboloidGroup, PROPERTY_RAZSPEED, 0.0, -99999.0, 99999.0, 10.0); 
 
     QtProperty *hbandGroup = createGroup(*paraboloidGroup, GROUP_HBAND);
 
@@ -116,7 +116,13 @@ void Scene_ParaboloidMappedHimmel::propertyChanged(
 ,   const QString &name)
 {
         if(PROPERTY_RAZSPEED == name)
-        m_himmel->setSecondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+    {
+        const double secondsPerRAZ(doubleValue(PROPERTY_RAZSPEED));
+
+        m_himmel->setSecondsPerRAZ(secondsPerRAZ);
+        m_himmel->setRazDirection(secondsPerRAZ < 0 ? 
+            AbstractMappedHimmel::RD_NorthEastSouthWest : AbstractMappedHimmel::RD_NorthWestSouthEast);
+    }
 
     else if(PROPERTY_HBAND_SCALE == name)
         m_himmel->hBand()->setScale(doubleValue(PROPERTY_HBAND_SCALE));
