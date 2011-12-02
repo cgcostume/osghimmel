@@ -43,6 +43,8 @@ public:
 
 protected:
 
+    virtual void update();
+
     // abstract interface
 
     virtual const std::string getVertexShaderSource();

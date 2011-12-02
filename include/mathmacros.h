@@ -33,14 +33,14 @@
 
 #include <math.h>
 
-#define _PI 3.1415926535897932384626433832795
-#define _PI2  _PI * 2.00
-#define _PI_2 _PI * 0.50
-#define _PI4  _PI * 4.00
-#define _PI_4 _PI * 0.25
+#define _PI 3.1415926535897932384626433832795L
+#define _PI2  _PI * 2.00L
+#define _PI_2 _PI * 0.50L
+#define _PI4  _PI * 4.00L
+#define _PI_4 _PI * 0.25L
 
 #define _abs(v) \
-    ((v < 0) ? -(v) : (v))
+    (((v) < 0) ? -(v) : (v))
 
 #define _int(v) \
     (static_cast<int>(v))
@@ -49,7 +49,7 @@
     (static_cast<short>(v))
 
 #define _mod(a, m) \
-    ((a) - (m) * (_int((a) / (m)) - (a < 0 ? 1 : 0)))
+    ((a) - (m) * (_int((a) / (m)) - ((a) < 0 ? 1 : 0)))
 
 #define _frac(x) \
     ((x) - _int(x))
@@ -63,7 +63,7 @@
 // same as _hour
 // note: if h is negative use -_decimal(d, m, s) instead of _decimal(-d, m, s)
 #define _decimal(d, m, s) \
-    ((d) + ((m) + (s) / 60.0) / 60.0)
+    ((d) + ((m) + (s) / 60.0L) / 60.0L)
 
 #define _sind(deg) \
     (sin(_rad(deg)))
@@ -92,27 +92,27 @@
 
 // normalizes an angle to between 0 and 360 degrees
 #define _revd(deg) \
-    ((deg) - floor((deg) / 360.0) * 360.0)
+    ((deg) - floor((deg) / 360.0L) * 360.0L)
 
 // cube root (e.g. needed for parabolic orbits)
 #define _cbrt(x) \
-    ((x > 0.0) ? exp(log(x) / 3.0) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
+    (((x) > 0.0) ? exp(log(x) / 3.0L) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
 
 #define _rightascd(deg, min, sec) \
-    ((_decimal(deg, min, sec) * 15.0)
+    ((_decimal(deg, min, sec) * 15.0L)
 
 #define _rightasc(deg, min, sec) \
     (_rad(_rightascd(deg, min, sec)))
 
 #define _day(h, m, s) \
-    (_hour(h, m, s) / 24.0)
+    (_hour(h, m, s) / 24.0L)
 
 // note: if h is negative use -_hour(h, m, s) instead of _hour(-h, m, s)
 #define _hour(h, m, s) \
-    ((h) + ((m) + (s) / 60.0) / 60.0)
+    ((h) + ((m) + (s) / 60.0L) / 60.0L)
 
 #define _hours(d) \
-    (_mod(d / 15.0, 24.0))
+    (_mod(d / 15.0L, 24.0L))
 
 // When using powers, try to use Horner's Method
 

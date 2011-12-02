@@ -31,7 +31,11 @@
 #ifndef __ASTRONOMICAL_TIME_H__
 #define __ASTRONOMICAL_TIME_H__
 
+
 #include <time.h>
+
+class TimeF;
+
 
 typedef struct s_AstronomicalTime
 {
@@ -51,11 +55,12 @@ typedef struct s_AstronomicalTime
     ,   const long double day
     ,   const short gmtOffset = 0);
 
-    s_AstronomicalTime(const time_t &t);
+    static const s_AstronomicalTime fromTimeT(const time_t &t);
+    static const s_AstronomicalTime fromTimeF(const TimeF &t);
 
+    const time_t timet() const;
 
-    const long double decimalDay() const;
-
+    const long double dayf() const;
 
     const bool operator==(const s_AstronomicalTime &other) const
     {

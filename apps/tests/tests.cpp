@@ -30,12 +30,14 @@
 
 #include "test_math.h"
 #include "test_astronomy.h"
+#include "test_time.h"
 #include "test_twounitschanger.h"
 
 int main(int argc, char* argv[])
 {
     test_math();
     test_astronomy();
+    test_time();
     test_twounitschanger();
 
     return 0;

@@ -43,25 +43,25 @@ void test_twounitschanger()
     tuc.pushUnit(0, 0.0f);
     tuc.pushUnit(1, 0.5f);
 
-    ASSERT_EQ(0, tuc.getSrcUnit(0.0f));
-    ASSERT_EQ(0, tuc.getSrcUnit(0.8f));
-    ASSERT_EQ(1, tuc.getSrcUnit(0.2f));
+    ASSERT_EQ(int, 0, tuc.getSrcUnit(0.0f));
+    ASSERT_EQ(int, 0, tuc.getSrcUnit(0.8f));
+    ASSERT_EQ(int, 1, tuc.getSrcUnit(0.2f));
 
-    ASSERT_EQ(1, tuc.getSrcUnit(0.5f));
-    ASSERT_EQ(1, tuc.getSrcUnit(0.3f));
-    ASSERT_EQ(0, tuc.getSrcUnit(0.7f));
+    ASSERT_EQ(int, 1, tuc.getSrcUnit(0.5f));
+    ASSERT_EQ(int, 1, tuc.getSrcUnit(0.3f));
+    ASSERT_EQ(int, 0, tuc.getSrcUnit(0.7f));
 
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.8f), 0.0001);
-    ASSERT_AB(0.25, tuc.getSrcAlpha(0.9f), 0.0001);
-    ASSERT_AB(0.50, tuc.getSrcAlpha(0.0f), 0.0001);
-    ASSERT_AB(0.75, tuc.getSrcAlpha(0.1f), 0.0001);
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.2f), 0.0001);
+    ASSERT_AB(float, 0.00, tuc.getSrcAlpha(0.8f), 0.0001);
+    ASSERT_AB(float, 0.25, tuc.getSrcAlpha(0.9f), 0.0001);
+    ASSERT_AB(float, 0.50, tuc.getSrcAlpha(0.0f), 0.0001);
+    ASSERT_AB(float, 0.75, tuc.getSrcAlpha(0.1f), 0.0001);
+    ASSERT_AB(float, 0.00, tuc.getSrcAlpha(0.2f), 0.0001);
 
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.3f), 0.0001);
-    ASSERT_AB(0.25, tuc.getSrcAlpha(0.4f), 0.0001);
-    ASSERT_AB(0.50, tuc.getSrcAlpha(0.5f), 0.0001);
-    ASSERT_AB(0.75, tuc.getSrcAlpha(0.6f), 0.0001);
-    ASSERT_AB(0.00, tuc.getSrcAlpha(0.7f), 0.0001);
+    ASSERT_AB(float, 0.00, tuc.getSrcAlpha(0.3f), 0.0001);
+    ASSERT_AB(float, 0.25, tuc.getSrcAlpha(0.4f), 0.0001);
+    ASSERT_AB(float, 0.50, tuc.getSrcAlpha(0.5f), 0.0001);
+    ASSERT_AB(float, 0.75, tuc.getSrcAlpha(0.6f), 0.0001);
+    ASSERT_AB(float, 0.00, tuc.getSrcAlpha(0.7f), 0.0001);
 
     TEST_REPORT();
 }

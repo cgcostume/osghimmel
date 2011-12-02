@@ -56,12 +56,12 @@ class TimeF
 public:
     
     TimeF(
-        const float time = 0.f
-    ,   const float secondsPerCycle = 0.f);
+        const long double time = 0.0
+    ,   const long double secondsPerCycle = 0.0);
 
     TimeF(
         const time_t &time
-    ,   const float secondsPerCycle = 0.f);
+    ,   const long double secondsPerCycle = 0.0);
 
     ~TimeF();
 
@@ -75,29 +75,29 @@ public:
     void reset(const bool forceUpdate = false); // Resets the time to initial value (secondsPerCycle remain unchanged).
     void stop (const bool forceUpdate = false); // Stops and resets the time.
 
-    inline const float getSecondsPerCycle() const
+    inline const long double getSecondsPerCycle() const
     {
         return m_secondsPerCycle;
     }
 
-    const float setSecondsPerCycle(const float secondsPerCycle);
+    const long double setSecondsPerCycle(const long double secondsPerCycle);
 
 
     // Float time in the intervall [0;1]
-    inline const float getf() const
+    inline const long double getf() const
     {
         return m_timef[1];
     }
 
-    const float getf(const bool updateFirst);
+    const long double getf(const bool updateFirst);
 
     // Sets only time, date remains unchanged.
-    const float setf(
-        float time
+    const long double setf(
+        long double time
     ,   const bool forceUpdate = false);
 
     // Elapsed float time from initialized time.
-    const float getNonModf(const bool updateFirst = false);
+    const long double getNonModf(const bool updateFirst = false);
 
     // Time in seconds from initial time.
     inline const time_t gett() const
@@ -115,23 +115,23 @@ public:
     const bool isRunning() const;
 
 protected:
-    static inline const float secondsTof(const time_t &time);
-    static inline const time_t fToSeconds(const float time);
+    static inline const long double secondsTof(const time_t &time);
+    static inline const time_t fToSeconds(const long double time);
 
     void initialize();
 
 protected:
     osg::Timer *m_timer;
 
-    time_t m_time[3]; // [2] is for stop
-    float m_timef[3]; // [2] is for stop
+    time_t m_time[3];       // [2] is for stop
+    long double m_timef[3]; // [2] is for stop
 
-    float m_offset;
+    long double m_offset;
 
     e_Mode m_mode;
-    float m_lastModeChangeTime;
+    long double m_lastModeChangeTime;
 
-    float m_secondsPerCycle;
+    long double m_secondsPerCycle;
 };
 
 #endif // __TIMEF_H__
