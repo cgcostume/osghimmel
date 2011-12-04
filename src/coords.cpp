@@ -91,17 +91,17 @@ const s_HorizontalCoords s_EquatorialCoords::toHorizontal(
     t_horCoords hor;
 
     // local hour angle: H = θ - α
-    const long double H = _rad(siderealTime - observersLongitude - right_ascension);
+    const long double H = _rad(siderealTime * 15.0 + observersLongitude - right_ascension);
 
     const long double cosh(cos(H));
     const long double sinr(sin(_rad(observersLatitude)));
     const long double cosr(cos(_rad(observersLatitude)));
 
-    hor.altitude = _deg(atan2(
-        sin(H), cosh * sinr - tan(_rad(declination)) * cosr));
-
-    hor.azimuth = _deg(asin(
+    hor.altitude = _deg(asin(
         sinr * sin(_rad(declination)) + cosr * cos(_rad(declination)) * cosh));
+
+    hor.azimuth = _deg(atan2(
+        sin(H), cosh * sinr - tan(_rad(declination)) * cosr));
 
     return hor;
 }

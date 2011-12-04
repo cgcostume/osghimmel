@@ -39,6 +39,8 @@ class TimeF;
 
 typedef struct s_AstronomicalTime
 {
+    s_AstronomicalTime();
+
     s_AstronomicalTime(
         const short year
     ,   const short month
