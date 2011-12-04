@@ -229,9 +229,6 @@ void test_coords()
 
 void test_sun()
 {
-    t_julianDay t;
-    t_julianDay s;
-    
     t_aTime aTime;
 
     // Berlin
