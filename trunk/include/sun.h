@@ -43,5 +43,9 @@ const long double sun_trueAnomaly(const t_julianDay t);
 const long double sun_trueLongitude(const t_julianDay t);
 
 const t_equCoords sun_apparentPosition(const t_julianDay t);
+const t_horCoords sun_horizontalPosition(
+    const t_aTime &aTime
+,   const long double latitude
+,   const long double longitude);
 
 #endif // __SUN_H__

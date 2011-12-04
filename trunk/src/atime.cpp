@@ -35,6 +35,18 @@
 #include <assert.h>
 
 
+s_AstronomicalTime::s_AstronomicalTime()
+:   year(0)
+,   month(0)
+,   day(0)
+,   hour(0)
+,   minute(0)
+,   second(0)
+,   gmtOffset(0)
+{
+}
+
+
 s_AstronomicalTime::s_AstronomicalTime(
     const short year
 ,   const short month

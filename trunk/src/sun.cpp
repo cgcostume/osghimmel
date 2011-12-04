@@ -30,6 +30,7 @@
 #include "sun.h"
 #include "earth.h"
 #include "moon.h"
+#include "sideraltime.h"
 
 #include "mathmacros.h"
 
@@ -114,4 +115,18 @@ const t_equCoords sun_apparentPosition(const t_julianDay t)
     equ.declination = _deg(asin(sin(ε) * sinλ));
 
     return equ;
+}
+
+
+const t_horCoords sun_horizontalPosition(
+    const t_aTime &aTime
+,   const long double latitude
+,   const long double longitude)
+{
+    t_julianDay t(jd(aTime));
+    t_julianDay s(siderealTime(aTime));
+
+    t_equCoords equ = sun_apparentPosition(t);
+
+    return equ.toHorizontal(s, latitude, longitude);
 }

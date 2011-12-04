@@ -45,6 +45,7 @@ void test_aTime();
 void test_jd();
 void test_sideralTime();
 void test_coords();
+void test_sun();
 
 
 void test_astronomy()
@@ -54,6 +55,7 @@ void test_astronomy()
     test_jd();
     test_sideralTime();
     test_coords();
+    test_sun();
 
     TEST_REPORT();
 }
@@ -222,3 +224,77 @@ void test_coords()
     ASSERT_AB(long double,  13.225388, _hours(equ.right_ascension), 0.00005);
     ASSERT_AB(long double, - 7.78507 , equ.declination,             0.00005);
 }
+
+
+
+void test_sun()
+{
+    t_julianDay t;
+    t_julianDay s;
+    
+    t_aTime aTime;
+
+    // Berlin
+    
+    long double lat = _decimal(52, 31, 0);
+    long double lon = _decimal(13, 24, 0);
+
+    // Test nutation and obliquity.
+
+    // Azimuth is interpreted from north from:
+    // http://www.sunposition.info/sunposition/spc/locations.php
+
+    aTime = t_aTime(2011, 12, 4,  8, 0, 0, 1); 
+    {
+        const int hour[9] = { 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+        const int azim[9] = { 127, 139, 152, 166, 180, 195, 208, 221, 233 };
+        const int alt[9]  = { -1, 6, 11, 14, 15, 14, 11, 5, -1 };
+
+        for(unsigned int i = 0; i < 9; ++i)
+        {
+            aTime.hour = hour[i];
+            t_horCoords hor = sun_horizontalPosition(aTime, lat, lon);
+
+            ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
+            ASSERT_AB(int, alt[i], hor.altitude, 1);
+        }
+    }
+
+    aTime = t_aTime(2011,  6, 4,  8, 0, 0, 2); 
+    {
+        const int hour[17] = { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+        const int azim[17] = { 52, 63, 75, 86, 98,  112, 129, 151, 177, 204, 227, 245, 259, 271, 283, 294, 305 };
+        const int alt[17]  = { 1, 8, 17, 26, 35, 44, 52, 57, 60, 58, 53, 45, 36, 27, 18, 10, 2 };
+
+        for(unsigned int i = 0; i < 17; ++i)
+        {
+            aTime.hour = hour[i];
+            t_horCoords hor = sun_horizontalPosition(aTime, lat, lon);
+
+            ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
+            ASSERT_AB(int, alt[i], hor.altitude, 1);
+        }
+    }
+
+    // random: Peru, Pueblo Libre
+
+    lat = _decimal(-12,  5, 0);
+    lon = _decimal(-77,  4, 0);
+
+    aTime = t_aTime(2007,  5, 16,  0, 0, 0, -5); 
+    {
+        const int hour[12] = { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+        const int azim[12] = { 68, 63, 56, 44, 27, 2, 336, 317, 305, 297, 292, 289 };
+        const int alt[12]  = { 9, 22, 35, 46, 55, 59, 56, 48, 37, 24, 11, -3 };
+
+        for(unsigned int i = 0; i < 12; ++i)
+        {
+            aTime.hour = hour[i];
+            t_horCoords hor = sun_horizontalPosition(aTime, lat, lon);
+
+            ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
+            ASSERT_AB(int, alt[i], hor.altitude, 1);
+        }
+    }
+}
+
