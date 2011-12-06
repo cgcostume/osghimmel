@@ -76,10 +76,10 @@ protected slots:
     void on_timeSlider_valueChanged(int value);
 
     void on_latitudeDoubleSpinBox_valueChanged(double d);
-    void on_latitudeLineEdit_textChanged(const QString &text);
+    void on_latitudeLineEdit_editingFinished();
     
     void on_longitudeDoubleSpinBox_valueChanged(double d);
-    void on_longitudeLineEdit_textChanged(const QString &text);
+    void on_longitudeLineEdit_editingFinished();
    
     void on_presetComboBox_currentIndexChanged(int index);
 
