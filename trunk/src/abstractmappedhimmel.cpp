@@ -95,6 +95,10 @@ AbstractMappedHimmel::~AbstractMappedHimmel()
     delete m_razTimef;
 };
 
+#pragma NOTE("Move includes...")
+
+#include "coords.h"
+#include "mathmacros.h"
 
 void AbstractMappedHimmel::update()
 {
@@ -110,9 +114,19 @@ void AbstractMappedHimmel::update()
     if(u_razInverse)
         u_razInverse->set(osg::Matrix::inverse(m_razTransform->getMatrix()));
 
-    // Update two texture status for arbitrary blending (e.g. normal).
+
+#pragma NOTE("Interface for FakeSun required")
 
     const float t(timef());
+
+    t_equCoords equ;
+    equ.declination = _deg(sin(t * _PI2));
+    equ.right_ascension = _deg(cos(t * _PI2));
+
+    t_horCoords hor = equ.toHorizontal(0, 120.0, 0);
+    u_sun->set(hor.toEuclidean());
+
+    // Update two texture status for arbitrary blending (e.g. normal).
 
     // update texture change
     u_srcAlpha->set(m_changer.getSrcAlpha(t));

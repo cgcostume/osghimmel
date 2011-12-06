@@ -34,7 +34,7 @@
 #include "julianday.h"
 #include "coords.h"
 
-const long double sun_meanAnomaly(const t_julianDay t);
+const long double sun_meanAnomaly(const t_julianDay t);     // AA.45.3 (AA.24.3)
 const long double sun_meanLongitude(const t_julianDay t);
 
 const long double sun_center(const t_julianDay t);

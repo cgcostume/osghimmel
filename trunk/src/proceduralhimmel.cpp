@@ -34,6 +34,7 @@
 #include "timef.h"
 #include "sideraltime.h"
 #include "sun.h"
+#include "moon.h"
 
 #include "himmelquad.h"
 
@@ -42,9 +43,11 @@ ProceduralHimmel::ProceduralHimmel()
 :   AbstractHimmel()
 ,   m_latitude(0)
 ,   m_longitude(0)
-,   u_sun(new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 1.0)))
+,   u_sun (new osg::Uniform("sun",  osg::Vec3(1.0, 0.0, 0.0)))
+,   u_moon(new osg::Uniform("moon", osg::Vec3(0.0, 0.0, 1.0)))
 {
     getOrCreateStateSet()->addUniform(u_sun);
+    getOrCreateStateSet()->addUniform(u_moon);
 
     addChild(m_hquad);
 };
@@ -62,14 +65,11 @@ void ProceduralHimmel::update()
     const t_aTime aTime(t_aTime::fromTimeF(*getTime()));
     const t_julianDay t(jd(aTime));
 
+    t_horCoords sun = sun_horizontalPosition(aTime, m_latitude, m_longitude);
+    u_sun->set(sun.toEuclidean());
 
-    t_equCoords sun = sun_apparentPosition(t);
-    
-    t_horCoords hor = sun.toHorizontal(siderealTime(aTime)
-      , m_latitude, m_longitude);
-
-    osg::Vec3 v(hor.toEuclidean());
-    u_sun->set(v);
+    t_horCoords moon = moon_horizontalPosition(aTime, m_latitude, m_longitude);
+    u_moon->set(moon.toEuclidean());
 }
 
 
@@ -129,22 +129,27 @@ const std::string ProceduralHimmel::getFragmentShaderSource()
     return glsl_f_version
 
     +
-        "uniform vec3  sun;\n"
-        "\n"
         "in vec4 m_ray;\n"
         "\n"
 
         // Color Retrieval
 
+        "uniform vec3 sun;\n"
+        "uniform vec3 moon;\n"
+        "\n"
         "void main(void)\n"
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-        "    float d = 1.0 / length(normalize(sun) - stu) * 0.04;\n"
+        "    float s = 1.0 / length(normalize(sun) - stu)  * 0.08;\n"
+        "    float m = 1.0 / length(normalize(moon) - stu) * 0.08;\n"
         "\n"
-        "    float h = pow(1.0 - abs(stu.z), 2) * 0.8;\n"
+	    "    vec3 su = vec3(0.6, .5, 0.4) * s;\n"
+	    "    vec3 mo = vec3(0.6, .6, 0.5) * clamp(m, 0.0, 2.0) * 0.66;\n"
         "\n"
-        "    gl_FragColor = vec4(vec3(d + h), 1.0);\n"
+        "    vec3 h = vec3(pow(1.0 - abs(stu.z), 2) * 0.8);\n"
+        "\n"
+        "    gl_FragColor = vec4(mo + su + h, 1.0);\n"
         "}\n\n";
 }
 
