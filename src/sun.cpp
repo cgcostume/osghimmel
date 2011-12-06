@@ -37,19 +37,30 @@
 #include <assert.h>
 
 
+// Mean anomaly (AA.45.3).
+
 const long double sun_meanAnomaly(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
+
+    const long double M = 357.5291092
+        + T * (+ 35999.0502909
+        + T * (-     0.0001536
+        + T * (+ 1.0 / 24490000.0)));
+
+    // AA uses different coefficients all over the book...
+    // ...taken the (probably) most accurate above
 
     //const long double M = 357.52772
     //    + T * (+  35999.050340
     //    + T * (-      0.0001603
     //    + T * (- 1.0 / 300000.0)));
 
-    const long double M = 357.52910
-        + T * (+ 35999.05030
-        + T * (-     0.0001559
-        + T * (-     0.00000048)));
+    //// From (AA.24.3)
+    //const long double M = 357.52910
+    //    + T * (+ 35999.05030
+    //    + T * (-     0.0001559
+    //    + T * (-     0.00000048)));
 
     // another suggestion (seems insuficient) from 
     // http://wlym.com/~animations/ceres/calculatingposition/eccentric.html
@@ -93,6 +104,7 @@ const long double sun_trueAnomaly(const t_julianDay t)
 
 
 // True geometric longitude referred to the mean equinox of the date.
+
 const long double sun_trueLongitude(const t_julianDay t)
 {
     return sun_meanLongitude(t) + sun_center(t); // Θ

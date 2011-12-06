@@ -39,15 +39,18 @@
 // Compared to the avg. distance of 149.6 * 10^6 km this is not much.
 // http://www.greier-greiner.at/hc/ekliptik.htm
 
+// P. Bretagnon, "Théorie du mouvement de l'ensamble des planètes. Solution VSOP82", 1982
+
 const long double earth_orbitEccentricity(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double e = 0.016708617
+    const long double E = 0.01670862
         + T * (- 0.000042037
-        + T * (- 0.0000001236));
+        + T * (- 0.0000001236
+        + T * (+ 0.00000000004)));
 
-    return _revd(e);
+    return _revd(E);
 }
 
 
@@ -103,6 +106,7 @@ const long double earth_trueObliquity(const t_julianDay t)
     return earth_meanObliquity(t) + earth_obliquityNutation(t); // ε
 }
 
+
 // Inclination of the Earth's axis of rotation.
 // By J. Laskar, "Astronomy and Astrophysics" 1986
 
@@ -133,4 +137,20 @@ const long double earth_meanObliquity(const t_julianDay t)
         + U * (+ _decimal(0, 0,    2.45)))))))))));
 
     return ε0;
+}
+
+
+// Effect of refraction for true altitudes (AA.15.4).
+// G.G. Bennet, "The Calculation of the Astronomical Refraction in marine Navigation", 1982
+
+// This should not be used for procedural himmel, since the refraction,
+// which depends on the lights' wave-length, is already taken int account 
+// in the calculations there.
+
+const long double earth_atmosphericRefraction(const long double altitude)
+{
+    long double R = 1.02 / 
+        tan(_rad(altitude + 10.3 / (altitude + 5.11))) + 0.0019279;
+
+    return _decimal(0, R, 0); // (since R is in minutes)
 }

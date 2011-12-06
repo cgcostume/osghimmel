@@ -42,4 +42,6 @@ const long double earth_obliquityNutation(const t_julianDay t);
 const long double earth_meanObliquity(const t_julianDay t);
 const long double earth_trueObliquity(const t_julianDay t);
 
+const long double earth_atmosphericRefraction(const long double altitude);
+
 #endif // __EARTH_H__

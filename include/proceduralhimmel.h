@@ -62,6 +62,7 @@ protected:
     long double m_longitude;
 
     osg::ref_ptr<osg::Uniform> u_sun;
+    osg::ref_ptr<osg::Uniform> u_moon;
 };
 
 #endif // __PROCEDURALHIMMEL_H__

@@ -46,7 +46,7 @@ void test_jd();
 void test_sideralTime();
 void test_coords();
 void test_sun();
-
+void test_moon();
 
 void test_astronomy()
 {
@@ -56,6 +56,7 @@ void test_astronomy()
     test_sideralTime();
     test_coords();
     test_sun();
+    test_moon();
 
     TEST_REPORT();
 }
@@ -201,7 +202,7 @@ void test_coords()
 
     ASSERT_AB(long double, _decimal( 0,  0, -3.788), earth_longitudeNutation(t), 0.00005);
 
-    ASSERT_AB(long double, 229.27840, moon_meanAnomaly(t),  0.00002);
+    ASSERT_AB(long double, 229.27840, moon_meanAnomaly(t),  0.001);
 
 
     t = jd(t_aTime(1992, 10, 13, 0, 0, 0));
@@ -215,8 +216,7 @@ void test_coords()
     ASSERT_AB(long double,  23.44023, earth_meanObliquity(t), 0.000001);
 
     ASSERT_AB(long double, 0.99766, earth_sunDistance(t),     0.00001);
-
-    ASSERT_AB(long double, 0.016711651, earth_orbitEccentricity(t), 0.00000001);
+    ASSERT_AB(long double, 0.016711651, earth_orbitEccentricity(t), 0.000001);
 
 
     t_equCoords equ = sun_apparentPosition(t);
@@ -295,3 +295,38 @@ void test_sun()
     }
 }
 
+
+void test_moon()
+{
+    t_aTime aTime;
+
+    // Berlin
+    
+    long double lat = _decimal(52, 31, 0);
+    long double lon = _decimal(13, 24, 0);
+
+    // Test nutation and obliquity.
+
+    // Azimuth is interpreted from north from:
+    // http://www.sunposition.info/sunposition/spc/locations.php
+
+    aTime = t_aTime(1992, 4, 12, 0, 0, 0, 0); 
+
+    const t_julianDay t = jd(aTime);
+
+    ASSERT_AB(long double,  97.643514, sun_meanAnomaly(t),     0.000001);
+
+    ASSERT_AB(long double, 134.290186, moon_meanLongitude(t),  0.000001);
+    ASSERT_AB(long double,   5.150839, moon_meanAnomaly(t),    0.000001);
+    ASSERT_AB(long double, 113.842309, moon_meanElongation(t), 0.000001);
+    ASSERT_AB(long double, 219.889726, moon_meanLatitude(t),   0.000001);
+
+    t_eclCoords ecl = moon_position(t);
+
+    ASSERT_AB(long double, 133.162659, ecl.longitude, 0.0001);
+    ASSERT_AB(long double,  -3.229127, ecl.latitude,  0.0001);
+
+    ASSERT_AB(long double, 368409.7, moon_distance(t), 0.2);
+
+    ASSERT_AB(long double, 0.004610, earth_longitudeNutation(t), 0.0002);
+}

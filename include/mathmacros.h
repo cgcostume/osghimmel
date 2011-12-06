@@ -58,10 +58,10 @@
     ((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
 
 #define _deg(rad) \
-    ((rad) * 180.0 / _PI)
+    ((rad) * 180.0L / _PI)
 
 #define _rad(deg) \
-    ((deg) * _PI / 180.0)
+    ((deg) * _PI / 180.0L)
 
 // same as _hour
 // note: if h is negative use -_decimal(d, m, s) instead of _decimal(-d, m, s)
