@@ -133,7 +133,7 @@
      <property name="verticalSpacing">
       <number>4</number>
      </property>
-     <item row="1" column="0" alignment="Qt::AlignVCenter">
+     <item row="1" column="0">
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -180,6 +180,9 @@
    </item>
    <item row="2" column="2">
     <widget class="QLineEdit" name="longitudeLineEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="inputMask">
       <string>999°99'99'' A; </string>
      </property>
@@ -191,7 +194,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1" alignment="Qt::AlignHCenter">
+   <item row="6" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -206,6 +209,9 @@
    </item>
    <item row="1" column="2">
     <widget class="QLineEdit" name="latitudeLineEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="inputMask">
       <string>99°99'99'' A; </string>
      </property>
@@ -226,6 +232,9 @@
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="longitudeLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>L&amp;ongitude:</string>
      </property>
@@ -236,6 +245,9 @@
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="latitudeLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>L&amp;atitude:</string>
      </property>
@@ -246,6 +258,9 @@
    </item>
    <item row="2" column="1">
     <widget class="QDoubleSpinBox" name="longitudeDoubleSpinBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="suffix">
       <string>°</string>
      </property>
@@ -262,6 +277,9 @@
    </item>
    <item row="1" column="1">
     <widget class="QDoubleSpinBox" name="latitudeDoubleSpinBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="suffix">
       <string>°</string>
      </property>
@@ -277,10 +295,17 @@
     </widget>
    </item>
    <item row="3" column="1" colspan="2">
-    <widget class="QComboBox" name="presetComboBox"/>
+    <widget class="QComboBox" name="presetComboBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="presetLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>&amp;Preset:</string>
      </property>

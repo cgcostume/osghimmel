@@ -248,7 +248,7 @@ void DateTimeWidget::on_applyPushButton_clicked(bool)
     stop();
     m_timef.sett(t, true);
 
-    if(m_scene->hasLocationSupport())
+    if(m_scene && m_scene->hasLocationSupport())
     {
         m_scene->setLatitude(m_ui->latitudeDoubleSpinBox->value());
         m_scene->setLongitude(m_ui->longitudeDoubleSpinBox->value());
@@ -353,16 +353,16 @@ void DateTimeWidget::on_longitudeDoubleSpinBox_valueChanged(double d)
 }
 
 
-void DateTimeWidget::on_latitudeLineEdit_textChanged(const QString &text)
+void DateTimeWidget::on_latitudeLineEdit_editingFinished()
 {
-    m_ui->latitudeDoubleSpinBox->setValue(latitudeFromText(text));
+    m_ui->latitudeDoubleSpinBox->setValue(latitudeFromText(m_ui->latitudeLineEdit->text()));
 }
 
 
-void DateTimeWidget::on_longitudeLineEdit_textChanged(const QString &text)
+void DateTimeWidget::on_longitudeLineEdit_editingFinished()
 {
 
-    m_ui->longitudeDoubleSpinBox->setValue(longitudeFromText(text));
+    m_ui->longitudeDoubleSpinBox->setValue(longitudeFromText(m_ui->longitudeLineEdit->text()));
 }
 
 
@@ -414,7 +414,10 @@ void DateTimeWidget::on_presetComboBox_currentIndexChanged(int index)
     m_presetChanged = true;
 
     m_ui->latitudeLineEdit->setText(temp[0]);
+    on_latitudeLineEdit_editingFinished();
+
     m_ui->longitudeLineEdit->setText(temp[1]);
+    on_longitudeLineEdit_editingFinished();
 
     m_presetChanged = false;
 }
