@@ -88,6 +88,8 @@ protected slots:
 
 protected:
 
+    void autoApply();
+
     const bool isCycling() const;
 
 	const float getTimeSliderF() const;

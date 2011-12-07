@@ -234,10 +234,16 @@ void DateTimeWidget::stop()
 }
 
 
-void DateTimeWidget::on_dateTimeEdit_dateTimeChanged(const QDateTime &datetime)
+void DateTimeWidget::autoApply()
 {
     if(m_ui->autoApplyPushButton->isChecked())
         on_applyPushButton_clicked();
+}
+
+
+void DateTimeWidget::on_dateTimeEdit_dateTimeChanged(const QDateTime &datetime)
+{
+    autoApply();
 }
 
 
@@ -325,6 +331,8 @@ void DateTimeWidget::on_latitudeDoubleSpinBox_valueChanged(double d)
     }
 
     m_ui->latitudeLineEdit->setText(latitude);
+
+    autoApply();
 }
 
 
@@ -350,6 +358,8 @@ void DateTimeWidget::on_longitudeDoubleSpinBox_valueChanged(double d)
     }
 
     m_ui->longitudeLineEdit->setText(longitude);
+
+    autoApply();
 }
 
 
@@ -420,6 +430,8 @@ void DateTimeWidget::on_presetComboBox_currentIndexChanged(int index)
     on_longitudeLineEdit_editingFinished();
 
     m_presetChanged = false;
+
+    autoApply();
 }
 
 
