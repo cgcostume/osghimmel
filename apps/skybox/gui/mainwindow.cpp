@@ -202,7 +202,7 @@ void MainWindow::initializeScene()
     m_root->addChild(m_scene.get());
     m_ui->centralWidget->setSceneData(m_root.get());
 
-    const time_t t(QDateTime::currentDateTime().toTime_t());
+    const time_t t(QDateTime::currentDateTimeUtc().toTime_t());
     m_timef = new TimeF(t, 30.f);
 }
 
