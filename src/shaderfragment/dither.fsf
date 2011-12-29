@@ -33,6 +33,15 @@
 
 // requires: pseudo_rand
 
+// The dithering mainly relies on a frame-to-frame coherent pseudo 
+// random number, described in pseudo_rand.fsf. The rand value used 
+// non-uniformly for all 4 color channels and modulated by some 
+// primes. The 0.0001 weight is good for default appliance (change 
+// it as required). Depends on strength of color banding and the 
+// displays color scheme and settings. 
+// The exact value of most of the used constant values where gathered 
+// by trial and error and benchmarked by subjective perception.
+
 namespace 
 {
 	static const std::string glsl_f_dither
@@ -42,7 +51,7 @@ namespace
         "    float r = pseudo_rand(gl_FragCoord.xy);\n"
         "    uvec4 v = uint(r * 3571) * uvec4(67, 89, 23, 71);\n"
         "\n"
-        "    return vec4(v % uvec4(853)) * 0.0001;\n"
+        "    return (vec4(v % uvec4(853)) - 199) * 0.0001;\n"   // subtract 199 to get approx. same colorization when adding this dithering
         "}\n\n"
     );
 }
