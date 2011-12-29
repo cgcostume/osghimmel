@@ -33,14 +33,20 @@
 
 // requires: uniform int osg_FrameNumber;
 
-// The generated pseudo random number is good for frame-to-frame coherent dithering.
+// The generated pseudo random number is good for frame-to-frame 
+// coherent dithering.
 
-// Two static, pseudo random signals, one moving vertically and one horizontally over time, are overlapped.
-// If frame-to-frame coherence is not required, osg_FrameNumber can be changed to any random seed, given via an uniform.
+// Two static, pseudo random signals, one moving vertically and one
+// horizontally over time, are overlapped. If frame-to-frame coherence
+// is not required, osg_FrameNumber can be changed to any random seed,
+// given via an uniform.
 
-// The algorithm was inspired and partially relies on techniques described in:
-// -> http://zfx.info/viewtopic.php?f=11&t=8#p19
-// -> http://www.geeks3d.com/20100831/shader-library-noise-and-pseudo-random-number-generator-in-glsl/
+// The algorithm was inspired and partially relies on techniques 
+// described in: http://zfx.info/viewtopic.php?f=11&t=8#p19
+// and http://www.geeks3d.com/20100831/shader-library-noise-and-pseudo-random-number-generator-in-glsl/
+
+// The exact value of most of the used constant values where gathered 
+// by trial and error and benchmarked by subjective perception.
 
 namespace 
 {
