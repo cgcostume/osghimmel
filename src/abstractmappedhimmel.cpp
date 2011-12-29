@@ -119,12 +119,15 @@ void AbstractMappedHimmel::update()
 
     const float t(timef());
 
-    t_equCoords equ;
-    equ.declination = _deg(sin(t * _PI2));
-    equ.right_ascension = _deg(cos(t * _PI2));
+    if(u_sun)
+    {
+        t_equCoords equ;
+        equ.declination = _deg(sin(t * _PI2));
+        equ.right_ascension = _deg(cos(t * _PI2));
 
-    t_horCoords hor = equ.toHorizontal(0, 120.0, 0);
-    u_sun->set(hor.toEuclidean());
+        t_horCoords hor = equ.toHorizontal(0, 120.0, 0);
+        u_sun->set(hor.toEuclidean());
+    }
 
     // Update two texture status for arbitrary blending (e.g. normal).
 

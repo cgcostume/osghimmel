@@ -31,13 +31,6 @@
 #ifndef __GLSL_HBAND_FSF__
 #define __GLSL_HBAND_FSF__
 
-// The general composition of two colors is specified in these two macros:
-// The first (default) uses the alpha value of src, the other allows over-
-// writing it. The Blending function is specified via COMPOSE parameter.
-
-// e.g. IMP_COMPOSE(multiply, b * s) creates the blend_multiply function
-// that uses back * src as intermediate composition.
-
 namespace 
 {
     static const std::string glsl_f_hband
