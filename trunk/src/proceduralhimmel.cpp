@@ -123,15 +123,22 @@ const std::string ProceduralHimmel::getVertexShaderSource()
 // FragmentShader
 
 #include "shaderfragment/version.fsf"
+#include "shaderfragment/pseudo_rand.fsf"
+#include "shaderfragment/dither.fsf"
 
 const std::string ProceduralHimmel::getFragmentShaderSource()
 {
     return glsl_f_version
-
+    
     +
         "in vec4 m_ray;\n"
         "\n"
+        "uniform int osg_FrameNumber;\n"    // required by pseudo_rand
+        "\n"
 
+    +   glsl_f_pseudo_rand
+    +   glsl_f_dither
+    +
         // Color Retrieval
 
         "uniform vec3 sun;\n"
@@ -149,7 +156,7 @@ const std::string ProceduralHimmel::getFragmentShaderSource()
         "\n"
         "    vec3 h = vec3(pow(1.0 - abs(stu.z), 2) * 0.8);\n"
         "\n"
-        "    gl_FragColor = vec4(mo + su + h, 1.0);\n"
+        "    gl_FragColor = vec4(mo + su + h, 1.0) + dither();\n"
         "}\n\n";
 }
 

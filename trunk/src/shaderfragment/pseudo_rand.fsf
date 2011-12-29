@@ -28,33 +28,38 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_FAKESUN_FSF__
-#define __GLSL_FAKESUN_FSF__
+#ifndef __GLSL_PSEUDO_RAND_FSF__
+#define __GLSL_PSEUDO_RAND_FSF__
+
+// requires: uniform int osg_FrameNumber;
+
+// The generated pseudo random number is good for frame-to-frame coherent dithering.
+
+// Two static, pseudo random signals, one moving vertically and one horizontally over time, are overlapped.
+// If frame-to-frame coherence is not required, osg_FrameNumber can be changed to any random seed, given via an uniform.
+
+// The algorithm was inspired and partially relies on techniques described in:
+// -> http://zfx.info/viewtopic.php?f=11&t=8#p19
+// -> http://www.geeks3d.com/20100831/shader-library-noise-and-pseudo-random-number-generator-in-glsl/
 
 namespace 
 {
-    static const std::string glsl_f_fakesun
+	static const std::string glsl_f_pseudo_rand
     (
-        "in vec4 m_rayFixed;\n"
-        "\n"
-		"uniform vec3  sun;\n"
-		"uniform vec4  sunCoeffs;\n"
-		"uniform float sunScale;\n"
-		"\n"
-        "vec4 fakeSun(float alpha)\n"
+        // "uniform int seed;\n"
+
+        "float pseudo_rand(vec2 seed)\n"
         "{\n"
-		"    vec3 fix = normalize(m_rayFixed.xyz);\n"
-		"\n"
-		"    float d = sunScale * 2.0 / length(normalize(sun) - fix);\n"
-		
-		"    d *= alpha * 0.1 + 0.2;\n"             // Reduce suns' size on low alpha.
-		"    d *= clamp(fix.z + 0.1, 0.0, 0.1);\n"  // Disappear in lower hemisphere.
-		
-		"    d  = clamp(clamp(d, 0.0, 2.0) - (1.0 - alpha) * 2.0, 0.0, 2.0);\n"
-		"\n"
-        "    return vec4(sunCoeffs.rgb * d, sunCoeffs.a);\n"
+        "    int i1 = int(seed.x + seed.y * 1733);\n"
+        "    i1 = (i1 << 7) ^ i1 + osg_FrameNumber;\n"  // seed
+        "\n"
+        "    int i2 = int(seed.y + seed.x * 1103);\n"
+        "    i2 = (i2 << 7) ^ i2 + osg_FrameNumber;\n"  // seed
+        "\n"
+        "    i1 ^= i2;\n"
+        "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
         "}\n\n"
     );
 }
 
-#endif // __GLSL_FAKESUN_FSF__
+#endif // __GLSL_PSEUDO_RAND_FSF__

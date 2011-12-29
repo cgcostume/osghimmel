@@ -85,7 +85,9 @@ set(LIB_SOURCES
     shaderfragment/blend_normal.fsf
     shaderfragment/blend_screen.fsf
     shaderfragment/compose.fsf
+	shaderfragment/dither.fsf
 	shaderfragment/hband.fsf
+	shaderfragment/pseudo_rand.fsf
     shaderfragment/quadretrieveray.vsf
     shaderfragment/quadtransform.vsf
 	shaderfragment/fakesun.fsf

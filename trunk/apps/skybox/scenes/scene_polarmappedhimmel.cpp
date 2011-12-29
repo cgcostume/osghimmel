@@ -69,17 +69,17 @@ Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
     m_himmel->setTransitionDuration(0.05f);
     m_himmel->setSecondsPerRAZ(2000.f);
 
-    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
-    m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("D:/polar_half_art_2.png"));
-    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
-    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
-    m_himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
+//    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
+    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_alphatest.png"));
+    //m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
+    //m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
+    //m_himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
 
+//    m_himmel->pushTextureUnit(0, 0.0f);
     m_himmel->pushTextureUnit(0, 0.0f);
-    m_himmel->pushTextureUnit(1, 0.2f);
-    m_himmel->pushTextureUnit(2, 0.4f);
-    m_himmel->pushTextureUnit(3, 0.6f);
-    m_himmel->pushTextureUnit(4, 0.8f);
+//    m_himmel->pushTextureUnit(2, 0.4f);
+  //  m_himmel->pushTextureUnit(3, 0.6f);
+    //m_himmel->pushTextureUnit(4, 0.8f);
 
     addChild(m_himmel);
 }
