@@ -57,7 +57,6 @@ DateTimeWidget::DateTimeWidget(
 
     const QDateTime dt(QDateTime::fromTime_t(m_timef.gett()));
     m_ui->dateTimeEdit->setDateTime(dt);
-    m_ui->daylightSavingTimeCheckBox->setChecked(false);
     m_ui->utcOffsetDoubleSpinBox->setValue(dt.utcOffset() / (60.0 * 60.0));
 
     me_timeout();
@@ -248,12 +247,17 @@ void DateTimeWidget::on_dateTimeEdit_dateTimeChanged(const QDateTime &datetime)
     autoApply();
 }
 
+#include <qdebug.h>
+
 
 void DateTimeWidget::on_applyPushButton_clicked(bool)
 {
     const time_t t(dateTime().toTime_t());
 
     stop();
+
+//    qDebug() << m_timef.gmtOffset();
+
     m_timef.sett(t, true);
 
     if(m_scene && m_scene->hasLocationSupport())
@@ -320,28 +324,16 @@ const int DateTimeWidget::utcOffset() const
 }
 
 
-const bool DateTimeWidget::daylightSavingTime() const
-{
-    return m_ui->daylightSavingTimeCheckBox->checkState() == Qt::Checked;
-}
-
-
 const QDateTime DateTimeWidget::dateTime() const
 {
     QDateTime dt = m_ui->dateTimeEdit->dateTime();
-    dt.setUtcOffset(utcOffset() + (daylightSavingTime() ? 3600 : 0));
+    //dt.setUtcOffset(utcOffset() + (daylightSavingTime() ? 3600 : 0));
 
     return dt;
 }
 
 
 void DateTimeWidget::on_utcOffsetDoubleSpinBox_valueChanged(double d)
-{
-    autoApply();
-}
-
-
-void DateTimeWidget::on_daylightSavingTimeCheckBox_stateChanged(int state)
 {
     autoApply();
 }

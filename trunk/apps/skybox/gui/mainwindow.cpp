@@ -82,6 +82,9 @@ namespace
 {
     const QString SETTINGS_GROUP_COMMON_GUI("common");
 
+    const QString SETTINGS_GEOMETRY("Geometry");
+    const QString SETTINGS_STATE("State");
+
     const float INITIAL_CAMERA_FOV(60.f);
 }
 
@@ -106,9 +109,6 @@ MainWindow::MainWindow(QWidget *parent)
 ,   m_propertyWidget(NULL)
 ,   m_propertyDockWidget(NULL)
 {
-    QCoreApplication::setOrganizationName("dm@g4t3.de");
-    QCoreApplication::setApplicationName(APPLICATION_NAME);
-
     m_ui->setupUi(this);
 
     setWindowTitle(APPLICATION_NAME " " APPLICATION_VERSION);
@@ -122,8 +122,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     initializeDockWidgets();
 
-#pragma NOTE("Add layout store/restore support for mainwindow and dockwidgets.")
-
     connect(m_ui->centralWidget, SIGNAL(mouseDrop(QList<QUrl>)),
         this, SLOT(mouseDroped(QList<QUrl>)));
 }
@@ -131,6 +129,14 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    // Store Geometry and State
+
+    QSettings s;
+    s.setValue(SETTINGS_GEOMETRY, saveGeometry());
+    s.setValue(SETTINGS_STATE, saveState());
+
+    // Uninitialize
+
     clearHimmel();
 
     m_ui->centralWidget->setSceneData(NULL);
@@ -184,6 +190,8 @@ void MainWindow::uninitializeLog()
     delete m_logStatusLabel;
 }
 
+#include <qdebug.h>
+
 void MainWindow::initializeScene()
 {
     m_camera = m_ui->centralWidget->getCamera();
@@ -202,8 +210,15 @@ void MainWindow::initializeScene()
     m_root->addChild(m_scene.get());
     m_ui->centralWidget->setSceneData(m_root.get());
 
-    const time_t t(QDateTime::currentDateTimeUtc().toTime_t());
-    m_timef = new TimeF(t, 30.f);
+    QDateTime dt(QDateTime::currentDateTimeUtc());
+    QDateTime lt(dt.toTimeSpec(Qt::OffsetFromUTC));
+
+    const time_t t(lt.toTime_t());
+
+    qDebug() << lt.toString(Qt::DateFormat::SystemLocaleLongDate);
+    qDebug() << dt.toString(Qt::DateFormat::SystemLocaleLongDate);
+
+    m_timef = new TimeF(t, dt.utcOffset(), 30.f);
 }
 
 
@@ -306,6 +321,15 @@ void MainWindow::initializeDockWidgets()
     m_glslEditorDockWidget = new CollapsibleDockWidget(*m_glslEditor, this);
 
     addDockWidget(Qt::RightDockWidgetArea, m_glslEditorDockWidget);
+
+
+    // Restore Geometry and State
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+
+    QSettings s;
+    restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
+    restoreState(s.value(SETTINGS_STATE).toByteArray());
 }
 
 
@@ -468,9 +492,13 @@ void MainWindow::mouseDroped(QList<QUrl> urlList)
 }
 
 
+#include <qdebug.h>
+
 void MainWindow::me_timeout()
 {
     assert(m_timef);
+
+//    qDebug() << m_timef->gmtOffset();
 
     m_timefLabel->setText(QString::number(m_timef->getf(), 'f', 4));
 

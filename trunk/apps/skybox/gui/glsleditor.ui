@@ -14,15 +14,6 @@
    <string>GLSL-Editor</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="horizontalSpacing">
-    <number>8</number>
-   </property>
-   <property name="verticalSpacing">
-    <number>4</number>
-   </property>
-   <property name="margin">
-    <number>4</number>
-   </property>
    <item row="0" column="0">
     <widget class="QComboBox" name="shaderComboBox">
      <property name="sizePolicy">
