@@ -58,9 +58,6 @@ public:
 
     const bool isCollapsed() const;
 
-    void saveLayoutState(QSettings &settings);
-    void restoreLayoutState(const QSettings &settings);
-
 public slots:
     void toggleCollapse();
     void toggleCollapse(const bool collapse);
@@ -86,6 +83,7 @@ protected:
 protected slots:
     void detach();
     void dockStatusChanged();
+
     void addTitleBarIfFloating();
 };
 

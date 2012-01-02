@@ -43,6 +43,7 @@ PropertyWidget::PropertyWidget(QWidget *parent)
 ,   m_props(NULL)
 ,   m_propertyBrowser(NULL)
 {
+    setObjectName("Properties");
     setWindowTitle("Properties");
 
     // setup property browser and stuff
@@ -53,8 +54,6 @@ PropertyWidget::PropertyWidget(QWidget *parent)
 
     // setup ui
     setLayout(new QVBoxLayout(this));
-    layout()->setSpacing(4);
-    layout()->setMargin(4);
 
     layout()->addWidget(m_propertyBrowser);
 

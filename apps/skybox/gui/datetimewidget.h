@@ -76,7 +76,6 @@ protected slots:
     void on_timeSlider_valueChanged(int value);
 
     void on_utcOffsetDoubleSpinBox_valueChanged(double d);
-    void on_daylightSavingTimeCheckBox_stateChanged(int state);
 
     void on_latitudeDoubleSpinBox_valueChanged(double d);
     void on_latitudeLineEdit_editingFinished();
@@ -96,7 +95,6 @@ protected:
     const bool isCycling() const;
 
     const int utcOffset() const; // in seconds
-    const bool daylightSavingTime() const;
 
     const QDateTime dateTime() const;
 

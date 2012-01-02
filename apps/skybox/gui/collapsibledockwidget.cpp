@@ -104,8 +104,6 @@ void CollapsibleDockWidget::toggleCollapse(const bool collapse)
 
     if(_titleBar)
         _titleBar->setCollapsed(collapse);
-
-    // TODO: restore geometry
 }
 
 
@@ -129,11 +127,7 @@ void CollapsibleDockWidget::dockStatusChanged()
     if(mw)
         updateCollapsePolicy(*mw);
 
-    if(!isFloating())
-        setTitleBarWidget(_titleBar);
-
-    if(isFloating() && isCollapsed())
-        toggleCollapse();
+    addTitleBarIfFloating();
 }
 
 
@@ -181,25 +175,19 @@ bool CollapsibleDockWidget::eventFilter(QObject *object, QEvent *event)
     if(event->type() == QEvent::MouseButtonRelease)
         addTitleBarIfFloating();
 
-    return false;    // do not filter any event
+    return false; // do not filter any event
 }
 
 
 void CollapsibleDockWidget::addTitleBarIfFloating()
 {
     if(isFloating() && titleBarWidget() != NULL)
+    {
+        if(isCollapsed())
+            toggleCollapse();
+
         setTitleBarWidget(NULL);
-}
-
-
-void CollapsibleDockWidget::saveLayoutState(QSettings& settings)
-{
-    settings.setValue(objectName() + "_collapsed", isCollapsed());
-}
-
-
-void CollapsibleDockWidget::restoreLayoutState(const QSettings& settings)
-{
-    toggleCollapse(settings.value(objectName() + "_collapsed", false).toBool());
-    addTitleBarIfFloating();
+    }
+    else if(!isFloating() && titleBarWidget() == NULL)
+        setTitleBarWidget(_titleBar);
 }

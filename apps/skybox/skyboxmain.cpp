@@ -44,6 +44,14 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
 
+
+    QApplication::setApplicationName(APPLICATION_NAME);
+    QApplication::setApplicationVersion(APPLICATION_VERSION);
+
+    QApplication::setOrganizationName("Daniel Müller");
+    QApplication::setOrganizationDomain("http://code.google.com/p/osghimmel/");
+
+
     MainWindow w;
 #if defined(Q_WS_S60)
     w.showMaximized();

@@ -55,6 +55,20 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
 
     m_himmel->setTransitionDuration(0.05f);
 
+    osg::TextureCubeMap *tcm;
+
+    tcm = m_himmel->getOrCreateTextureCubeMap(0);
+
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/moon_px.png"));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/moon_nx.png"));
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/moon_py.png"));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/moon_ny.png"));
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/moon_pz.png"));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/moon_nz.png"));
+
+    m_himmel->pushTextureUnit(0);
+
+    /*
     std::string name[] = { "4", "6", "9", "17", "19" };
     osg::TextureCubeMap *tcm[5];
 
@@ -72,6 +86,7 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
 
       m_himmel->pushTextureUnit(i, (i * 1.f) / (n * 1.f));
     }
+    */
     addChild(m_himmel);
 }
 
