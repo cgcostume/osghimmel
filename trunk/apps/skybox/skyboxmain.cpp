@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     QApplication::setApplicationName(APPLICATION_NAME);
     QApplication::setApplicationVersion(APPLICATION_VERSION);
 
-    QApplication::setOrganizationName("Daniel Müller");
+    QApplication::setOrganizationName("Daniel Müller @ Hasso-Plattner-Institut");
     QApplication::setOrganizationDomain("http://code.google.com/p/osghimmel/");
 
 
