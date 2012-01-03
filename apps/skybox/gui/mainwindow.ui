@@ -295,7 +295,7 @@
     <string>&amp;Procedural Himmel</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+P</string>
+    <string>Ctrl+Alt+P</string>
    </property>
   </action>
   <action name="insert3DObjectFromFileAction">
