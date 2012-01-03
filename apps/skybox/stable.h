@@ -63,6 +63,7 @@
 #include <QQueue>
 #include <QVector>
 
+#include <qdebug.h>
 
 
 #define TR QObject::tr

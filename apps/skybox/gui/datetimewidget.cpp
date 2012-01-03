@@ -55,9 +55,11 @@ DateTimeWidget::DateTimeWidget(
 
     m_ui->secondsPerCycleDoubleSpinBox->setValue(m_timef.getSecondsPerCycle());
 
-    const QDateTime dt(QDateTime::fromTime_t(m_timef.gett()));
+    QDateTime dt(QDateTime::fromTime_t(m_timef.gett()));
+    dt.setUtcOffset(0);
+
     m_ui->dateTimeEdit->setDateTime(dt);
-    m_ui->utcOffsetDoubleSpinBox->setValue(dt.utcOffset() / (60.0 * 60.0));
+    m_ui->utcOffsetDoubleSpinBox->setValue(m_timef.getUtcOffset() / 3600);
 
     me_timeout();
 
@@ -247,7 +249,17 @@ void DateTimeWidget::on_dateTimeEdit_dateTimeChanged(const QDateTime &datetime)
     autoApply();
 }
 
-#include <qdebug.h>
+
+void DateTimeWidget::on_nowPushButton_clicked(bool checked)
+{
+    QDateTime lt(QDateTime::currentDateTime());
+    QDateTime ut(lt.toUTC());
+
+    m_ui->dateTimeEdit->setDateTime(lt);
+
+    lt.setUtcOffset(0);
+    m_ui->utcOffsetDoubleSpinBox->setValue(-lt.secsTo(ut) / 3600.0);
+}
 
 
 void DateTimeWidget::on_applyPushButton_clicked(bool)
@@ -256,9 +268,8 @@ void DateTimeWidget::on_applyPushButton_clicked(bool)
 
     stop();
 
-//    qDebug() << m_timef.gmtOffset();
-
-    m_timef.sett(t, true);
+    m_timef.setUtcOffset(m_ui->utcOffsetDoubleSpinBox->value() * 3600);
+    m_timef.sett(t);
 
     if(m_scene && m_scene->hasLocationSupport())
     {
@@ -267,6 +278,13 @@ void DateTimeWidget::on_applyPushButton_clicked(bool)
     }
 
     me_timeout();
+}
+
+
+void DateTimeWidget::on_autoApplyPushButton_clicked(bool checked)
+{
+    if(checked)
+        autoApply();
 }
 
 
@@ -304,7 +322,10 @@ void DateTimeWidget::on_timeSlider_valueChanged(int value)
 
     pause();
 
-    m_timef.setf(timeSliderF(), true);
+    // Don't change seconds fraction. Slider works on minutes.
+    const long double seconds = _frac(m_timef.getf() * 1440.0) / 1440.0;
+
+    m_timef.setf(timeSliderF() + seconds, true);
 }
 
 
@@ -323,18 +344,19 @@ const int DateTimeWidget::utcOffset() const
     return seconds;
 }
 
-
 const QDateTime DateTimeWidget::dateTime() const
 {
-    QDateTime dt = m_ui->dateTimeEdit->dateTime();
-    //dt.setUtcOffset(utcOffset() + (daylightSavingTime() ? 3600 : 0));
-
-    return dt;
+    return m_ui->dateTimeEdit->dateTime();
 }
-
 
 void DateTimeWidget::on_utcOffsetDoubleSpinBox_valueChanged(double d)
 {
+    QString prefix("UTC");
+    if(d >= 0.0)
+        prefix.append("+");
+
+    m_ui->utcOffsetDoubleSpinBox->setPrefix(prefix);
+       
     autoApply();
 }
 
@@ -459,8 +481,8 @@ void DateTimeWidget::on_presetComboBox_currentIndexChanged(int index)
     m_ui->longitudeLineEdit->setText(temp[1]);
     on_longitudeLineEdit_editingFinished();
 
-    m_ui->utcOffsetDoubleSpinBox->setValue(temp[2].toFloat());
-    on_utcOffsetDoubleSpinBox_valueChanged(m_ui->utcOffsetDoubleSpinBox->value());
+    if(index != 0)
+        m_ui->utcOffsetDoubleSpinBox->setValue(temp[2].toFloat());
 
     m_presetChanged = false;
 

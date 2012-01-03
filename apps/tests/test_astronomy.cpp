@@ -241,7 +241,7 @@ void test_sun()
     // Azimuth is interpreted from north from:
     // http://www.sunposition.info/sunposition/spc/locations.php
 
-    aTime = t_aTime(2011, 12, 4,  8, 0, 0, 1); 
+    aTime = t_aTime(2011, 12, 4,  8, 0, 0, 1 * 3600); 
     {
         const int hour[9] = { 8, 9, 10, 11, 12, 13, 14, 15, 16 };
         const int azim[9] = { 127, 139, 152, 166, 180, 195, 208, 221, 233 };
@@ -257,7 +257,7 @@ void test_sun()
         }
     }
 
-    aTime = t_aTime(2011,  6, 4,  8, 0, 0, 2); 
+    aTime = t_aTime(2011,  6, 4,  8, 0, 0, 2 * 3600); 
     {
         const int hour[17] = { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
         const int azim[17] = { 52, 63, 75, 86, 98,  112, 129, 151, 177, 204, 227, 245, 259, 271, 283, 294, 305 };
@@ -278,7 +278,7 @@ void test_sun()
     lat = _decimal(-12,  5, 0);
     lon = _decimal(-77,  4, 0);
 
-    aTime = t_aTime(2007,  5, 16,  0, 0, 0, -5); 
+    aTime = t_aTime(2007,  5, 16,  0, 0, 0, -5 * 3600); 
     {
         const int hour[12] = { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
         const int azim[12] = { 68, 63, 56, 44, 27, 2, 336, 317, 305, 297, 292, 289 };

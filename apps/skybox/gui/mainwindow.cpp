@@ -85,7 +85,7 @@ namespace
     const QString SETTINGS_GEOMETRY("Geometry");
     const QString SETTINGS_STATE("State");
 
-    const float INITIAL_CAMERA_FOV(60.f);
+    const float INITIAL_CAMERA_FOV(75.f);
 }
 
 
@@ -190,7 +190,6 @@ void MainWindow::uninitializeLog()
     delete m_logStatusLabel;
 }
 
-#include <qdebug.h>
 
 void MainWindow::initializeScene()
 {
@@ -210,15 +209,14 @@ void MainWindow::initializeScene()
     m_root->addChild(m_scene.get());
     m_ui->centralWidget->setSceneData(m_root.get());
 
-    QDateTime dt(QDateTime::currentDateTimeUtc());
-    QDateTime lt(dt.toTimeSpec(Qt::OffsetFromUTC));
+
+    QDateTime lt(QDateTime::currentDateTime());
+    QDateTime ut(lt.toUTC());
 
     const time_t t(lt.toTime_t());
+    lt.setUtcOffset(0);
 
-    qDebug() << lt.toString(Qt::DateFormat::SystemLocaleLongDate);
-    qDebug() << dt.toString(Qt::DateFormat::SystemLocaleLongDate);
-
-    m_timef = new TimeF(t, dt.utcOffset(), 30.f);
+    m_timef = new TimeF(t, -lt.secsTo(ut), 30.f);
 }
 
 
@@ -492,16 +490,16 @@ void MainWindow::mouseDroped(QList<QUrl> urlList)
 }
 
 
-#include <qdebug.h>
-
 void MainWindow::me_timeout()
 {
     assert(m_timef);
 
-//    qDebug() << m_timef->gmtOffset();
-
     m_timefLabel->setText(QString::number(m_timef->getf(), 'f', 4));
 
-    const QDateTime dt(QDateTime::fromTime_t(m_timef->gett()));
-    m_dateTimeLabel->setText(dt.toString(Qt::ISODate));
+    t_aTime aTime(t_aTime::fromTimeF(*m_timef));
+
+    QDateTime lt(QDateTime::fromTime_t(aTime.toTime_t()));
+    lt.setUtcOffset(aTime.utcOffset);
+
+    m_dateTimeLabel->setText(lt.toString(Qt::ISODate));
 }
