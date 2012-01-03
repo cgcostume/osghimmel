@@ -130,12 +130,12 @@ void AbstractHimmel::initialize()
     if(m_initialized)
         return;
 
-    m_initialized = true;
-
     makeVertexShader();
     makeFragmentShader();
 
     postInitialize();
+
+    m_initialized = true;
 }
 
 
@@ -177,7 +177,6 @@ void AbstractHimmel::unmakeFragmentShader()
         shaderModifier()->unregisterShader(m_fShader);
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
-
 
 
 void AbstractHimmel::update()

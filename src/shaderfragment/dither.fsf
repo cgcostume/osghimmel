@@ -46,12 +46,14 @@ namespace
 {
 	static const std::string glsl_f_dither
     (
+        "uniform float ditheringMultiplier = 1.0;\n"
+        "\n"
         "vec4 dither()\n"
         "{\n"
         "    float r = pseudo_rand(gl_FragCoord.xy);\n"
         "    uvec4 v = uint(r * 3571) * uvec4(67, 89, 23, 71);\n"
         "\n"
-        "    return (vec4(v % uvec4(853)) - 199) * 0.0001;\n"   // subtract 199 to get approx. same colorization when adding this dithering
+        "    return (vec4(v % uvec4(853)) - 199) * 0.00004 * ditheringMultiplier;\n"   // subtract 199 to get approx. same colorization when adding this dithering
         "}\n\n"
     );
 }

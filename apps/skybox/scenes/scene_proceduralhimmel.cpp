@@ -37,6 +37,8 @@ namespace
     // Properties
 
     static const QString GROUP_PROCEDURAL(TR("Procedrual"));
+
+    static const QString PROPERTY_DITHERING_MULTIPLIER (TR("Dithering Multiplier"));
 }
 
 Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
@@ -66,6 +68,8 @@ void Scene_ProceduralHimmel::registerProperties()
     AbstractHimmelScene::registerProperties();
 
     QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
+
+    createProperty(*proceduralGroup, PROPERTY_DITHERING_MULTIPLIER, 1.0, 0.0, 8.0, 0.02); 
 }
 
 
@@ -73,6 +77,8 @@ void Scene_ProceduralHimmel::propertyChanged(
     QtProperty *p
 ,   const QString &name)
 {
+    if(PROPERTY_DITHERING_MULTIPLIER == name)
+        m_himmel->setDitheringMultiplier(doubleValue(PROPERTY_DITHERING_MULTIPLIER));
 }
 
 

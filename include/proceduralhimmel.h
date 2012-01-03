@@ -47,6 +47,9 @@ public:
     const long double setLongitude(const long double longitude);
     const long double getLongitude() const;
 
+    const float setDitheringMultiplier(const float multiplier);
+    const float getDitheringMultiplier() const;
+
 protected:
 
     virtual void update();
@@ -63,6 +66,8 @@ protected:
 
     osg::ref_ptr<osg::Uniform> u_sun;
     osg::ref_ptr<osg::Uniform> u_moon;
+
+    osg::ref_ptr<osg::Uniform> u_ditheringMultiplier;
 };
 
 #endif // __PROCEDURALHIMMEL_H__
