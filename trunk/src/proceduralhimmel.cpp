@@ -45,9 +45,11 @@ ProceduralHimmel::ProceduralHimmel()
 ,   m_longitude(0)
 ,   u_sun (new osg::Uniform("sun",  osg::Vec3(1.0, 0.0, 0.0)))
 ,   u_moon(new osg::Uniform("moon", osg::Vec3(0.0, 0.0, 1.0)))
+,   u_ditheringMultiplier(new osg::Uniform("ditheringMultiplier", 1.0f))
 {
     getOrCreateStateSet()->addUniform(u_sun);
     getOrCreateStateSet()->addUniform(u_moon);
+    getOrCreateStateSet()->addUniform(u_ditheringMultiplier);
 
     addChild(m_hquad);
 };
@@ -95,6 +97,23 @@ const long double ProceduralHimmel::getLongitude() const
 {
     return m_longitude;
 }
+
+
+const float ProceduralHimmel::setDitheringMultiplier(const float multiplier)
+{
+    u_ditheringMultiplier->set(multiplier);
+    return getDitheringMultiplier();
+}
+
+const float ProceduralHimmel::getDitheringMultiplier() const
+{
+    float multiplier;
+    u_ditheringMultiplier->get(multiplier);
+
+    return multiplier;
+}
+
+
 
 
 // VertexShader
