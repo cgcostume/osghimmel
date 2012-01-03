@@ -42,7 +42,7 @@ s_AstronomicalTime::s_AstronomicalTime()
 ,   hour(0)
 ,   minute(0)
 ,   second(0)
-,   gmtOffset(0)
+,   utcOffset(0)
 {
 }
 
@@ -54,14 +54,14 @@ s_AstronomicalTime::s_AstronomicalTime(
 ,   const short hour
 ,   const short minute
 ,   const short second
-,   const short gmtOffset)
+,   const short utcOffset)
 :   year(year)
 ,   month(month)
 ,   day(day)
 ,   hour(hour)
 ,   minute(minute)
 ,   second(second)
-,   gmtOffset(gmtOffset)
+,   utcOffset(utcOffset)
 {
 }
 
@@ -70,11 +70,11 @@ s_AstronomicalTime::s_AstronomicalTime(
     const short year
 ,   const short month
 ,   const long double day
-,   const short gmtOffset)
+,   const short utcOffset)
 :   year(year)
 ,   month(month)
 ,   day(static_cast<unsigned short>(day))
-,   gmtOffset(gmtOffset)
+,   utcOffset(utcOffset)
 {
     const long double h = _frac(day) * 24.0;
     const long double m = _frac(h) * 60.0;
@@ -86,16 +86,13 @@ s_AstronomicalTime::s_AstronomicalTime(
 }
 
 
-const s_AstronomicalTime s_AstronomicalTime::fromTimeT(const time_t &t)
+const s_AstronomicalTime s_AstronomicalTime::fromTimeT(
+    const time_t &time
+,   const time_t &utcOffset)
 {
-    struct tm local, utc;
-
-    localtime_s(&local, &t);
-    gmtime_s(&utc, &t);
-
     // Daylight saving time should not be concidered here -> julian time functions ignore this.
-    //if(local.tm_isdst)
-    //  hourUT += 1;
+
+    struct tm local(*localtime(&time));
 
     return s_AstronomicalTime(
         local.tm_year + 1900
@@ -104,17 +101,17 @@ const s_AstronomicalTime s_AstronomicalTime::fromTimeT(const time_t &t)
     ,   local.tm_hour
     ,   local.tm_min
     ,   local.tm_sec
-    ,   local.tm_hour - utc.tm_hour);
+    ,   static_cast<short>(utcOffset));
 }
 
 
 const s_AstronomicalTime s_AstronomicalTime::fromTimeF(const TimeF &t)
 {
-    return fromTimeT(t.gett());
+    return fromTimeT(t.gett(), t.getUtcOffset());
 }
 
 
-const time_t s_AstronomicalTime::timet() const
+const time_t s_AstronomicalTime::toTime_t() const
 {
     time_t t = 0;
     struct tm lcl(*localtime(&t));
@@ -122,9 +119,12 @@ const time_t s_AstronomicalTime::timet() const
     lcl.tm_year = year - 1900;
     lcl.tm_mon  = month - 1;
     lcl.tm_mday = day;
-    lcl.tm_hour = hour + gmtOffset;
+
+    lcl.tm_hour = hour;
     lcl.tm_min  = minute;
     lcl.tm_sec  = second;
+
+    lcl.tm_isdst = 0;
 
     t = mktime(&lcl);
 

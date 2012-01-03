@@ -61,6 +61,7 @@ public:
 
     TimeF(
         const time_t &time
+    ,   const time_t &utcOffset // In seconds (UTC+01:00 is m_utcOffset = +3600).
     ,   const long double secondsPerCycle = 0.0);
 
     ~TimeF();
@@ -102,13 +103,16 @@ public:
     // Time in seconds from initial time.
     inline const time_t gett() const
     {
-        return m_time[1];
+        return m_time[1] + _timezone;
     }
 
     const time_t gett(const bool updateFirst);
     const time_t sett(
         const time_t &time
     ,   const bool forceUpdate = false);
+
+    const time_t getUtcOffset() const;
+    const time_t setUtcOffset(const time_t &utcOffset /* In Seconds. */);
 
     // 
 
@@ -122,6 +126,8 @@ protected:
 
 protected:
     osg::Timer *m_timer;
+
+    time_t m_utcOffset;
 
     time_t m_time[3];       // [2] is for stop
     long double m_timef[3]; // [2] is for stop

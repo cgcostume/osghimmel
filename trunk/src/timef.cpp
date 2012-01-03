@@ -40,9 +40,10 @@ TimeF::TimeF(
 ,   const long double secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
-,   m_mode(M_Running)
+,   m_mode(M_Pausing)
 ,   m_offset(0.f)
 ,   m_lastModeChangeTime(0.f)
+,   m_utcOffset(0)
 {
     initialize();
     setf(time, true);
@@ -51,12 +52,14 @@ TimeF::TimeF(
 
 TimeF::TimeF(
     const time_t &time
+,   const time_t &utcOffset
 ,   const long double secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
-,   m_mode(M_Running)
+,   m_mode(M_Pausing)
 ,   m_offset(0.f)
 ,   m_lastModeChangeTime(0.f)
+,   m_utcOffset(utcOffset)
 {
     initialize();
     sett(time, true);
@@ -102,7 +105,6 @@ const long double TimeF::getf(const bool updateFirst)
     return m_timef[1];
 }
 
-
 const long double TimeF::setf(
     long double timef
 ,   const bool forceUpdate)
@@ -120,19 +122,11 @@ const long double TimeF::setf(
     const time_t seconds(fToSeconds(timef));
     struct tm lcl(*localtime(&m_time[1]));
 
-    /*struct tm gmt(*gmtime(&m_time[0]));
-
-    const int lcls(mktime(&lcl));
-    const int gmts(mktime(&gmt));
-
-    const time_t offseth((lcls - gmts) / 3600);
-    */
-
-    lcl.tm_hour = seconds / 3600; // - offseth;
+    lcl.tm_hour = seconds / 3600;
     lcl.tm_min  = seconds % 3600 / 60;
     lcl.tm_sec  = seconds % 60;
 
-    m_time[0] = mktime(&lcl);
+    m_time[0] = mktime(&lcl) - _timezone;
     m_time[2] = m_time[0];
 
     reset(forceUpdate);
@@ -152,7 +146,7 @@ const time_t TimeF::gett(const bool updateFirst)
     if(updateFirst)
         update();
 
-    return m_time[1];
+    return m_time[1] + _timezone;
 }
 
 
@@ -160,10 +154,12 @@ const time_t TimeF::sett(
     const time_t &time
 ,   const bool forceUpdate)
 {
-    m_time[0] = time;
+    time_t t = time - _timezone;
+
+    m_time[0] = t;
     m_time[2] = m_time[0];
 
-    m_timef[0] = _frac(secondsTof(time));
+    m_timef[0] = _frac(secondsTof(t));
     m_timef[2] = m_timef[0];
 
     m_offset = 0;
@@ -193,7 +189,7 @@ const long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 
 inline const long double TimeF::secondsTof(const time_t &time)
 {
-    return static_cast<long double>(time / (60.0 * 60.0 * 24.0));
+    return static_cast<long double>((time) / (60.0 * 60.0 * 24.0));
 }
 
 
@@ -260,4 +256,17 @@ void TimeF::stop(const bool forceUpdate)
 {
     pause();
     reset(forceUpdate);
+}
+
+
+const time_t TimeF::getUtcOffset() const
+{
+    return m_utcOffset;
+}
+
+const time_t TimeF::setUtcOffset(const time_t &utcOffset)
+{
+    m_utcOffset = utcOffset;
+
+    return getUtcOffset();
 }

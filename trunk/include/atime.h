@@ -48,19 +48,22 @@ typedef struct s_AstronomicalTime
     ,   const short hour
     ,   const short minute
     ,   const short second
-    ,   const short gmtOffset = 0);
+    ,   const short utcOffset = 0);
 
 
     s_AstronomicalTime::s_AstronomicalTime(
         const short year
     ,   const short month
     ,   const long double day
-    ,   const short gmtOffset = 0);
+    ,   const short utcOffset = 0);
 
-    static const s_AstronomicalTime fromTimeT(const time_t &t);
+    static const s_AstronomicalTime fromTimeT(
+        const time_t &localTime
+    ,   const time_t &utcOffset);
+
     static const s_AstronomicalTime fromTimeF(const TimeF &t);
 
-    const time_t timet() const;
+    const time_t toTime_t() const;
 
     const long double dayf() const;
 
@@ -83,7 +86,7 @@ public:
     short minute;
     short second;
 
-    short gmtOffset;
+    short utcOffset; // In seconds.
 
 } t_aTime;
 

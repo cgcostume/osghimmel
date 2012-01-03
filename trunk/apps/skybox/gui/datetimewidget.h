@@ -67,8 +67,10 @@ public slots:
 protected slots:
 
     void on_dateTimeEdit_dateTimeChanged(const QDateTime &datetime);
+    void on_nowPushButton_clicked(bool checked = false);
 
     void on_applyPushButton_clicked(bool checked = false);
+    void on_autoApplyPushButton_clicked(bool checked);
     void on_cyclePushButton_toggled(bool checked);
 
     void on_secondsPerCycleDoubleSpinBox_valueChanged(double value);

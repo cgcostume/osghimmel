@@ -78,7 +78,7 @@ const t_julianDay jd(t_aTime aTime)
 
 const t_julianDay jdUT(const t_aTime &aTime)
 {
-    return jd(0 == aTime.gmtOffset ? aTime : makeUT(aTime));
+    return jd(0 == aTime.utcOffset ? aTime : makeUT(aTime));
 }
 
 
@@ -88,7 +88,7 @@ const t_julianDay jd0UT(t_aTime aTime)
     aTime.minute = 0;
     aTime.hour   = 0;
 
-    return jd(0 == aTime.gmtOffset ? aTime : makeUT(aTime));
+    return jd(0 == aTime.utcOffset ? aTime : makeUT(aTime));
 }
 
 
@@ -141,7 +141,7 @@ const t_aTime makeTime(
 
 const t_aTime makeUT(const t_aTime &aTime)
 {
-    return makeTime(jd(aTime) - aTime.gmtOffset / 24.0, 0);
+    return makeTime(jd(aTime) - aTime.utcOffset / 3600.0 / 24.0, 0);
 }
 
 

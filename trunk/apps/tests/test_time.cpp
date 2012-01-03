@@ -38,28 +38,90 @@
 
 void test_time()
 {
-    t_aTime aTime(2011, 12, 2, 0, 42, 24);
-    time_t t = aTime.timet();
+    {
+        t_aTime aTime(2011, 12, 2, 0, 42, 24, +1.11 * 3600);
+        time_t t = aTime.toTime_t();
 
-    TimeF timef(t);
+        TimeF f(t, 0);
 
-    ASSERT_EQ(__int64, t, timef.gett());
+        ASSERT_EQ(float, 0.029444444, f.getf());
+        ASSERT_EQ(__int64, t, f.gett());
 
-    timef.setf(0.0, true);
-    ASSERT_EQ(__int64, t - 42 * 60 - 24, timef.gett());
+        f.setf(0.0, true);
+        ASSERT_EQ(__int64, t - 42 * 60 - 24, f.gett());
+
+        f.setf(_day( 0, 42, 24), true);
+        ASSERT_EQ(__int64, t, f.gett());
+
+        f.setf(_day(24, 42, 24), true);
+        ASSERT_EQ(__int64, t, f.gett());
+
+        f.setf(_day(0, 42, 23), true);
+        ASSERT_EQ_NOT(__int64, t, f.gett());
+        f.setf(_day(0, 42, 25), true);
+        ASSERT_EQ_NOT(__int64, t, f.gett());
+    }
+
+    {
+        time_t temp = 0;
+        struct tm ttm;
+
+        ttm.tm_isdst = 0;
+
+        ttm.tm_mday = 3;
+        ttm.tm_mon = 0;
+        ttm.tm_year = 2012 - 1900;
+
+        ttm.tm_min  = 0;
+        ttm.tm_sec  = 0;
+        ttm.tm_hour = 12;
+
+
+        time_t t = mktime(&ttm);
+
+        TimeF f(t, -3.33 * 3600, 0.0L);
+
+
+        ASSERT_EQ(float, 0.5, f.getf());
+
+        ASSERT_EQ(__int64, t, f.gett());
+
+
+        t_aTime a;
+
+        a = t_aTime::fromTimeF(f);
+
+        ASSERT_EQ(short, a.year,   ttm.tm_year + 1900);
+        ASSERT_EQ(short, a.month,  ttm.tm_mon + 1);
+        ASSERT_EQ(short, a.day,    ttm.tm_mday);
+        ASSERT_EQ(short, a.hour,   ttm.tm_hour);
+        ASSERT_EQ(short, a.minute, ttm.tm_min);
+        ASSERT_EQ(short, a.second, ttm.tm_sec);
+
     
-    timef.setf(_day( 0, 42, 24), true);
-    ASSERT_EQ(__int64, t, timef.gett());
+        f.setf(0.5);
+        a = t_aTime::fromTimeF(f);
 
-    timef.setf(_day(24, 42, 24), true);
-    ASSERT_EQ(__int64, t, timef.gett());
+        ASSERT_EQ(short, a.hour,   ttm.tm_hour);
+        ASSERT_EQ(short, a.minute, ttm.tm_min);
+        ASSERT_EQ(short, a.second, ttm.tm_sec);
 
-    timef.setf(_day(0, 42, 23), true);
-    ASSERT_EQ_NOT(__int64, t, timef.gett());
-    timef.setf(_day(0, 42, 25), true);
-    ASSERT_EQ_NOT(__int64, t, timef.gett());
+        f.update();
+        a = t_aTime::fromTimeF(f);
 
+        ASSERT_EQ(short, a.hour,   ttm.tm_hour);
+        ASSERT_EQ(short, a.minute, ttm.tm_min);
+        ASSERT_EQ(short, a.second, ttm.tm_sec);
 
+        f.setf(0.22, true);
+        a = t_aTime::fromTimeF(f);
 
+        ASSERT_EQ(__int64, t - (0.5 - 0.22) * 3600 * 24, f.gett());
+
+        ASSERT_EQ(short, a.hour,   5);
+        ASSERT_EQ(short, a.minute, 16);
+        ASSERT_EQ(short, a.second, 48);
+    }
+    
     TEST_REPORT();
 }
