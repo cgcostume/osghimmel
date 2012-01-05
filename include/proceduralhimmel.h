@@ -68,6 +68,19 @@ protected:
     osg::ref_ptr<osg::Uniform> u_moon;
 
     osg::ref_ptr<osg::Uniform> u_ditheringMultiplier;
+
+
+
+    HimmelQuad *m_mquad;
+
+    void moon_hack();
+
+    osg::Program *m_mprogram;
+    osg::Shader *m_mvShader;
+    osg::Shader *m_mfShader;
+    osg::Shader *m_mgShader;
+
+    osg::ref_ptr<osg::Uniform> u_mcube;
 };
 
 #endif // __PROCEDURALHIMMEL_H__
