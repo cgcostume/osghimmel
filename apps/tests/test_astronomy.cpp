@@ -215,7 +215,7 @@ void test_coords()
     ASSERT_AB(long double, 199.90987, sun_trueLongitude(t),   0.00001);
     ASSERT_AB(long double,  23.44023, earth_meanObliquity(t), 0.000001);
 
-    ASSERT_AB(long double, 0.99766, earth_sunDistance(t),     0.00001);
+    ASSERT_AB(long double, 0.99766, _AUs(earth_sunDistance(t)),     0.00001);
     ASSERT_AB(long double, 0.016711651, earth_orbitEccentricity(t), 0.000001);
 
 
@@ -326,7 +326,7 @@ void test_moon()
     ASSERT_AB(long double, 133.162659, ecl.longitude, 0.0001);
     ASSERT_AB(long double,  -3.229127, ecl.latitude,  0.0001);
 
-    ASSERT_AB(long double, 368409.7, moon_distance(t), 0.2);
+    ASSERT_AB(long double, 368409.7, earth_moonDistance(t), 0.2);
 
     ASSERT_AB(long double, 0.004610, earth_longitudeNutation(t), 0.0002);
 }

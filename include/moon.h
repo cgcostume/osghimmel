@@ -80,6 +80,6 @@ const t_horCoords moon_horizontalPosition(
 ,   const long double latitude
 ,   const long double longitude);
 
-const long double moon_distance(const t_julianDay t);
+const long double moon_meanRadius();
 
 #endif // __MOON_H__

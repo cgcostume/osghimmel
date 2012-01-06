@@ -33,6 +33,7 @@
 #include "atime.h"
 #include "timef.h"
 #include "sideraltime.h"
+#include "earth.h"
 #include "sun.h"
 #include "moon.h"
 
@@ -43,8 +44,8 @@ ProceduralHimmel::ProceduralHimmel()
 :   AbstractHimmel()
 ,   m_latitude(0)
 ,   m_longitude(0)
-,   u_sun (new osg::Uniform("sun",  osg::Vec3(1.0, 0.0, 0.0)))
-,   u_moon(new osg::Uniform("moon", osg::Vec3(0.0, 0.0, 1.0)))
+,   u_sun (new osg::Uniform("sun",  osg::Vec4(1.0, 0.0, 0.0, 1.0))) // [3] = apparent angular radius (not diameter!)
+,   u_moon(new osg::Uniform("moon", osg::Vec4(0.0, 0.0, 1.0, 1.0))) // [3] = apparent angular radius (not diameter!)
 ,   u_ditheringMultiplier(new osg::Uniform("ditheringMultiplier", 1.0f))
 {
     getOrCreateStateSet()->addUniform(u_sun);
@@ -69,11 +70,24 @@ void ProceduralHimmel::update()
     const t_aTime aTime(t_aTime::fromTimeF(*getTime()));
     const t_julianDay t(jd(aTime));
 
+
     t_horCoords sun = sun_horizontalPosition(aTime, m_latitude, m_longitude);
-    u_sun->set(sun.toEuclidean());
+
+    osg::Vec3 sunv  = sun.toEuclidean();
+    sunv.normalize();
+
+    const osg::Vec4f::value_type aasr = earth_apparentAngularSunDiameter(t) * 0.5;
+
+    u_sun->set(osg::Vec4(sunv, aasr));
+
 
     t_horCoords moon = moon_horizontalPosition(aTime, m_latitude, m_longitude);
-    u_moon->set(moon.toEuclidean());
+    osg::Vec3 moonv  = moon.toEuclidean();
+    moonv.normalize();
+
+    const osg::Vec4f::value_type aamr = earth_apparentAngularMoonDiameter(t) * 0.5;
+
+    u_moon->set(osg::Vec4(moonv, aamr));
 }
 
 
@@ -194,24 +208,28 @@ void ProceduralHimmel::moon_hack()
 
 #version 150 compatibility
 
-uniform vec3 moon;
+uniform vec4 moon;
 
 out mat3 test;
 
+const float SQRT2 = 1.41421356237;
+
 void main(void)
 {
-    vec3 m = normalize(moon);
+	vec3 m = moon.xyz;
 
-	vec3 u = normalize(cross(m.xyz, vec3(1)));
-	vec3 v = normalize(cross(u, m.xyz));
+	vec3 u = normalize(cross(m, vec3(1)));
+	vec3 v = normalize(cross(u, m));
 
 	test = mat3(u, v, m);
 
-    vec3 f = m - (gl_Vertex.x * u + gl_Vertex.y * v) * 0.018; // 0.018; // yields a 2° moon
+	float mScale = tan(moon.a) * SQRT2;
+    vec3 f = m - normalize(gl_Vertex.x * u + gl_Vertex.y * v) * mScale;
 
 	gl_TexCoord[0] = gl_Vertex;
     gl_Position = gl_ModelViewProjectionMatrix * vec4(f, 1.0);
 }
+
 
 */
 
@@ -220,8 +238,8 @@ void main(void)
 
 #version 150 compatibility
 
-uniform vec3 moon; // expected to be normalized
-uniform vec3 sun; // expected to be normalized
+uniform vec4 moon; // expected to be normalized
+uniform vec4 sun;  // expected to be normalized
 
 uniform samplerCube moonCube;
 
@@ -256,8 +274,8 @@ void main(void)
 	float cd = c.a;
 
 	vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));
-//	vec3 d = vec3(dot(-sun, n)) * cd;
-	vec3 d = 2.0 * vec3(0.1 + smoothstep(-0.2, 0.2, dot(-sun, n))) * cd;
+//	vec3 d = vec3(dot(-sun.xyz, n)) * cd;
+	vec3 d = 2.0 * vec3(0.1 + smoothstep(-0.2, 0.2, dot(-sun.xyz, n))) * cd;
 
 	gl_FragColor = vec4(d * vec3(1.06, 1.06, 0.98), 1.0);
 
@@ -330,22 +348,23 @@ const std::string ProceduralHimmel::getFragmentShaderSource()
     +
         // Color Retrieval
 
-        "uniform vec3 sun;\n"
-        "uniform vec3 moon;\n"
+        "uniform vec4 sun;\n"
+        //"uniform vec3 moon;\n"
         "\n"
         "void main(void)\n"
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-        "    float s = 1.0 / length(normalize(sun) - stu)  * 0.08;\n"
-        "    float m = 1.0 / length(normalize(moon) - stu) * 0.08;\n"
+        "    float s = 1.0 / length(normalize(sun.xyz) - stu)  * 0.08;\n"
+        //"    float m = 1.0 / length(normalize(moon) - stu) * 0.08;\n"
         "\n"
 	    "    vec3 su = vec3(0.6, .5, 0.4) * s;\n"
-	    "    vec3 mo = vec3(0.6, .6, 0.5) * clamp(m, 0.0, 2.0) * 0.66;\n"
+	    //"    vec3 mo = vec3(0.6, .6, 0.5) * clamp(m, 0.0, 2.0) * 0.66;\n"
         "\n"
         "    vec3 h = vec3(pow(1.0 - abs(stu.z), 2) * 0.8);\n"
         "\n"
-        "    gl_FragColor = vec4(mo + su + h, 1.0) + dither();\n"
+        //"    gl_FragColor = vec4(mo + su + h, 1.0) + dither();\n"
+        "    gl_FragColor = vec4(su + h, 1.0) + dither();\n"
         "}\n\n";
 }
 

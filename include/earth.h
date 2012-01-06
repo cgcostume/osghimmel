@@ -34,7 +34,12 @@
 #include "julianday.h"
 
 const long double earth_orbitEccentricity(const t_julianDay t);
+
 const long double earth_sunDistance(const t_julianDay t);
+const long double earth_apparentAngularSunDiameter(const t_julianDay t);
+
+const long double earth_moonDistance(const t_julianDay t);
+const long double earth_apparentAngularMoonDiameter(const t_julianDay t);
 
 const long double earth_longitudeNutation(const t_julianDay t);
 const long double earth_obliquityNutation(const t_julianDay t);
@@ -43,5 +48,7 @@ const long double earth_meanObliquity(const t_julianDay t);
 const long double earth_trueObliquity(const t_julianDay t);
 
 const long double earth_atmosphericRefraction(const long double altitude);
+
+const long double earth_meanRadius();
 
 #endif // __EARTH_H__
