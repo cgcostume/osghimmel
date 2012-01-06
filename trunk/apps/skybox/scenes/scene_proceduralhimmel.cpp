@@ -39,6 +39,7 @@ namespace
     static const QString GROUP_PROCEDURAL(TR("Procedrual"));
 
     static const QString PROPERTY_DITHERING_MULTIPLIER (TR("Dithering Multiplier"));
+    static const QString PROPERTY_MOON_SCALE           (TR("Moon Scale"));
 }
 
 Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
@@ -69,7 +70,8 @@ void Scene_ProceduralHimmel::registerProperties()
 
     QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
 
-    createProperty(*proceduralGroup, PROPERTY_DITHERING_MULTIPLIER, 1.0, 0.0, 8.0, 0.02); 
+    createProperty(*proceduralGroup, PROPERTY_DITHERING_MULTIPLIER, 1.0, 0.0, 16.0, 0.05);
+    createProperty(*proceduralGroup, PROPERTY_MOON_SCALE, 1.0, 0.0, 64.0, 0.1); 
 }
 
 
@@ -79,6 +81,9 @@ void Scene_ProceduralHimmel::propertyChanged(
 {
     if(PROPERTY_DITHERING_MULTIPLIER == name)
         m_himmel->setDitheringMultiplier(doubleValue(PROPERTY_DITHERING_MULTIPLIER));
+    if(PROPERTY_MOON_SCALE == name)
+        m_himmel->setMoonScale(doubleValue(PROPERTY_MOON_SCALE));
+
 }
 
 
