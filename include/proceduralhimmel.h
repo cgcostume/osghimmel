@@ -47,6 +47,9 @@ public:
     const long double setLongitude(const long double longitude);
     const long double getLongitude() const;
 
+    const float setMoonScale(const float moonScale);
+    const float getMoonScale() const;
+
     const float setDitheringMultiplier(const float multiplier);
     const float getDitheringMultiplier() const;
 
@@ -63,6 +66,8 @@ protected:
 
     long double m_latitude;
     long double m_longitude;
+
+    float m_moonScale;
 
     osg::ref_ptr<osg::Uniform> u_sun;
     osg::ref_ptr<osg::Uniform> u_moon;

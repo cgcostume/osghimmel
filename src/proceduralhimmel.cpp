@@ -44,6 +44,7 @@ ProceduralHimmel::ProceduralHimmel()
 :   AbstractHimmel()
 ,   m_latitude(0)
 ,   m_longitude(0)
+,   m_moonScale(1.f)
 ,   u_sun (new osg::Uniform("sun",  osg::Vec4(1.0, 0.0, 0.0, 1.0))) // [3] = apparent angular radius (not diameter!)
 ,   u_moon(new osg::Uniform("moon", osg::Vec4(0.0, 0.0, 1.0, 1.0))) // [3] = apparent angular radius (not diameter!)
 ,   u_ditheringMultiplier(new osg::Uniform("ditheringMultiplier", 1.0f))
@@ -85,7 +86,7 @@ void ProceduralHimmel::update()
     osg::Vec3 moonv  = moon.toEuclidean();
     moonv.normalize();
 
-    const osg::Vec4f::value_type aamr = earth_apparentAngularMoonDiameter(t) * 0.5;
+    const osg::Vec4f::value_type aamr = earth_apparentAngularMoonDiameter(t) * 0.5 * m_moonScale;
 
     u_moon->set(osg::Vec4(moonv, aamr));
 }
@@ -112,6 +113,18 @@ const long double ProceduralHimmel::setLongitude(const long double longitude)
 const long double ProceduralHimmel::getLongitude() const
 {
     return m_longitude;
+}
+
+
+const float ProceduralHimmel::setMoonScale(const float moonScale)
+{
+    m_moonScale = moonScale;
+    return getMoonScale();
+}
+
+const float ProceduralHimmel::getMoonScale() const
+{
+    return m_moonScale;
 }
 
 
