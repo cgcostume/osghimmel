@@ -142,3 +142,11 @@ const t_horCoords sun_horizontalPosition(
 
     return equ.toHorizontal(s, latitude, longitude);
 }
+
+
+const long double sun_meanRadius()
+{
+    // http://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
+
+    return 0.696e+6; // in kilometers
+}

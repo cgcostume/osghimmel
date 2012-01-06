@@ -48,4 +48,6 @@ const t_horCoords sun_horizontalPosition(
 ,   const long double latitude
 ,   const long double longitude);
 
+const long double sun_meanRadius();
+
 #endif // __SUN_H__

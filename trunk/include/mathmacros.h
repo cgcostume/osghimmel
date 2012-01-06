@@ -89,6 +89,9 @@
 #define _atan2d(x, y) \
     (_deg(atan2(x, y)))
 
+#define _adiameter(D, r) \
+    (2 * atan(r / D))
+
 // normalizes an angle to between 0 and 2PI radians
 #define _rev(rad) \
     ((rad) - floor((rad) / _PI2) * _PI2)
@@ -117,7 +120,14 @@
 #define _hours(d) \
     (_mod(d / 15.0L, 24.0L))
 
-// When using powers, try to use Horner's Method
+
+#define _AUs(kms) \
+    (kms / 149598000)
+
+#define _kms(AUs) \
+    (AUs * 149598000)
+
+// NOTE: When using powers, try to use Horner's Method
 
 
 #endif // __MATHMACROS_H__
