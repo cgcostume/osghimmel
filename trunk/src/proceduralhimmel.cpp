@@ -218,12 +218,12 @@ void ProceduralHimmel::moon_hack()
     
 
 /* VERTEX
-
 #version 150 compatibility
 
 uniform vec4 moon;
 
 out mat3 test;
+out vec3 m_eye;
 
 const float SQRT2 = 1.41421356237;
 
@@ -238,17 +238,19 @@ void main(void)
 
 	float mScale = tan(moon.a) * SQRT2;
     vec3 f = m - normalize(gl_Vertex.x * u + gl_Vertex.y * v) * mScale;
+	m_eye = f;
+
 
 	gl_TexCoord[0] = gl_Vertex;
     gl_Position = gl_ModelViewProjectionMatrix * vec4(f, 1.0);
 }
 
 
+
 */
 
 
 /* FRAGMENT
-
 #version 150 compatibility
 
 uniform vec4 moon; // expected to be normalized
@@ -258,9 +260,13 @@ uniform samplerCube moonCube;
 
 const float radius = 0.98;
 
-in vec4 m_eye;
+in vec3 m_eye;
 
 in mat3 test;
+
+// TODO: shorten
+const float PI = 3.1415926535897932384626433832795;
+const float TWO_OVER_THREEPI = 0.21220659078919378102517835116335;
 
 void main(void)
 {
@@ -276,21 +282,60 @@ void main(void)
 
 	mat3 m = test;;
 
-	// optimize later to mt = mn.zyx and mb = mn.xzy ;)
 	vec3 mn = normalize(m * vec3(x, y, z));
 	vec3 mt = mn.zyx;
 	vec3 mb = mn.xzy;
 
-	vec4  c  = textureCube(moonCube, -mn);
-	vec3  cn = normalize((c.xyz) * 2.0 - 1.0);
+	vec4 c  = textureCube(moonCube, -mn);
+	vec3 cn = normalize((c.xyz) * 2.0 - 1.0);
 
-	float cd = c.a;
+	vec3 n = normalize(vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn)));
 
-	vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));
-//	vec3 d = vec3(dot(-sun.xyz, n)) * cd;
-	vec3 d = 2.0 * vec3(0.1 + smoothstep(-0.2, 0.2, dot(-sun.xyz, n))) * cd;
 
-	gl_FragColor = vec4(d * vec3(1.06, 1.06, 0.98), 1.0);
+	vec3 l = normalize(sun.xyz);
+	vec3 e = normalize(m_eye.xyz);
+
+	float cos_p = clamp(dot(e, l), 0.0, 1.0);
+	float p     = acos(cos_p);
+	float tan_p = tan(p);
+
+	float dot_ne = dot(n, e);
+	float dot_nl = dot(n, l);
+
+	float g = 0.6; // surface densitiy parameter which determines the sharpness of the peak at the full Moon
+	float t = 0.1; // small amount of forward scattering
+
+
+	float R = 2.0 - tan_p / (2.0 * g)
+		* (1.0 - exp(-g / tan_p)) 
+		* (3.0 - exp(-g / tan_p));
+
+	float S = (sin(p) + (PI - p) * cos_p) / PI
+		+ t * (1.0 - cos_p) * (1.0 - cos_p);
+
+	float F = TWO_OVER_THREEPI * R * S * 1.0 / (1.0 + (-dot_ne) / dot_nl);
+
+	if(dot_nl > 0.0)
+		F = 0.0;
+
+	// From "nightsky" paper [46] -> Van De Hulst, H. - "Light Scattering" - 1980
+	float p2 = (PI - acos(dot(-moon.xyz, sun.xyz))) * 0.5;
+	float Eem = 0.19 * 0.5 * (1.0 - sin(p2) * tan(p2) * log(1.0 / tan(p2 * 0.5)));
+	
+	// My approximation with non-perceivable difference.
+	float p2f = dot(-moon.xyz, sun.xyz);
+	float Eemf = 0.1 * (p2f * p2f);
+
+	float Ff = sqrt(-dot_nl) - (dot_ne * 0.7) + 0.3;
+
+	gl_FragColor = vec4(c.a *
+		( vec3(1.0, 1.02, 1.04) * Eem
+      	+ vec3(1.12, 1.10, 0.98) * F * p * 32.0 ), 1.0);
+
+//	gl_FragColor = vec4(c.a *
+	//	( vec3(1.0, 1.02, 1.04) * Eemf
+      //	+ vec3(1.12, 1.10, 0.98) * Ff * p * 2.0 ), 1.0);
+
 
 	// debug
 
@@ -300,6 +345,8 @@ void main(void)
 //	gl_FragColor = vec4(vec3(cd), 1.0);
 //	gl_FragColor = vec4(d * vec3(1.06, 1.06, 0.98), 1.0);
 }
+
+
 
 */
 

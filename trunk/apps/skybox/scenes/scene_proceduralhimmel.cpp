@@ -71,7 +71,7 @@ void Scene_ProceduralHimmel::registerProperties()
     QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
 
     createProperty(*proceduralGroup, PROPERTY_DITHERING_MULTIPLIER, 1.0, 0.0, 16.0, 0.05);
-    createProperty(*proceduralGroup, PROPERTY_MOON_SCALE, 1.0, 0.0, 64.0, 0.1); 
+    createProperty(*proceduralGroup, PROPERTY_MOON_SCALE, 1.0, 0.0, 100.0, 0.1); 
 }
 
 

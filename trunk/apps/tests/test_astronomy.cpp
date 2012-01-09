@@ -190,7 +190,7 @@ void test_coords()
 {
     t_julianDay t;
 
-    // Test nutation and obliquity.
+    // Test nutation and obliquity. (AA. Example 21.a)
 
     t = jd(t_aTime(1987,  4, 10, 0, 0, 0));
 
@@ -298,8 +298,6 @@ void test_sun()
 
 void test_moon()
 {
-    t_aTime aTime;
-
     // Berlin
     
     long double lat = _decimal(52, 31, 0);
@@ -310,10 +308,10 @@ void test_moon()
     // Azimuth is interpreted from north from:
     // http://www.sunposition.info/sunposition/spc/locations.php
 
-    aTime = t_aTime(1992, 4, 12, 0, 0, 0, 0); 
+    const t_aTime aTime(1992, 4, 12); 
 
-    const t_julianDay t = jd(aTime);
-
+    const t_julianDay t(jd(aTime));
+    
     ASSERT_AB(long double,  97.643514, sun_meanAnomaly(t),     0.000001);
 
     ASSERT_AB(long double, 134.290186, moon_meanLongitude(t),  0.000001);
@@ -323,10 +321,26 @@ void test_moon()
 
     t_eclCoords ecl = moon_position(t);
 
-    ASSERT_AB(long double, 133.162659, ecl.longitude, 0.0001);
-    ASSERT_AB(long double,  -3.229127, ecl.latitude,  0.0001);
+    ASSERT_AB(long double, 133.167269, ecl.longitude, 0.00001);
+    ASSERT_AB(long double,  -3.229127, ecl.latitude,  0.00001);
 
-    ASSERT_AB(long double, 368409.7, earth_moonDistance(t), 0.2);
+    ASSERT_AB(long double, 368409.7, earth_moonDistance(t), 0.02);
 
-    ASSERT_AB(long double, 0.004610, earth_longitudeNutation(t), 0.0002);
+    long double tes = _decimal(0, 0, -3.788);
+    long double tes2 = _decimal(0, 0, +9.443);
+    ASSERT_AB(long double, 0.004610, earth_longitudeNutation(jd(t_aTime(1987, 4, 10))), 0.0000002);
+    ASSERT_AB(long double, 0.004610, earth_obliquityNutation(jd(t_aTime(1987, 4, 10))), 0.0000002);
+
+    ASSERT_AB(long double, 0.004610, earth_longitudeNutation(t), 0.0000002);
+
+
+    // Lunar perigee and apogee, values from: http://en.wikipedia.org/wiki/File:Lunar_perigee_apogee.png
+
+    const t_aTime aTime1(2007, 10, 26);
+    const t_aTime aTime2(2007,  4,  3);
+
+    const t_julianDay t1(jd(aTime1));
+    const t_julianDay t2(jd(aTime2));
+
+    ASSERT_AB(long double, earth_apparentAngularMoonDiameter(t1) / earth_apparentAngularMoonDiameter(t2), 1.13, 0.01);
 }
