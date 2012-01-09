@@ -51,6 +51,7 @@ const long double sun_meanAnomaly(const t_julianDay t)
     // AA uses different coefficients all over the book...
     // ...taken the (probably) most accurate above
 
+    // AA.21 ...
     //const long double M = 357.52772
     //    + T * (+  35999.050340
     //    + T * (-      0.0001603

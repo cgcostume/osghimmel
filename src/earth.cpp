@@ -91,68 +91,66 @@ const long double earth_moonDistance(const t_julianDay t)
 
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double A1 = _rad(_revd(119.75 +    131.849 * T));
-    const long double A2 = _rad(_revd( 53.09 + 479264.290 * T));
-    const long double A3 = _rad(_revd(313.45 + 481266.484 * T));
+    // Correction for eccentricity of the Earth's orbit around the sun.
 
     // (AA.45.6)
+
     const long double E = 1.0  
         + T * (- 0.002516 
         + T * (- 0.0000074));
 
-    const long double sM1 = sM * E;
-    const long double sM2 = sM * E * E;
+    const long double EE = E * E;
 
     // (AA.45.A)
 
-    Σr -=20905355 * cos(                  + 1 * mM         );
-    Σr -= 3699111 * cos( 2 * mD           - 1 * mM         );
-    Σr -= 2955968 * cos( 2 * mD                            );
-    Σr -=  569925 * cos(                  + 2 * mM         );
-    Σr +=   48888 * cos(        + 1 * sM1                  );
-    Σr -=    3149 * cos(                           + 2 * mF);
-    Σr +=  246158 * cos( 2 * mD           - 2 * mM         );
-    Σr -=  152138 * cos( 2 * mD - 1 * sM1 - 1 * mM         );
-    Σr -=  170733 * cos( 2 * mD           + 1 * mM         );
-    Σr -=  204586 * cos( 2 * mD - 1 * sM1                  );
-    Σr -=  129620 * cos(        + 1 * sM1 - 1 * mM         );
-    Σr +=  108743 * cos( 1 * mD                            );
-    Σr +=  104755 * cos(        + 1 * sM1 + 1 * mM         );
-    Σr +=   10321 * cos( 2 * mD                    - 2 * mF);
-    Σr +=   79661 * cos(                  + 1 * mM - 2 * mF);
-    Σr -=   34782 * cos( 4 * mD           - 1 * mM         );
-    Σr -=   23210 * cos(                  + 3 * mM         );
-    Σr -=   21636 * cos( 4 * mD           - 2 * mM         );
-    Σr +=   24208 * cos( 2 * mD + 1 * sM1 - 1 * mM         );
-    Σr +=   30824 * cos( 2 * mD + 1 * sM1                  );
-    Σr -=    8379 * cos( 1 * mD           - 1 * mM         );
-    Σr -=   16675 * cos( 1 * mD + 1 * sM1                  );
-    Σr -=   12831 * cos( 2 * mD - 1 * sM1 + 1 * mM         );
-    Σr -=   10445 * cos( 2 * mD           + 2 * mM         );
-    Σr -=   11650 * cos( 4 * mD                            );
-    Σr +=   14403 * cos( 2 * mD           - 3 * mM         );
-    Σr -=    7003 * cos(        + 1 * sM1 - 2 * mM         );
-    Σr +=   10056 * cos( 2 * mD - 1 * sM1 - 2 * mM         );
-    Σr +=    6322 * cos( 1 * mD           + 1 * mM         );
-    Σr -=    9884 * cos( 2 * mD - 2 * sM2                  );
-    Σr +=    5751 * cos(        + 1 * sM1 + 2 * mM         );
-    Σr -=    4950 * cos( 2 * mD - 2 * sM2 - 1 * mM         );
-    Σr +=    4130 * cos( 2 * mD           + 1 * mM - 2 * mF);
-    Σr -=    3958 * cos( 4 * mD - 1 * sM1 - 1 * mM         );
-    Σr +=    3258 * cos( 3 * mD           - 1 * mM         );
-    Σr +=    2616 * cos( 2 * mD + 1 * sM1 + 1 * mM         );
-    Σr -=    1897 * cos( 4 * mD - 1 * sM1 - 2 * mM         );
-    Σr -=    2117 * cos(        + 2 * sM2 - 1 * mM         );
-    Σr +=    2354 * cos( 2 * mD + 2 * sM2 - 1 * mM         );
-    Σr -=    1423 * cos( 4 * mD           + 1 * mM         );
-    Σr -=    1117 * cos(                  + 4 * mM         );
-    Σr -=    1571 * cos( 4 * mD - 1 * sM1                  );
-    Σr -=    1739 * cos( 1 * mD           - 2 * mM         );
-    Σr -=    4421 * cos(                  + 2 * mM - 2 * mF);
-    Σr +=    1165 * cos(        + 2 * sM2 + 1 * mM         );
-    Σr +=    8752 * cos( 2 * mD           - 1 * mM - 2 * mF);
+    Σr -= 20905.355 * cos(                 + 1 * mM         );
+    Σr -=  3699.111 * cos( 2 * mD          - 1 * mM         );
+    Σr -=  2955.968 * cos( 2 * mD                           );
+    Σr -=   569.925 * cos(                 + 2 * mM         );
+    Σr +=    48.888 * cos(        + 1 * sM                  ) * E;
+    Σr -=     3.149 * cos(                          + 2 * mF);
+    Σr +=   246.158 * cos( 2 * mD          - 2 * mM         );
+    Σr -=   152.138 * cos( 2 * mD - 1 * sM - 1 * mM         ) * E;
+    Σr -=   170.733 * cos( 2 * mD          + 1 * mM         );
+    Σr -=   204.586 * cos( 2 * mD - 1 * sM                  ) * E;
+    Σr -=   129.620 * cos(        + 1 * sM - 1 * mM         ) * E;
+    Σr +=   108.743 * cos( 1 * mD                           );
+    Σr +=   104.755 * cos(        + 1 * sM + 1 * mM         ) * E;
+    Σr +=    10.321 * cos( 2 * mD                   - 2 * mF);
+    Σr +=    79.661 * cos(                 + 1 * mM - 2 * mF);
+    Σr -=    34.782 * cos( 4 * mD          - 1 * mM         );
+    Σr -=    23.210 * cos(                 + 3 * mM         );
+    Σr -=    21.636 * cos( 4 * mD          - 2 * mM         );
+    Σr +=    24.208 * cos( 2 * mD + 1 * sM - 1 * mM         ) * E;
+    Σr +=    30.824 * cos( 2 * mD + 1 * sM                  ) * E;
+    Σr -=     8.379 * cos( 1 * mD          - 1 * mM         );
+    Σr -=    16.675 * cos( 1 * mD + 1 * sM                  ) * E;
+    Σr -=    12.831 * cos( 2 * mD - 1 * sM + 1 * mM         ) * E;
+    Σr -=    10.445 * cos( 2 * mD          + 2 * mM         );
+    Σr -=    11.650 * cos( 4 * mD                           );
+    Σr +=    14.403 * cos( 2 * mD          - 3 * mM         );
+    Σr -=     7.003 * cos(        + 1 * sM - 2 * mM         ) * E;
+    Σr +=    10.056 * cos( 2 * mD - 1 * sM - 2 * mM         ) * E;
+    Σr +=     6.322 * cos( 1 * mD          + 1 * mM         );
+    Σr -=     9.884 * cos( 2 * mD - 2 * sM                  ) * EE;
+    Σr +=     5.751 * cos(        + 1 * sM + 2 * mM         ) * E;
+    Σr -=     4.950 * cos( 2 * mD - 2 * sM - 1 * mM         ) * EE;
+    Σr +=     4.130 * cos( 2 * mD          + 1 * mM - 2 * mF);
+    Σr -=     3.958 * cos( 4 * mD - 1 * sM - 1 * mM         ) * E;
+    Σr +=     3.258 * cos( 3 * mD          - 1 * mM         );
+    Σr +=     2.616 * cos( 2 * mD + 1 * sM + 1 * mM         ) * E;
+    Σr -=     1.897 * cos( 4 * mD - 1 * sM - 2 * mM         ) * E;
+    Σr -=     2.117 * cos(        + 2 * sM - 1 * mM         ) * EE;
+    Σr +=     2.354 * cos( 2 * mD + 2 * sM - 1 * mM         ) * EE;
+    Σr -=     1.423 * cos( 4 * mD          + 1 * mM         );
+    Σr -=     1.117 * cos(                 + 4 * mM         );
+    Σr -=     1.571 * cos( 4 * mD - 1 * sM                  ) * E;
+    Σr -=     1.739 * cos( 1 * mD          - 2 * mM         );
+    Σr -=     4.421 * cos(                 + 2 * mM - 2 * mF);
+    Σr +=     1.165 * cos(        + 2 * sM + 1 * mM         ) * EE;
+    Σr +=     8.752 * cos( 2 * mD          - 1 * mM - 2 * mF);
 
-    const long double Δ = 385000.56 + Σr * 0.001; // in kilometers
+    const long double Δ = 385000.56 + Σr; // in kilometers
     return Δ;
 }
 
@@ -162,13 +160,19 @@ const long double earth_apparentAngularMoonDiameter(const t_julianDay t)
 }
 
 
+// (AA.21)
+
 const long double earth_longitudeNutation(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
     const long double Ω  = _rad(moon_meanOrbitLongitude(t));
-    const long double Ls = _rad(280.4664  +  36000.7698   * T);
-    const long double Lm = _rad(218.3165  + 481267.8813   * T);
+    const long double Ls = _rad(sun_meanAnomaly(t));
+    const long double Lm = _rad(moon_meanAnomaly(t));
+
+#pragma NOTE("Fix mixing of high-precision with low precision formulars (use high-precision only).");
+    // TODO: Mixing high-precision with low-precision (below) formulars here.
+    // Perhaps adapt nightsky papers model anytime in the future.
 
     const long double ψ =
         - _decimal(0, 0, 17.20) * sin(Ω)
@@ -180,13 +184,19 @@ const long double earth_longitudeNutation(const t_julianDay t)
 }
 
 
+// (AA.21)
+
 const long double earth_obliquityNutation(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
     const long double Ω  = _rad(moon_meanOrbitLongitude(t));
-    const long double Ls = _rad(280.4664  +  36000.7698   * T);
-    const long double Lm = _rad(218.3165  + 481267.8813   * T);
+    const long double Ls = _rad(sun_meanAnomaly(t));
+    const long double Lm = _rad(moon_meanAnomaly(t));
+
+#pragma NOTE("Fix mixing of high-precision with low precision formulars (use high-precision only).");
+    // TODO: Mixing high-precision with low-precision (below) formulars here.
+    // Perhaps adapt nightsky papers model anytime in the future.
 
     const long double ε =
         + _decimal(0, 0,  9.20) * cos(Ω)
@@ -204,7 +214,7 @@ const long double earth_trueObliquity(const t_julianDay t)
 }
 
 
-// Inclination of the Earth's axis of rotation.
+// Inclination of the Earth's axis of rotation. (AA.21.3)
 // By J. Laskar, "Astronomy and Astrophysics" 1986
 
 const long double earth_meanObliquity(const t_julianDay t)
