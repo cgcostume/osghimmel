@@ -86,6 +86,7 @@ protected:
     osg::Shader *m_mgShader;
 
     osg::ref_ptr<osg::Uniform> u_mcube;
+    osg::ref_ptr<osg::Uniform> u_rot;
 };
 
 #endif // __PROCEDURALHIMMEL_H__

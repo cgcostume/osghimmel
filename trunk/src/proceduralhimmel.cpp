@@ -89,6 +89,11 @@ void ProceduralHimmel::update()
     const osg::Vec4f::value_type aamr = earth_apparentAngularMoonDiameter(t) * 0.5 * m_moonScale;
 
     u_moon->set(osg::Vec4(moonv, aamr));
+
+
+    // MOON HACK
+
+    u_rot->set(osg::Matrix::rotate(osg::Vec3(0.0, 1.0, 0.0), moonv));
 }
 
 
@@ -152,6 +157,7 @@ const float ProceduralHimmel::getDitheringMultiplier() const
 #include <osg/Geode>
 #include <osg/Geometry>
 
+#include <osg/Depth>
 
 void ProceduralHimmel::moon_hack()
 {
@@ -179,8 +185,18 @@ void ProceduralHimmel::moon_hack()
     stateSet->addUniform(u_moon);
     stateSet->addUniform(u_sun);
 
+
     u_mcube = new osg::Uniform("mooncube", 0);
     stateSet->addUniform(u_mcube);
+
+    u_rot = new osg::Uniform("rot", osg::Matrixd());
+    stateSet->addUniform(u_rot);
+
+
+
+    //osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);
+    //stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
 
     //m_mprogram->addShader(m_mgShader);
     m_mprogram->addShader(m_mvShader);
@@ -218,11 +234,13 @@ void ProceduralHimmel::moon_hack()
     
 
 /* VERTEX
+
+
 #version 150 compatibility
 
 uniform vec4 moon;
 
-out mat3 test;
+out mat4 test;
 out vec3 m_eye;
 
 const float SQRT2 = 1.41421356237;
@@ -234,7 +252,7 @@ void main(void)
 	vec3 u = normalize(cross(m, vec3(1)));
 	vec3 v = normalize(cross(u, m));
 
-	test = mat3(u, v, m);
+	test = mat4(vec4(u, 0.0), vec4(v, 0.0), vec4(m, 0.0), vec4(vec3(0.0), 1.0));
 
 	float mScale = tan(moon.a) * SQRT2;
     vec3 f = m - normalize(gl_Vertex.x * u + gl_Vertex.y * v) * mScale;
@@ -251,6 +269,8 @@ void main(void)
 
 
 /* FRAGMENT
+
+
 #version 150 compatibility
 
 uniform vec4 moon; // expected to be normalized
@@ -262,7 +282,9 @@ const float radius = 0.98;
 
 in vec3 m_eye;
 
-in mat3 test;
+in mat4 test;
+
+uniform mat4 rot;
 
 // TODO: shorten
 const float PI = 3.1415926535897932384626433832795;
@@ -280,13 +302,14 @@ void main(void)
 
 	float z = sqrt(zz);
 
-	mat3 m = test;;
+	mat4 m = test;;
 
-	vec3 mn = normalize(m * vec3(x, y, z));
+	vec3 mn = normalize((m * vec4(x, y, z, 1.0)).xyz);
 	vec3 mt = mn.zyx;
 	vec3 mb = mn.xzy;
 
-	vec4 c  = textureCube(moonCube, -mn);
+	vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * rot).xyz;
+	vec4 c  = textureCube(moonCube, vec3(-q.x, q.y, -q.z));
 	vec3 cn = normalize((c.xyz) * 2.0 - 1.0);
 
 	vec3 n = normalize(vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn)));
@@ -323,18 +346,12 @@ void main(void)
 	float Eem = 0.19 * 0.5 * (1.0 - sin(p2) * tan(p2) * log(1.0 / tan(p2 * 0.5)));
 	
 	// My approximation with non-perceivable difference.
-	float p2f = dot(-moon.xyz, sun.xyz);
-	float Eemf = 0.1 * (p2f * p2f);
-
-	float Ff = sqrt(-dot_nl) - (dot_ne * 0.7) + 0.3;
+//	float p2f = dot(-moon.xyz, sun.xyz);
+//	float Eemf = 0.1 * (p2f * p2f);
 
 	gl_FragColor = vec4(c.a *
 		( vec3(1.0, 1.02, 1.04) * Eem
       	+ vec3(1.12, 1.10, 0.98) * F * p * 32.0 ), 1.0);
-
-//	gl_FragColor = vec4(c.a *
-	//	( vec3(1.0, 1.02, 1.04) * Eemf
-      //	+ vec3(1.12, 1.10, 0.98) * Ff * p * 2.0 ), 1.0);
 
 
 	// debug
@@ -345,6 +362,7 @@ void main(void)
 //	gl_FragColor = vec4(vec3(cd), 1.0);
 //	gl_FragColor = vec4(d * vec3(1.06, 1.06, 0.98), 1.0);
 }
+
 
 
 
