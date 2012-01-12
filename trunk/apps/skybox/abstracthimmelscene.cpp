@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -96,3 +96,18 @@ const double AbstractHimmelScene::setLongitude(const double longitude)
 {
     return 0.0;
 }
+
+
+
+
+    // TODO - TEMP: will be changed soon
+    void AbstractHimmelScene::hintCamera(osg::Camera *camera)
+    {
+        himmel()->hintCamera(camera);
+    }
+
+    void AbstractHimmelScene::hintViewSize(unsigned int width, unsigned int height)
+    {
+        himmel()->hintViewSize(width, height);
+    }
+

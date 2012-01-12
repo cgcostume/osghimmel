@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -130,8 +130,8 @@ void QOsgWidget::createContext()
     traits->windowDecoration = false;
     traits->doubleBuffer = true;
     traits->sharedContext = 0;
-    traits->sampleBuffers = ds->getMultiSamples();
-    traits->samples = 16;
+    traits->sampleBuffers = 1; //ds->getMultiSamples();
+    traits->samples = 1;    // TODO: make adjustable
 
     traits->setInheritedWindowPixelFormat = true;
 
@@ -182,7 +182,7 @@ void QOsgWidget::resizeEvent(QResizeEvent *event)
     m_gw->getEventQueue()->windowResize(0, 0, size.width(), size.height() );
     m_gw->resized(0, 0, size.width(), size.height());
 
-    // emit resizeWidget(size.width(), size.height());
+    emit widgetResized(size.width(), size.height());
 }
 
 

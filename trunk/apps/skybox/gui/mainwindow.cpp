@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -124,6 +124,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_ui->centralWidget, SIGNAL(mouseDrop(QList<QUrl>)),
         this, SLOT(mouseDroped(QList<QUrl>)));
+
+    connect(m_ui->centralWidget, SIGNAL(widgetResized(unsigned int, unsigned int))
+        , this, SLOT(hintViewSize(unsigned int, unsigned int)));
 }
 
 
@@ -224,6 +227,9 @@ void MainWindow::setCameraFov(float fov)
 {
     m_camera->setProjectionMatrixAsPerspective(
         fov, static_cast<double>(m_ui->centralWidget->width()) / static_cast<double>(m_ui->centralWidget->height()), 0.1, 8.f);
+
+    if(m_himmel)
+        m_himmel->hintCamera(m_camera);     // TODO: ugly
 }
 
 
@@ -240,9 +246,22 @@ void MainWindow::himmelChanged()
     {
         m_himmel->assignTime(m_timef);
         m_root->addChild(m_himmel.get());
+
+        // TODO: ugly
+        m_himmel->hintCamera(m_camera);
+        m_himmel->hintViewSize(m_ui->centralWidget->width(), m_ui->centralWidget->height());
     }
 
     m_propertyWidget->assign(m_himmel);
+}
+
+
+void MainWindow::hintViewSize(
+    unsigned int width
+,   unsigned int height)
+{
+    if(m_himmel)
+        m_himmel->hintViewSize(width, height);
 }
 
 
