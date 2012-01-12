@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -87,6 +87,12 @@ public:
     virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const;
 
 
+
+    // TODO - TEMP: will be changed soon
+    void hintCamera(osg::Camera *camera);
+    void hintViewSize(unsigned int width, unsigned int height);
+
+
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
     static void setupShaderModifier(ShaderModifier *shaderModifier);
     static ShaderModifier *shaderModifier();
@@ -140,6 +146,13 @@ protected:
     bool m_autoUpdateTime;
 
     HimmelQuad *m_hquad;
+
+
+    // TODO  temp
+    osg::Camera *m_cameraHint;
+    unsigned int m_widthHint;
+    unsigned int m_heightHint;
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 private:

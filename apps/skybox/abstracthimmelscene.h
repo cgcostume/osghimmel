@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -62,6 +62,13 @@ public:
 
     virtual const double setLatitude(const double latitude);
     virtual const double setLongitude(const double longitude);
+
+
+    // TODO - TEMP: will be changed soon
+    void hintCamera(osg::Camera *camera);
+    void hintViewSize(unsigned int width, unsigned int height);
+
+
 
 protected:
 

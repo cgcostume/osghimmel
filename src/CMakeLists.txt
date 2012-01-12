@@ -48,6 +48,7 @@ set(LIB_SOURCES
     shadermodifier.cpp
 	sideraltime.cpp
     spheremappedhimmel.cpp
+	stars.cpp
 	sun.cpp
     timef.cpp
     twounitschanger.cpp
@@ -72,6 +73,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/shadermodifier.h
 	${HEADER_PATH}/sideraltime.h
     ${HEADER_PATH}/spheremappedhimmel.h
+	${HEADER_PATH}/stars.h
 	${HEADER_PATH}/sun.h
     ${HEADER_PATH}/timef.h
     ${HEADER_PATH}/twounitschanger.h

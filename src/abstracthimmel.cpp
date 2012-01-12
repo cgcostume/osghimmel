@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -67,6 +67,13 @@ AbstractHimmel::AbstractHimmel()
 ,   m_hquad(new HimmelQuad())
 
 ,   m_initialized(false)
+
+
+// TODO
+,   m_cameraHint(NULL)
+,   m_widthHint(NULL)
+,   m_heightHint(NULL)
+
 {
     osg::StateSet* stateSet = getOrCreateStateSet();
 
@@ -228,3 +235,20 @@ ShaderModifier *AbstractHimmel::shaderModifier()
 }
 
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+
+
+// TODO  temp
+
+void AbstractHimmel::hintCamera(osg::Camera *camera)
+{
+    m_cameraHint = camera;
+}
+
+
+void AbstractHimmel::hintViewSize(unsigned int width, unsigned int height)
+{
+    m_widthHint = width;
+    m_heightHint = height;
+}
+

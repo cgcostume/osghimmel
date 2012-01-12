@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -87,6 +87,17 @@ protected:
 
     osg::ref_ptr<osg::Uniform> u_mcube;
     osg::ref_ptr<osg::Uniform> u_rot;
+
+
+    void stars_hack();
+
+    osg::Program *m_sprogram;
+    osg::Shader *m_svShader;
+    osg::Shader *m_sfShader;
+    osg::Shader *m_sgShader;
+
+
+    osg::ref_ptr<osg::Uniform> u_starWidth;
 };
 
 #endif // __PROCEDURALHIMMEL_H__

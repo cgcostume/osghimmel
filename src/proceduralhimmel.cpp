@@ -1,5 +1,5 @@
 
-// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -54,8 +54,9 @@ ProceduralHimmel::ProceduralHimmel()
     getOrCreateStateSet()->addUniform(u_ditheringMultiplier);
 
     addChild(m_hquad);
-
     moon_hack();
+
+    stars_hack();
 };
 
 
@@ -70,7 +71,6 @@ void ProceduralHimmel::update()
 
     const t_aTime aTime(t_aTime::fromTimeF(*getTime()));
     const t_julianDay t(jd(aTime));
-
 
     t_horCoords sun = sun_horizontalPosition(aTime, m_latitude, m_longitude);
 
@@ -91,9 +91,23 @@ void ProceduralHimmel::update()
     u_moon->set(osg::Vec4(moonv, aamr));
 
 
-    // MOON HACK
+    //// TODO: MOON HACK
 
     u_rot->set(osg::Matrix::rotate(osg::Vec3(0.0, 1.0, 0.0), moonv));
+
+    // TODO: Star HACK
+
+    if(m_cameraHint)
+    {
+        double fov;
+        double dummy;
+        m_cameraHint->getProjectionMatrixAsPerspective(fov, dummy, dummy, dummy);
+
+        static const float TWO_TIMES_SQRT2 = 2.0 * sqrt(2.0);
+
+        if(m_widthHint > 0)
+            u_starWidth->set((float)(tan(_rad(fov) / m_heightHint) * 2.0));
+    }
 }
 
 
@@ -156,7 +170,7 @@ const float ProceduralHimmel::getDitheringMultiplier() const
 
 #include <osg/Geode>
 #include <osg/Geometry>
-
+#include <osg/BlendFunc>
 #include <osg/Depth>
 
 void ProceduralHimmel::moon_hack()
@@ -164,7 +178,6 @@ void ProceduralHimmel::moon_hack()
 // - Hack that transforms a quad to the moons position into the canopy.
 // - Generates circle with sphere normals and adds normals from moon cube map
 // - Applies lighting from sun - moon phase is correct (no extra calc for that ;))
-// - TODO: BRDF of Moon
 // - TODO: Correct Moon rotation (Face towards earth is still wrong)
 
 #pragma NOTE("Beautify this!")
@@ -180,7 +193,7 @@ void ProceduralHimmel::moon_hack()
 
     osg::StateSet* stateSet = m_mquad->getOrCreateStateSet();
 
-    setupNode(stateSet);
+   // setupNode(stateSet);
  
     stateSet->addUniform(u_moon);
     stateSet->addUniform(u_sun);
@@ -193,9 +206,8 @@ void ProceduralHimmel::moon_hack()
     stateSet->addUniform(u_rot);
 
 
-
-    //osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);
-    //stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+    osg::Depth* depth = new osg::Depth(osg::Depth::LESS);    // This is to not render inside the moon.
+    stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 
 
     //m_mprogram->addShader(m_mgShader);
@@ -203,7 +215,10 @@ void ProceduralHimmel::moon_hack()
     m_mprogram->addShader(m_mfShader);
 
     stateSet->setAttributeAndModes(m_mprogram, osg::StateAttribute::ON);
-
+            
+    
+    osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+    stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 
     osg::ref_ptr<osg::TextureCubeMap> tcm(new osg::TextureCubeMap);
 
@@ -379,6 +394,164 @@ void main(void)
     }
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
+
+
+
+
+#include <osg/Point>
+
+
+
+
+
+namespace 
+{
+	#define NUM_RANDS 100000
+	static int randI = 0;
+
+	static double randds[NUM_RANDS];
+	static double randfs[NUM_RANDS];
+}
+
+
+void initializeRands()
+{
+	for(int i = 0; i < NUM_RANDS; ++i)
+		randds[i] = rand() % 351371 / 351371.0;	// use prime number
+	for(int i = 0; i < NUM_RANDS; ++i)
+        randfs[i] = rand() / (RAND_MAX * 1.0f);	// use prime number
+}
+
+
+const double randd() 
+{
+	randI = (randI + 1) % NUM_RANDS; 
+	return randds[randI];
+}
+
+
+const float randf()
+{
+	randI = (randI + 1) % NUM_RANDS; 
+	return randfs[randI];
+}
+
+
+
+class StarPoints : public osg::Geometry
+{
+public:
+    StarPoints()
+    {
+        
+        initializeRands();
+
+        osg::Vec4Array* cAry = new osg::Vec4Array;
+        setColorArray( cAry );
+        setColorBinding( osg::Geometry::BIND_OVERALL );
+        cAry->push_back( osg::Vec4(1,0,0,1) );
+
+        osg::Vec4Array* vAry = new osg::Vec4Array();
+        setVertexArray( vAry );
+
+        for(int i = 0; i < 9110; i++)
+        {
+            osg::Vec4 v = osg::Vec4((rand() % 36000 / 36000.0) - 0.5, (rand() % 36000 / 36000.0) - 0.5, (rand() % 36000 / 36000.0) - 0.5, (rand() % 32 / 32.0));
+            v.normalize();
+            vAry->push_back(v);
+        }
+
+        addPrimitiveSet( new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, vAry->size() ) );
+
+        osg::StateSet* sset = getOrCreateStateSet();
+
+        // if things go wrong, fall back to big points
+        osg::Point* p = new osg::Point;
+        p->setSize(6);
+        sset->setAttribute( p );
+
+    }
+
+};
+
+
+
+void ProceduralHimmel::stars_hack()
+{
+
+    osg::Geode* root( new osg::Geode );
+    root->addDrawable( new StarPoints() );
+
+
+    addChild(root);
+
+    m_sprogram = new osg::Program;
+    m_svShader = new osg::Shader(osg::Shader::VERTEX);
+    m_sfShader = new osg::Shader(osg::Shader::FRAGMENT);
+    m_sgShader = new osg::Shader(osg::Shader::GEOMETRY);
+ 
+    osg::StateSet* stateSet = root->getOrCreateStateSet();
+
+
+        u_starWidth = new osg::Uniform("starWidth", 1.0f);
+    stateSet->addUniform(u_starWidth);
+
+
+    stateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
+
+    //stateSet->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF); 
+
+        osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+        stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
+
+    //osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS, 0.0, 1.0);
+    //stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+    stateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+ 
+    stateSet->addUniform(u_moon);
+    stateSet->addUniform(u_sun);
+
+
+    m_sprogram->addShader(m_sgShader);
+    m_sprogram->addShader(m_svShader);
+    m_sprogram->addShader(m_sfShader);
+    
+    stateSet->setAttributeAndModes(m_sprogram, osg::StateAttribute::ON);
+
+    m_sgShader->loadShaderSourceFromFile("D:/p/osghimmel/tempsg.txt");
+    m_svShader->loadShaderSourceFromFile("D:/p/osghimmel/tempsv.txt");
+    m_sfShader->loadShaderSourceFromFile("D:/p/osghimmel/tempsf.txt");
+
+
+/* VERTEX
+
+
+*/
+
+
+/* FRAGMENT
+
+
+
+*/
+
+
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+    {
+        shaderModifier()->registerShader("stars_hack", m_sfShader);
+        shaderModifier()->registerShader("stars_hack", m_svShader);
+        shaderModifier()->registerShader("stars_hack", m_sgShader);
+    }
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+}
+
+
+
+
+
 
 
 
