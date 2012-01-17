@@ -1,5 +1,5 @@
-
-// Copyright (c) 2011-2012, Daniel M�ller <dm@g4t3.de>
+﻿
+// Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -27,20 +27,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#pragma once
+#ifndef __STARS_H__
+#define __STARS_H__
 
-#include "test_math.h"
-#include "test_astronomy.h"
-#include "test_astronomy_la.h"
-#include "test_time.h"
-#include "test_twounitschanger.h"
+#include "julianday.h"
+#include "coords.h"
 
-int main(int argc, char* argv[])
-{
-    test_math();
-    test_astronomy();
-    test_astronomy_la();
-    test_time();
-    test_twounitschanger();
 
-    return 0;
-}
+const t_equd star_apparentPosition(
+    const t_julianDay t
+,   const long double α2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
+,   const long double δ2000   /* declination (DE) in decimal degrees, equinox J2000 */
+,   const long double mpα2000 /* annual proper motion in RA J2000 */
+,   const long double mpδ2000 /* annual proper motion in DE J2000 */);
+
+const t_hord star_horizontalPosition(
+    const t_aTime &aTime
+,   const long double latitude
+,   const long double longitude
+,   const long double α2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
+,   const long double δ2000   /* declination (DE) in decimal degrees, equinox J2000 */
+,   const long double mpα2000 /* annual proper motion in RA J2000 */
+,   const long double mpδ2000 /* annual proper motion in DE J2000 */);
+
+
+#endif // __STARS_H__

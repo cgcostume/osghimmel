@@ -60,7 +60,7 @@ const float sun_meanLongitude_la(const t_julianDay t);
 
 const float sun_center_la(const t_julianDay t);
 
-const float sun_trueAnomaly_la(const t_julianDay t);
+const float c(const t_julianDay t);
 const float sun_trueLongitude_la(const t_julianDay t);
 
 const t_equf sun_apparentPosition_la(const t_julianDay t);

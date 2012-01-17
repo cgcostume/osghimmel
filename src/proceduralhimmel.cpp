@@ -73,21 +73,21 @@ void ProceduralHimmel::update()
     const t_aTime aTime(t_aTime::fromTimeF(*getTime()));
     const t_julianDay t(jd(aTime));
 
-    t_hord sun = sun_horizontalPosition(aTime, m_latitude, m_longitude);
+    t_horf sun = sun_horizontalPosition_la(aTime, m_latitude, m_longitude);
 
     osg::Vec3 sunv  = sun.toEuclidean();
     sunv.normalize();
 
-    const osg::Vec4f::value_type aasr = earth_apparentAngularSunDiameter(t) * 0.5;
+    const osg::Vec4f::value_type aasr = earth_apparentAngularSunDiameter_la(t) * 0.5;
 
     u_sun->set(osg::Vec4(sunv, aasr));
 
 
-    t_hord moon = moon_horizontalPosition(aTime, m_latitude, m_longitude);
+    t_horf moon = moon_horizontalPosition_la(aTime, m_latitude, m_longitude);
     osg::Vec3 moonv  = moon.toEuclidean();
     moonv.normalize();
 
-    const osg::Vec4f::value_type aamr = earth_apparentAngularMoonDiameter(t) * 0.5 * m_moonScale;
+    const osg::Vec4f::value_type aamr = earth_apparentAngularMoonDiameter_la(t) * 0.5 * m_moonScale;
 
     u_moon->set(osg::Vec4(moonv, aamr));
 
