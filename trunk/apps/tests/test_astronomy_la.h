@@ -28,19 +28,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include "test_math.h"
-#include "test_astronomy.h"
-#include "test_astronomy_la.h"
-#include "test_time.h"
-#include "test_twounitschanger.h"
+#pragma once
+#ifndef __TEST_ASTRONOMY_LA_H__
+#define __TEST_ASTRONOMY_LA_H__
 
-int main(int argc, char* argv[])
-{
-    test_math();
-    test_astronomy();
-    test_astronomy_la();
-    test_time();
-    test_twounitschanger();
+void test_astronomy_la();
 
-    return 0;
-}
+#endif // __TEST_ASTRONOMY_LA_H__

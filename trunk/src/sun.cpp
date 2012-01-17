@@ -201,12 +201,12 @@ const t_equf sun_apparentPosition_la(const t_julianDay t)
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
 
     const t_julianDay T(jCenturiesSinceSE(t));
-    const float M = sun_meanAnomaly_la(t);
+    const float M = _rad(sun_meanAnomaly_la(t));
 
     t_eclf ecl;
 
-    ecl.longitude = 4.895048 + 628.331951 * T
-        + (0.033417 - 0.000084 * T) * sin(M) + 0.000351 * sin(2 * M);
+    ecl.longitude = _deg(4.895048 + 628.331951 * T
+        + (0.033417 - 0.000084 * T) * sin(M) + 0.000351 * sin(2 * M));
     ecl.latitude = 0;
 
     t_equf equ;

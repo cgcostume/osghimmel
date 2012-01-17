@@ -1,5 +1,5 @@
-
-// Copyright (c) 2011-2012, Daniel M�ller <dm@g4t3.de>
+﻿
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -27,20 +27,53 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "stars.h"
 
-#include "test_math.h"
-#include "test_astronomy.h"
-#include "test_astronomy_la.h"
-#include "test_time.h"
-#include "test_twounitschanger.h"
+#include "mathmacros.h"
+#include "sideraltime.h"
 
-int main(int argc, char* argv[])
+
+const t_equd star_apparentPosition(
+    const t_julianDay t
+,   const long double α2000
+,   const long double δ2000
+,   const long double mpα2000
+,   const long double mpδ2000)
 {
-    test_math();
-    test_astronomy();
-    test_astronomy_la();
-    test_time();
-    test_twounitschanger();
+    const t_julianDay T(jCenturiesSinceSE(t));
 
-    return 0;
+    // (AA.20.1)
+
+    const long double m  = (_decimal(0, 0, 3.07496)) + (_decimal(0, 0, 0.00186)) * T * 100.0;
+    const long double n  = _arcsecs(_decimal(0, 0, 1.33621)) - _arcsecs(_decimal(0, 0, 0.00057)) * T * 100.0;
+
+    const long double Δα = m + n * sin(_rad(mpα2000)) * tan(_rad(mpδ2000));
+    const long double Δβ = n * cos(_rad(mpα2000));
+
+    t_equd equ;
+
+    //equ.right_ascension = 
+
+
+
+
+    return equ;
+}
+
+
+const t_hord star_horizontalPosition(
+    const t_aTime &aTime
+,   const long double latitude
+,   const long double longitude
+,   const long double α2000
+,   const long double δ2000
+,   const long double mpα2000
+,   const long double mpδ2000)
+{
+    t_julianDay t(jd(aTime));
+    t_julianDay s(siderealTime(aTime));
+
+    t_equd equ = star_apparentPosition(t, α2000, δ2000, mpα2000, mpδ2000);
+
+    return equ.toHorizontal(s, latitude, longitude);
 }
