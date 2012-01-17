@@ -57,3 +57,5 @@ target_link_libraries(tests
 
 install(TARGETS tests
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")

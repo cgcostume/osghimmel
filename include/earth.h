@@ -35,10 +35,7 @@
 
 const long double earth_orbitEccentricity(const t_julianDay t);
 
-const long double earth_sunDistance(const t_julianDay t);
 const long double earth_apparentAngularSunDiameter(const t_julianDay t);
-
-const long double earth_moonDistance(const t_julianDay t);
 const long double earth_apparentAngularMoonDiameter(const t_julianDay t);
 
 const long double earth_longitudeNutation(const t_julianDay t);
@@ -50,5 +47,19 @@ const long double earth_trueObliquity(const t_julianDay t);
 const long double earth_atmosphericRefraction(const long double altitude);
 
 const long double earth_meanRadius();
+
+// Low Accuracy
+
+const float earth_orbitEccentricity_la(const t_julianDay t);
+
+const float earth_apparentAngularSunDiameter_la(const t_julianDay t);
+const float earth_apparentAngularMoonDiameter_la(const t_julianDay t);
+
+const float earth_longitudeNutation_la(const t_julianDay t);
+const float earth_obliquityNutation_la(const t_julianDay t);
+
+const float earth_meanObliquity_la(const t_julianDay t);
+const float earth_trueObliquity_la(const t_julianDay t);
+
 
 #endif // __EARTH_H__

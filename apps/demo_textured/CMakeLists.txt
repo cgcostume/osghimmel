@@ -45,3 +45,5 @@ target_link_libraries(demo_textured
    
 install(TARGETS demo_textured
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	
+ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")
