@@ -45,3 +45,5 @@ target_link_libraries(demo_computed
 
 install(TARGETS demo_computed
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")

@@ -36,6 +36,7 @@
 #include "earth.h"
 #include "sun.h"
 #include "moon.h"
+#include "stars.h"
 
 #include "himmelquad.h"
 
@@ -72,7 +73,7 @@ void ProceduralHimmel::update()
     const t_aTime aTime(t_aTime::fromTimeF(*getTime()));
     const t_julianDay t(jd(aTime));
 
-    t_horCoords sun = sun_horizontalPosition(aTime, m_latitude, m_longitude);
+    t_hord sun = sun_horizontalPosition(aTime, m_latitude, m_longitude);
 
     osg::Vec3 sunv  = sun.toEuclidean();
     sunv.normalize();
@@ -82,7 +83,7 @@ void ProceduralHimmel::update()
     u_sun->set(osg::Vec4(sunv, aasr));
 
 
-    t_horCoords moon = moon_horizontalPosition(aTime, m_latitude, m_longitude);
+    t_hord moon = moon_horizontalPosition(aTime, m_latitude, m_longitude);
     osg::Vec3 moonv  = moon.toEuclidean();
     moonv.normalize();
 

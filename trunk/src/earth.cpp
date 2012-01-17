@@ -50,137 +50,107 @@ const long double earth_orbitEccentricity(const t_julianDay t)
         + T * (- 0.0000001236
         + T * (+ 0.00000000004)));
 
+    // (AA.24.4)
+    //const long double E = 0.016708617
+    //    + T * (- 0.000042037
+    //    + T * (- 0.0000001236));
+
     return _revd(E);
-}
-
-
-// NOTE: This gives the distance from the center of the sun to the
-// center of the earth.
-
-const long double earth_sunDistance(const t_julianDay t)
-{
-    const long double e = earth_orbitEccentricity(t);
-
-    // (AA.24.5)
-    const long double R = 1.000001018 * (1.0 - e * e) /
-        (1.0 + e * cos(_rad(sun_trueAnomaly(t))));  // in AU
-
-    return _kms(R);
 }
 
 
 const long double earth_apparentAngularSunDiameter(const t_julianDay t)
 {
-    return _adiameter(earth_sunDistance(t), sun_meanRadius());
+    return _adiameter(sun_distance(t), sun_meanRadius());
 }
 
-
-// NOTE: This gives the distance from the center of the moon to the
-// center of the earth. 
-
-const long double earth_moonDistance(const t_julianDay t)
-{
-    long double Σr = 0.0;
-
-    const long double sM = _rad(sun_meanAnomaly(t));
-
-    const long double mL = _rad(moon_meanLongitude(t));
-    const long double mM = _rad(moon_meanAnomaly(t));
-    const long double mD = _rad(moon_meanElongation(t));
-    const long double mF = _rad(moon_meanLatitude(t));
-
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // Correction for eccentricity of the Earth's orbit around the sun.
-
-    // (AA.45.6)
-
-    const long double E = 1.0  
-        + T * (- 0.002516 
-        + T * (- 0.0000074));
-
-    const long double EE = E * E;
-
-    // (AA.45.A)
-
-    Σr -= 20905.355 * cos(                 + 1 * mM         );
-    Σr -=  3699.111 * cos( 2 * mD          - 1 * mM         );
-    Σr -=  2955.968 * cos( 2 * mD                           );
-    Σr -=   569.925 * cos(                 + 2 * mM         );
-    Σr +=    48.888 * cos(        + 1 * sM                  ) * E;
-    Σr -=     3.149 * cos(                          + 2 * mF);
-    Σr +=   246.158 * cos( 2 * mD          - 2 * mM         );
-    Σr -=   152.138 * cos( 2 * mD - 1 * sM - 1 * mM         ) * E;
-    Σr -=   170.733 * cos( 2 * mD          + 1 * mM         );
-    Σr -=   204.586 * cos( 2 * mD - 1 * sM                  ) * E;
-    Σr -=   129.620 * cos(        + 1 * sM - 1 * mM         ) * E;
-    Σr +=   108.743 * cos( 1 * mD                           );
-    Σr +=   104.755 * cos(        + 1 * sM + 1 * mM         ) * E;
-    Σr +=    10.321 * cos( 2 * mD                   - 2 * mF);
-    Σr +=    79.661 * cos(                 + 1 * mM - 2 * mF);
-    Σr -=    34.782 * cos( 4 * mD          - 1 * mM         );
-    Σr -=    23.210 * cos(                 + 3 * mM         );
-    Σr -=    21.636 * cos( 4 * mD          - 2 * mM         );
-    Σr +=    24.208 * cos( 2 * mD + 1 * sM - 1 * mM         ) * E;
-    Σr +=    30.824 * cos( 2 * mD + 1 * sM                  ) * E;
-    Σr -=     8.379 * cos( 1 * mD          - 1 * mM         );
-    Σr -=    16.675 * cos( 1 * mD + 1 * sM                  ) * E;
-    Σr -=    12.831 * cos( 2 * mD - 1 * sM + 1 * mM         ) * E;
-    Σr -=    10.445 * cos( 2 * mD          + 2 * mM         );
-    Σr -=    11.650 * cos( 4 * mD                           );
-    Σr +=    14.403 * cos( 2 * mD          - 3 * mM         );
-    Σr -=     7.003 * cos(        + 1 * sM - 2 * mM         ) * E;
-    Σr +=    10.056 * cos( 2 * mD - 1 * sM - 2 * mM         ) * E;
-    Σr +=     6.322 * cos( 1 * mD          + 1 * mM         );
-    Σr -=     9.884 * cos( 2 * mD - 2 * sM                  ) * EE;
-    Σr +=     5.751 * cos(        + 1 * sM + 2 * mM         ) * E;
-    Σr -=     4.950 * cos( 2 * mD - 2 * sM - 1 * mM         ) * EE;
-    Σr +=     4.130 * cos( 2 * mD          + 1 * mM - 2 * mF);
-    Σr -=     3.958 * cos( 4 * mD - 1 * sM - 1 * mM         ) * E;
-    Σr +=     3.258 * cos( 3 * mD          - 1 * mM         );
-    Σr +=     2.616 * cos( 2 * mD + 1 * sM + 1 * mM         ) * E;
-    Σr -=     1.897 * cos( 4 * mD - 1 * sM - 2 * mM         ) * E;
-    Σr -=     2.117 * cos(        + 2 * sM - 1 * mM         ) * EE;
-    Σr +=     2.354 * cos( 2 * mD + 2 * sM - 1 * mM         ) * EE;
-    Σr -=     1.423 * cos( 4 * mD          + 1 * mM         );
-    Σr -=     1.117 * cos(                 + 4 * mM         );
-    Σr -=     1.571 * cos( 4 * mD - 1 * sM                  ) * E;
-    Σr -=     1.739 * cos( 1 * mD          - 2 * mM         );
-    Σr -=     4.421 * cos(                 + 2 * mM - 2 * mF);
-    Σr +=     1.165 * cos(        + 2 * sM + 1 * mM         ) * EE;
-    Σr +=     8.752 * cos( 2 * mD          - 1 * mM - 2 * mF);
-
-    const long double Δ = 385000.56 + Σr; // in kilometers
-    return Δ;
-}
 
 const long double earth_apparentAngularMoonDiameter(const t_julianDay t)
 {
-    return _adiameter(earth_moonDistance(t), moon_meanRadius());
+    return _adiameter(moon_distance(t), moon_meanRadius());
 }
 
-
-// (AA.21)
 
 const long double earth_longitudeNutation(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
+    const long double sM = _rad(sun_meanAnomaly(t));
+
+    const long double mM = _rad(moon_meanAnomaly(t));
+    const long double mD = _rad(moon_meanElongation(t));
+    const long double mF = _rad(moon_meanLatitude(t));    
     const long double Ω  = _rad(moon_meanOrbitLongitude(t));
-    const long double Ls = _rad(sun_meanAnomaly(t));
-    const long double Lm = _rad(moon_meanAnomaly(t));
+   
+    // (AA.21.A)
 
-#pragma NOTE("Fix mixing of high-precision with low precision formulars (use high-precision only).");
-    // TODO: Mixing high-precision with low-precision (below) formulars here.
-    // Perhaps adapt nightsky papers model anytime in the future.
+    long double Δψ = 0.0;
 
-    const long double ψ =
-        - _decimal(0, 0, 17.20) * sin(Ω)
-        - _decimal(0, 0,  1.32) * sin(2.0 * Ls)
-        - _decimal(0, 0,  0.23) * sin(2.0 * Lm)
-        + _decimal(0, 0,  0.21) * sin(2.0 * Ω );
+    Δψ -= (17.1996 - 0.01742 * T) * sin(                                   + 1 * Ω);
+    Δψ -= ( 1.3187 - 0.00016 * T) * sin(-2 * mD                   + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.2274 - 0.00002 * T) * sin(                          + 2 * mF + 2 * Ω);
+    Δψ += ( 0.2062 + 0.00002 * T) * sin(                                   + 2 * Ω);
+    Δψ += ( 0.1426 - 0.00034 * T) * sin(        + 1 * sM                          );
+    Δψ += ( 0.0712 + 0.00001 * T) * sin(                 + 1 * mM                 );
+    Δψ += ( 0.0517 + 0.00012 * T) * sin(-2 * mD + 1 * sM          + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0386 - 0.00004 * T) * sin(                          + 2 * mF + 1 * Ω);
+    Δψ -= ( 0.0301              ) * sin(                 + 1 * mM + 2 * mF + 2 * Ω);
+    Δψ += ( 0.0217 - 0.00005 * T) * sin(-2 * mD - 1 * sM          + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0158              ) * sin(-2 * mD          + 1 * mM                 );
+    Δψ += ( 0.0129 + 0.00001 * T) * sin(-2 * mD                   + 2 * mF + 1 * Ω);
+    Δψ += ( 0.0123              ) * sin(                 - 1 * mM + 2 * mF + 2 * Ω);
+    Δψ += ( 0.0063              ) * sin( 2 * mD                                   );
+    Δψ += ( 0.0063 + 0.00001 * T) * sin(                 + 1 * mM          + 1 * Ω);
+    Δψ -= ( 0.0059              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0058 - 0.00001 * T) * sin(                 - 1 * mM          + 1 * Ω);
+    Δψ -= ( 0.0051              ) * sin(                 + 1 * mM + 2 * mF + 1 * Ω);
+    Δψ += ( 0.0048              ) * sin(-2 * mD          + 2 * mM                 );
+    Δψ += ( 0.0046              ) * sin(                 - 2 * mM + 2 * mF + 1 * Ω);
+    Δψ -= ( 0.0038              ) * sin( 2 * mD                   + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0031              ) * sin(                 + 2 * mM + 2 * mF + 2 * Ω);
+    Δψ += ( 0.0029              ) * sin(                 + 2 * mM                 );
+    Δψ += ( 0.0029              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
+    Δψ += ( 0.0026              ) * sin(                          + 2 * mF        );
+    Δψ -= ( 0.0022              ) * sin(-2 * mD                   + 2 * mF        );
+    Δψ += ( 0.0021              ) * sin(                 - 1 * mM + 2 * mF + 1 * Ω);
+    Δψ += ( 0.0017 - 0.00001 * T) * sin(        + 2 * sM                          );
+    Δψ += ( 0.0016              ) * sin( 2 * mD          - 1 * mM          + 1 * Ω);
+    Δψ -= ( 0.0016 + 0.00001 * T) * sin(-2 * mD + 2 * sM          + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0015              ) * sin(        + 1 * sM                   + 1 * Ω);
+    Δψ -= ( 0.0013              ) * sin(-2 * mD          + 1 * mM          + 1 * Ω);
+    Δψ -= ( 0.0012              ) * sin(        - 1 * sM                   + 1 * Ω);
+    Δψ += ( 0.0011              ) * sin(                 + 2 * mM - 2 * mF        );
+    Δψ -= ( 0.0010              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 1 * Ω);
+    Δψ -= ( 0.0008              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
+    Δψ += ( 0.0007              ) * sin(        + 1 * sM          + 2 * mF + 2 * Ω);
+    Δψ += ( 0.0007              ) * sin(-2 * mD + 1 * sM + 1 * mM                 );
+    Δψ -= ( 0.0007              ) * sin(        - 1 * sM          + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0007              ) * sin( 2 * mD                   + 2 * mF + 1 * Ω);
+    Δψ += ( 0.0006              ) * sin( 2 * mD          + 1 * mM                 );
+    Δψ += ( 0.0006              ) * sin(-2 * mD          + 2 * mM + 2 * mF + 2 * Ω);
+    Δψ += ( 0.0006              ) * sin(-2 * mD          + 1 * mM + 2 * mF + 1 * Ω);
+    Δψ -= ( 0.0006              ) * sin( 2 * mD          - 2 * mM          + 1 * Ω);
+    Δψ -= ( 0.0006              ) * sin( 2 * mD                            + 1 * Ω);
+    Δψ += ( 0.0005              ) * sin(        - 1 * sM + 1 * mM                 );
+    Δψ += ( 0.0005              ) * sin(-2 * mD - 1 * sM          + 2 * mF + 1 * Ω);
+    Δψ -= ( 0.0005              ) * sin(-2 * mD                            + 1 * Ω);
+    Δψ -= ( 0.0005              ) * sin(                 + 2 * mM + 2 * mF + 1 * Ω);
+    Δψ += ( 0.0004              ) * sin(-2 * mD          + 2 * mM          + 1 * Ω);
+    Δψ += ( 0.0004              ) * sin(-2 * mD + 1 * sM          + 2 * mF + 1 * Ω);
+    Δψ += ( 0.0004              ) * sin(                 + 1 * mM - 2 * mF        );
+    Δψ -= ( 0.0004              ) * sin(-1 * mD          + 1 * mM                 );
+    Δψ -= ( 0.0004              ) * sin(-2 * mD + 1 * sM                          );
+    Δψ -= ( 0.0004              ) * sin( 1 * mD                                   );
+    Δψ += ( 0.0003              ) * sin(                 + 1 * mM + 2 * mF        );
+    Δψ -= ( 0.0003              ) * sin(                 - 2 * mM + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0003              ) * sin(-1 * mD - 1 * sM + 1 * mM                 );
+    Δψ -= ( 0.0003              ) * sin(        + 1 * sM + 1 * mM                 );
+    Δψ -= ( 0.0003              ) * sin(        - 1 * sM + 1 * mM + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0003              ) * sin( 2 * mD - 1 * sM - 1 * mM + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0003              ) * sin(                 + 3 * mM + 2 * mF + 2 * Ω);
+    Δψ -= ( 0.0003              ) * sin( 2 * mD - 1 * sM          + 2 * mF + 2 * Ω);
 
-    return ψ;
+    return _decimal(0, 0, Δψ);
 }
 
 
@@ -190,21 +160,57 @@ const long double earth_obliquityNutation(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
+    const long double sM = _rad(sun_meanAnomaly(t));
+
+    const long double mM = _rad(moon_meanAnomaly(t));
+    const long double mD = _rad(moon_meanElongation(t));
+    const long double mF = _rad(moon_meanLatitude(t));    
     const long double Ω  = _rad(moon_meanOrbitLongitude(t));
-    const long double Ls = _rad(sun_meanAnomaly(t));
-    const long double Lm = _rad(moon_meanAnomaly(t));
 
-#pragma NOTE("Fix mixing of high-precision with low precision formulars (use high-precision only).");
-    // TODO: Mixing high-precision with low-precision (below) formulars here.
-    // Perhaps adapt nightsky papers model anytime in the future.
+    // (AA.21.A)
 
-    const long double ε =
-        + _decimal(0, 0,  9.20) * cos(Ω)
-        + _decimal(0, 0,  0.57) * cos(2.0 * Ls)
-        + _decimal(0, 0,  0.10) * cos(2.0 * Lm)
-        - _decimal(0, 0,  0.09) * cos(2.0 * Ω );
+    long double Δε = 0.0;
 
-    return ε;
+    Δε += ( 9.2025 + 0.00089 * T) * sin(                                   + 1 * Ω);
+    Δε += ( 0.5736 - 0.00031 * T) * sin(-2 * mD                   + 2 * mF + 2 * Ω);
+    Δε += ( 0.0977 - 0.00005 * T) * sin(                          + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0895 + 0.00005 * T) * sin(                                   + 2 * Ω);
+    Δε += ( 0.0054 - 0.00001 * T) * sin(        + 1 * sM                          );
+    Δε -= ( 0.0007              ) * sin(                 + 1 * mM                 );
+    Δε += ( 0.0224 - 0.00006 * T) * sin(-2 * mD + 1 * sM          + 2 * mF + 2 * Ω);
+    Δε += ( 0.0200              ) * sin(                          + 2 * mF + 1 * Ω);
+    Δε += ( 0.0129 - 0.00001 * T) * sin(                 + 1 * mM + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0095 + 0.00003 * T) * sin(-2 * mD - 1 * sM          + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0070              ) * sin(-2 * mD                   + 2 * mF + 1 * Ω);
+    Δε -= ( 0.0053              ) * sin(                 - 1 * mM + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0033              ) * sin(                 + 1 * mM          + 1 * Ω);
+    Δε += ( 0.0026              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 2 * Ω);
+    Δε += ( 0.0032              ) * sin(                 - 1 * mM          + 1 * Ω);
+    Δε += ( 0.0027              ) * sin(                 + 1 * mM + 2 * mF + 1 * Ω);
+    Δε -= ( 0.0024              ) * sin(                 - 2 * mM + 2 * mF + 1 * Ω);
+    Δε += ( 0.0016              ) * sin( 2 * mD                   + 2 * mF + 2 * Ω);
+    Δε += ( 0.0013              ) * sin(                 + 2 * mM + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0012              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0010              ) * sin(                 - 1 * mM + 2 * mF + 1 * Ω);
+    Δε -= ( 0.0008              ) * sin( 2 * mD          - 1 * mM          + 1 * Ω);
+    Δε += ( 0.0007              ) * sin(-2 * mD + 2 * sM          + 2 * mF + 2 * Ω);
+    Δε += ( 0.0009              ) * sin(        + 1 * sM                   + 1 * Ω);
+    Δε += ( 0.0007              ) * sin(-2 * mD          + 1 * mM          + 1 * Ω);
+    Δε += ( 0.0006              ) * sin(        - 1 * sM                   + 1 * Ω);
+    Δε += ( 0.0005              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 1 * Ω);
+    Δε += ( 0.0003              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0003              ) * sin(        + 1 * sM          + 2 * mF + 2 * Ω);
+    Δε += ( 0.0003              ) * sin(        - 1 * sM          + 2 * mF + 2 * Ω);
+    Δε += ( 0.0003              ) * sin( 2 * mD                   + 2 * mF + 1 * Ω);
+    Δε -= ( 0.0003              ) * sin(-2 * mD          + 2 * mM + 2 * mF + 2 * Ω);
+    Δε -= ( 0.0003              ) * sin(-2 * mD          + 1 * mM + 2 * mF + 1 * Ω);
+    Δε += ( 0.0003              ) * sin( 2 * mD          - 2 * mM          + 1 * Ω);
+    Δε += ( 0.0003              ) * sin( 2 * mD                            + 1 * Ω);
+    Δε += ( 0.0003              ) * sin(-2 * mD - 1 * sM          + 2 * mF + 1 * Ω);
+    Δε += ( 0.0003              ) * sin(-2 * mD                            + 1 * Ω);
+    Δε += ( 0.0003              ) * sin(                 + 2 * mM + 2 * mF + 1 * Ω);
+
+    return _decimal(0, 0, Δε);
 }
 
 
@@ -219,31 +225,23 @@ const long double earth_trueObliquity(const t_julianDay t)
 
 const long double earth_meanObliquity(const t_julianDay t)
 {
-/*    const t_julianDay T(jCenturiesSinceSE(t));
-
-    const long double ε0 = _decimal(23, 26, 21.448) 
-        + T * (- _decimal(0, 0, 46.8150)
-        + T * (- _decimal(0, 0,  0.00059)
-        + T * (+ _decimal(0, 0,  0.001813))));
-*/
-
     const t_julianDay U = jCenturiesSinceSE(t) * 0.01;
 
     assert(_abs(U) < 1.0);
 
-    const long double ε0 = _decimal(23, 26, 21.448) 
-        + U * (- _decimal(0, 0, 4680.93)
-        + U * (- _decimal(0, 0,    1.55)
-        + U * (+ _decimal(0, 0, 1999.25)
-        + U * (- _decimal(0, 0,   51.38)
-        + U * (- _decimal(0, 0,  249.67)
-        + U * (- _decimal(0, 0,   39.05)
-        + U * (+ _decimal(0, 0,    7.12)
-        + U * (+ _decimal(0, 0,   27.87)
-        + U * (+ _decimal(0, 0,    5.79)
-        + U * (+ _decimal(0, 0,    2.45)))))))))));
+    const long double ε0 = 0.0
+        + U * (- 4680.93
+        + U * (-    1.55
+        + U * (+ 1999.25
+        + U * (-   51.38
+        + U * (-  249.67
+        + U * (-   39.05
+        + U * (+    7.12
+        + U * (+   27.87
+        + U * (+    5.79
+        + U * (+    2.45))))))))));
 
-    return ε0;
+    return _decimal(23, 26, 21.448) + _decimal(0, 0, ε0);
 }
 
 
@@ -268,4 +266,90 @@ const long double earth_meanRadius()
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
 
     return  6371.0; // in kilometers
+}
+
+
+// LOW ACCURACY
+
+const float earth_orbitEccentricity_la(const t_julianDay t)
+{
+    const t_julianDay T(jCenturiesSinceSE(t));
+
+    // Low Accuracy (http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html)
+    const float E = 0.01671022;
+
+    return _revd(E);
+}
+
+
+const float earth_apparentAngularSunDiameter_la(const t_julianDay t)
+{
+    return _adiameter(sun_distance_la(t), sun_meanRadius());
+}
+
+
+const float earth_apparentAngularMoonDiameter_la(const t_julianDay t)
+{
+    return _adiameter(moon_distance_la(t), moon_meanRadius());
+}
+
+
+const float earth_longitudeNutation_la(const t_julianDay t)
+{
+    const t_julianDay T(jCenturiesSinceSE(t));
+
+    const float Ω  = _rad(moon_meanOrbitLongitude_la(t));
+    const float Ls = _rad(sun_meanAnomaly_la(t));
+    const float Lm = _rad(moon_meanAnomaly_la(t));
+
+    // (AA.21 p132)
+    const float ψ =
+        - _decimal(0, 0, 17.20) * sin(Ω)
+        - _decimal(0, 0,  1.32) * sin(2.0 * Ls)
+        - _decimal(0, 0,  0.23) * sin(2.0 * Lm)
+        + _decimal(0, 0,  0.21) * sin(2.0 * Ω );
+
+    return ψ;
+}
+
+
+const float earth_obliquityNutation_la(const t_julianDay t)
+{
+    const t_julianDay T(jCenturiesSinceSE(t));
+
+    const float Ω  = _rad(moon_meanOrbitLongitude_la(t));
+    const float Ls = _rad(sun_meanAnomaly_la(t));
+    const float Lm = _rad(moon_meanAnomaly_la(t));
+
+    // (AA.21 p132)
+    const float ε =
+        + _decimal(0, 0,  9.20) * cos(Ω)
+        + _decimal(0, 0,  0.57) * cos(2.0 * Ls)
+        + _decimal(0, 0,  0.10) * cos(2.0 * Lm)
+        - _decimal(0, 0,  0.09) * cos(2.0 * Ω );
+
+    return ε;
+}
+
+
+const float earth_trueObliquity_la(const t_julianDay t)
+{
+    return earth_meanObliquity_la(t) + earth_obliquityNutation_la(t); // ε
+}
+
+
+const float earth_meanObliquity_la(const t_julianDay t)
+{
+    const t_julianDay T(jCenturiesSinceSE(t));
+
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    const float ε0 = _deg(0.409093 - 0.000227 * T);
+
+    // Low Accuracy (AA.21.2)
+    //const float ε0 = _decimal(23, 26, 21.448) 
+    //    + T * (- _decimal(0, 0, 46.8150)
+    //    + T * (- _decimal(0, 0,  0.00059)
+    //    + T * (+ _decimal(0, 0,  0.001813))));
+
+    return ε0;
 }

@@ -39,6 +39,7 @@
 #include "include/moon.h"
 #include "include/sun.h"
 #include "include/earth.h"
+#include "include/stars.h"
 
 
 void test_aTime();
@@ -47,6 +48,7 @@ void test_sideralTime();
 void test_coords();
 void test_sun();
 void test_moon();
+void test_stars();
 
 void test_astronomy()
 {
@@ -57,6 +59,7 @@ void test_astronomy()
     test_coords();
     test_sun();
     test_moon();
+    test_stars();
 
     TEST_REPORT();
 }
@@ -215,11 +218,11 @@ void test_coords()
     ASSERT_AB(long double, 199.90987, sun_trueLongitude(t),   0.00001);
     ASSERT_AB(long double,  23.44023, earth_meanObliquity(t), 0.000001);
 
-    ASSERT_AB(long double, 0.99766, _AUs(earth_sunDistance(t)),     0.00001);
+    ASSERT_AB(long double, 0.99766, _AUs(sun_distance(t)),     0.00001);
     ASSERT_AB(long double, 0.016711651, earth_orbitEccentricity(t), 0.000001);
 
 
-    t_equCoords equ = sun_apparentPosition(t);
+    t_equd equ = sun_apparentPosition(t);
 
     ASSERT_AB(long double,  13.225388, _hours(equ.right_ascension), 0.00005);
     ASSERT_AB(long double, - 7.78507 , equ.declination,             0.00005);
@@ -250,7 +253,7 @@ void test_sun()
         for(unsigned int i = 0; i < 9; ++i)
         {
             aTime.hour = hour[i];
-            t_horCoords hor = sun_horizontalPosition(aTime, lat, lon);
+            t_hord hor = sun_horizontalPosition(aTime, lat, lon);
 
             ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
             ASSERT_AB(int, alt[i], hor.altitude, 1);
@@ -266,7 +269,7 @@ void test_sun()
         for(unsigned int i = 0; i < 17; ++i)
         {
             aTime.hour = hour[i];
-            t_horCoords hor = sun_horizontalPosition(aTime, lat, lon);
+            t_hord hor = sun_horizontalPosition(aTime, lat, lon);
 
             ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
             ASSERT_AB(int, alt[i], hor.altitude, 1);
@@ -287,7 +290,7 @@ void test_sun()
         for(unsigned int i = 0; i < 12; ++i)
         {
             aTime.hour = hour[i];
-            t_horCoords hor = sun_horizontalPosition(aTime, lat, lon);
+            t_hord hor = sun_horizontalPosition(aTime, lat, lon);
 
             ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
             ASSERT_AB(int, alt[i], hor.altitude, 1);
@@ -319,12 +322,12 @@ void test_moon()
     ASSERT_AB(long double, 113.842309, moon_meanElongation(t), 0.000001);
     ASSERT_AB(long double, 219.889726, moon_meanLatitude(t),   0.000001);
 
-    t_eclCoords ecl = moon_position(t);
+    t_ecld ecl = moon_position(t);
 
     ASSERT_AB(long double, 133.167269, ecl.longitude, 0.00001);
     ASSERT_AB(long double,  -3.229127, ecl.latitude,  0.00001);
 
-    ASSERT_AB(long double, 368409.7, earth_moonDistance(t), 0.02);
+    ASSERT_AB(long double, 368409.7, moon_distance(t), 0.02);
 
     long double tes = _decimal(0, 0, -3.788);
     long double tes2 = _decimal(0, 0, +9.443);
@@ -343,4 +346,15 @@ void test_moon()
     const t_julianDay t2(jd(aTime2));
 
     ASSERT_AB(long double, earth_apparentAngularMoonDiameter(t1) / earth_apparentAngularMoonDiameter(t2), 1.13, 0.01);
+}
+
+
+void test_stars()
+{
+    const t_julianDay t(jd(t_aTime(1978, 1, 1)));
+
+    const t_equd equ = star_apparentPosition(t
+        , _decimal(10, 8, 22.3), _decimal(11, 58,  2)
+        , _arcsecs(_decimal(0, 0, 0.248)), _decimal(0, 0, 0.006));
+
 }
