@@ -105,7 +105,7 @@
     (((x) > 0.0) ? exp(log(x) / 3.0L) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
 
 #define _rightascd(deg, min, sec) \
-    ((_decimal(deg, min, sec) * 15.0L)
+    (_decimal(deg, min, sec) * 15.0L)
 
 #define _rightasc(deg, min, sec) \
     (_rad(_rightascd(deg, min, sec)))
