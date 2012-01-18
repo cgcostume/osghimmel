@@ -34,6 +34,7 @@ set(LIB_SOURCES
     abstracthimmel.cpp
     abstractmappedhimmel.cpp
 	atime.cpp
+	brightstars.cpp
 	coords.cpp
     cubemappedhimmel.cpp
 	earth.cpp
@@ -56,6 +57,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/abstracthimmel.h
     ${HEADER_PATH}/abstractmappedhimmel.h
     ${HEADER_PATH}/atime.h
+	${HEADER_PATH}/brightstars.h
 	${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
 	${HEADER_PATH}/earth.h
