@@ -33,6 +33,86 @@
 #include "sideraltime.h"
 
 
+const long double star_tempratureFromBV(const long double BtoV)
+{
+    // NOTE: This is just an estimation!
+
+    // (Night Rendering - Jensen, Premovze, Shirley, Thompson, Ferwerda - 2001)
+    return 7000.0 / (BtoV + 0.56);
+
+    // (The Colors of the Stars - Olson - 1998)
+    //return 1000.0 + 5000.0 / (BtoV + 0.5);
+}
+
+
+// Planckian locus in CIE XYZ Approximation
+
+const osg::Vec2f star_planckianLocusInCieXYZ(const long double t)
+{
+    // (http://en.wikipedia.org/wiki/Planckian_locus)
+
+    float x(0.f), y(0.f);
+
+    const float o = 1.0 / t;
+
+         if( 1667 <= t && t <=  4000)
+        x = +0.17991 + o * (+877.6956 + o * (- 234358.0 + o * - 266123900.0));
+    else if( 4000 <  t && t <= 25000) 
+        x = +0.24039 + o * (+222.6347 + o * (+2107037.9 + o * -3025846900.0));
+
+
+         if( 1667 <= t && t <=  2222)
+        y = -0.20219683 + t * (+2.18555832 + t * (-1.3481102 + t * -1.1063814));
+    else if( 2222 <  t && t <=  4000) 
+        y = -0.16748867 + t * (+2.09137015 + t * (-1.3741859 + t * -0.9549476));
+    else if( 4000 <  t && t <= 25000) 
+        y = -0.37001483 + t * (+3.75112997 + t * (-5.8733867 + t * +3.0817580));
+
+    return osg::Vec2f(x, y);
+}
+
+
+const osg::Vec3f star_xyzTristimulus(const long double t)
+{
+    return star_xyzTristimulus(star_planckianLocusInCieXYZ(t));
+}
+
+const osg::Vec3f star_xyzTristimulus(const osg::Vec2f planckianLocus)
+{
+    // (http://en.wikipedia.org/wiki/CIE_1931_color_space)
+    // and (The Colors of the Stars - Olson - 1998)
+
+    const float Y = 1.0;
+    
+    const float X = Y / planckianLocus.y() * planckianLocus.x();
+    const float Z = Y / planckianLocus.y() * (1.0 - planckianLocus.x() - planckianLocus.y());
+
+    return osg::Vec3f(X, Y, Z);
+}
+
+
+const osg::Vec3f star_sRgbColor(const long double t)
+{
+    return star_sRgbColor(star_xyzTristimulus(t));
+}
+
+const osg::Vec3f star_sRgbColor(const osg::Vec2f planckianLocus)
+{
+    return star_sRgbColor(star_xyzTristimulus(planckianLocus));
+}
+
+const osg::Vec3f star_sRgbColor(const osg::Vec3f xyzTristimulus)
+{
+    // (The Colors of the Stars - Olson - 1998) - sRGB matrix - feel free to use other matrices here...
+
+    const float r =  3.24  * xyzTristimulus.x() -1.537 * xyzTristimulus.y() -0.499 * xyzTristimulus.z();
+    const float g = -0.969 * xyzTristimulus.x() +1.876 * xyzTristimulus.y() +0.042 * xyzTristimulus.z();
+    const float b =  0.056 * xyzTristimulus.x() -0.204 * xyzTristimulus.y() +1.057 * xyzTristimulus.z();
+
+    return osg::Vec3f(r, g, b);
+}
+
+
 const t_equd star_apparentPosition(
     const t_julianDay t
 ,   const long double α2000

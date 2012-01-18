@@ -35,6 +35,18 @@
 #include "coords.h"
 
 
+const long double star_tempratureFromBV(const long double BtoV);
+
+const osg::Vec2f star_planckianLocusInCieXYZ(const long double t /* temperature in K */);
+
+const osg::Vec3f star_xyzTristimulus(const long double t /* temperature in K */);
+const osg::Vec3f star_xyzTristimulus(const osg::Vec2f planckianLocus);
+
+const osg::Vec3f star_sRgbColor(const long double t /* temperature in K */);
+const osg::Vec3f star_sRgbColor(const osg::Vec2f planckianLocus);
+const osg::Vec3f star_sRgbColor(const osg::Vec3f xyzTrisimulus);
+
+
 const t_equd star_apparentPosition(
     const t_julianDay t
 ,   const long double α2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
