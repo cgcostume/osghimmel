@@ -28,72 +28,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __PROCEDURALHIMMEL_H__
-#define __PROCEDURALHIMMEL_H__
+#ifndef __GALAXYGEODE_H__
+#define __GALAXYGEODE_H__
 
-#include "abstracthimmel.h"
+#include <osg/Geode>
 
-
-class AbstractAstronomy;
-class AtmosphereGeode;
-class MoonGeode;
-class StarsGeode;
-class GalaxyGeode;
-
-
-class ProceduralHimmel : public AbstractHimmel
+class GalaxyGeode : public osg::Geode
 {
 public:
 
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
-
-
-    const float setLatitude(const float latitude);
-    const float getLatitude() const;
-
-    const float setLongitude(const float longitude);
-    const float getLongitude() const;
-
-
-    inline AtmosphereGeode *atmosphere() const 
-    {
-        return m_atmosphere;
-    }
-
-    inline MoonGeode *moon() const
-    {
-        return m_moon;
-    }
-
-    inline StarsGeode *stars() const
-    {
-        return m_stars;
-    }
-
-    inline GalaxyGeode *galaxy() const
-    {
-        return m_galaxy;
-    }
-
-
-    inline AbstractAstronomy *astro() const
-    {
-        return m_astronomy;
-    }
-
-protected:
-
-    virtual void update();
-
-protected:
-
-    AbstractAstronomy *m_astronomy;
-
-    osg::ref_ptr<AtmosphereGeode>   m_atmosphere;
-    osg::ref_ptr<MoonGeode>         m_moon;
-    osg::ref_ptr<StarsGeode>        m_stars;
-    osg::ref_ptr<GalaxyGeode>       m_galaxy;
+    GalaxyGeode();
+    virtual ~GalaxyGeode();
 };
 
-#endif // __PROCEDURALHIMMEL_H__
+#endif // __GALAXYGEODE_H__

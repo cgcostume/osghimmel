@@ -101,7 +101,7 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_f_version
+    return glsl_f_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 

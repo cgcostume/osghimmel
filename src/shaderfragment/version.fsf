@@ -33,7 +33,7 @@
 
 namespace 
 {
-    static const std::string glsl_f_version
+    static const std::string glsl_f_version_150
     (
         "#version 150 compatibility\n\n"
     );

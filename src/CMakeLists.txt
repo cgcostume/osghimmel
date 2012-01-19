@@ -33,16 +33,22 @@ set(LIB_SOURCES
 
     abstracthimmel.cpp
     abstractmappedhimmel.cpp
+	abstractastronomy.cpp
+	astronomy.cpp
+	astronomyla.cpp
 	atime.cpp
+	atmospheregeode.cpp
 	brightstars.cpp
 	coords.cpp
     cubemappedhimmel.cpp
 	earth.cpp
+	galaxygeode.cpp
     himmelenvmap.cpp
     himmelquad.cpp
     horizonband.cpp
 	julianday.cpp
 	moon.cpp
+	moongeode.cpp
     paraboloidmappedhimmel.cpp
     polarmappedhimmel.cpp
     proceduralhimmel.cpp
@@ -50,17 +56,23 @@ set(LIB_SOURCES
 	sideraltime.cpp
     spheremappedhimmel.cpp
 	stars.cpp
+	starsgeode.cpp
 	sun.cpp
     timef.cpp
     twounitschanger.cpp
 
     ${HEADER_PATH}/abstracthimmel.h
     ${HEADER_PATH}/abstractmappedhimmel.h
+	${HEADER_PATH}/abstractastronomy.h
+	${HEADER_PATH}/astronomy.h
+	${HEADER_PATH}/astronomyla.h
     ${HEADER_PATH}/atime.h
+	${HEADER_PATH}/atmospheregeode.h
 	${HEADER_PATH}/brightstars.h
 	${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
 	${HEADER_PATH}/earth.h
+	${HEADER_PATH}/galaxygeode.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/horizonband.h
@@ -68,6 +80,7 @@ set(LIB_SOURCES
 	${HEADER_PATH}/julianday.h
 	${HEADER_PATH}/mathmacros.h
 	${HEADER_PATH}/moon.h
+	${HEADER_PATH}/moongeode.h
     ${HEADER_PATH}/paraboloidmappedhimmel.h
     ${HEADER_PATH}/polarmappedhimmel.h
     ${HEADER_PATH}/pragmanote.h
@@ -76,6 +89,7 @@ set(LIB_SOURCES
 	${HEADER_PATH}/sideraltime.h
     ${HEADER_PATH}/spheremappedhimmel.h
 	${HEADER_PATH}/stars.h
+	${HEADER_PATH}/starsgeode.h
 	${HEADER_PATH}/sun.h
     ${HEADER_PATH}/timef.h
     ${HEADER_PATH}/twounitschanger.h

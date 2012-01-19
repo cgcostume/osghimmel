@@ -28,72 +28,75 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __PROCEDURALHIMMEL_H__
-#define __PROCEDURALHIMMEL_H__
+#ifndef __MOONGEODE_H__
+#define __MOONGEODE_H__
 
-#include "abstracthimmel.h"
-
-
-class AbstractAstronomy;
-class AtmosphereGeode;
-class MoonGeode;
-class StarsGeode;
-class GalaxyGeode;
+#include <osg/Geode>
 
 
-class ProceduralHimmel : public AbstractHimmel
+class ProceduralHimmel;
+class HimmelQuad;
+
+
+class MoonGeode : public osg::Geode
 {
 public:
 
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
+    MoonGeode(const ProceduralHimmel &himmel);
+    virtual ~MoonGeode();
+
+    void update();
 
 
-    const float setLatitude(const float latitude);
-    const float getLatitude() const;
+    const float setScale(const float scale);
+    const float getScale() const;
+    static const float defaultScale();
 
-    const float setLongitude(const float longitude);
-    const float getLongitude() const;
+    const osg::Vec3 setSunShineColor(const osg::Vec3 &color);
+    const osg::Vec3 getSunShineColor() const;
+    static const osg::Vec3 defaultSunShineColor();
 
+    const float setSunShineIntensity(const float intensity);
+    const float getSunShineIntensity() const;
+    static const float defaultSunShineIntensity();
 
-    inline AtmosphereGeode *atmosphere() const 
-    {
-        return m_atmosphere;
-    }
+    const osg::Vec3 setEarthShineColor(const osg::Vec3 &color);
+    const osg::Vec3 getEarthShineColor() const;
+    static const osg::Vec3 defaultEarthShineColor();
 
-    inline MoonGeode *moon() const
-    {
-        return m_moon;
-    }
-
-    inline StarsGeode *stars() const
-    {
-        return m_stars;
-    }
-
-    inline GalaxyGeode *galaxy() const
-    {
-        return m_galaxy;
-    }
-
-
-    inline AbstractAstronomy *astro() const
-    {
-        return m_astronomy;
-    }
+    const float setEarthShineIntensity(const float intensity);
+    const float getEarthShineIntensity() const;
+    static const float defaultEarthShineIntensity();
 
 protected:
 
-    virtual void update();
+    void setupUniforms(osg::StateSet* stateSet);
+    void setupNode    (osg::StateSet* stateSet);
+    void setupTextures(osg::StateSet* stateSet);
+    void setupShader  (osg::StateSet* stateSet);
+
+    const std::string getVertexShaderSource();
+    const std::string getFragmentShaderSource();
 
 protected:
 
-    AbstractAstronomy *m_astronomy;
+    const ProceduralHimmel &m_himmel;
 
-    osg::ref_ptr<AtmosphereGeode>   m_atmosphere;
-    osg::ref_ptr<MoonGeode>         m_moon;
-    osg::ref_ptr<StarsGeode>        m_stars;
-    osg::ref_ptr<GalaxyGeode>       m_galaxy;
+    HimmelQuad *m_hquad;
+
+    osg::Program *m_program;
+    osg::Shader *m_vShader;
+    osg::Shader *m_fShader;
+
+    osg::ref_ptr<osg::Uniform> u_sun;
+    osg::ref_ptr<osg::Uniform> u_moon;
+
+    osg::ref_ptr<osg::Uniform> u_moonCube;
+    osg::ref_ptr<osg::Uniform> u_rotation;
+    osg::ref_ptr<osg::Uniform> u_sunShine;
+    osg::ref_ptr<osg::Uniform> u_earthShine;
+
+    float m_scale;
 };
 
-#endif // __PROCEDURALHIMMEL_H__
+#endif // __MOONGEODE_H__

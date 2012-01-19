@@ -99,15 +99,14 @@ const double AbstractHimmelScene::setLongitude(const double longitude)
 
 
 
+// TODO: change this - seems ugly. Works as workaround for now...
 
-    // TODO - TEMP: will be changed soon
-    void AbstractHimmelScene::hintCamera(osg::Camera *camera)
-    {
-        himmel()->hintCamera(camera);
-    }
+void AbstractHimmelScene::hintCamera(osg::Camera *camera)
+{
+    himmel()->setCameraHint(camera);
+}
 
-    void AbstractHimmelScene::hintViewSize(unsigned int width, unsigned int height)
-    {
-        himmel()->hintViewSize(width, height);
-    }
-
+void AbstractHimmelScene::hintViewSize(unsigned int width, unsigned int height)
+{
+    himmel()->setViewSizeHint(width, height);
+}

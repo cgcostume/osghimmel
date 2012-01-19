@@ -125,7 +125,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
     {
     case MM_Half:
 
-    return glsl_f_version
+    return glsl_f_version_150
 
     +   glsl_f_blendNormalExt
 
@@ -164,7 +164,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
 
     case MM_Full:
 
-    return glsl_f_version
+    return glsl_f_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 
@@ -196,6 +196,7 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
         "\n"
         "    gl_FragColor = " + (m_withFakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
         "}\n\n";
+
 
     default:
         assert(false);

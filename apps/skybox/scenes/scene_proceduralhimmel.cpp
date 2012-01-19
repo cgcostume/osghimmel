@@ -30,6 +30,8 @@
 #include "scene_proceduralhimmel.h"
 
 #include "include/proceduralhimmel.h"
+#include "include/atmospheregeode.h"
+#include "include/moongeode.h"
 
 
 namespace
@@ -70,8 +72,8 @@ void Scene_ProceduralHimmel::registerProperties()
 
     QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
 
-    createProperty(*proceduralGroup, PROPERTY_DITHERING_MULTIPLIER, 4.0, 0.0, 255.0, 1.00);
-    createProperty(*proceduralGroup, PROPERTY_MOON_SCALE, 1.0, 0.0, 100.0, 0.1); 
+    createProperty(*proceduralGroup, PROPERTY_DITHERING_MULTIPLIER, AtmosphereGeode::defaultDitheringMultiplier(), 0.0, 255.0, 1.00);
+    createProperty(*proceduralGroup, PROPERTY_MOON_SCALE, MoonGeode::defaultScale(), 0.0, 100.0, 0.1); 
 }
 
 
@@ -80,9 +82,9 @@ void Scene_ProceduralHimmel::propertyChanged(
 ,   const QString &name)
 {
     if(PROPERTY_DITHERING_MULTIPLIER == name)
-        m_himmel->setDitheringMultiplier(doubleValue(PROPERTY_DITHERING_MULTIPLIER));
+        m_himmel->atmosphere()->setDitheringMultiplier(doubleValue(PROPERTY_DITHERING_MULTIPLIER));
     if(PROPERTY_MOON_SCALE == name)
-        m_himmel->setMoonScale(doubleValue(PROPERTY_MOON_SCALE));
+        m_himmel->moon()->setScale(doubleValue(PROPERTY_MOON_SCALE));
 
 }
 

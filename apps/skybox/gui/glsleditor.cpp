@@ -57,7 +57,7 @@ GlslEditor::~GlslEditor()
 
     delete m_shaderModifier;
 
-    m_ui->glslTextEdit->setDocument(NULL);
+    //m_ui->glslTextEdit->setDocument(NULL); -> crash in QSyntaxHighlighter
     foreach(QTextDocument *textdoc, m_documentsByIdentifier)
         delete textdoc;
 

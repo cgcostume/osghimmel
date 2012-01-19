@@ -37,6 +37,7 @@
 #include "pragmanote.h"
 
 class TimeF;
+class HimmelQuad;
 
 namespace osg
 {
@@ -117,18 +118,52 @@ protected:
 
     const float updateSrcAlpha() const; // Accesses TwoUnitsChanger.
 
+    // Shader
+
+    void setupProgram(osg::StateSet *stateSet);
+    void setupUniforms(osg::StateSet *stateSet);
+
+    void makeVertexShader();
+    void unmakeVertexShader();
+
+    void makeFragmentShader();
+    void unmakeFragmentShader();
+
+    // abstract interface
+
+    virtual const std::string getVertexShaderSource();
+    virtual const std::string getFragmentShaderSource() = 0;
+
+    // getter
+
+    inline osg::Program &program()
+    {
+        return *m_program;
+    }
+
+
     // Interface
 
     virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const = 0;
 
+    // AbstractHimmel
 
-    // AbstractHimmel interface
-
-    virtual const std::string getVertexShaderSource();
+    virtual void postInitialize();
 
 protected:
 
+    HimmelQuad *m_hquad;
+
     TwoUnitsChanger m_changer;
+
+    // shader
+
+    osg::Program *m_program;
+
+    osg::Shader *m_vShader;
+    osg::Shader *m_fShader;
+
+    // uniforms
 
     osg::ref_ptr<osg::Uniform> u_back; // type depends on subclasses
     osg::ref_ptr<osg::Uniform> u_src;  // type depends on subclasses
@@ -139,6 +174,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_sunScale;
 
     osg::ref_ptr<osg::Uniform> u_srcAlpha; // float
+
 
     GLint m_activeBackUnit;
     GLint m_activeSrcUnit;

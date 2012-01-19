@@ -116,7 +116,7 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 
 const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_f_version
+    return glsl_f_version_150
 
     +   glsl_f_blendNormalExt
     
