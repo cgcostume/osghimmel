@@ -31,6 +31,7 @@
 #include "timef.h"
 #include "himmelquad.h"
 
+#include <osg/Geode>
 #include <osg/MatrixTransform>
 
 #include <assert.h>
@@ -46,6 +47,13 @@ namespace
 AbstractMappedHimmel::AbstractMappedHimmel(
     const bool fakeSun)
 :   AbstractHimmel()
+
+,   m_hquad(new HimmelQuad())
+
+,   m_program(new osg::Program)
+,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
+,   m_fShader(new osg::Shader(osg::Shader::FRAGMENT))
+
 ,   u_srcAlpha  (new osg::Uniform("srcAlpha", 0.f))
 ,   u_back      (new osg::Uniform("back", BACK_TEXTURE_INDEX))
 ,   u_src       (new osg::Uniform("src",  SRC_TEXTURE_INDEX))
@@ -64,36 +72,31 @@ AbstractMappedHimmel::AbstractMappedHimmel(
 
 ,   m_withFakeSun(fakeSun)
 {
-    getOrCreateStateSet()->addUniform(u_srcAlpha);
-    getOrCreateStateSet()->addUniform(u_back);
-    getOrCreateStateSet()->addUniform(u_src);
+    osg::StateSet* stateSet = getOrCreateStateSet();
 
-    if(m_withFakeSun)
-    {
-        u_razInverse = new osg::Uniform("razInverse", osg::Matrix());
+    setupProgram(stateSet);
+    setupUniforms(stateSet);
 
-        u_sun       = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 1.0));
-        u_sunCoeffs = new osg::Uniform("sunCoeffs", defaultSunCoeffs());
-        u_sunScale  = new osg::Uniform("sunScale", 1.f);
-
-        getOrCreateStateSet()->addUniform(u_razInverse);
-        
-        getOrCreateStateSet()->addUniform(u_sun);
-        getOrCreateStateSet()->addUniform(u_sunCoeffs);
-        getOrCreateStateSet()->addUniform(u_sunScale);
-    }
 
     // Encapsulate hQuad into MatrixTransform.
 
-    m_razTransform->addChild(m_hquad);
+    osg::Geode *geode = new osg::Geode();
+    geode->addDrawable(m_hquad);
+
+    m_razTransform->addChild(geode);
     addChild(m_razTransform.get());
 };
 
 
 AbstractMappedHimmel::~AbstractMappedHimmel()
 {
+    unmakeVertexShader();
+    unmakeFragmentShader();
+
     delete m_razTimef;
+    delete m_hquad;
 };
+
 
 #pragma NOTE("Move includes...")
 
@@ -177,6 +180,87 @@ void AbstractMappedHimmel::assignUnit(
     else
         getOrCreateStateSet()->setTextureAttributeAndModes(targetIndex, NULL, osg::StateAttribute::OFF);
 }
+
+
+void AbstractMappedHimmel::setupProgram(osg::StateSet *stateSet)
+{
+    m_program->addShader(m_vShader);
+    m_program->addShader(m_fShader);
+
+    stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
+}
+
+
+void AbstractMappedHimmel::setupUniforms(osg::StateSet *stateSet)
+{
+    stateSet->addUniform(u_srcAlpha);
+    stateSet->addUniform(u_back);
+    stateSet->addUniform(u_src);
+
+    if(m_withFakeSun)
+    {
+        u_razInverse = new osg::Uniform("razInverse", osg::Matrix());
+
+        u_sun       = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 1.0));
+        u_sunCoeffs = new osg::Uniform("sunCoeffs", defaultSunCoeffs());
+        u_sunScale  = new osg::Uniform("sunScale", 1.f);
+
+        stateSet->addUniform(u_razInverse);
+        
+        stateSet->addUniform(u_sun);
+        stateSet->addUniform(u_sunCoeffs);
+        stateSet->addUniform(u_sunScale);
+    }
+}
+
+
+void AbstractMappedHimmel::postInitialize()
+{
+    makeVertexShader();
+    makeFragmentShader();
+}
+
+
+void AbstractMappedHimmel::makeVertexShader()
+{
+    m_vShader->setShaderSource(getVertexShaderSource());
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->registerShader(getName(), m_vShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+}
+
+
+void AbstractMappedHimmel::unmakeVertexShader()
+{
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->unregisterShader(m_vShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+}
+
+
+void AbstractMappedHimmel::makeFragmentShader()
+{
+    m_fShader->setShaderSource(getFragmentShaderSource());
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->registerShader(getName(), m_fShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+}
+
+
+void AbstractMappedHimmel::unmakeFragmentShader()
+{
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    if(shaderModifier())
+        shaderModifier()->unregisterShader(m_fShader);
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+}
+
+
 
 
 void AbstractMappedHimmel::setTransitionDuration(const float duration)
@@ -266,7 +350,7 @@ const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
 
 const std::string AbstractMappedHimmel::getVertexShaderSource()
 {
-    return glsl_v_version
+    return glsl_v_version_150
 
         +   glsl_v_quadRetrieveRay
         +   glsl_v_quadTransform

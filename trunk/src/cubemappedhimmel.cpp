@@ -101,7 +101,7 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 
 const std::string CubeMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_f_version
+    return glsl_f_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
     

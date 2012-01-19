@@ -27,73 +27,48 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __PROCEDURALHIMMEL_H__
-#define __PROCEDURALHIMMEL_H__
+#include "astronomy.h"
 
-#include "abstracthimmel.h"
-
-
-class AbstractAstronomy;
-class AtmosphereGeode;
-class MoonGeode;
-class StarsGeode;
-class GalaxyGeode;
+#include "earth.h"
+#include "sun.h"
+#include "moon.h"
+#include "stars.h"
 
 
-class ProceduralHimmel : public AbstractHimmel
+Astronomy::Astronomy()
 {
-public:
-
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
+}
 
 
-    const float setLatitude(const float latitude);
-    const float getLatitude() const;
-
-    const float setLongitude(const float longitude);
-    const float getLongitude() const;
-
-
-    inline AtmosphereGeode *atmosphere() const 
-    {
-        return m_atmosphere;
-    }
-
-    inline MoonGeode *moon() const
-    {
-        return m_moon;
-    }
-
-    inline StarsGeode *stars() const
-    {
-        return m_stars;
-    }
-
-    inline GalaxyGeode *galaxy() const
-    {
-        return m_galaxy;
-    }
+const float Astronomy::getAngularSunRadius() const
+{
+    return earth_apparentAngularSunDiameter(t()) * 0.5;
+}
 
 
-    inline AbstractAstronomy *astro() const
-    {
-        return m_astronomy;
-    }
+const float Astronomy::getAngularMoonRadius() const
+{
+    return earth_apparentAngularMoonDiameter(t()) * 0.5;
+}
 
-protected:
 
-    virtual void update();
+const osg::Vec3 Astronomy::moonPosition() const
+{
+    t_hord moon = moon_horizontalPosition(getATime(), getLatitude(), getLongitude());
 
-protected:
+    osg::Vec3 moonv  = moon.toEuclidean();
+    moonv.normalize();
 
-    AbstractAstronomy *m_astronomy;
+    return moonv;
+}
 
-    osg::ref_ptr<AtmosphereGeode>   m_atmosphere;
-    osg::ref_ptr<MoonGeode>         m_moon;
-    osg::ref_ptr<StarsGeode>        m_stars;
-    osg::ref_ptr<GalaxyGeode>       m_galaxy;
-};
 
-#endif // __PROCEDURALHIMMEL_H__
+const osg::Vec3 Astronomy::sunPosition() const
+{
+    t_hord sun = sun_horizontalPosition(getATime(), getLatitude(), getLongitude());
+
+    osg::Vec3 sunv  = sun.toEuclidean();
+    sunv.normalize();
+
+    return sunv;
+}

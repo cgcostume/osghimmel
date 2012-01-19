@@ -28,25 +28,29 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __PROCEDURALHIMMEL_H__
-#define __PROCEDURALHIMMEL_H__
+#ifndef __ABSTRACTASTRONOMY_H__
+#define __ABSTRACTASTRONOMY_H__
 
-#include "abstracthimmel.h"
+#include "atime.h"
+#include "julianday.h"
 
-
-class AbstractAstronomy;
-class AtmosphereGeode;
-class MoonGeode;
-class StarsGeode;
-class GalaxyGeode;
+#include <osg/Vec3>
 
 
-class ProceduralHimmel : public AbstractHimmel
+class AbstractAstronomy
 {
 public:
 
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
+    AbstractAstronomy();
+    virtual ~AbstractAstronomy();
+
+
+    void update(const t_aTime &aTime);
+
+    inline const t_aTime &getATime() const
+    {
+        return m_aTime;
+    }
 
 
     const float setLatitude(const float latitude);
@@ -55,45 +59,47 @@ public:
     const float setLongitude(const float longitude);
     const float getLongitude() const;
 
+    const bool setOverrideMoonPosition(const bool enabled); 
+    const bool getOverrideMoonPosition() const;
 
-    inline AtmosphereGeode *atmosphere() const 
+    const osg::Vec3 setMoonPosition(const osg::Vec3 &position);
+    const osg::Vec3 getMoonPosition() const;
+
+    const bool setOverrideSunPosition(const bool enabled); 
+    const bool getOverrideSunPosition() const;
+
+    const osg::Vec3 setSunPosition(const osg::Vec3 &position);
+    const osg::Vec3 getSunPosition() const;
+
+
+
+    virtual const float getAngularSunRadius() const = 0;
+    virtual const float getAngularMoonRadius() const = 0;
+
+protected:
+
+    virtual const osg::Vec3 moonPosition() const = 0;
+    virtual const osg::Vec3 sunPosition() const = 0;
+
+
+    inline const t_julianDay t() const 
     {
-        return m_atmosphere;
-    }
-
-    inline MoonGeode *moon() const
-    {
-        return m_moon;
-    }
-
-    inline StarsGeode *stars() const
-    {
-        return m_stars;
-    }
-
-    inline GalaxyGeode *galaxy() const
-    {
-        return m_galaxy;
-    }
-
-
-    inline AbstractAstronomy *astro() const
-    {
-        return m_astronomy;
+        return m_t;
     }
 
 protected:
 
-    virtual void update();
+    t_aTime m_aTime;
+    t_julianDay m_t;
 
-protected:
+    float m_latitude;
+    float m_longitude;
 
-    AbstractAstronomy *m_astronomy;
+    bool m_overrideMoonPosition;
+    osg::Vec3 m_moonPosition;
 
-    osg::ref_ptr<AtmosphereGeode>   m_atmosphere;
-    osg::ref_ptr<MoonGeode>         m_moon;
-    osg::ref_ptr<StarsGeode>        m_stars;
-    osg::ref_ptr<GalaxyGeode>       m_galaxy;
+    bool m_overrideSunPosition;
+    osg::Vec3 m_sunPosition;
 };
 
-#endif // __PROCEDURALHIMMEL_H__
+#endif // __ABSTRACTASTRONOMY_H__

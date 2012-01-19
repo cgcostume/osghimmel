@@ -28,18 +28,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "abstracthimmel.h"
-
 #include "timef.h"
-#include "himmelquad.h"
 
 #include <osg/Depth>
 
 #include <osgUtil/CullVisitor>
 
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-#include "shadermodifier.h"
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+#include <assert.h>
 
 
 void AbstractHimmel::HimmelNodeCallback::operator()(
@@ -60,14 +55,7 @@ AbstractHimmel::AbstractHimmel()
 ,   m_timef(NULL)
 ,   m_autoUpdateTime(false)
 
-,   m_program(new osg::Program)
-,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
-,   m_fShader(new osg::Shader(osg::Shader::FRAGMENT))
-
-,   m_hquad(new HimmelQuad())
-
 ,   m_initialized(false)
-
 
 // TODO
 ,   m_cameraHint(NULL)
@@ -75,10 +63,7 @@ AbstractHimmel::AbstractHimmel()
 ,   m_heightHint(NULL)
 
 {
-    osg::StateSet* stateSet = getOrCreateStateSet();
-
-    setupNode(stateSet);
-    setupProgram(stateSet);
+    setupNode(getOrCreateStateSet());
 
     setUpdateCallback(new HimmelNodeCallback);
 };
@@ -86,8 +71,6 @@ AbstractHimmel::AbstractHimmel()
 
 AbstractHimmel::~AbstractHimmel()
 {
-    unmakeVertexShader();
-    unmakeFragmentShader();
 };
 
 
@@ -123,66 +106,14 @@ void AbstractHimmel::setupNode(osg::StateSet* stateSet)
 }
 
 
-void AbstractHimmel::setupProgram(osg::StateSet *stateSet)
-{
-    m_program->addShader(m_vShader);
-    m_program->addShader(m_fShader);
-
-    stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
-}
-
-
 void AbstractHimmel::initialize()
 {
     if(m_initialized)
         return;
 
-    makeVertexShader();
-    makeFragmentShader();
-
     postInitialize();
 
     m_initialized = true;
-}
-
-
-void AbstractHimmel::makeVertexShader()
-{
-    m_vShader->setShaderSource(getVertexShaderSource());
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->registerShader(getName(), m_vShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-}
-
-
-void AbstractHimmel::unmakeVertexShader()
-{
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->unregisterShader(m_vShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-}
-
-
-void AbstractHimmel::makeFragmentShader()
-{
-    m_fShader->setShaderSource(getFragmentShaderSource());
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->registerShader(getName(), m_fShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-}
-
-
-void AbstractHimmel::unmakeFragmentShader()
-{
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->unregisterShader(m_fShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
@@ -238,17 +169,36 @@ ShaderModifier *AbstractHimmel::shaderModifier()
 
 
 
-// TODO  temp
 
-void AbstractHimmel::hintCamera(osg::Camera *camera)
+void AbstractHimmel::setCameraHint(osg::Camera *camera)
 {
     m_cameraHint = camera;
 }
 
+const float AbstractHimmel::getCameraFovHint() const
+{
+    assert(m_cameraHint);
+    
+    double fov, dummy;
+    if(m_cameraHint->getProjectionMatrixAsPerspective(fov, dummy, dummy, dummy))
+        return fov;
 
-void AbstractHimmel::hintViewSize(unsigned int width, unsigned int height)
+    return 0;
+}
+
+
+void AbstractHimmel::setViewSizeHint(unsigned int width, unsigned int height)
 {
     m_widthHint = width;
     m_heightHint = height;
 }
 
+const unsigned int AbstractHimmel::getViewSizeWidthHint() const
+{
+    return m_widthHint;
+}
+
+const unsigned int AbstractHimmel::getViewSizeHeightHint() const
+{
+    return m_heightHint;
+}

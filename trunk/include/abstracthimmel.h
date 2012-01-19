@@ -34,13 +34,12 @@
 #include <osg/Transform>
 #include <osg/NodeCallback>
 
-class TimeF;
-class HimmelQuad;
-
-
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-class ShaderModifier;
+#include "shadermodifier.h"
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+
+class TimeF;
 
 
 class AbstractHimmel : public osg::Transform
@@ -88,9 +87,14 @@ public:
 
 
 
-    // TODO - TEMP: will be changed soon
-    void hintCamera(osg::Camera *camera);
-    void hintViewSize(unsigned int width, unsigned int height);
+    // TODO: seems ugly - optimize this!
+
+    void setCameraHint(osg::Camera *camera);
+    const float getCameraFovHint() const;
+
+    void setViewSizeHint(unsigned int width, unsigned int height);
+    const unsigned int getViewSizeWidthHint() const;
+    const unsigned int getViewSizeHeightHint() const;
 
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
@@ -101,7 +105,6 @@ public:
 protected:
 
     void setupNode(osg::StateSet* stateSet);
-    void setupProgram(osg::StateSet *stateSet);
 
     // Called by the HimmelUpdateCallback. Call this first when inherited!
     virtual void update();
@@ -109,23 +112,6 @@ protected:
     void initialize();
     virtual void postInitialize() { };
 
-    void makeVertexShader();
-    void unmakeVertexShader();
-
-    void makeFragmentShader();
-    void unmakeFragmentShader();
-
-    // abstract interface
-
-    virtual const std::string getVertexShaderSource() = 0;
-    virtual const std::string getFragmentShaderSource() = 0;
-
-    // getter
-
-    inline osg::Program &program()
-    {
-        return *m_program;
-    }
 
     const float timef() const;
 
@@ -133,19 +119,10 @@ protected:
 
     bool m_initialized;
 
-    // shader
-
-    osg::Program *m_program;
-
-    osg::Shader *m_vShader;
-    osg::Shader *m_fShader;
-
     //
 
     TimeF *m_timef;
     bool m_autoUpdateTime;
-
-    HimmelQuad *m_hquad;
 
 
     // TODO  temp

@@ -31,18 +31,14 @@
 #ifndef __HIMMELQUAD_H__
 #define __HIMMELQUAD_H__
 
-#include <osg/Geode>
 #include <osg/Geometry>
 
 
-class HimmelQuad : public osg::Geode
+class HimmelQuad : public osg::Geometry
 {
 public:
     HimmelQuad();
     virtual ~HimmelQuad();
-
-protected:
-    osg::ref_ptr<osg::Geometry> m_quad;
 };
 
 

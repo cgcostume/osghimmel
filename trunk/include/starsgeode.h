@@ -28,72 +28,46 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __PROCEDURALHIMMEL_H__
-#define __PROCEDURALHIMMEL_H__
+#ifndef __STARSGEODE_H__
+#define __STARSGEODE_H__
 
-#include "abstracthimmel.h"
-
-
-class AbstractAstronomy;
-class AtmosphereGeode;
-class MoonGeode;
-class StarsGeode;
-class GalaxyGeode;
+#include <osg/Geode>
 
 
-class ProceduralHimmel : public AbstractHimmel
+class ProceduralHimmel;
+
+
+class StarsGeode : public osg::Geode
 {
 public:
 
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
+   StarsGeode(const ProceduralHimmel &himmel);
+    virtual ~StarsGeode();
 
-
-    const float setLatitude(const float latitude);
-    const float getLatitude() const;
-
-    const float setLongitude(const float longitude);
-    const float getLongitude() const;
-
-
-    inline AtmosphereGeode *atmosphere() const 
-    {
-        return m_atmosphere;
-    }
-
-    inline MoonGeode *moon() const
-    {
-        return m_moon;
-    }
-
-    inline StarsGeode *stars() const
-    {
-        return m_stars;
-    }
-
-    inline GalaxyGeode *galaxy() const
-    {
-        return m_galaxy;
-    }
-
-
-    inline AbstractAstronomy *astro() const
-    {
-        return m_astronomy;
-    }
+    void update();
 
 protected:
 
-    virtual void update();
+    void setupUniforms(osg::StateSet* stateSet);
+    void setupNode    (osg::StateSet* stateSet);
+    void setupTextures(osg::StateSet* stateSet);
+    void setupShader  (osg::StateSet* stateSet);
+
+    void createAndAddDrawable();
+
+    const std::string getVertexShaderSource();
+    const std::string getFragmentShaderSource();
 
 protected:
 
-    AbstractAstronomy *m_astronomy;
+    const ProceduralHimmel &m_himmel;
 
-    osg::ref_ptr<AtmosphereGeode>   m_atmosphere;
-    osg::ref_ptr<MoonGeode>         m_moon;
-    osg::ref_ptr<StarsGeode>        m_stars;
-    osg::ref_ptr<GalaxyGeode>       m_galaxy;
+    osg::Program *m_program;
+    osg::Shader *m_vShader;
+    osg::Shader *m_gShader;
+    osg::Shader *m_fShader;
+
+    osg::ref_ptr<osg::Uniform> u_starWidth;
 };
 
-#endif // __PROCEDURALHIMMEL_H__
+#endif // __STARSGEODE_H__
