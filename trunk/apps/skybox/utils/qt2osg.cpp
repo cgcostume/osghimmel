@@ -48,3 +48,21 @@ const QColor toQColor(const osg::Vec4 &color)
     ,   color.b()
     ,   color.a());
 }
+
+
+const osg::Vec3 toVec3(const QColor &color)
+{
+    return osg::Vec3(
+        color.redF()
+    ,   color.greenF()
+    ,   color.blueF());
+}
+
+const QColor toQColor(const osg::Vec3 &color)
+{
+    return QColor::fromRgbF(
+        color.x()
+    ,   color.y()
+    ,   color.z()
+    ,   1.0);
+}

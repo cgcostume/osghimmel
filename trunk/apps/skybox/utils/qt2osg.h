@@ -34,8 +34,12 @@
 class QColor;
 
 #include <osg/Vec4>
+#include <osg/Vec3>
 
 const osg::Vec4 toVec4(const QColor &color);
 const QColor toQColor(const osg::Vec4 &color);
+
+const osg::Vec3 toVec3(const QColor &color);
+const QColor toQColor(const osg::Vec3 &color);
 
 #endif // __IMPORT_H__
