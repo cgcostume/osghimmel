@@ -86,6 +86,8 @@ protected:
     osg::ref_ptr<osg::Uniform> u_glareIntensity;
     osg::ref_ptr<osg::Uniform> u_glareScale;
 
+    osg::ref_ptr<osg::Uniform> u_sun;
+
     // TODO
 
     std::vector<s_BrightStar> m_bss;
