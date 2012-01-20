@@ -46,6 +46,16 @@ public:
 
     void update();
 
+    const float setGlareIntensity(const float intensity);
+    const float getGlareIntensity() const;
+
+    const float setGlareScale(const float scale);
+    const float getGlareScale() const;
+
+    const float setMaxVMag(const float vMag);
+    const float getMaxVMag() const;
+    static const float defaultMaxVMag();
+
 protected:
 
     void setupUniforms(osg::StateSet* stateSet);
@@ -56,6 +66,7 @@ protected:
     void createAndAddDrawable();
 
     const std::string getVertexShaderSource();
+    const std::string getGeometryShaderSource();
     const std::string getFragmentShaderSource();
 
 protected:
@@ -68,6 +79,10 @@ protected:
     osg::Shader *m_fShader;
 
     osg::ref_ptr<osg::Uniform> u_starWidth;
+
+    osg::ref_ptr<osg::Uniform> u_maxVMag;
+    osg::ref_ptr<osg::Uniform> u_glareIntensity;
+    osg::ref_ptr<osg::Uniform> u_glareScale;
 };
 
 #endif // __STARSGEODE_H__
