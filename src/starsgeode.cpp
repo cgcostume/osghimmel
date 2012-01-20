@@ -51,6 +51,9 @@ StarsGeode::StarsGeode(const ProceduralHimmel &himmel)
 ,   m_fShader(new osg::Shader(osg::Shader::FRAGMENT))
 
 ,   u_starWidth(NULL)
+,   u_maxVMag(NULL)
+,   u_glareIntensity(NULL)
+,   u_glareScale(NULL)
 {
     setName("Stars");
 
@@ -73,16 +76,28 @@ void StarsGeode::update()
 {
     float fov = m_himmel.getCameraFovHint();
     float height = m_himmel.getViewSizeHeightHint();
+    
+    static const float TWO_TIMES_SQRT2 = 2.0 * sqrt(2.0);
 
-    u_starWidth->set(static_cast<float>(tan(_rad(fov) / height) * 2.f));
+    u_starWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
 }
 
 
 void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    u_starWidth = new osg::Uniform("starWidth", 0.0004f); // TODO: change to zero! -> can cause graphics driver to crash if > 0.1
+    u_starWidth = new osg::Uniform("starWidth", 0.0f);
     stateSet->addUniform(u_starWidth);
+
+    u_glareIntensity = new osg::Uniform("glareIntensity", 1.0f);
+    stateSet->addUniform(u_glareIntensity);
+
+    u_glareScale = new osg::Uniform("glareScale", 1.0f);
+    stateSet->addUniform(u_glareScale);
+
+    u_maxVMag = new osg::Uniform("maxVMag", defaultMaxVMag());
+    stateSet->addUniform(u_maxVMag);
 }
+
 
 
 #include "coords.h"
@@ -110,7 +125,7 @@ void StarsGeode::createAndAddDrawable()
 
 
     osg::Vec4Array* cAry = new osg::Vec4Array;
-    osg::Vec4Array* vAry = new osg::Vec4Array;
+    osg::Vec3Array* vAry = new osg::Vec3Array;
 
     for(int i = 0; i < bss.size(); ++i)
     {
@@ -119,8 +134,8 @@ void StarsGeode::createAndAddDrawable()
         equ.declination = bss[i].DE;
 
         osg::Vec3f vec = equ.toHorizontal(s, la, lo).toEuclidean();
-        vAry->push_back(osg::Vec4(vec, bss[i].Vmag));
-        cAry->push_back(osg::Vec4(bss[i].sRGB_R, bss[i].sRGB_G, bss[i].sRGB_B, 1.0));
+        vAry->push_back(vec);
+        cAry->push_back(osg::Vec4(bss[i].sRGB_R, bss[i].sRGB_G, bss[i].sRGB_B, bss[i].Vmag));
     }
 
     g->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
@@ -151,9 +166,9 @@ void StarsGeode::setupNode(osg::StateSet* stateSet)
 
 void StarsGeode::setupShader(osg::StateSet* stateSet)
 {
-    m_vShader->loadShaderSourceFromFile("D:/p/osghimmel/tempsv.txt");
-    m_gShader->loadShaderSourceFromFile("D:/p/osghimmel/tempsg.txt");
-    m_fShader->loadShaderSourceFromFile("D:/p/osghimmel/tempsf.txt");
+    m_vShader->setShaderSource(getVertexShaderSource());
+    m_gShader->setShaderSource(getGeometryShaderSource());
+    m_fShader->setShaderSource(getFragmentShaderSource());
 
     m_program->addShader(m_vShader);
     m_program->addShader(m_gShader);
@@ -175,4 +190,175 @@ void StarsGeode::setupShader(osg::StateSet* stateSet)
 void StarsGeode::setupTextures(osg::StateSet* stateSet)
 {
 
+}
+
+
+
+
+const float StarsGeode::setGlareIntensity(const float intensity)
+{
+    u_glareIntensity->set(intensity);
+    return getGlareIntensity();
+}
+
+const float StarsGeode::getGlareIntensity() const
+{
+    float intensity;
+    u_glareIntensity->get(intensity);
+
+    return intensity;
+}
+
+
+const float StarsGeode::setGlareScale(const float scale)
+{
+    u_glareScale->set(scale);
+    return getGlareScale();
+}
+
+const float StarsGeode::getGlareScale() const
+{
+    float scale;
+    u_glareScale->get(scale);
+
+    return scale;
+}
+
+
+const float StarsGeode::setMaxVMag(const float vMag)
+{
+    u_maxVMag->set(vMag);
+    return getMaxVMag();
+}
+
+const float StarsGeode::getMaxVMag() const
+{
+    float vMag;
+    u_maxVMag->get(vMag);
+
+    return vMag;
+}
+
+const float StarsGeode::defaultMaxVMag() 
+{
+    return 6.5f;
+}
+
+
+
+
+// VertexShader
+
+const std::string StarsGeode::getVertexShaderSource()
+{
+    return 
+        "#version 150 compatibility\n"
+        "\n"
+        "uniform float starWidth;\n"
+        "uniform float maxVMag;\n"
+        "\n"
+        "out vec4 m_color;\n"
+        "\n"
+        "const float minB = pow(2.512, -6.5);\n"
+        "\n"
+        "void main(void)\n"
+        "{\n"
+	    "    float vMag = gl_Color.w;\n"
+        "\n"
+	    "    float estB = pow(2.512, maxVMag - vMag);\n"
+	    "    float scaledB = minB * estB / starWidth * 0.1;\n"
+        "\n"
+	    "    m_color = vec4(gl_Color.rgb, scaledB);\n"
+        "\n"
+        "    gl_Position = vec4(gl_Vertex.xyz, 1.0);\n"
+        "}\n\n";
+}
+
+
+// GeometryShader
+
+const std::string StarsGeode::getGeometryShaderSource()
+{
+    return
+        "#version 150 compatibility\n"
+        "\n"
+        "#extension GL_EXT_geometry_shader4 : enable\n"
+        "\n"
+        "layout (points) in;\n"
+        "layout (triangle_Strip, max_vertices = 4) out;\n"
+        "\n"
+        "uniform float starWidth;\n"
+        "uniform float glareScale;\n"
+        "\n"
+        "in vec4 m_color[];\n"
+        "out vec4 m_c;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+	    "    vec3 p = normalize(gl_in[0].gl_Position.xyz);\n"
+        "\n"
+	    "    vec3 u = cross(p, vec3(1));\n"
+	    "    vec3 v = cross(u, p);\n"
+        "\n"
+	    "    float scaledB = m_color[0].w;\n"
+        "\n"
+	    "    m_c = vec4(m_color[0].rgb, scaledB);\n"
+        "\n"
+	    "    gl_TexCoord[0].z = (1.0 + sqrt(scaledB)) * max(1.0, glareScale);\n"
+        "\n"
+
+	    "    float k = starWidth * gl_TexCoord[0].z;\n"
+        "\n"
+	    "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
+	    "    gl_TexCoord[0].xy = vec2(-1.0, -1.0);\n"
+	    "    EmitVertex();\n"
+        "\n"
+	    "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u +v) * k, 1.0);\n"
+	    "    gl_TexCoord[0].xy = vec2(-1.0,  1.0);\n"
+	    "    EmitVertex();\n"
+        "\n"
+	    "    gl_Position = gl_ModelViewProjectionMatrix  * vec4(p - normalize(+u -v) * k, 1.0);\n"
+	    "    gl_TexCoord[0].xy = vec2( 1.0, -1.0);\n"
+	    "    EmitVertex();\n"
+        "\n"
+        "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(+u +v) * k, 1.0);\n"
+	    "    gl_TexCoord[0].xy = vec2( 1.0,  1.0);\n"
+	    "    EmitVertex();\n"
+        "}\n\n";
+}
+
+
+// FragmentShader
+
+const std::string StarsGeode::getFragmentShaderSource()
+{
+    return 
+
+        "#version 150 compatibility\n"
+        "\n"
+        "uniform float starWidth;\n"
+        "uniform float glareIntensity;\n"
+        "\n"
+        "in vec4 m_c;\n"
+        "\n"
+        "void main(void)\n"
+        "{\n"
+	    "    float x = gl_TexCoord[0].x;\n"
+	    "    float y = gl_TexCoord[0].y;\n"
+        "\n"
+	    "    float radius = 0.98;\n"
+	    "    float zz = (radius * radius - x * x - y * y);\n"
+        "\n"
+	    "    if(zz < 0)\n"
+		"        discard;\n"
+        "\n"
+	    "    float s =  gl_TexCoord[0].z;\n"
+        "\n"
+	    "    float l = length(vec2(x, y));\n"
+        "\n"
+	    "    float t = smoothstep(1.0, 0.0, l * s);\n"
+	    "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
+        "\n"
+	    "    gl_FragColor = m_c * (t + g);\n"
+        "}\n\n";
 }
