@@ -168,7 +168,7 @@ const std::string AtmosphereGeode::getVertexShaderSource()
 
 const std::string AtmosphereGeode::getFragmentShaderSource()
 {
-    return glsl_f_version_150
+/*    return glsl_f_version_150
     
     +
         "in vec4 m_ray;\n"
@@ -198,5 +198,132 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         //"\n"
         //"    gl_FragColor = vec4(mo + su + h, 1.0) + dither();\n"
         "    gl_FragColor = vec4(su, 1.0) + dither();\n"
+        "}\n\n";
+*/
+    return glsl_f_version_150
+
+    +   
+        "uniform int osg_FrameNumber;\n"    // required by pseudo_rand
+        "\n"
+
+    +   glsl_f_pseudo_rand
+    +   glsl_f_dither
+
+    +
+        "uniform float planetRadius = 6367.46;\n"           // in km\n (e.g. 6367.46)
+        "uniform float atmoshpereThickness = 8.0;\n"    // height to troposphere end in km (e.g. 6.f to 20.f for earth)
+        "\n"
+
+//        "uniform vec3 rayleighCoeffs;\n"          // contains precomputed coefficents - if these are undefined you get the sun only ;)
+
+        "uniform float mieCoeff = 0.1e-6;\n"               // (e.g. 0.1e-6)
+        "uniform float rayleighCoeff = 0.0303;\n"          // (e.g. 0.0303)
+        "uniform float excentricity = 0.998;\n"           // (e.g. 0.95)
+        "\n"
+
+        "uniform float intensity = 32.0;\n"              // (e.g. 20.0)
+        "\n"
+
+        "uniform float bgIntensity =  0.33;\n"
+        "uniform vec4 bgColor = vec4(0.0f, 0.0, 0.0f, 1.f);\n"
+        "\n"
+
+        "uniform vec4 sun;\n"
+//        "uniform float sunScale;\n"
+        "\n"
+
+//      "in float m_distance;\n"
+        "in vec4 m_ray;\n"
+        "\n"
+
+        "const float c_PI        = 3.1415926535897932384626433832795;\n"
+        "const float c_3Over16PI = 0.0596831036594607509133314112647;\n"
+        "const float c_1Over4PI  = 0.0795774715459476678844418816863;\n"
+        "\n"
+        "\n"
+
+
+        "float opticalDensity()\n"
+        "{\n"
+        "   float a = (planetRadius + atmoshpereThickness) * 1000.0;\n"
+        "   float c = planetRadius * 1000.0;\n"
+        "\n"
+
+        //  If sin_alpha is < 0.04 precision errors will occur -> resulting in black dot on up
+        //  -> the if-else-approach works for vertex based, precomputed distances
+        //  -> works not here -> just scale up the whole distance by 0.998
+
+        "   // .98 is to prevent unprecize angle close to up vector\n"
+        "\n"
+        //  a = 180° - sin^(-1)(dot(up, dir))
+        "   float alpha = c_PI - acos(dot(vec3(0, 0, 1), normalize(m_ray.xyz)) * 0.98);\n" // the 0.98 fixes the black hole at the top
+        "\n"
+        //  ? = sin^(-1)(c sin a/a)
+        "   float gamma = asin(c * sin(alpha) / a);\n"
+        "\n"
+        //  ß = 180° - a - ?
+        "   float beta = c_PI - alpha - gamma;\n"
+        "\n"
+        //  b = a/sin a * sin ß
+        "   return a / sin(alpha) * sin(beta);\n"
+        "}\n"
+        "\n"
+        "\n"
+
+        "vec4 color()\n"
+        "{\n"
+        "   vec3 Esun = vec3(intensity);\n"
+     "   vec3 lambda = vec3(650.f, 600.f, 500.f);\n"
+     "\n"
+
+     "   vec3 rayleighCoeffs = vec3(\n"
+     "       pow(lambda.r * rayleighCoeff, -4.f),\n"
+     "       pow(lambda.g * rayleighCoeff, -4.f),\n"
+     "       pow(lambda.b * rayleighCoeff, -4.f));\n"
+     "\n"
+
+        "   float distance = opticalDensity();\n"
+        "\n"
+
+        "   vec3 Fex = exp(-(rayleighCoeffs + mieCoeff) * distance);\n"
+        "\n"
+
+        "   Esun *= (1.0 - Fex) * Fex;\n"
+        "\n"
+
+        "   float cos_theta = dot(normalize(sun.xyz), normalize(m_ray.xyz));\n"
+        "\n"
+
+        //  Rayleigh-Streuung: ?_R(?) = 3/4 (1+ cos²(?))
+        "   float rayleighPhase = 0.75 * (1.0 + cos_theta * cos_theta);\n"
+        "\n"
+        
+        //  Rayleigh-Streuungskoeffizienten: ß_R(?) = 3/16p ß_R ?_R(?)
+        "   vec3 rayleighBeta = c_3Over16PI * rayleighCoeffs * rayleighPhase;\n"
+        "\n"
+
+        "   float g = excentricity; float gg = excentricity * excentricity;\n"
+        "   float miePhase = (1.0) * 0.2666 * (1.0 - gg) / pow(1.0 + gg - 2.0 * g * cos_theta, 1.5);\n" // by default scale with 0.2666
+        "   float mieBeta = mieCoeff * miePhase * c_1Over4PI;\n"
+        "\n"
+        //  Darker night tweak.
+        "   float dayIntensity = 0.2 + 0.8 * smoothstep(0.0, 1.0, atan(sun.z * 2.0 + 0.66));\n"
+        "\n"
+        "   vec4 c;\n"
+        "   c.xyz = (rayleighBeta + mieBeta) / (rayleighCoeffs + mieCoeff);\n"
+        "   c.xyz *= Esun * dayIntensity;\n"
+        "\n"
+        //  Tweaked background color.
+        "   c.xyz += (1.0 - Fex) * (bgColor.xyz * bgIntensity * dayIntensity);\n"
+        "   c.w = gl_FragDepth = 1.0;\n"
+        "\n"
+        "   return c;\n"
+        "}\n"
+        "\n"
+        "\n"
+
+        "void main(void)\n"
+        "{\n"
+        "   gl_FragColor = color() * smoothstep(0.0, 1.0, asin(clamp((sun.z + 0.8), -1.0, 1.0))) + dither();\n"
         "}\n\n";
 }

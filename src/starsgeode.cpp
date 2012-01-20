@@ -117,6 +117,11 @@ void StarsGeode::update()
     }
 //    m_vAry->dirty();
     m_g->setVertexArray(m_vAry);
+
+
+    // TEMP
+
+    u_sun->set(m_himmel.astro()->getSunPosition());
 }
 
 
@@ -133,6 +138,10 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 
     u_maxVMag = new osg::Uniform("maxVMag", defaultMaxVMag());
     stateSet->addUniform(u_maxVMag);
+
+    // TEMP - use correct function in cpu for that
+    u_sun = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 0.0));
+    stateSet->addUniform(u_sun);
 }
 
 
@@ -350,6 +359,8 @@ const std::string StarsGeode::getFragmentShaderSource()
         "uniform float starWidth;\n"
         "uniform float glareIntensity;\n"
         "\n"
+        "uniform vec3 sun;\n"
+        "\n"
         "in vec4 m_c;\n"
         "\n"
         "void main(void)\n"
@@ -370,6 +381,6 @@ const std::string StarsGeode::getFragmentShaderSource()
 	    "    float t = smoothstep(1.0, 0.0, l * s);\n"
 	    "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
         "\n"
-	    "    gl_FragColor = m_c * (t + g);\n"
+	    "    gl_FragColor = m_c * (t + g) * clamp(-asin(sun.z - 0.1) * 2, 0.0, 1.0);\n"
         "}\n\n";
 }
