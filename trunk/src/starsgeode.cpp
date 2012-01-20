@@ -32,13 +32,17 @@
 #include "proceduralhimmel.h"
 #include "shadermodifier.h"
 #include "abstractastronomy.h"
-#include "brightstars.h"
 
 #include "mathmacros.h"
 
 #include <osg/Geometry>
 #include <osg/Point>
 #include <osg/BlendFunc>
+
+namespace
+{
+    static const float TWO_TIMES_SQRT2(2.0 * sqrt(2.0));
+}
 
 
 StarsGeode::StarsGeode(const ProceduralHimmel &himmel)
@@ -71,15 +75,48 @@ StarsGeode::~StarsGeode()
 };
 
 
+#include "coords.h"
+#include "earth.h"
+#include "sideraltime.h"
+#include "stars.h"
+
 
 void StarsGeode::update()
 {
     float fov = m_himmel.getCameraFovHint();
     float height = m_himmel.getViewSizeHeightHint();
     
-    static const float TWO_TIMES_SQRT2 = 2.0 * sqrt(2.0);
-
     u_starWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
+
+
+    // TODO
+
+    // TODO: use actual time
+    t_aTime aTime(m_himmel.astro()->getATime());
+
+    // TODO: replace this by the equ to horizontal matrix
+    const float o = earth_trueObliquity(jd(aTime));
+    const float s = siderealTime(aTime);
+
+    const float la = m_himmel.astro()->getLatitude();
+    const float lo = m_himmel.astro()->getLongitude();
+
+    osg::Vec3Array::iterator i = m_vAry->begin();
+    const osg::Vec3Array::iterator iEnd = m_vAry->end();
+
+    unsigned int c = 0;
+
+    for(; i != iEnd; ++i, ++c)
+    {
+        t_equf equ;
+        equ.right_ascension = _rightascd(m_bss[c].RA, 0, 0);
+        equ.declination = m_bss[c].DE;
+
+        osg::Vec3f vec = equ.toHorizontal(s, la, lo).toEuclidean();
+        i->set(vec);
+    }
+//    m_vAry->dirty();
+    m_g->setVertexArray(m_vAry);
 }
 
 
@@ -99,54 +136,28 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 }
 
 
-
-#include "coords.h"
-#include "earth.h"
-#include "sideraltime.h"
-#include "stars.h"
-
-
 void StarsGeode::createAndAddDrawable()
 {
-    osg::Geometry *g = new osg::Geometry;
-    addDrawable(g);
+    m_g = new osg::Geometry;
+    addDrawable(m_g);
 
-    std::vector<s_BrightStar> bss;
-    brightstars_readFromFile("resources/brightstars", bss);
-
-    // TODO: use actual time
-    t_aTime aTime(2012, 17, 1, 12, 0, 0);
-
-    // TODO: replace this by the equ to horizontal matrix
-    float o = earth_trueObliquity(jd(aTime));
-    float s = siderealTime(aTime);
-    float la = 52.5000;
-    float lo = 13.4167;
+    brightstars_readFromFile("resources/brightstars", m_bss);
 
 
-    osg::Vec4Array* cAry = new osg::Vec4Array;
-    osg::Vec3Array* vAry = new osg::Vec3Array;
+    m_cAry = new osg::Vec4Array;
+    m_vAry = new osg::Vec3Array(m_bss.size());
 
-    for(int i = 0; i < bss.size(); ++i)
-    {
-        t_equf equ;
-        equ.right_ascension = _rightascd(bss[i].RA, 0, 0);
-        equ.declination = bss[i].DE;
+    for(int i = 0; i < m_bss.size(); ++i)
+        m_cAry->push_back(osg::Vec4(m_bss[i].sRGB_R, m_bss[i].sRGB_G, m_bss[i].sRGB_B, m_bss[i].Vmag));
 
-        osg::Vec3f vec = equ.toHorizontal(s, la, lo).toEuclidean();
-        vAry->push_back(vec);
-        cAry->push_back(osg::Vec4(bss[i].sRGB_R, bss[i].sRGB_G, bss[i].sRGB_B, bss[i].Vmag));
-    }
+    m_g->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+    m_g->setColorArray(m_cAry);
+    m_g->setVertexArray(m_vAry);
 
-    g->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
-    g->setColorArray(cAry);
-    g->setVertexArray(vAry);
+    m_g->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, m_vAry->size()));
 
-    g->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, vAry->size()));
-
-
-    // If things go wrong, fall back to big points.
-    g->getOrCreateStateSet()->setAttribute(new osg::Point(2));
+    // If things go wrong, fall back to big point rendering without geometry shader.
+    m_g->getOrCreateStateSet()->setAttribute(new osg::Point(TWO_TIMES_SQRT2));
 }
 
 
