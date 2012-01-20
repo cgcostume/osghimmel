@@ -32,7 +32,9 @@
 #define __STARSGEODE_H__
 
 #include <osg/Geode>
+#include <osg/Geometry> // TODO remove
 
+#include "brightstars.h"
 
 class ProceduralHimmel;
 
@@ -83,6 +85,15 @@ protected:
     osg::ref_ptr<osg::Uniform> u_maxVMag;
     osg::ref_ptr<osg::Uniform> u_glareIntensity;
     osg::ref_ptr<osg::Uniform> u_glareScale;
+
+    // TODO
+
+    std::vector<s_BrightStar> m_bss;
+
+    osg::Vec4Array* m_cAry;
+    osg::Vec3Array* m_vAry;
+
+    osg::ref_ptr<osg::Geometry> m_g;
 };
 
 #endif // __STARSGEODE_H__
