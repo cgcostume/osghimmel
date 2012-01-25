@@ -295,9 +295,10 @@ const long double earth_meanRadius()
 const long double earth_atmosphereThickness()
 {
     // Thickness of atmosphere if the density were uniform.
-    // ("Precomputed Atmospheric Scattering" - 2008 - Bruneton, Neyret)
-
-    return 8.0;
+    
+    // 8000 ("Precomputed Atmospheric Scattering" - 2008 - Bruneton, Neyret)
+    // 7994 ("Display of the earth taking into account atmospheric scattering" - 1993 - Nishita et al.)
+    return 7.994;
 }
 
 

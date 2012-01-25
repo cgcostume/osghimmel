@@ -362,13 +362,13 @@ void test_earth()
     ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 1.0)
         , earth_atmosphereThickness(), 1.e-6);
     ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 0.5)
-        ,    15.97001392, 1.e-6);
+        ,    15.95805877, 1.e-6);
     ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 0.1)
-        ,    75.56851341, 1.e-6);
+        ,    75.51480621, 1.e-6);
     ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 0.0)
-        ,   319.3743885,  1.e-6);
+        ,   319.2545255,  1.e-6);
     ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere(-0.5)
-        ,  6386.970014,   1.e-6);
+        ,  6386.958059,   1.e-6);
     ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere(-1.0)
         , earth_meanRadius() * 2 + earth_atmosphereThickness(),    1.e-6);
 }
