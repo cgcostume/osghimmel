@@ -246,23 +246,29 @@ const long double earth_meanObliquity(const t_julianDay t)
 
 
 const long double earth_viewDistanceWithinAtmosphere(
-    const osg::Vec3 &eye)
+    const long double y)
 {
-    return earth_viewDistanceWithinAtmosphere(eye, earth_atmosphereThickness(), earth_meanRadius());
+    return earth_viewDistanceWithinAtmosphere(y, earth_atmosphereThickness(), earth_meanRadius());
 }
 
 const long double earth_viewDistanceWithinAtmosphere(
-    const osg::Vec3 &eye
+    const long double y
 ,   const long double t
 ,   const long double r)
 {
-    const float a = asin(osg::Vec3(0.0, 0.0, 1.0) * eye);
-    const float cosa = cos(a);
+    // This works, since dot product of [0, 1, 0] and 
+    // eye with [x, y, z] gives y.
+
+    const long double a = asin(y * (1.0 - 1.e-12)); // correction is required to 
+                             // gain t at y = 1.0 - fix for long double accuracy.
+    const long double cosa = cos(a);
+    const long double rt = r + t;
 
     // Using law of sine for arbitrary triangle with two sides and one angle known.
     // Since the angle is (π/2 + a), cos is used instead of sine.
 
-    return cos(a + asin(r * cosa)) * (r + t) / cosa;
+    const long double distance = cos(a + asin(cosa * r / rt)) * rt / cosa;
+    return distance;
 }
 
 
@@ -283,6 +289,15 @@ const long double earth_meanRadius()
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
 
     return  6371.0; // in kilometers
+}
+
+
+const long double earth_atmosphereThickness()
+{
+    // Thickness of atmosphere if the density were uniform.
+    // ("Precomputed Atmospheric Scattering" - 2008 - Bruneton, Neyret)
+
+    return 8.0;
 }
 
 
@@ -374,16 +389,16 @@ const float earth_meanObliquity_la(const t_julianDay t)
 
 
 const float earth_viewDistanceWithinAtmosphere_la(
-    const osg::Vec3 &eye)
+    const float y)
 {
-    return earth_viewDistanceWithinAtmosphere_la(eye, earth_atmosphereThickness());
+    return earth_viewDistanceWithinAtmosphere_la(y, earth_atmosphereThickness());
 }
 
 const float earth_viewDistanceWithinAtmosphere_la(
-    const osg::Vec3 &eye
-,   const long double t)
+    const float y
+,   const float t)
 {
-    const float d = osg::Vec3(0.0, 0.0, 1.0) * eye;
+    const float d = y;
 
     // This works only for mean radius of earth.
     return t * 1116.0 / ((d + 0.004) * 1.1116);

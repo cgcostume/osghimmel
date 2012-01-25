@@ -39,7 +39,7 @@
 void test_time()
 {
     {
-        t_aTime aTime(2011, 12, 2, 0, 42, 24, +1.11 * 3600);
+        t_aTime aTime(2011, 12, 2, 0, 42, 24, static_cast<short>(+1.11 * 3600));
         time_t t = aTime.toTime_t();
 
         TimeF f(t, 0);
@@ -79,7 +79,7 @@ void test_time()
 
         time_t t = mktime(&ttm);
 
-        TimeF f(t, -3.33 * 3600, 0.0L);
+        TimeF f(t, static_cast<time_t>(-3.33 * 3600), 0.0L);
 
 
         ASSERT_EQ(float, 0.5, f.getf());

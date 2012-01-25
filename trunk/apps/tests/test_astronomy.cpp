@@ -49,6 +49,7 @@ void test_coords();
 void test_sun();
 void test_moon();
 void test_stars();
+void test_earth();
 
 void test_astronomy()
 {
@@ -60,6 +61,7 @@ void test_astronomy()
     test_sun();
     test_moon();
     test_stars();
+    test_earth();
 
     TEST_REPORT();
 }
@@ -352,4 +354,21 @@ void test_stars()
         , _decimal(10, 8, 22.3), _decimal(11, 58,  2)
         , _arcsecs(_decimal(0, 0, 0.248)), _decimal(0, 0, 0.006));
 
+}
+
+
+void test_earth()
+{
+    ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 1.0)
+        , earth_atmosphereThickness(), 1.e-6);
+    ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 0.5)
+        ,    15.97001392, 1.e-6);
+    ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 0.1)
+        ,    75.56851341, 1.e-6);
+    ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere( 0.0)
+        ,   319.3743885,  1.e-6);
+    ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere(-0.5)
+        ,  6386.970014,   1.e-6);
+    ASSERT_AB(long double, earth_viewDistanceWithinAtmosphere(-1.0)
+        , earth_meanRadius() * 2 + earth_atmosphereThickness(),    1.e-6);
 }
