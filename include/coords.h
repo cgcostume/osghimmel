@@ -65,6 +65,8 @@ struct s_EquatorialCoords
     ,   const T observersLatitude      /* Φ   */
     ,   const T observersLongitude     /* L   */) const;
 
+    const osg::Vec3f toEuclidean() const;
+
 // Not required for now...
 //#pragma NOTE("const s_GalacticCoords toGalactic() const; not yet implemented")
 
@@ -207,6 +209,8 @@ const s_EclipticalCoords<T> s_EquatorialCoords<T>::toEcliptical(const T obliquit
 }
 
 
+// (AA.12.5) and (AA.12.6)
+
 template<typename T>
 const s_HorizontalCoords<T> s_EquatorialCoords<T>::toHorizontal(
     const t_julianDay siderealTime /* θ_0 */
@@ -215,7 +219,7 @@ const s_HorizontalCoords<T> s_EquatorialCoords<T>::toHorizontal(
 {
     s_HorizontalCoords<T> hor;
 
-    // local hour angle: H = θ - α
+    // local hour angle: H = θ - α (AA.p88)
     const T H = _rad(siderealTime * 15.0 + observersLongitude - right_ascension);
 
     const T cosh(cos(H));
@@ -229,6 +233,19 @@ const s_HorizontalCoords<T> s_EquatorialCoords<T>::toHorizontal(
         sin(H)), static_cast<T>(cosh * sinr - tan(_rad(declination)) * cosr)));
 
     return hor;
+}
+
+
+template<typename T>
+const osg::Vec3f s_EquatorialCoords<T>::toEuclidean() const
+{
+    const T cosd(cos(_rad(declination)));
+
+    const T x(r * sin(_rad(right_ascension)) * cosd);
+    const T y(r * cos(_rad(right_ascension)) * cosd);
+    const T z(r * sin(_rad(declination)));
+
+    return osg::Vec3(x, y, z);
 }
 
 
@@ -253,7 +270,7 @@ const s_EquatorialCoords<T> s_EclipticalCoords<T>::toEquatorial(const T obliquit
 
 template<typename T>
 const s_EquatorialCoords<T> s_HorizontalCoords<T>::toEquatorial(
-    const t_julianDay siderealTime       /* θ_0 */
+    const t_julianDay siderealTime /* θ_0 */
 ,   const T observersLatitude  /* Φ   */
 ,   const T observersLongitude /* L   */) const
 {
