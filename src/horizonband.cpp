@@ -130,8 +130,8 @@ const float HorizonBand::defaultOffset()
 
 const osg::Vec4 HorizonBand::setColor(const osg::Vec4 &color)
 {
-	u_color->set(color);
-	return getColor();
+    u_color->set(color);
+    return getColor();
 }
 
 const osg::Vec4 HorizonBand::getColor() const
@@ -149,8 +149,8 @@ const osg::Vec4 HorizonBand::defaultColor()
 
 const osg::Vec4 HorizonBand::setBottomColor(const osg::Vec4 &color)
 {
-	u_bottomColor->set(color);
-	return getBottomColor();
+    u_bottomColor->set(color);
+    return getBottomColor();
 }
 
 const osg::Vec4 HorizonBand::getBottomColor() const
