@@ -47,11 +47,8 @@ const long double earth_trueObliquity(const t_julianDay t);
 const long double earth_atmosphericRefraction(const long double altitude);
 
 const long double earth_viewDistanceWithinAtmosphere(
-    const long double y /* height component of the view direction on ground into the sky */);
-const long double earth_viewDistanceWithinAtmosphere(
-    const long double y
-,   const long double t  /* atmosphere thickness with uniform density in km */
-,   const long double r  /* meanRadius in km */);
+    const long double y /* height component of the view direction on ground into the sky */
+,   const bool refractionCorrected = false);
 
 const long double earth_meanRadius();
 const long double earth_atmosphereThickness(); // if its density were uniform...
@@ -71,8 +68,5 @@ const float earth_trueObliquity_la(const t_julianDay t);
 
 const float earth_viewDistanceWithinAtmosphere_la(
     const float y);
-const float earth_viewDistanceWithinAtmosphere_la(
-    const float y
-,   const float t);
 
 #endif // __EARTH_H__
