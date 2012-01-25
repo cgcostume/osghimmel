@@ -245,12 +245,29 @@ const long double earth_meanObliquity(const t_julianDay t)
 }
 
 
+const long double earth_viewDistanceWithinAtmosphere(
+    const osg::Vec3 &eye)
+{
+    return earth_viewDistanceWithinAtmosphere(eye, earth_atmosphereThickness(), earth_meanRadius());
+}
+
+const long double earth_viewDistanceWithinAtmosphere(
+    const osg::Vec3 &eye
+,   const long double t
+,   const long double r)
+{
+    const float a = asin(osg::Vec3(0.0, 0.0, 1.0) * eye);
+    const float cosa = cos(a);
+
+    // Using law of sine for arbitrary triangle with two sides and one angle known.
+    // Since the angle is (π/2 + a), cos is used instead of sine.
+
+    return cos(a + asin(r * cosa)) * (r + t) / cosa;
+}
+
+
 // Effect of refraction for true altitudes (AA.15.4).
 // G.G. Bennet, "The Calculation of the Astronomical Refraction in marine Navigation", 1982
-
-// This should not be used for procedural himmel, since the refraction,
-// which depends on the lights' wave-length, is already taken int account 
-// in the calculations there.
 
 const long double earth_atmosphericRefraction(const long double altitude)
 {
@@ -353,4 +370,21 @@ const float earth_meanObliquity_la(const t_julianDay t)
     //    + T * (+ _decimal(0, 0,  0.001813))));
 
     return ε0;
+}
+
+
+const float earth_viewDistanceWithinAtmosphere_la(
+    const osg::Vec3 &eye)
+{
+    return earth_viewDistanceWithinAtmosphere_la(eye, earth_atmosphereThickness());
+}
+
+const float earth_viewDistanceWithinAtmosphere_la(
+    const osg::Vec3 &eye
+,   const long double t)
+{
+    const float d = osg::Vec3(0.0, 0.0, 1.0) * eye;
+
+    // This works only for mean radius of earth.
+    return t * 1116.0 / ((d + 0.004) * 1.1116);
 }
