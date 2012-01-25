@@ -245,29 +245,32 @@ const long double earth_meanObliquity(const t_julianDay t)
 }
 
 
-const long double earth_viewDistanceWithinAtmosphere(
-    const long double y)
-{
-    return earth_viewDistanceWithinAtmosphere(y, earth_atmosphereThickness(), earth_meanRadius());
-}
+// This is, if required, approximatelly refraction corrected...
 
 const long double earth_viewDistanceWithinAtmosphere(
     const long double y
-,   const long double t
-,   const long double r)
+,   const bool refractionCorrected)
 {
+    const long double t = earth_atmosphereThickness();
+    const long double r = earth_meanRadius();
+
     // This works, since dot product of [0, 1, 0] and 
     // eye with [x, y, z] gives y.
 
-    const long double a = asin(y * (1.0 - 1.e-12)); // correction is required to 
-                             // gain t at y = 1.0 - fix for long double accuracy.
-    const long double cosa = cos(a);
+    long double h = asin(y * (1.0 - 1.e-12)); // correction is required to 
+                       // gain t at y = 1.0 - fix for long double accuracy.
+
+    if(refractionCorrected)
+        h += _rad(earth_atmosphericRefraction(_deg(asin(y))));
+
+    const long double cosa = cos(h);
     const long double rt = r + t;
 
     // Using law of sine for arbitrary triangle with two sides and one angle known.
     // Since the angle is (π/2 + a), cos is used instead of sine.
 
-    const long double distance = cos(a + asin(cosa * r / rt)) * rt / cosa;
+    const long double distance = cos(h + asin(cosa * r / rt)) * rt / cosa;
+
     return distance;
 }
 
@@ -389,17 +392,15 @@ const float earth_meanObliquity_la(const t_julianDay t)
 }
 
 
+// This is not refraction corrected.
+
 const float earth_viewDistanceWithinAtmosphere_la(
     const float y)
 {
-    return earth_viewDistanceWithinAtmosphere_la(y, earth_atmosphereThickness());
-}
-
-const float earth_viewDistanceWithinAtmosphere_la(
-    const float y
-,   const float t)
-{
     const float d = y;
+
+    const float t = earth_atmosphereThickness();
+    const float r = earth_meanRadius();
 
     // This works only for mean radius of earth.
     return t * 1116.0 / ((d + 0.004) * 1.1116);
