@@ -133,6 +133,25 @@
 #define _kms(AUs) \
     (AUs * 149598000)
 
+
+#define __b02(x) (     (x) | (     (x) >>  1))
+#define __b04(x) (__b02(x) | (__b02(x) >>  2))
+#define __b08(x) (__b04(x) | (__b04(x) >>  4))
+#define __b16(x) (__b08(x) | (__b08(x) >>  8))
+#define __b32(x) (__b16(x) | (__b16(x) >> 16))
+
+// Returns the next power of an integer.
+#define _nextPowerOf2(x) \
+    (b32((x) - 1) + 1)
+
+
+#define _randf(min, max) \
+    (static_cast<float>(rand()) / RAND_MAX * ((max) - (min)) + (min))
+
+#define _rand(min, max) \
+    (static_cast<int>(static_cast<float>(rand()) / RAND_MAX * ((max) - (min)) + (min)))
+
+
 // NOTE: When using powers, try to use Horner's Method
 
 

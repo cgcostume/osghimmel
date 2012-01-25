@@ -60,15 +60,15 @@ public:
 
     virtual bool insertChild(unsigned int index, Node *child);
     virtual bool removeChild(Node *child);
- 	virtual bool removeChild(unsigned int pos, unsigned int numChildrenToRemove = 1);
- 	virtual bool removeChildren(unsigned int pos, unsigned int numChildrenToRemove);
- 	virtual bool replaceChild(Node *origChild, Node *newChild);
- 	virtual unsigned int getNumChildren() const;
- 	virtual bool setChild(unsigned int i, Node *node);
- 	virtual Node *getChild(unsigned int i);
- 	virtual const Node *getChild(unsigned int i) const;
- 	virtual bool containsNode(const Node *node) const;
- 	virtual unsigned int getChildIndex(const Node *node) const;
+    virtual bool removeChild(unsigned int pos, unsigned int numChildrenToRemove = 1);
+    virtual bool removeChildren(unsigned int pos, unsigned int numChildrenToRemove);
+    virtual bool replaceChild(Node *origChild, Node *newChild);
+    virtual unsigned int getNumChildren() const;
+    virtual bool setChild(unsigned int i, Node *node);
+    virtual Node *getChild(unsigned int i);
+    virtual const Node *getChild(unsigned int i) const;
+    virtual bool containsNode(const Node *node) const;
+    virtual unsigned int getChildIndex(const Node *node) const;
 
 
 protected:
