@@ -397,11 +397,9 @@ const float earth_meanObliquity_la(const t_julianDay t)
 const float earth_viewDistanceWithinAtmosphere_la(
     const float y)
 {
-    const float d = y;
-
     const float t = earth_atmosphereThickness();
     const float r = earth_meanRadius();
 
     // This works only for mean radius of earth.
-    return t * 1116.0 / ((d + 0.004) * 1.1116);
+    return t * 1116.0 / ((y + 0.004) * 1.1116);
 }
