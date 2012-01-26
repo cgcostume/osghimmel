@@ -60,6 +60,7 @@ namespace
 
     static const QString GROUP_PROCEDURAL_STARS(TR("Stars"));
 
+    static const QString PROPERTY_STARS_SCINTILLATION  (TR("Scintillation"));
     static const QString PROPERTY_STARS_GLARE_INTENSITY(TR("Glare Intensity"));
     static const QString PROPERTY_STARS_GLARE_SCALE    (TR("Glare Scale"));
     static const QString PROPERTY_STARS_MAX_VMAG       (TR("Max Visible Magnitude"));
@@ -113,6 +114,7 @@ void Scene_ProceduralHimmel::registerProperties()
 
     createProperty(*starGroup, PROPERTY_STARS_GLARE_INTENSITY, 1.0, 0.0, 100.0, 0.1); 
     createProperty(*starGroup, PROPERTY_STARS_GLARE_SCALE, 1.0, 0.0, 100.0, 0.1); 
+    createProperty(*starGroup, PROPERTY_STARS_SCINTILLATION, 1.0, 0.0, 2.0, 0.1); 
     createProperty(*starGroup, PROPERTY_STARS_MAX_VMAG, StarsGeode::defaultMaxVMag(), -32.0, 32.0, 0.1); 
 }
 
@@ -149,9 +151,11 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->astro()->setMoonPosition(vec);
     }
 
+    if(PROPERTY_STARS_SCINTILLATION == name)
+        m_himmel->stars()->setScintillation(doubleValue(PROPERTY_STARS_SCINTILLATION));
+
     if(PROPERTY_STARS_GLARE_INTENSITY == name)
         m_himmel->stars()->setGlareIntensity(doubleValue(PROPERTY_STARS_GLARE_INTENSITY));
-
     if(PROPERTY_STARS_GLARE_SCALE == name)
         m_himmel->stars()->setGlareScale(doubleValue(PROPERTY_STARS_GLARE_SCALE));
 

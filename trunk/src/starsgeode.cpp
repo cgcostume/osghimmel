@@ -32,12 +32,21 @@
 #include "proceduralhimmel.h"
 #include "shadermodifier.h"
 #include "abstractastronomy.h"
+#include "randommapgenerator.h"
 
 #include "mathmacros.h"
+
+#include "coords.h"
+#include "earth.h"
+#include "sideraltime.h"
+#include "stars.h"
 
 #include <osg/Geometry>
 #include <osg/Point>
 #include <osg/BlendFunc>
+#include <osg/Image>
+#include <osg/Texture1D>
+
 
 namespace
 {
@@ -56,8 +65,13 @@ StarsGeode::StarsGeode(const ProceduralHimmel &himmel)
 
 ,   u_starWidth(NULL)
 ,   u_maxVMag(NULL)
+
+,   u_scintillation(NULL)
+
 ,   u_glareIntensity(NULL)
 ,   u_glareScale(NULL)
+,
+u_noise1(NULL)
 {
     setName("Stars");
 
@@ -75,12 +89,6 @@ StarsGeode::~StarsGeode()
 };
 
 
-#include "coords.h"
-#include "earth.h"
-#include "sideraltime.h"
-#include "stars.h"
-
-
 void StarsGeode::update()
 {
     float fov = m_himmel.getCameraFovHint();
@@ -88,21 +96,20 @@ void StarsGeode::update()
     
     u_starWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
 
-
-    // TODO
-
-    // TODO: use actual time
     t_aTime aTime(m_himmel.astro()->getATime());
 
-    // TODO: replace this by the equ to horizontal matrix
+    // It seems faster to update the array every frame than
+    // to do the equ to hor conversion in shader.
+    // Furthermore osg produces clipping errors with the fixed vertices set.
+
     const float o = earth_trueObliquity(jd(aTime));
     const float s = siderealTime(aTime);
 
     const float la = m_himmel.astro()->getLatitude();
     const float lo = m_himmel.astro()->getLongitude();
 
-    osg::Vec3Array::iterator i = m_vAry->begin();
-    const osg::Vec3Array::iterator iEnd = m_vAry->end();
+    osg::Vec4Array::iterator i = m_vAry->begin();
+    const osg::Vec4Array::iterator iEnd = m_vAry->end();
 
     unsigned int c = 0;
 
@@ -113,11 +120,9 @@ void StarsGeode::update()
         equ.declination = m_bss[c].DE;
 
         osg::Vec3f vec = equ.toHorizontal(s, la, lo).toEuclidean();
-        i->set(vec);
+        i->set(vec.x(), vec.y(), vec.z(), c);
     }
-//    m_vAry->dirty();
     m_g->setVertexArray(m_vAry);
-
 
     // TEMP
 
@@ -127,6 +132,9 @@ void StarsGeode::update()
 
 void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 {
+    u_scintillation = new osg::Uniform("scintillation", 1.0f);
+    stateSet->addUniform(u_scintillation);
+
     u_starWidth = new osg::Uniform("starWidth", 0.0f);
     stateSet->addUniform(u_starWidth);
 
@@ -138,6 +146,9 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 
     u_maxVMag = new osg::Uniform("maxVMag", defaultMaxVMag());
     stateSet->addUniform(u_maxVMag);
+
+    u_noise1 = new osg::Uniform("noise1", 0);
+    stateSet->addUniform(u_noise1);
 
     // TEMP - use correct function in cpu for that
     u_sun = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 0.0));
@@ -154,7 +165,7 @@ void StarsGeode::createAndAddDrawable()
 
 
     m_cAry = new osg::Vec4Array;
-    m_vAry = new osg::Vec3Array(m_bss.size());
+    m_vAry = new osg::Vec4Array(m_bss.size());
 
     for(int i = 0; i < m_bss.size(); ++i)
         m_cAry->push_back(osg::Vec4(m_bss[i].sRGB_R, m_bss[i].sRGB_G, m_bss[i].sRGB_B, m_bss[i].Vmag));
@@ -174,13 +185,10 @@ void StarsGeode::setupNode(osg::StateSet* stateSet)
 {
     createAndAddDrawable();
 
-
     osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
     stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 
     stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
-
-    stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 }
 
 
@@ -208,11 +216,23 @@ void StarsGeode::setupShader(osg::StateSet* stateSet)
 
 
 void StarsGeode::setupTextures(osg::StateSet* stateSet)
-{
+{   
+    const int noiseN = 256;
 
+    unsigned char *noiseMap = new unsigned char[noiseN * 1];
+    RandomMapGenerator::generate1(noiseN, 1, noiseMap);
+
+    osg::ref_ptr<osg::Image> noiseImage = new osg::Image();
+    noiseImage->setImage(noiseN, 1, 1
+        , GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE
+        , noiseMap, osg::Image::USE_NEW_DELETE);
+
+    osg::ref_ptr<osg::Texture1D> noise = new osg::Texture1D(noiseImage);
+
+    stateSet->setTextureAttributeAndModes(0, noise, osg::StateAttribute::ON);
+
+    u_noise1->set(0);
 }
-
-
 
 
 const float StarsGeode::setGlareIntensity(const float intensity)
@@ -245,6 +265,21 @@ const float StarsGeode::getGlareScale() const
 }
 
 
+const float StarsGeode::setScintillation(const float scintillation)
+{
+    u_scintillation->set(scintillation);
+    return getScintillation();
+}
+
+const float StarsGeode::getScintillation() const
+{
+    float scintillation;
+    u_scintillation->get(scintillation);
+
+    return scintillation;
+}
+
+
 const float StarsGeode::setMaxVMag(const float vMag)
 {
     u_maxVMag->set(vMag);
@@ -261,7 +296,7 @@ const float StarsGeode::getMaxVMag() const
 
 const float StarsGeode::defaultMaxVMag() 
 {
-    return 6.5f;
+    return 6.0f;
 }
 
 
@@ -272,10 +307,17 @@ const float StarsGeode::defaultMaxVMag()
 const std::string StarsGeode::getVertexShaderSource()
 {
     return 
+
         "#version 150 compatibility\n"
+        "\n"
+        "uniform float scintillation;\n"
         "\n"
         "uniform float starWidth;\n"
         "uniform float maxVMag;\n"
+        "\n"
+        "uniform sampler1D noise1;\n"
+        "\n"
+        "uniform int osg_FrameNumber;\n"
         "\n"
         "out vec4 m_color;\n"
         "\n"
@@ -283,15 +325,74 @@ const std::string StarsGeode::getVertexShaderSource()
         "\n"
         "void main(void)\n"
         "{\n"
-	    "    float vMag = gl_Color.w;\n"
+        "    float vMag = gl_Color.w;\n"
         "\n"
-	    "    float estB = pow(2.512, maxVMag - vMag);\n"
-	    "    float scaledB = minB * estB / starWidth * 0.1;\n"
+        "    float estB = pow(2.512, maxVMag - vMag);\n"
+        "    float scaledB = minB * estB / starWidth * 0.1;\n"
         "\n"
-	    "    m_color = vec4(gl_Color.rgb, scaledB);\n"
+	    "    float w1 = pow(1.0 - gl_Vertex.b, 5.37);\n"
+	    "    float w2 = pow(1.0 - gl_Vertex.b, 1.00);\n"
+        "\n"
+	    "    vec3 lambda = vec3(0.0695, 0.118, 0.244);\n"
+        "\n"
+	    "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
+	    "    float n = texture(noise1, i / 256.0).r;\n"
+        "\n"
+	    "    vec3 c = gl_Color.rgb - lambda * (w1 * 8 + w2 * n * 8 * scintillation);\n"
+        "\n"
+        "    m_color = vec4(c, scaledB * (1.0 - w1));\n"
         "\n"
         "    gl_Position = vec4(gl_Vertex.xyz, 1.0);\n"
         "}\n\n";
+
+
+
+/* Vertex Shader with equ to hor conversion:
+
+        "#version 150 compatibility\n"
+        "\n"
+        "uniform float starWidth;\n"
+        "uniform float maxVMag;\n"
+        "\n"
+        "uniform vec3 equ2hor;\n"
+        "\n"
+        "out vec4 m_color;\n"
+        "\n"
+        "const float minB = pow(2.512, -6.5);\n"
+        "\n"
+        "void main(void)\n"
+        "{\n"
+        "    float vMag = gl_Color.w;\n"
+        "\n"
+        "    float estB = pow(2.512, maxVMag - vMag);\n"
+        "    float scaledB = minB * estB / starWidth * 0.1;\n"
+        "\n"
+        "    m_color = vec4(gl_Color.rgb, scaledB);\n"
+        "\n"
+        "    float sinDE = gl_Vertex[0];\n"
+        "    float cosDE = gl_Vertex[1];\n"
+        "    float tanDE = gl_Vertex[2];\n"
+        "    float    RA = gl_Vertex[3];\n"
+        "\n"
+        "    float H = equ2hor[0] - RA;\n"
+        "    float sinH = sin(H);\n"
+        "    float cosH = cos(H);\n"
+        "\n"
+        "    float sinLa = equ2hor[1];\n"
+        "    float cosLa = equ2hor[2];\n"
+        "\n"
+        "    float h = atan(sinH, cosH * sinLa - cosLa * tanDE);\n"
+        "    float A = asin(sinLa * sinDE + cosH * cosLa * cosDE);\n"
+        "\n"
+        "    float cosA = cos(A);\n"
+        "\n"
+        "    float x = sin(h) * cosA;\n"
+        "    float y = cos(h) * cosA;\n"
+        "    float z = sin(A);\n"
+        "\n"
+        "    gl_Position = vec4(x, y, z, 1.0);\n"
+        "}\n\n";
+*/
 }
 
 
@@ -315,35 +416,35 @@ const std::string StarsGeode::getGeometryShaderSource()
         "\n"
         "void main()\n"
         "{\n"
-	    "    vec3 p = normalize(gl_in[0].gl_Position.xyz);\n"
+        "    vec3 p = normalize(gl_in[0].gl_Position.xyz);\n"
         "\n"
-	    "    vec3 u = cross(p, vec3(1));\n"
-	    "    vec3 v = cross(u, p);\n"
+        "    vec3 u = cross(p, vec3(1));\n"
+        "    vec3 v = cross(u, p);\n"
         "\n"
-	    "    float scaledB = m_color[0].w;\n"
+        "    float scaledB = m_color[0].w;\n"
         "\n"
-	    "    m_c = vec4(m_color[0].rgb, scaledB);\n"
+        "    m_c = vec4(m_color[0].rgb, scaledB);\n"
         "\n"
-	    "    gl_TexCoord[0].z = (1.0 + sqrt(scaledB)) * max(1.0, glareScale);\n"
+        "    gl_TexCoord[0].z = (1.0 + sqrt(scaledB)) * max(1.0, glareScale);\n"
         "\n"
 
-	    "    float k = starWidth * gl_TexCoord[0].z;\n"
+        "    float k = starWidth * gl_TexCoord[0].z;\n"
         "\n"
-	    "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
-	    "    gl_TexCoord[0].xy = vec2(-1.0, -1.0);\n"
-	    "    EmitVertex();\n"
+        "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
+        "    gl_TexCoord[0].xy = vec2(-1.0, -1.0);\n"
+        "    EmitVertex();\n"
         "\n"
-	    "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u +v) * k, 1.0);\n"
-	    "    gl_TexCoord[0].xy = vec2(-1.0,  1.0);\n"
-	    "    EmitVertex();\n"
+        "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u +v) * k, 1.0);\n"
+        "    gl_TexCoord[0].xy = vec2(-1.0,  1.0);\n"
+        "    EmitVertex();\n"
         "\n"
-	    "    gl_Position = gl_ModelViewProjectionMatrix  * vec4(p - normalize(+u -v) * k, 1.0);\n"
-	    "    gl_TexCoord[0].xy = vec2( 1.0, -1.0);\n"
-	    "    EmitVertex();\n"
+        "    gl_Position = gl_ModelViewProjectionMatrix  * vec4(p - normalize(+u -v) * k, 1.0);\n"
+        "    gl_TexCoord[0].xy = vec2( 1.0, -1.0);\n"
+        "    EmitVertex();\n"
         "\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(+u +v) * k, 1.0);\n"
-	    "    gl_TexCoord[0].xy = vec2( 1.0,  1.0);\n"
-	    "    EmitVertex();\n"
+        "    gl_TexCoord[0].xy = vec2( 1.0,  1.0);\n"
+        "    EmitVertex();\n"
         "}\n\n";
 }
 
@@ -365,22 +466,22 @@ const std::string StarsGeode::getFragmentShaderSource()
         "\n"
         "void main(void)\n"
         "{\n"
-	    "    float x = gl_TexCoord[0].x;\n"
-	    "    float y = gl_TexCoord[0].y;\n"
+        "    float x = gl_TexCoord[0].x;\n"
+        "    float y = gl_TexCoord[0].y;\n"
         "\n"
-	    "    float radius = 0.98;\n"
-	    "    float zz = (radius * radius - x * x - y * y);\n"
+        "    float radius = 0.98;\n"
+        "    float zz = (radius * radius - x * x - y * y);\n"
         "\n"
-	    "    if(zz < 0)\n"
-		"        discard;\n"
+        "    if(zz < 0)\n"
+        "        discard;\n"
         "\n"
-	    "    float s =  gl_TexCoord[0].z;\n"
+        "    float s =  gl_TexCoord[0].z;\n"
         "\n"
-	    "    float l = length(vec2(x, y));\n"
+        "    float l = length(vec2(x, y));\n"
         "\n"
-	    "    float t = smoothstep(1.0, 0.0, l * s);\n"
-	    "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
+        "    float t = smoothstep(1.0, 0.0, l * s);\n"
+        "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
         "\n"
-	    "    gl_FragColor = m_c * (t + g) * clamp(-asin(sun.z - 0.1) * 2, 0.0, 1.0);\n"
+        "    gl_FragColor = m_c * (t + g) * clamp(-asin(sun.z - 0.1) * 2, 0.0, 1.0);\n"
         "}\n\n";
 }

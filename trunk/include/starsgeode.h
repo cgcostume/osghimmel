@@ -54,6 +54,9 @@ public:
     const float setGlareScale(const float scale);
     const float getGlareScale() const;
 
+    const float setScintillation(const float scintillation);
+    const float getScintillation() const;
+
     const float setMaxVMag(const float vMag);
     const float getMaxVMag() const;
     static const float defaultMaxVMag();
@@ -83,17 +86,22 @@ protected:
     osg::ref_ptr<osg::Uniform> u_starWidth;
 
     osg::ref_ptr<osg::Uniform> u_maxVMag;
+    osg::ref_ptr<osg::Uniform> u_scintillation;
+
     osg::ref_ptr<osg::Uniform> u_glareIntensity;
     osg::ref_ptr<osg::Uniform> u_glareScale;
 
+    osg::ref_ptr<osg::Uniform> u_noise1;
+
+
     osg::ref_ptr<osg::Uniform> u_sun;
 
-    // TODO
+    // stars' vertex and color data.
 
     std::vector<s_BrightStar> m_bss;
 
     osg::Vec4Array* m_cAry;
-    osg::Vec3Array* m_vAry;
+    osg::Vec4Array* m_vAry;
 
     osg::ref_ptr<osg::Geometry> m_g;
 };
