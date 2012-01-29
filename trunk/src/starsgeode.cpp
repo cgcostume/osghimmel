@@ -401,7 +401,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float scaledB = minB * estB / quadWidth;\n"
         //"\n"
         "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
-        "    vec3 s = texture(noise1, i / 256.0).rgb - 0.5;\n"
+        "    vec3 s = (texture(noise1, i / 256.0).rgb - 0.5) * scintillation;\n"
         "\n"
         // Approximation of relative air mass (path length relative to that at the zenith at sea level).
         // Also called optical path length: http://en.wikipedia.org/wiki/Air_mass_(astronomy).
@@ -410,7 +410,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float w1 = pow(1.0 - gl_Vertex.b, 5.37);\n"
         "\n"
         "    vec3 c = mix(gl_Color.rgb, color.rgb, color.a)\n"
-        "        - lambda * w1 * 4 * (scattering + s * scintillation);\n"
+        "        - lambda * w1 * 4 * (scattering + s);\n"
         "\n"
         "    m_color = vec4(c, scaledB - w1 * s * 0.1);\n"
         "\n"
