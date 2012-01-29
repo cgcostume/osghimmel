@@ -60,10 +60,13 @@ namespace
 
     static const QString GROUP_PROCEDURAL_STARS(TR("Stars"));
 
-    static const QString PROPERTY_STARS_SCINTILLATION  (TR("Scintillation"));
+    static const QString PROPERTY_STARS_COLOR          (TR("Color"));
+    static const QString PROPERTY_STARS_COLOR_RATIO    (TR("Color Ratio"));
     static const QString PROPERTY_STARS_GLARE_INTENSITY(TR("Glare Intensity"));
     static const QString PROPERTY_STARS_GLARE_SCALE    (TR("Glare Scale"));
     static const QString PROPERTY_STARS_MAX_VMAG       (TR("Max Visible Magnitude"));
+    static const QString PROPERTY_STARS_SCATTERING     (TR("Scattering"));
+    static const QString PROPERTY_STARS_SCINTILLATION  (TR("Scintillation"));
 
     static const QString GROUP_PROCEDURAL_GALAXY(TR("Galaxy"));
 }
@@ -110,12 +113,15 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*moonGroup, PROPERTY_MOON_POSITION_Y, 0.0, -1.0, 1.0, 0.01); 
     createProperty(*moonGroup, PROPERTY_MOON_POSITION_Z, 0.0, -1.0, 1.0, 0.01);   
 
-    QtProperty *starGroup = createGroup(GROUP_PROCEDURAL_STARS);
+    QtProperty *starsGroup = createGroup(GROUP_PROCEDURAL_STARS);
 
-    createProperty(*starGroup, PROPERTY_STARS_GLARE_INTENSITY, 1.0, 0.0, 100.0, 0.1); 
-    createProperty(*starGroup, PROPERTY_STARS_GLARE_SCALE, 1.0, 0.0, 100.0, 0.1); 
-    createProperty(*starGroup, PROPERTY_STARS_SCINTILLATION, 1.0, 0.0, 2.0, 0.1); 
-    createProperty(*starGroup, PROPERTY_STARS_MAX_VMAG, StarsGeode::defaultMaxVMag(), -32.0, 32.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_COLOR, QColor(Qt::white)); 
+    createProperty(*starsGroup, PROPERTY_STARS_COLOR_RATIO, 0.0, 0.0, 1.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_GLARE_INTENSITY, 1.0, 0.0, 100.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_GLARE_SCALE, 1.0, 0.0, 100.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_SCATTERING, 1.0, 0.0, 10.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_SCINTILLATION, 1.0, 0.0, 10.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_MAX_VMAG, StarsGeode::defaultMaxVMag(), -32.0, 32.0, 0.1); 
 }
 
 
@@ -123,25 +129,23 @@ void Scene_ProceduralHimmel::propertyChanged(
     QtProperty *p
 ,   const QString &name)
 {
-    if(PROPERTY_DITHERING_MULTIPLIER == name)
+         if(PROPERTY_DITHERING_MULTIPLIER == name)
         m_himmel->atmosphere()->setDitheringMultiplier(doubleValue(PROPERTY_DITHERING_MULTIPLIER));
-    if(PROPERTY_MOON_SCALE == name)
+
+
+    else if(PROPERTY_MOON_SCALE == name)
         m_himmel->moon()->setScale(doubleValue(PROPERTY_MOON_SCALE));
-
-    if(PROPERTY_MOON_SUNSHINE_COLOR == name)
+    else if(PROPERTY_MOON_SUNSHINE_COLOR == name)
         m_himmel->moon()->setSunShineColor(toVec3(colorValue(PROPERTY_MOON_SUNSHINE_COLOR)));
-    if(PROPERTY_MOON_SUNSHINE_INTENSITY == name)
+    else if(PROPERTY_MOON_SUNSHINE_INTENSITY == name)
         m_himmel->moon()->setSunShineIntensity(doubleValue(PROPERTY_MOON_SUNSHINE_INTENSITY));
-
-    if(PROPERTY_MOON_EARTHSHINE_COLOR == name)
+    else if(PROPERTY_MOON_EARTHSHINE_COLOR == name)
         m_himmel->moon()->setEarthShineColor(toVec3(colorValue(PROPERTY_MOON_EARTHSHINE_COLOR)));
-    if(PROPERTY_MOON_EARTHSHINE_INTENSITY == name)
+    else if(PROPERTY_MOON_EARTHSHINE_INTENSITY == name)
         m_himmel->moon()->setEarthShineIntensity(doubleValue(PROPERTY_MOON_EARTHSHINE_INTENSITY));
-
-    if(PROPERTY_MOON_POSITION_OVERRIDE == name)
+    else if(PROPERTY_MOON_POSITION_OVERRIDE == name)
         m_himmel->astro()->setOverrideMoonPosition(boolValue(PROPERTY_MOON_POSITION_OVERRIDE));
-    
-    if(PROPERTY_MOON_POSITION_X == name || PROPERTY_MOON_POSITION_Y == name || PROPERTY_MOON_POSITION_Z == name)
+    else if(PROPERTY_MOON_POSITION_X == name || PROPERTY_MOON_POSITION_Y == name || PROPERTY_MOON_POSITION_Z == name)
     {
         osg::Vec3 vec;
         vec._v[0] =  doubleValue(PROPERTY_MOON_POSITION_X);
@@ -151,15 +155,20 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->astro()->setMoonPosition(vec);
     }
 
-    if(PROPERTY_STARS_SCINTILLATION == name)
-        m_himmel->stars()->setScintillation(doubleValue(PROPERTY_STARS_SCINTILLATION));
 
-    if(PROPERTY_STARS_GLARE_INTENSITY == name)
+    else if(PROPERTY_STARS_COLOR == name)
+        m_himmel->stars()->setColor(toVec3(colorValue(PROPERTY_STARS_COLOR)));
+    else if(PROPERTY_STARS_COLOR_RATIO == name)
+        m_himmel->stars()->setColorRatio(doubleValue(PROPERTY_STARS_COLOR_RATIO));
+    else if(PROPERTY_STARS_GLARE_INTENSITY == name)
         m_himmel->stars()->setGlareIntensity(doubleValue(PROPERTY_STARS_GLARE_INTENSITY));
-    if(PROPERTY_STARS_GLARE_SCALE == name)
+    else if(PROPERTY_STARS_GLARE_SCALE == name)
         m_himmel->stars()->setGlareScale(doubleValue(PROPERTY_STARS_GLARE_SCALE));
-
-    if(PROPERTY_STARS_MAX_VMAG == name)
+    else if(PROPERTY_STARS_SCATTERING == name)
+        m_himmel->stars()->setScattering(doubleValue(PROPERTY_STARS_SCATTERING));
+    else if(PROPERTY_STARS_SCINTILLATION == name)
+        m_himmel->stars()->setScintillation(doubleValue(PROPERTY_STARS_SCINTILLATION));
+    else if(PROPERTY_STARS_MAX_VMAG == name)
         m_himmel->stars()->setMaxVMag(doubleValue(PROPERTY_STARS_MAX_VMAG));
 }
 
