@@ -63,15 +63,15 @@ StarsGeode::StarsGeode(const ProceduralHimmel &himmel)
 ,   m_gShader(new osg::Shader(osg::Shader::GEOMETRY))
 ,   m_fShader(new osg::Shader(osg::Shader::FRAGMENT))
 
-,   u_starWidth(NULL)
-,   u_maxVMag(NULL)
+,   u_quadWidth(NULL)
+,   u_noise1(NULL)
 
-,   u_scintillation(NULL)
-
+,   u_color(NULL)
 ,   u_glareIntensity(NULL)
 ,   u_glareScale(NULL)
-,
-u_noise1(NULL)
+,   u_maxVMag(NULL)
+,   u_scattering(NULL)
+,   u_scintillation(NULL)
 {
     setName("Stars");
 
@@ -94,7 +94,7 @@ void StarsGeode::update()
     float fov = m_himmel.getCameraFovHint();
     float height = m_himmel.getViewSizeHeightHint();
     
-    u_starWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
+    u_quadWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
 
     t_aTime aTime(m_himmel.astro()->getATime());
 
@@ -132,11 +132,16 @@ void StarsGeode::update()
 
 void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    u_scintillation = new osg::Uniform("scintillation", 1.0f);
-    stateSet->addUniform(u_scintillation);
+    u_quadWidth = new osg::Uniform("quadWidth", 0.0f);
+    stateSet->addUniform(u_quadWidth);
 
-    u_starWidth = new osg::Uniform("starWidth", 0.0f);
-    stateSet->addUniform(u_starWidth);
+    u_noise1 = new osg::Uniform("noise1", 0);
+    stateSet->addUniform(u_noise1);
+
+
+    u_color = new osg::Uniform("color", osg::Vec4(1.0, 1.0, 1.0, 0.0));
+    stateSet->addUniform(u_color);
+
 
     u_glareIntensity = new osg::Uniform("glareIntensity", 1.0f);
     stateSet->addUniform(u_glareIntensity);
@@ -147,8 +152,12 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
     u_maxVMag = new osg::Uniform("maxVMag", defaultMaxVMag());
     stateSet->addUniform(u_maxVMag);
 
-    u_noise1 = new osg::Uniform("noise1", 0);
-    stateSet->addUniform(u_noise1);
+    u_scintillation = new osg::Uniform("scintillation", 1.0f);
+    stateSet->addUniform(u_scintillation);
+
+    u_scattering = new osg::Uniform("scattering", 1.0f);
+    stateSet->addUniform(u_scattering);
+
 
     // TEMP - use correct function in cpu for that
     u_sun = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 0.0));
@@ -219,12 +228,12 @@ void StarsGeode::setupTextures(osg::StateSet* stateSet)
 {   
     const int noiseN = 256;
 
-    unsigned char *noiseMap = new unsigned char[noiseN * 1];
-    RandomMapGenerator::generate1(noiseN, 1, noiseMap);
+    unsigned char *noiseMap = new unsigned char[noiseN * 3];
+    RandomMapGenerator::generate3(noiseN, 1, noiseMap);
 
     osg::ref_ptr<osg::Image> noiseImage = new osg::Image();
     noiseImage->setImage(noiseN, 1, 1
-        , GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE
+        , GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE
         , noiseMap, osg::Image::USE_NEW_DELETE);
 
     osg::ref_ptr<osg::Texture1D> noise = new osg::Texture1D(noiseImage);
@@ -280,6 +289,21 @@ const float StarsGeode::getScintillation() const
 }
 
 
+const float StarsGeode::setScattering(const float scattering)
+{
+    u_scattering->set(scattering);
+    return getScattering();
+}
+
+const float StarsGeode::getScattering() const
+{
+    float scattering;
+    u_scattering->get(scattering);
+
+    return scattering;
+}
+
+
 const float StarsGeode::setMaxVMag(const float vMag)
 {
     u_maxVMag->set(vMag);
@@ -300,6 +324,46 @@ const float StarsGeode::defaultMaxVMag()
 }
 
 
+const osg::Vec3 StarsGeode::setColor(const osg::Vec3 color)
+{
+    osg::Vec4 colorAndRatio;
+    u_color->get(colorAndRatio);
+    
+    colorAndRatio._v[0] = color._v[0];
+    colorAndRatio._v[1] = color._v[1];
+    colorAndRatio._v[2] = color._v[2];
+
+    u_color->set(colorAndRatio);
+    return getColor();
+}
+
+const osg::Vec3 StarsGeode::getColor() const
+{
+    osg::Vec4 colorAndRatio;
+    u_color->get(colorAndRatio);
+
+    return osg::Vec3(colorAndRatio._v[0], colorAndRatio._v[1], colorAndRatio._v[2]);
+}
+
+
+const float StarsGeode::setColorRatio(const float ratio)
+{
+    osg::Vec4 colorAndRatio;
+    u_color->get(colorAndRatio);
+    
+    colorAndRatio._v[3] = ratio;
+
+    u_color->set(colorAndRatio);
+    return getColorRatio();
+}
+
+const float StarsGeode::getColorRatio() const
+{
+    osg::Vec4 colorAndRatio;
+    u_color->get(colorAndRatio);
+
+    return colorAndRatio._v[3];
+}
 
 
 // VertexShader
@@ -310,9 +374,12 @@ const std::string StarsGeode::getVertexShaderSource()
 
         "#version 150 compatibility\n"
         "\n"
-        "uniform float scintillation;\n"
+        "uniform vec4 color;\n" // rgb and alpha for mix
         "\n"
-        "uniform float starWidth;\n"
+        "uniform float scintillation;\n"
+        "uniform float scattering;\n"
+        "\n"
+        "uniform float quadWidth;\n"
         "uniform float maxVMag;\n"
         "\n"
         "uniform sampler1D noise1;\n"
@@ -321,77 +388,60 @@ const std::string StarsGeode::getVertexShaderSource()
         "\n"
         "out vec4 m_color;\n"
         "\n"
-        "const float minB = pow(2.512, -6.5);\n"
+        "const float minB = pow(2.512, -6.5) * 0.1;\n"
+        
+        //  ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
+        "const vec3 lambda = vec3(0.058, 0.135, 0.331);\n"
         "\n"
         "void main(void)\n"
         "{\n"
         "    float vMag = gl_Color.w;\n"
         "\n"
         "    float estB = pow(2.512, maxVMag - vMag);\n"
-        "    float scaledB = minB * estB / starWidth * 0.1;\n"
+        "    float scaledB = minB * estB / quadWidth;\n"
+        //"\n"
+        "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
+        "    vec3 s = texture(noise1, i / 256.0).rgb - 0.5;\n"
         "\n"
-	    "    float w1 = pow(1.0 - gl_Vertex.b, 5.37);\n"
-	    "    float w2 = pow(1.0 - gl_Vertex.b, 1.00);\n"
+        "    float w1 = pow(1.0 - gl_Vertex.b, 5.37);\n"
         "\n"
-	    "    vec3 lambda = vec3(0.0695, 0.118, 0.244);\n"
+        "    vec3 c = mix(gl_Color.rgb, color.rgb, color.a)\n"
+        "        - lambda * w1 * 4 * (scattering + s * scintillation);\n"
         "\n"
-	    "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
-	    "    float n = texture(noise1, i / 256.0).r;\n"
-        "\n"
-	    "    vec3 c = gl_Color.rgb - lambda * (w1 * 8 + w2 * n * 8 * scintillation);\n"
-        "\n"
-        "    m_color = vec4(c, scaledB * (1.0 - w1));\n"
+        "    m_color = vec4(c, scaledB - w1 * s * 0.1);\n"
         "\n"
         "    gl_Position = vec4(gl_Vertex.xyz, 1.0);\n"
         "}\n\n";
 
 
+/* equ to hor conversion for vertex shader:
 
-/* Vertex Shader with equ to hor conversion:
+         ...
 
-        "#version 150 compatibility\n"
-        "\n"
-        "uniform float starWidth;\n"
-        "uniform float maxVMag;\n"
-        "\n"
-        "uniform vec3 equ2hor;\n"
-        "\n"
-        "out vec4 m_color;\n"
-        "\n"
-        "const float minB = pow(2.512, -6.5);\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "    float vMag = gl_Color.w;\n"
-        "\n"
-        "    float estB = pow(2.512, maxVMag - vMag);\n"
-        "    float scaledB = minB * estB / starWidth * 0.1;\n"
-        "\n"
-        "    m_color = vec4(gl_Color.rgb, scaledB);\n"
-        "\n"
-        "    float sinDE = gl_Vertex[0];\n"
-        "    float cosDE = gl_Vertex[1];\n"
-        "    float tanDE = gl_Vertex[2];\n"
-        "    float    RA = gl_Vertex[3];\n"
-        "\n"
-        "    float H = equ2hor[0] - RA;\n"
-        "    float sinH = sin(H);\n"
-        "    float cosH = cos(H);\n"
-        "\n"
-        "    float sinLa = equ2hor[1];\n"
-        "    float cosLa = equ2hor[2];\n"
-        "\n"
-        "    float h = atan(sinH, cosH * sinLa - cosLa * tanDE);\n"
-        "    float A = asin(sinLa * sinDE + cosH * cosLa * cosDE);\n"
-        "\n"
-        "    float cosA = cos(A);\n"
-        "\n"
-        "    float x = sin(h) * cosA;\n"
-        "    float y = cos(h) * cosA;\n"
-        "    float z = sin(A);\n"
-        "\n"
-        "    gl_Position = vec4(x, y, z, 1.0);\n"
-        "}\n\n";
+        float sinDE = gl_Vertex[0];
+        float cosDE = gl_Vertex[1];
+        float tanDE = gl_Vertex[2];
+        float    RA = gl_Vertex[3];
+
+        float H = equ2hor[0] - RA;
+        float sinH = sin(H);
+        float cosH = cos(H);
+
+        float sinLa = equ2hor[1];
+        float cosLa = equ2hor[2];
+
+        float h = atan(sinH, cosH * sinLa - cosLa * tanDE);
+        float A = asin(sinLa * sinDE + cosH * cosLa * cosDE);
+
+        float cosA = cos(A);
+
+        float x = sin(h) * cosA;
+        float y = cos(h) * cosA;
+        float z = sin(A);
+
+        gl_Position = vec4(x, y, z, 1.0);
+
+        ...
 */
 }
 
@@ -408,7 +458,7 @@ const std::string StarsGeode::getGeometryShaderSource()
         "layout (points) in;\n"
         "layout (triangle_Strip, max_vertices = 4) out;\n"
         "\n"
-        "uniform float starWidth;\n"
+        "uniform float quadWidth;\n"
         "uniform float glareScale;\n"
         "\n"
         "in vec4 m_color[];\n"
@@ -428,7 +478,7 @@ const std::string StarsGeode::getGeometryShaderSource()
         "    gl_TexCoord[0].z = (1.0 + sqrt(scaledB)) * max(1.0, glareScale);\n"
         "\n"
 
-        "    float k = starWidth * gl_TexCoord[0].z;\n"
+        "    float k = quadWidth * gl_TexCoord[0].z;\n"
         "\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
         "    gl_TexCoord[0].xy = vec2(-1.0, -1.0);\n"
@@ -457,7 +507,7 @@ const std::string StarsGeode::getFragmentShaderSource()
 
         "#version 150 compatibility\n"
         "\n"
-        "uniform float starWidth;\n"
+        "uniform float quadWidth;\n"
         "uniform float glareIntensity;\n"
         "\n"
         "uniform vec3 sun;\n"

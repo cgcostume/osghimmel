@@ -48,6 +48,16 @@ public:
 
     void update();
 
+    const float setMaxVMag(const float vMag);
+    const float getMaxVMag() const;
+    static const float defaultMaxVMag();
+
+    const osg::Vec3 setColor(const osg::Vec3 color);
+    const osg::Vec3 getColor() const;
+
+    const float setColorRatio(const float ratio);
+    const float getColorRatio() const;
+
     const float setGlareIntensity(const float intensity);
     const float getGlareIntensity() const;
 
@@ -57,9 +67,8 @@ public:
     const float setScintillation(const float scintillation);
     const float getScintillation() const;
 
-    const float setMaxVMag(const float vMag);
-    const float getMaxVMag() const;
-    static const float defaultMaxVMag();
+    const float setScattering(const float scattering);
+    const float getScattering() const;
 
 protected:
 
@@ -83,17 +92,17 @@ protected:
     osg::Shader *m_gShader;
     osg::Shader *m_fShader;
 
-    osg::ref_ptr<osg::Uniform> u_starWidth;
-
-    osg::ref_ptr<osg::Uniform> u_maxVMag;
-    osg::ref_ptr<osg::Uniform> u_scintillation;
-
-    osg::ref_ptr<osg::Uniform> u_glareIntensity;
-    osg::ref_ptr<osg::Uniform> u_glareScale;
-
+    osg::ref_ptr<osg::Uniform> u_quadWidth;
     osg::ref_ptr<osg::Uniform> u_noise1;
 
+    osg::ref_ptr<osg::Uniform> u_color;
+    osg::ref_ptr<osg::Uniform> u_glareIntensity;
+    osg::ref_ptr<osg::Uniform> u_glareScale;
+    osg::ref_ptr<osg::Uniform> u_maxVMag;
+    osg::ref_ptr<osg::Uniform> u_scattering;
+    osg::ref_ptr<osg::Uniform> u_scintillation;
 
+    // TODO: replace with VMag intensity function of procedural himmel
     osg::ref_ptr<osg::Uniform> u_sun;
 
     // stars' vertex and color data.
