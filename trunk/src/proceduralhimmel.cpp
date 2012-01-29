@@ -70,6 +70,7 @@ ProceduralHimmel::~ProceduralHimmel()
     delete m_astronomy;
 };
 
+#include <iostream>
 
 void ProceduralHimmel::update()
 {
