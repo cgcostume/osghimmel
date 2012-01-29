@@ -56,12 +56,14 @@ AbstractHimmel::AbstractHimmel()
 ,   m_autoUpdateTime(false)
 
 ,   m_initialized(false)
+,   m_dirty(false)
 
 // TODO
 ,   m_cameraHint(NULL)
 ,   m_widthHint(NULL)
 ,   m_heightHint(NULL)
 
+,   m_lastElapsed(0.0)
 {
     setupNode(getOrCreateStateSet());
 
@@ -123,7 +125,21 @@ void AbstractHimmel::update()
         initialize();
 
     if(m_autoUpdateTime && m_timef)
+    {
         m_timef->update();
+        dirty();
+    }
+
+
+    if(!m_timef)
+        return;
+
+    const long double elapsed(m_timef->getNonModf());
+    if(elapsed != m_lastElapsed)
+    {
+        dirty();
+        m_lastElapsed = elapsed;
+    }
 }
 
 
@@ -151,6 +167,19 @@ const float AbstractHimmel::timef() const
 }
 
 
+void AbstractHimmel::dirty(const bool enable)
+{
+    m_dirty = enable;
+}
+
+
+const bool AbstractHimmel::isDirty() const
+{
+    return m_dirty;
+}
+
+
+
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 ShaderModifier *AbstractHimmel::m_shaderModifier = NULL;
@@ -172,6 +201,8 @@ ShaderModifier *AbstractHimmel::shaderModifier()
 
 void AbstractHimmel::setCameraHint(osg::Camera *camera)
 {
+    dirty();
+
     m_cameraHint = camera;
 }
 
@@ -189,6 +220,8 @@ const float AbstractHimmel::getCameraFovHint() const
 
 void AbstractHimmel::setViewSizeHint(unsigned int width, unsigned int height)
 {
+    dirty();
+
     m_widthHint = width;
     m_heightHint = height;
 }

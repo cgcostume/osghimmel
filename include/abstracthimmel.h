@@ -86,6 +86,8 @@ public:
     virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const;
 
 
+    void dirty(const bool enable = true);
+    virtual const bool isDirty() const;
 
     // TODO: seems ugly - optimize this!
 
@@ -118,12 +120,16 @@ protected:
 protected:
 
     bool m_initialized;
+    bool m_dirty;
 
     //
 
     TimeF *m_timef;
     bool m_autoUpdateTime;
 
+    // This is used for "is dirty decisions" in update.
+    // m_timef can be updated from outsite, so we need check for changes manually.
+    long double m_lastElapsed;
 
     // TODO  temp
     osg::Camera *m_cameraHint;
