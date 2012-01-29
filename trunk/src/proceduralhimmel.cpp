@@ -74,17 +74,25 @@ ProceduralHimmel::~ProceduralHimmel()
 void ProceduralHimmel::update()
 {
     AbstractHimmel::update();
-    astro()->update(t_aTime::fromTimeF(*getTime()));
 
-    m_atmosphere->update();
-    m_moon->update();
-    m_stars->update();   
+    if(isDirty())
+    {
+        astro()->update(t_aTime::fromTimeF(*getTime()));
+
+        m_atmosphere->update();
+        m_moon->update();
+        m_stars->update();
+
+        dirty(false);
+    }
 }
 
 
 const float ProceduralHimmel::setLatitude(const float latitude)
 {
     assert(m_astronomy);
+    
+    dirty();
     return m_astronomy->setLatitude(latitude);
 }
 
@@ -98,6 +106,8 @@ const float ProceduralHimmel::getLatitude() const
 const float ProceduralHimmel::setLongitude(const float longitude)
 {
     assert(m_astronomy);
+
+    dirty();
     return m_astronomy->setLongitude(longitude);
 }
 
