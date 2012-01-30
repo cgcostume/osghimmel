@@ -38,10 +38,26 @@ const long double siderealTime(const t_aTime &aTime)
     const t_aTime gmt(makeUT(aTime));
     const t_julianDay JD(jdUT(gmt));
 
+    // (AA.11.4)
+
     const long double T(jCenturiesSinceSE(JD));
     const long double t = 
         280.46061837 + 360.98564736629 * (jdSinceSE(JD))
         + T * T * (0.000387933 - T / 38710000.0);
 
-    return _hours(t);
+    return _revd(t);
+}
+
+
+const long double siderealTime_la(const t_aTime &aTime)
+{
+    const t_aTime gmt(makeUT(aTime));
+    const t_julianDay JD(jdUT(aTime));
+
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
+
+    const long double T(jCenturiesSinceSE(JD));
+    const float t = 4.894961 + 230121.675315 * T;
+
+    return _revd(_deg(t));
 }

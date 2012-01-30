@@ -1,5 +1,5 @@
-
-// Copyright (c) 2011-2012, Daniel M�ller <dm@g4t3.de>
+﻿
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -186,8 +186,8 @@ void test_jd()
 
 void test_sideralTime()
 {
-    ASSERT_AB(long double, _hour(13, 10, 46.3668), siderealTime(t_aTime(1987, 4, 10,  0,  0, 0)), 0.00000001);
-    ASSERT_AB(long double, _hour( 8, 34, 57.0896), siderealTime(t_aTime(1987, 4, 10, 19, 21, 0)), 0.00000001);
+    ASSERT_AB(long double, _hour(13, 10, 46.3668), _hours(siderealTime(t_aTime(1987, 4, 10,  0,  0, 0))), 0.00000001);
+    ASSERT_AB(long double, _hour( 8, 34, 57.0896), _hours(siderealTime(t_aTime(1987, 4, 10, 19, 21, 0))), 0.00000001);
 }
 
 

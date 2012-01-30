@@ -449,7 +449,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         
 
         // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
-        // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.) -> the 0.19 is the earth full intensity
+        // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
         "    float op2 = (PI - acos(dot(-m, s))) * 0.5; // opposite phase over 2\n"
         "    float Eem = 0.19 * 0.5 * (1.0 - sin(op2) * tan(op2) * log(1.0 / tan(op2 * 0.5)));\n"
         "\n"

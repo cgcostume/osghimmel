@@ -411,7 +411,7 @@ const float moon_meanLongitude_la(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
     const float L0 = _deg(3.8104 + 8399.7091 * T);
 
     // Low Accuracy (AA.21 p132)
@@ -431,7 +431,7 @@ const float moon_meanElongation_la(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
     const float D = _deg(5.1985 + 7771.3772 * T);
 
     return _revd(D);
@@ -442,7 +442,7 @@ const float moon_meanAnomaly_la(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
     const float M = _deg(2.3554 + 8328.6911 * T);
 
     // Low Accuracy (AA.21...)
@@ -464,7 +464,7 @@ const float moon_meanLatitude_la(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
     const float F = _deg(1.6280 + 8433.4663 * T);
 
     return _revd(F);
@@ -494,7 +494,7 @@ const t_eclf moon_position_la(const t_julianDay t)
 
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 
     float Σl = mL;
 
@@ -565,7 +565,7 @@ const float moon_distance_la(const t_julianDay t)
 
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 
     float Σr = 0.016593;
 

@@ -174,7 +174,7 @@ const float sun_meanAnomaly_la(const t_julianDay t)
     const t_julianDay T(jCenturiesSinceSE(t));
 
     // Low Accuracy 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
     const float M = _deg(6.24 + 628.302 * T);
 
     // Low Accuracy - suggestion (seems insuficient) from 
@@ -198,7 +198,7 @@ const float sun_meanLongitude_la(const t_julianDay t)
 
 const t_equf sun_apparentPosition_la(const t_julianDay t)
 {
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 
     const t_julianDay T(jCenturiesSinceSE(t));
     const float M = _rad(sun_meanAnomaly_la(t));
@@ -235,7 +235,7 @@ const t_horf sun_horizontalPosition_la(
 
 const float sun_distance_la(const t_julianDay t)
 {
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
     const t_julianDay T(jCenturiesSinceSE(t));
     
     const float M = 6.24 + 628.302 * T;

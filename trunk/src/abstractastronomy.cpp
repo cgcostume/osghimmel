@@ -110,7 +110,15 @@ const osg::Vec3 AbstractAstronomy::getMoonPosition() const
     if(m_overrideMoonPosition)
         return m_moonPosition;
 
-    return moonPosition();
+    return moonPosition(getATime(), getLatitude(), getLongitude());
+}
+
+const osg::Vec3 AbstractAstronomy::getMoonPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    return moonPosition(aTime, latitude, longitude);
 }
 
 
@@ -141,5 +149,35 @@ const osg::Vec3 AbstractAstronomy::getSunPosition() const
     if(m_overrideSunPosition)
         return m_sunPosition;
 
-    return sunPosition();
+    return sunPosition(getATime(), getLatitude(), getLongitude());
+}
+
+const osg::Vec3 AbstractAstronomy::getSunPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    return sunPosition(aTime, latitude, longitude);
+}
+
+
+const float AbstractAstronomy::getAngularSunRadius() const
+{
+    return angularSunRadius(t());
+}
+
+const float AbstractAstronomy::getAngularSunRadius(const t_aTime &aTime) const
+{
+    return angularSunRadius(jd(aTime));
+}
+
+
+const float AbstractAstronomy::getAngularMoonRadius() const
+{
+    return angularMoonRadius(t());
+}
+
+const float AbstractAstronomy::getAngularMoonRadius(const t_aTime &aTime) const
+{
+    return angularMoonRadius(jd(aTime));
 }

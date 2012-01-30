@@ -40,13 +40,22 @@ public:
 
     LowAccuracyAstronomy();
 
-    virtual const float getAngularSunRadius() const;
-    virtual const float getAngularMoonRadius() const;
+    virtual const osg::Matrix equToLocalHorizonMatrix() const;
 
 protected:
 
-    virtual const osg::Vec3 moonPosition() const;
-    virtual const osg::Vec3 sunPosition() const;
+    virtual const osg::Vec3 moonPosition(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
+
+    virtual const osg::Vec3 sunPosition(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
+
+    virtual const float angularSunRadius(const t_julianDay t) const;
+    virtual const float angularMoonRadius(const t_julianDay t) const;
 };
 
 #endif // __ASTRONOMYLA_H__

@@ -379,7 +379,7 @@ const float earth_meanObliquity_la(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.)
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
     const float ε0 = _deg(0.409093 - 0.000227 * T);
 
     // Low Accuracy (AA.21.2)

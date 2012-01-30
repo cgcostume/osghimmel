@@ -33,6 +33,7 @@
 #include "sun.h"
 #include "moon.h"
 #include "stars.h"
+#include "sideraltime.h"
 
 
 LowAccuracyAstronomy::LowAccuracyAstronomy()
@@ -40,21 +41,24 @@ LowAccuracyAstronomy::LowAccuracyAstronomy()
 }
 
 
-const float LowAccuracyAstronomy::getAngularSunRadius() const
+const float LowAccuracyAstronomy::angularSunRadius(const t_julianDay t) const
 {
-    return earth_apparentAngularSunDiameter_la(t()) * 0.5;
+    return earth_apparentAngularSunDiameter_la(t) * 0.5;
 }
 
 
-const float LowAccuracyAstronomy::getAngularMoonRadius() const
+const float LowAccuracyAstronomy::angularMoonRadius(const t_julianDay t) const
 {
-    return earth_apparentAngularMoonDiameter_la(t()) * 0.5;
+    return earth_apparentAngularMoonDiameter_la(t) * 0.5;
 }
 
 
-const osg::Vec3 LowAccuracyAstronomy::moonPosition() const
+const osg::Vec3 LowAccuracyAstronomy::moonPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
 {
-    t_horf moon = moon_horizontalPosition_la(getATime(), getLatitude(), getLongitude());
+    t_horf moon = moon_horizontalPosition_la(aTime, latitude, longitude);
 
     osg::Vec3 moonv  = moon.toEuclidean();
     moonv.normalize();
@@ -63,12 +67,31 @@ const osg::Vec3 LowAccuracyAstronomy::moonPosition() const
 }
 
 
-const osg::Vec3 LowAccuracyAstronomy::sunPosition() const
+const osg::Vec3 LowAccuracyAstronomy::sunPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
 {
-    t_horf sun = sun_horizontalPosition_la(getATime(), getLatitude(), getLongitude());
+    t_horf sun = sun_horizontalPosition_la(aTime, latitude, longitude);
 
     osg::Vec3 sunv  = sun.toEuclidean();
     sunv.normalize();
 
     return sunv;
+}
+
+
+const osg::Matrix LowAccuracyAstronomy::equToLocalHorizonMatrix() const
+{
+
+    const t_aTime aTime(getATime());
+
+    const float s = siderealTime_la(aTime);
+
+    const float la = getLatitude();
+    const float lo = getLongitude();
+
+    return osg::Matrix::scale                  (-1, 1, 1)
+        * osg::Matrix::rotate( _rad(la) - _PI_2, 1, 0, 0)
+        * osg::Matrix::rotate(-_rad(s + lo)    , 0, 0, 1);
 }

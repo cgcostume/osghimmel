@@ -324,6 +324,6 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
 
         "void main(void)\n"
         "{\n"
-        "   gl_FragColor = color() * smoothstep(0.0, 1.0, asin(clamp((sun.z + 0.8), -1.0, 1.0))) + dither();\n"
+        "   gl_FragColor = 0 * color() * smoothstep(0.0, 1.0, asin(clamp((sun.z + 0.8), -1.0, 1.0))) + dither();\n"
         "}\n\n";
 }
