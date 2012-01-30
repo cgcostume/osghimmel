@@ -86,6 +86,11 @@ protected:
 
     virtual void update();
 
+    // Workaround avoiding culling by osgs' automated near far retrieval.
+    // This fixes culling of stars and moon when no further scene geometry     
+    // is available.
+    void addAntiCull();
+
 protected:
 
     AbstractAstronomy *m_astronomy;
