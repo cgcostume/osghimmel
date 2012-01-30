@@ -58,6 +58,8 @@ ProceduralHimmel::ProceduralHimmel()
     m_moon = new MoonGeode(*this);
     m_stars = new StarsGeode(*this);
 
+    addAntiCull(); // Required to be added prior to atmosphere.
+
     addChild(m_atmosphere);
     addChild(m_moon);
     addChild(m_stars);
@@ -70,7 +72,6 @@ ProceduralHimmel::~ProceduralHimmel()
     delete m_astronomy;
 };
 
-#include <iostream>
 
 void ProceduralHimmel::update()
 {
@@ -86,6 +87,35 @@ void ProceduralHimmel::update()
 
         dirty(false);
     }
+}
+
+
+void ProceduralHimmel::addAntiCull()
+{
+    // Add a unit cube to this geode, to avoid culling of stars, moon, etc. 
+    // caused by automatic near far retrieval of osg. This geode should be 
+    // added prior to the atmosphere node, since all other nodes are drawn
+    // with blending enabled, and would make the cubes' points visible.
+
+    osg::ref_ptr<osg::Geode> cullDummy = new osg::Geode();
+    addChild(cullDummy);
+
+    osg::ref_ptr<osg::Geometry> cullGeometry = new osg::Geometry();
+    cullDummy->addDrawable(cullGeometry);
+
+    osg::Vec3Array *vertices = new osg::Vec3Array();
+    vertices->push_back(osg::Vec3(-1.f, -1.f,  1.f));
+    vertices->push_back(osg::Vec3(-1.f,  1.f,  1.f));
+    vertices->push_back(osg::Vec3( 1.f,  1.f,  1.f));
+    vertices->push_back(osg::Vec3( 1.f, -1.f,  1.f));
+    vertices->push_back(osg::Vec3(-1.f, -1.f, -1.f));
+    vertices->push_back(osg::Vec3(-1.f,  1.f, -1.f));
+    vertices->push_back(osg::Vec3( 1.f,  1.f, -1.f));
+    vertices->push_back(osg::Vec3( 1.f, -1.f, -1.f));
+
+    cullGeometry->setVertexArray(vertices);   
+    cullGeometry->addPrimitiveSet(
+        new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, 8));
 }
 
 
