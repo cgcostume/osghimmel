@@ -33,6 +33,7 @@
 #include "sun.h"
 #include "moon.h"
 #include "stars.h"
+#include "sideraltime.h"
 
 
 Astronomy::Astronomy()
@@ -40,21 +41,24 @@ Astronomy::Astronomy()
 }
 
 
-const float Astronomy::getAngularSunRadius() const
+const float Astronomy::angularSunRadius(const t_julianDay t) const
 {
-    return earth_apparentAngularSunDiameter(t()) * 0.5;
+    return earth_apparentAngularSunDiameter(t) * 0.5;
 }
 
 
-const float Astronomy::getAngularMoonRadius() const
+const float Astronomy::angularMoonRadius(const t_julianDay t) const
 {
-    return earth_apparentAngularMoonDiameter(t()) * 0.5;
+    return earth_apparentAngularMoonDiameter(t) * 0.5;
 }
 
 
-const osg::Vec3 Astronomy::moonPosition() const
+const osg::Vec3 Astronomy::moonPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
 {
-    t_hord moon = moon_horizontalPosition(getATime(), getLatitude(), getLongitude());
+    t_hord moon = moon_horizontalPosition(aTime, latitude, longitude);
 
     osg::Vec3 moonv  = moon.toEuclidean();
     moonv.normalize();
@@ -63,12 +67,30 @@ const osg::Vec3 Astronomy::moonPosition() const
 }
 
 
-const osg::Vec3 Astronomy::sunPosition() const
+const osg::Vec3 Astronomy::sunPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
 {
-    t_hord sun = sun_horizontalPosition(getATime(), getLatitude(), getLongitude());
+    t_hord sun = sun_horizontalPosition(aTime, latitude, longitude);
 
     osg::Vec3 sunv  = sun.toEuclidean();
     sunv.normalize();
 
     return sunv;
+}
+
+
+const osg::Matrix Astronomy::equToLocalHorizonMatrix() const
+{
+    const t_aTime aTime(getATime());
+
+    const float s = siderealTime(aTime);
+
+    const float la = getLatitude();
+    const float lo = getLongitude();
+
+    return osg::Matrix::scale                  (-1, 1, 1)
+        * osg::Matrix::rotate( _rad(la) - _PI_2, 1, 0, 0)
+        * osg::Matrix::rotate(-_rad(s + lo)    , 0, 0, 1);
 }

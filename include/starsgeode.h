@@ -92,6 +92,7 @@ protected:
     osg::Shader *m_gShader;
     osg::Shader *m_fShader;
 
+    osg::ref_ptr<osg::Uniform> u_R;
     osg::ref_ptr<osg::Uniform> u_quadWidth;
     osg::ref_ptr<osg::Uniform> u_noise1;
 
@@ -104,15 +105,6 @@ protected:
 
     // TODO: replace with VMag intensity function of procedural himmel
     osg::ref_ptr<osg::Uniform> u_sun;
-
-    // stars' vertex and color data.
-
-    std::vector<s_BrightStar> m_bss;
-
-    osg::Vec4Array* m_cAry;
-    osg::Vec4Array* m_vAry;
-
-    osg::ref_ptr<osg::Geometry> m_g;
 };
 
 #endif // __STARSGEODE_H__

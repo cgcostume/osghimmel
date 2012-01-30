@@ -47,7 +47,7 @@ const t_julianDay jd(t_aTime aTime)
         aTime.month += 12;
     }
 
-    // TODO: from "A Physically-Based Night Sky Model" - 2001 - Wann Jensen et. al.
+    // TODO: from "A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.
     // "Local time is GMT with a zone correction. Terrestrial Time (TT)
     // is essentially the time kept by atomic clocks. As it is not corrected
     // for the slowing of the Earth’s rotation, it gains on GMT by about 

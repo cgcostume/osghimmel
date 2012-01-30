@@ -35,6 +35,7 @@
 #include "julianday.h"
 
 #include <osg/Vec3>
+#include <osg/Matrix>
 
 
 class AbstractAstronomy
@@ -59,28 +60,50 @@ public:
     const float setLongitude(const float longitude);
     const float getLongitude() const;
 
+
     const bool setOverrideMoonPosition(const bool enabled); 
     const bool getOverrideMoonPosition() const;
 
     const osg::Vec3 setMoonPosition(const osg::Vec3 &position);
     const osg::Vec3 getMoonPosition() const;
+    const osg::Vec3 getMoonPosition(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
 
     const bool setOverrideSunPosition(const bool enabled); 
     const bool getOverrideSunPosition() const;
 
     const osg::Vec3 setSunPosition(const osg::Vec3 &position);
     const osg::Vec3 getSunPosition() const;
+    const osg::Vec3 getSunPosition(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
 
 
+    const float getAngularSunRadius() const;
+    const float getAngularSunRadius(const t_aTime &aTime) const;
 
-    virtual const float getAngularSunRadius() const = 0;
-    virtual const float getAngularMoonRadius() const = 0;
+    const float getAngularMoonRadius() const;
+    const float getAngularMoonRadius(const t_aTime &aTime) const;
+
+    virtual const osg::Matrix equToLocalHorizonMatrix() const = 0;
 
 protected:
 
-    virtual const osg::Vec3 moonPosition() const = 0;
-    virtual const osg::Vec3 sunPosition() const = 0;
+    virtual const osg::Vec3 moonPosition(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const = 0;
 
+    virtual const osg::Vec3 sunPosition(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const = 0;
+
+    virtual const float angularSunRadius(const t_julianDay t) const = 0;
+    virtual const float angularMoonRadius(const t_julianDay t) const = 0;
 
     inline const t_julianDay t() const 
     {

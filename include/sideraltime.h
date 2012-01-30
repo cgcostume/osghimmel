@@ -35,5 +35,6 @@
 
 // The mean sideral time, Greenwich hour angle of the mean vernal point.
 const long double siderealTime(const t_aTime &aTime);
+const long double siderealTime_la(const t_aTime &aTime);
 
 #endif // __SIDERALTIME_H__

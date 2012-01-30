@@ -220,7 +220,7 @@ const s_HorizontalCoords<T> s_EquatorialCoords<T>::toHorizontal(
     s_HorizontalCoords<T> hor;
 
     // local hour angle: H = θ - α (AA.p88)
-    const T H = _rad(siderealTime * 15.0 + observersLongitude - right_ascension);
+    const T H = _rad(siderealTime + observersLongitude - right_ascension);
 
     const T cosh(cos(H));
     const T sinr(sin(_rad(observersLatitude)));
@@ -284,7 +284,7 @@ const s_EquatorialCoords<T> s_HorizontalCoords<T>::toEquatorial(
     const T H = _deg(atan2(
         sin(_rad(altitude)), cosa * sinr + tan(_rad(azimuth)) * cosr));
 
-    equ.right_ascension = siderealTime - observersLongitude - H;
+    equ.right_ascension = _hours(siderealTime) - observersLongitude - H;
 
     equ.declination = _deg(asin(
         sinr * sin(_rad(azimuth)) - cosr * cos(_rad(azimuth)) * cosa));

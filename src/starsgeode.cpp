@@ -96,33 +96,7 @@ void StarsGeode::update()
     
     u_quadWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
 
-    t_aTime aTime(m_himmel.astro()->getATime());
-
-    // It seems faster to update the array every frame than
-    // to do the equ to hor conversion in shader.
-    // Furthermore osg produces clipping errors with the fixed vertices set.
-
-    const float o = earth_trueObliquity(jd(aTime));
-    const float s = siderealTime(aTime);
-
-    const float la = m_himmel.astro()->getLatitude();
-    const float lo = m_himmel.astro()->getLongitude();
-
-    osg::Vec4Array::iterator i = m_vAry->begin();
-    const osg::Vec4Array::iterator iEnd = m_vAry->end();
-
-    unsigned int c = 0;
-
-    for(; i != iEnd; ++i, ++c)
-    {
-        t_equf equ;
-        equ.right_ascension = _rightascd(m_bss[c].RA, 0, 0);
-        equ.declination = m_bss[c].DE;
-
-        osg::Vec3f vec = equ.toHorizontal(s, la, lo).toEuclidean();
-        i->set(vec.x(), vec.y(), vec.z(), c);
-    }
-    m_g->setVertexArray(m_vAry);
+    u_R->set(m_himmel.astro()->equToLocalHorizonMatrix());
 
     // TEMP
 
@@ -132,6 +106,10 @@ void StarsGeode::update()
 
 void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 {
+    u_R = new osg::Uniform("R", osg::Matrix::identity());
+    stateSet->addUniform(u_R);
+
+
     u_quadWidth = new osg::Uniform("quadWidth", 0.0f);
     stateSet->addUniform(u_quadWidth);
 
@@ -167,26 +145,35 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 
 void StarsGeode::createAndAddDrawable()
 {
-    m_g = new osg::Geometry;
-    addDrawable(m_g);
+    std::vector<s_BrightStar> bss;
+    brightstars_readFromFile("resources/brightstars", bss);
 
-    brightstars_readFromFile("resources/brightstars", m_bss);
+    osg::ref_ptr<osg::Vec4Array> cAry = new osg::Vec4Array(bss.size());
+    osg::ref_ptr<osg::Vec4Array> vAry = new osg::Vec4Array(bss.size());
 
+    for(int i = 0; i < bss.size(); ++i)
+    {
+        t_equf equ;
+        equ.right_ascension = _rightascd(bss[i].RA, 0, 0);
+        equ.declination = bss[i].DE;
 
-    m_cAry = new osg::Vec4Array;
-    m_vAry = new osg::Vec4Array(m_bss.size());
+        osg::Vec3f vec = equ.toEuclidean();
+        (*vAry)[i] = osg::Vec4(vec.x(), vec.y(), vec.z(), i);
 
-    for(int i = 0; i < m_bss.size(); ++i)
-        m_cAry->push_back(osg::Vec4(m_bss[i].sRGB_R, m_bss[i].sRGB_G, m_bss[i].sRGB_B, m_bss[i].Vmag));
+        (*cAry)[i] = osg::Vec4(bss[i].sRGB_R, bss[i].sRGB_G, bss[i].sRGB_B, bss[i].Vmag);
+    }
+      
+    osg::ref_ptr<osg::Geometry> g = new osg::Geometry;
+    addDrawable(g);
 
-    m_g->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
-    m_g->setColorArray(m_cAry);
-    m_g->setVertexArray(m_vAry);
+    g->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+    g->setColorArray(cAry);
+    g->setVertexArray(vAry);
 
-    m_g->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, m_vAry->size()));
+    g->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, vAry->size()));
 
     // If things go wrong, fall back to big point rendering without geometry shader.
-    m_g->getOrCreateStateSet()->setAttribute(new osg::Point(TWO_TIMES_SQRT2));
+    g->getOrCreateStateSet()->setAttribute(new osg::Point(TWO_TIMES_SQRT2));
 }
 
 
@@ -374,6 +361,7 @@ const std::string StarsGeode::getVertexShaderSource()
 
         "#version 150 compatibility\n"
         "\n"
+        "uniform mat4 R;\n" // rgb and alpha for mix
         "uniform vec4 color;\n" // rgb and alpha for mix
         "\n"
         "uniform float scintillation;\n"
@@ -399,9 +387,11 @@ const std::string StarsGeode::getVertexShaderSource()
         "\n"
         "    float estB = pow(2.512, maxVMag - vMag);\n"
         "    float scaledB = minB * estB / quadWidth;\n"
-        //"\n"
+        "\n"
         "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
         "    vec3 s = (texture(noise1, i / 256.0).rgb - 0.5) * scintillation;\n"
+        "\n"
+        "	 vec4 v = gl_Vertex * R;\n"
         "\n"
         // Approximation of relative air mass (path length relative to that at the zenith at sea level).
         // Also called optical path length: http://en.wikipedia.org/wiki/Air_mass_(astronomy).
@@ -414,7 +404,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "\n"
         "    m_color = vec4(c, scaledB - w1 * s * 0.1);\n"
         "\n"
-        "    gl_Position = vec4(gl_Vertex.xyz, 1.0);\n"
+        "    gl_Position = v;\n"
         "}\n\n";
 
 
@@ -536,6 +526,6 @@ const std::string StarsGeode::getFragmentShaderSource()
         "    float t = smoothstep(1.0, 0.0, l * s);\n"
         "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
         "\n"
-        "    gl_FragColor = m_c * (t + g) * clamp(-asin(sun.z - 0.1) * 2, 0.0, 1.0);\n"
+        "    gl_FragColor = m_c * (t + g);// * clamp(-asin(sun.z - 0.1) * 2, 0.0, 1.0);\n"
         "}\n\n";
 }
