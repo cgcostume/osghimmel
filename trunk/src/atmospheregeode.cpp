@@ -29,7 +29,7 @@
 
 #include "atmospheregeode.h"
 
-#include "proceduralhimmel.h"
+#include "himmel.h"
 #include "shadermodifier.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
@@ -38,9 +38,8 @@
 #include <osg/BlendFunc>
 
 
-AtmosphereGeode::AtmosphereGeode(const ProceduralHimmel &himmel)
+AtmosphereGeode::AtmosphereGeode()
 :   osg::Geode()
-,   m_himmel(himmel)
 
 ,   m_program(new osg::Program)
 ,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
@@ -70,10 +69,10 @@ AtmosphereGeode::~AtmosphereGeode()
 };
 
 
-void AtmosphereGeode::update()
+void AtmosphereGeode::update(const Himmel &himmel)
 {
-    osg::Vec3 sunv = m_himmel.astro()->getSunPosition();
-    u_sun->set(osg::Vec4(sunv, m_himmel.astro()->getAngularSunRadius()/* * m_scale*/));
+    osg::Vec3 sunv = himmel.astro()->getSunPosition();
+    u_sun->set(osg::Vec4(sunv, himmel.astro()->getAngularSunRadius()/* * m_scale*/));
 }
 
 
@@ -106,15 +105,25 @@ void AtmosphereGeode::setupShader(osg::StateSet* stateSet)
     m_program->addShader(m_fShader);
 
     stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
+}
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(m_himmel.shaderModifier())
-    {
-        m_himmel.shaderModifier()->registerShader(getName(), m_fShader);
-        m_himmel.shaderModifier()->registerShader(getName(), m_vShader);
-    }
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+osg::Shader *AtmosphereGeode::vertexShader()
+{
+    return m_vShader;
 }
+osg::Shader *AtmosphereGeode::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *AtmosphereGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
 void AtmosphereGeode::setupTextures(osg::StateSet* stateSet)
@@ -171,8 +180,6 @@ const std::string AtmosphereGeode::getVertexShaderSource()
 // FragmentShader
 
 #include "shaderfragment/version.fsf"
-#include "shaderfragment/pseudo_rand.fsf"
-#include "shaderfragment/dither.fsf"
 
 const std::string AtmosphereGeode::getFragmentShaderSource()
 {

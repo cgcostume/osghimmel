@@ -36,17 +36,17 @@
 
 #include "brightstars.h"
 
-class ProceduralHimmel;
+class Himmel;
 
 
 class StarsGeode : public osg::Geode
 {
 public:
 
-   StarsGeode(const ProceduralHimmel &himmel);
+   StarsGeode(const std::string &brightStarsFilePath);
     virtual ~StarsGeode();
 
-    void update();
+    void update(const Himmel &himmel);
 
     const float setMaxVMag(const float vMag);
     const float getMaxVMag() const;
@@ -70,22 +70,34 @@ public:
     const float setScattering(const float scattering);
     const float getScattering() const;
 
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
 protected:
 
     void setupUniforms(osg::StateSet* stateSet);
-    void setupNode    (osg::StateSet* stateSet);
+
+    void setupNode    (
+        osg::StateSet* stateSet
+    ,   const std::string &brightStarsFilePath);
+
     void setupTextures(osg::StateSet* stateSet);
     void setupShader  (osg::StateSet* stateSet);
 
-    void createAndAddDrawable();
+    void createAndAddDrawable(
+        const std::string &brightStarsFilePath);
 
     const std::string getVertexShaderSource();
     const std::string getGeometryShaderSource();
     const std::string getFragmentShaderSource();
 
 protected:
-
-    const ProceduralHimmel &m_himmel;
 
     osg::Program *m_program;
     osg::Shader *m_vShader;

@@ -34,7 +34,7 @@
 #include "abstracthimmelscene.h"
 
 
-class ProceduralHimmel;
+class Himmel;
 
 class Scene_ProceduralHimmel : public AbstractHimmelScene
 {
@@ -62,7 +62,7 @@ protected:
     ,   const QString &name);
 
 protected:
-    osg::ref_ptr<ProceduralHimmel> m_himmel;
+    osg::ref_ptr<Himmel> m_himmel;
 };
 
 

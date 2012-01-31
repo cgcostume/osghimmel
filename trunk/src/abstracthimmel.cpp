@@ -58,7 +58,6 @@ AbstractHimmel::AbstractHimmel()
 ,   m_initialized(false)
 ,   m_dirty(false)
 
-// TODO
 ,   m_cameraHint(NULL)
 ,   m_widthHint(NULL)
 ,   m_heightHint(NULL)

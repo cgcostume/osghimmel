@@ -29,8 +29,7 @@
 
 #include "milkywaygeode.h"
 
-#include "proceduralhimmel.h"
-#include "shadermodifier.h"
+#include "himmel.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
 
@@ -39,10 +38,8 @@
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
-
-MilkywayGeode::MilkywayGeode(const ProceduralHimmel &himmel)
+MilkyWayGeode::MilkyWayGeode(const std::string &cubeMapFilePath)
 :   osg::Geode()
-,   m_himmel(himmel)
 
 ,   m_program(new osg::Program)
 ,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
@@ -51,35 +48,34 @@ MilkywayGeode::MilkywayGeode(const ProceduralHimmel &himmel)
 ,   m_hquad(new HimmelQuad())
 
 ,   u_R(NULL)
-,   u_color(NULL)
+,   u_color(NULL) // [0,1,2] = color; [3] = intensity
 ,   u_milkywayCube(NULL)
 {
-    setName("Milkyway");
+    setName("MilkyWay");
 
     osg::StateSet* stateSet = getOrCreateStateSet();
 
-    setupNode(stateSet);
     setupUniforms(stateSet);
     setupShader(stateSet);
-    setupTextures(stateSet);
+    setupTextures(stateSet, cubeMapFilePath);
 
 
     addDrawable(m_hquad);
 };
 
 
-MilkywayGeode::~MilkywayGeode()
+MilkyWayGeode::~MilkyWayGeode()
 {
 };
 
 
-void MilkywayGeode::update()
+void MilkyWayGeode::update(const Himmel &himmel)
 {
-    u_R->set(m_himmel.astro()->equToLocalHorizonMatrix());
+    u_R->set(himmel.astro()->equToLocalHorizonMatrix());
 }
 
 
-void MilkywayGeode::setupUniforms(osg::StateSet* stateSet)
+void MilkyWayGeode::setupUniforms(osg::StateSet* stateSet)
 {
     u_R = new osg::Uniform("R", osg::Matrix::identity());
     stateSet->addUniform(u_R);
@@ -92,19 +88,7 @@ void MilkywayGeode::setupUniforms(osg::StateSet* stateSet)
 }
 
 
-void MilkywayGeode::createAndAddDrawable()
-{
-
-}
-
-
-void MilkywayGeode::setupNode(osg::StateSet* stateSet)
-{
-    createAndAddDrawable();
-}
-
-
-void MilkywayGeode::setupShader(osg::StateSet* stateSet)
+void MilkyWayGeode::setupShader(osg::StateSet* stateSet)
 {
     m_vShader->setShaderSource(getVertexShaderSource());
     m_fShader->setShaderSource(getFragmentShaderSource());
@@ -113,18 +97,30 @@ void MilkywayGeode::setupShader(osg::StateSet* stateSet)
     m_program->addShader(m_fShader);
 
     stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(m_himmel.shaderModifier())
-    {
-        m_himmel.shaderModifier()->registerShader(getName(), m_fShader);
-        m_himmel.shaderModifier()->registerShader(getName(), m_vShader);
-    }
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
-void MilkywayGeode::setupTextures(osg::StateSet* stateSet)
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+osg::Shader *MilkyWayGeode::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *MilkyWayGeode::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *MilkyWayGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+
+void MilkyWayGeode::setupTextures(
+    osg::StateSet* stateSet
+,   const std::string &cubeMapFilePath)
 {   
     osg::ref_ptr<osg::TextureCubeMap> tcm(new osg::TextureCubeMap);
 
@@ -139,12 +135,20 @@ void MilkywayGeode::setupTextures(osg::StateSet* stateSet)
     tcm->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
     tcm->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/milkyway_px.png"));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/milkyway_nx.png"));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/milkyway_py.png"));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/milkyway_ny.png"));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/milkyway_pz.png"));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/milkyway_nz.png"));
+    
+    std::string px = cubeMapFilePath; px.replace(px.find("?"), 1, "_px");
+    std::string nx = cubeMapFilePath; nx.replace(nx.find("?"), 1, "_nx");
+    std::string py = cubeMapFilePath; py.replace(py.find("?"), 1, "_py");
+    std::string ny = cubeMapFilePath; ny.replace(ny.find("?"), 1, "_ny");
+    std::string pz = cubeMapFilePath; pz.replace(pz.find("?"), 1, "_pz");
+    std::string nz = cubeMapFilePath; nz.replace(nz.find("?"), 1, "_nz");
+
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile(px));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile(nx));
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile(py));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile(ny));
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile(pz));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile(nz));
 
     stateSet->setTextureAttributeAndModes(0, tcm, osg::StateAttribute::ON);
 
@@ -152,7 +156,7 @@ void MilkywayGeode::setupTextures(osg::StateSet* stateSet)
 }
 
 
-const osg::Vec3 MilkywayGeode::setColor(const osg::Vec3 &color)
+const osg::Vec3 MilkyWayGeode::setColor(const osg::Vec3 &color)
 {
     osg::Vec4 temp;
     u_color->get(temp);
@@ -166,7 +170,7 @@ const osg::Vec3 MilkywayGeode::setColor(const osg::Vec3 &color)
     return getColor();
 }
 
-const osg::Vec3 MilkywayGeode::getColor() const
+const osg::Vec3 MilkyWayGeode::getColor() const
 {
     osg::Vec4 earthShine;
     u_color->get(earthShine);
@@ -174,13 +178,13 @@ const osg::Vec3 MilkywayGeode::getColor() const
     return osg::Vec3(earthShine[0], earthShine[1], earthShine[2]);
 }
 
-const osg::Vec3 MilkywayGeode::defaultColor()
+const osg::Vec3 MilkyWayGeode::defaultColor()
 {
     return osg::Vec3(0.84, 0.9, 1.0);
 }
 
 
-const float MilkywayGeode::setIntensity(const float intensity)
+const float MilkyWayGeode::setIntensity(const float intensity)
 {
     osg::Vec4 color;
     u_color->get(color);
@@ -191,7 +195,7 @@ const float MilkywayGeode::setIntensity(const float intensity)
     return getIntensity();
 }
 
-const float MilkywayGeode::getIntensity() const
+const float MilkyWayGeode::getIntensity() const
 {
     osg::Vec4 color;
     u_color->get(color);
@@ -199,7 +203,7 @@ const float MilkywayGeode::getIntensity() const
     return color[3];
 }
 
-const float MilkywayGeode::defaultIntensity()
+const float MilkyWayGeode::defaultIntensity()
 {
     return 0.33f;
 }
@@ -212,7 +216,7 @@ const float MilkywayGeode::defaultIntensity()
 #include "shaderfragment/quadretrieveray.vsf"
 #include "shaderfragment/quadtransform.vsf"
 
-const std::string MilkywayGeode::getVertexShaderSource()
+const std::string MilkyWayGeode::getVertexShaderSource()
 {
     return glsl_v_version_150
 
@@ -234,7 +238,7 @@ const std::string MilkywayGeode::getVertexShaderSource()
 
 #include "shaderfragment/version.fsf"
 
-const std::string MilkywayGeode::getFragmentShaderSource()
+const std::string MilkyWayGeode::getFragmentShaderSource()
 {
     return glsl_f_version_150
 

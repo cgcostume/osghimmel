@@ -29,7 +29,7 @@
 
 #include "starsgeode.h"
 
-#include "proceduralhimmel.h"
+#include "himmel.h"
 #include "shadermodifier.h"
 #include "abstractastronomy.h"
 #include "randommapgenerator.h"
@@ -53,9 +53,8 @@ namespace
 }
 
 
-StarsGeode::StarsGeode(const ProceduralHimmel &himmel)
+StarsGeode::StarsGeode(const std::string &brightStarsFilePath)
 :   osg::Geode()
-,   m_himmel(himmel)
 
 ,   m_program(new osg::Program)
 ,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
@@ -77,7 +76,7 @@ StarsGeode::StarsGeode(const ProceduralHimmel &himmel)
 
     osg::StateSet* stateSet = getOrCreateStateSet();
 
-    setupNode(stateSet);
+    setupNode(stateSet, brightStarsFilePath);
     setupUniforms(stateSet);
     setupShader(stateSet);
     setupTextures(stateSet);
@@ -89,18 +88,18 @@ StarsGeode::~StarsGeode()
 };
 
 
-void StarsGeode::update()
+void StarsGeode::update(const Himmel &himmel)
 {
-    float fov = m_himmel.getCameraFovHint();
-    float height = m_himmel.getViewSizeHeightHint();
+    float fov = himmel.getCameraFovHint();
+    float height = himmel.getViewSizeHeightHint();
     
     u_quadWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
 
-    u_R->set(m_himmel.astro()->equToLocalHorizonMatrix());
+    u_R->set(himmel.astro()->equToLocalHorizonMatrix());
 
     // TEMP
 
-    u_sun->set(m_himmel.astro()->getSunPosition());
+    u_sun->set(himmel.astro()->getSunPosition());
 }
 
 
@@ -143,10 +142,10 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 }
 
 
-void StarsGeode::createAndAddDrawable()
+void StarsGeode::createAndAddDrawable(const std::string &brightStarsFilePath)
 {
     std::vector<s_BrightStar> bss;
-    brightstars_readFromFile("resources/brightstars", bss);
+    brightstars_readFromFile(brightStarsFilePath.c_str(), bss);
 
     osg::ref_ptr<osg::Vec4Array> cAry = new osg::Vec4Array(bss.size());
     osg::ref_ptr<osg::Vec4Array> vAry = new osg::Vec4Array(bss.size());
@@ -177,9 +176,11 @@ void StarsGeode::createAndAddDrawable()
 }
 
 
-void StarsGeode::setupNode(osg::StateSet* stateSet)
+void StarsGeode::setupNode(
+    osg::StateSet* stateSet
+,   const std::string &brightStarsFilePath)
 {
-    createAndAddDrawable();
+    createAndAddDrawable(brightStarsFilePath);
 
     osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
     stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
@@ -199,16 +200,25 @@ void StarsGeode::setupShader(osg::StateSet* stateSet)
     m_program->addShader(m_fShader);
 
     stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
+}
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(m_himmel.shaderModifier())
-    {
-        m_himmel.shaderModifier()->registerShader(getName(), m_fShader);
-        m_himmel.shaderModifier()->registerShader(getName(), m_gShader);
-        m_himmel.shaderModifier()->registerShader(getName(), m_vShader);
-    }
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+osg::Shader *StarsGeode::vertexShader()
+{
+    return m_vShader;
 }
+osg::Shader *StarsGeode::geometryShader()
+{
+    return m_gShader;
+}
+osg::Shader *StarsGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
 void StarsGeode::setupTextures(osg::StateSet* stateSet)

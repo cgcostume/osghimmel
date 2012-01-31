@@ -54,7 +54,7 @@ set(LIB_SOURCES
     paraboloidmappedhimmel.cpp
     perlinmapgenerator.cpp
     polarmappedhimmel.cpp
-    proceduralhimmel.cpp
+    himmel.cpp
     randommapgenerator.cpp
     shadermodifier.cpp
     sideraltime.cpp
@@ -91,7 +91,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/perlinmapgenerator.h
     ${HEADER_PATH}/polarmappedhimmel.h
     ${HEADER_PATH}/pragmanote.h
-    ${HEADER_PATH}/proceduralhimmel.h
+    ${HEADER_PATH}/himmel.h
     ${HEADER_PATH}/randommapgenerator.h
     ${HEADER_PATH}/shadermodifier.h
     ${HEADER_PATH}/sideraltime.h
