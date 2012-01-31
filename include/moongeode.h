@@ -34,7 +34,7 @@
 #include <osg/Geode>
 
 
-class ProceduralHimmel;
+class Himmel;
 class HimmelQuad;
 
 
@@ -42,10 +42,10 @@ class MoonGeode : public osg::Geode
 {
 public:
 
-    MoonGeode(const ProceduralHimmel &himmel);
+    MoonGeode(const std::string &cubeMapFilePath);
     virtual ~MoonGeode();
 
-    void update();
+    void update(const Himmel &himmel);
 
 
     const float setScale(const float scale);
@@ -68,19 +68,29 @@ public:
     const float getEarthShineIntensity() const;
     static const float defaultEarthShineIntensity();
 
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
 protected:
 
     void setupUniforms(osg::StateSet* stateSet);
     void setupNode    (osg::StateSet* stateSet);
-    void setupTextures(osg::StateSet* stateSet);
+
+    void setupTextures(
+        osg::StateSet* stateSet
+    ,   const std::string &cubeMapFilePath);
+
     void setupShader  (osg::StateSet* stateSet);
 
     const std::string getVertexShaderSource();
     const std::string getFragmentShaderSource();
 
 protected:
-
-    const ProceduralHimmel &m_himmel;
 
     HimmelQuad *m_hquad;
 

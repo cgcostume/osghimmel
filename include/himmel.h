@@ -38,15 +38,24 @@ class AbstractAstronomy;
 class AtmosphereGeode;
 class MoonGeode;
 class StarsGeode;
-class MilkywayGeode;
+class MilkyWayGeode;
 
 
-class ProceduralHimmel : public AbstractHimmel
+class Himmel : public AbstractHimmel
 {
 public:
+    static Himmel *create();
 
-    ProceduralHimmel();
-    virtual ~ProceduralHimmel();
+public:
+
+    Himmel(
+        MilkyWayGeode *milkyWay
+    ,   MoonGeode *moon
+    ,   StarsGeode *stars
+    ,   AtmosphereGeode *atmosphere
+    ,   AbstractAstronomy *astronomy);
+
+    virtual ~Himmel();
 
 
     const float setLatitude(const float latitude);
@@ -71,7 +80,7 @@ public:
         return m_stars;
     }
 
-    inline MilkywayGeode *milkyway() const
+    inline MilkyWayGeode *milkyway() const
     {
         return m_milkyway;
     }
@@ -86,19 +95,28 @@ protected:
 
     virtual void update();
 
-    // Workaround avoiding culling by osgs' automated near far retrieval.
-    // This fixes culling of stars and moon when no further scene geometry     
-    // is available.
+    // Workaround avoiding culling by osgs' automated near far 
+    // retrieval. This fixes culling of stars and moon when no 
+    // further scene geometry is available.
+    // Six black quads will be drawn. This adds a black 
+    // background that is used if no milkyway is given. This is
+    // required since other geodes are rendered with blending 
+    // enabled.
     void addAntiCull();
+
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    void registerShader() const;
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
 
     AbstractAstronomy *m_astronomy;
 
-    osg::ref_ptr<AtmosphereGeode>   m_atmosphere;
-    osg::ref_ptr<MoonGeode>         m_moon;
-    osg::ref_ptr<StarsGeode>        m_stars;
-    osg::ref_ptr<MilkywayGeode>       m_milkyway;
+    osg::ref_ptr<AtmosphereGeode> m_atmosphere;
+    osg::ref_ptr<MoonGeode>       m_moon;
+    osg::ref_ptr<StarsGeode>      m_stars;
+    osg::ref_ptr<MilkyWayGeode>   m_milkyway;
 };
 
 #endif // __PROCEDURALHIMMEL_H__

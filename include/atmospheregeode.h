@@ -34,7 +34,7 @@
 #include <osg/Geode>
 
 
-class ProceduralHimmel;
+class Himmel;
 class HimmelQuad;
 
 
@@ -42,15 +42,23 @@ class AtmosphereGeode : public osg::Geode
 {
 public:
 
-    AtmosphereGeode(const ProceduralHimmel &himmel);
+    AtmosphereGeode();
     virtual ~AtmosphereGeode();
 
-    void update();
+    void update(const Himmel &himmel);
 
 
     const float setDitheringMultiplier(const float multiplier);
     const float getDitheringMultiplier() const;
     static const float defaultDitheringMultiplier();
+
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
 
@@ -63,8 +71,6 @@ protected:
     const std::string getFragmentShaderSource();
 
 protected:
-
-    const ProceduralHimmel &m_himmel;
 
     HimmelQuad *m_hquad;
 

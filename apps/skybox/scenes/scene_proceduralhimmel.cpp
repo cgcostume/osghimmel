@@ -29,7 +29,7 @@
 
 #include "scene_proceduralhimmel.h"
 
-#include "include/proceduralhimmel.h"
+#include "include/himmel.h"
 #include "include/atmospheregeode.h"
 #include "include/moongeode.h"
 #include "include/starsgeode.h"
@@ -69,7 +69,7 @@ namespace
     static const QString PROPERTY_STARS_SCATTERING     (TR("Scattering"));
     static const QString PROPERTY_STARS_SCINTILLATION  (TR("Scintillation"));
 
-    static const QString GROUP_PROCEDURAL_MILKYWAY(TR("Milkyway"));
+    static const QString GROUP_PROCEDURAL_MILKYWAY(TR("MilkyWay"));
 
     static const QString PROPERTY_MILKYWAY_COLOR      (TR("Color Overlay"));
     static const QString PROPERTY_MILKYWAY_INTENSITY  (TR("Intensity"));
@@ -82,7 +82,7 @@ Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
 {
     initializeProperties();
 
-    m_himmel = new ProceduralHimmel();
+    m_himmel = Himmel::create();
     addChild(m_himmel);
 }
 
@@ -131,8 +131,8 @@ void Scene_ProceduralHimmel::registerProperties()
 
     QtProperty *milkywayGroup = createGroup(GROUP_PROCEDURAL_MILKYWAY);
 
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR, toQColor(MilkywayGeode::defaultColor())); 
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_INTENSITY, MilkywayGeode::defaultIntensity(), 0.0, 10.0, 0.25); 
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR, toQColor(MilkyWayGeode::defaultColor())); 
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_INTENSITY, MilkyWayGeode::defaultIntensity(), 0.0, 10.0, 0.25); 
 }
 
 

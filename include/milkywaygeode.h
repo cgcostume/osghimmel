@@ -34,18 +34,26 @@
 #include <osg/Geode>
 
 
-class ProceduralHimmel;
+class Himmel;
 class HimmelQuad;
 
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+class ShaderModifier;
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
-class MilkywayGeode : public osg::Geode
+
+class MilkyWayGeode : public osg::Geode
 {
 public:
 
-    MilkywayGeode(const ProceduralHimmel &himmel);
-    virtual ~MilkywayGeode();
+    // cubeMapFilePath should contain a questionmark '?' that is replaced
+    // by cubemap extensions '_px', '_nx', '_py', etc. 
+    // e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
 
-    void update();
+    MilkyWayGeode(const std::string &cubeMapFilePath);
+    virtual ~MilkyWayGeode();
+
+    void update(const Himmel &himmel);
 
     const float setIntensity(const float intensity);
     const float getIntensity() const;
@@ -55,22 +63,28 @@ public:
     const osg::Vec3 getColor() const;
     static const osg::Vec3 defaultColor();
 
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
 protected:
         
     void setupUniforms(osg::StateSet* stateSet);
-    void setupNode    (osg::StateSet* stateSet);
-    void setupTextures(osg::StateSet* stateSet);
-    void setupShader  (osg::StateSet* stateSet);
+    void setupTextures(
+        osg::StateSet* stateSet
+    ,   const std::string &cubeMapFilePath);
 
-    void createAndAddDrawable();
+    void setupShader  (osg::StateSet* stateSet);
 
     const std::string getVertexShaderSource();
     const std::string getGeometryShaderSource();
     const std::string getFragmentShaderSource();
 
 protected:
-
-    const ProceduralHimmel &m_himmel;
 
     HimmelQuad *m_hquad;
 

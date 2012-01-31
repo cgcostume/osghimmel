@@ -29,7 +29,7 @@
 
 #include "moongeode.h"
 
-#include "proceduralhimmel.h"
+#include "himmel.h"
 #include "shadermodifier.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
@@ -49,9 +49,8 @@
 // separate calculation is required. Correct Moon rotation is currently
 // faked (face towards earth is incorrect due to missing librations etc).
 
-MoonGeode::MoonGeode(const ProceduralHimmel &himmel)
+MoonGeode::MoonGeode(const std::string &cubeMapFilePath)
 :   osg::Geode()
-,   m_himmel(himmel)
 
 ,   m_program(new osg::Program)
 ,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
@@ -75,7 +74,7 @@ MoonGeode::MoonGeode(const ProceduralHimmel &himmel)
     setupNode(stateSet);
     setupUniforms(stateSet);
     setupShader(stateSet);
-    setupTextures(stateSet);
+    setupTextures(stateSet, cubeMapFilePath);
 
 
     addDrawable(m_hquad);
@@ -87,12 +86,12 @@ MoonGeode::~MoonGeode()
 };
 
 
-void MoonGeode::update()
+void MoonGeode::update(const Himmel &himmel)
 {
-    osg::Vec3 moonv = m_himmel.astro()->getMoonPosition();
-    u_moon->set(osg::Vec4(moonv, m_himmel.astro()->getAngularMoonRadius() * m_scale));
+    osg::Vec3 moonv = himmel.astro()->getMoonPosition();
+    u_moon->set(osg::Vec4(moonv, himmel.astro()->getAngularMoonRadius() * m_scale));
 
-    u_sun->set(m_himmel.astro()->getSunPosition());
+    u_sun->set(himmel.astro()->getSunPosition());
 
     // HACK: just orient the moon towards the earth. 
     // TODO: apply optical libration and real phase of the moon.
@@ -130,9 +129,6 @@ void MoonGeode::setupNode(osg::StateSet* stateSet)
 
     osg::Depth* depth = new osg::Depth(osg::Depth::LESS);    
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
-    
-    //osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
-    //stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
 
@@ -145,18 +141,30 @@ void MoonGeode::setupShader(osg::StateSet* stateSet)
     m_program->addShader(m_fShader);
 
     stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(m_himmel.shaderModifier())
-    {
-        m_himmel.shaderModifier()->registerShader(getName(), m_fShader);
-        m_himmel.shaderModifier()->registerShader(getName(), m_vShader);
-    }
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
-void MoonGeode::setupTextures(osg::StateSet* stateSet)
+#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+osg::Shader *MoonGeode::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *MoonGeode::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *MoonGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+
+
+void MoonGeode::setupTextures(
+    osg::StateSet* stateSet
+,   const std::string &cubeMapFilePath)
 {
     osg::ref_ptr<osg::TextureCubeMap> tcm(new osg::TextureCubeMap);
 
@@ -171,12 +179,19 @@ void MoonGeode::setupTextures(osg::StateSet* stateSet)
     tcm->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
     tcm->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/moon_px.png"));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/moon_nx.png"));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/moon_py.png"));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/moon_ny.png"));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/moon_pz.png"));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/moon_nz.png"));
+    std::string px = cubeMapFilePath; px.replace(px.find("?"), 1, "_px");
+    std::string nx = cubeMapFilePath; nx.replace(nx.find("?"), 1, "_nx");
+    std::string py = cubeMapFilePath; py.replace(py.find("?"), 1, "_py");
+    std::string ny = cubeMapFilePath; ny.replace(ny.find("?"), 1, "_ny");
+    std::string pz = cubeMapFilePath; pz.replace(pz.find("?"), 1, "_pz");
+    std::string nz = cubeMapFilePath; nz.replace(nz.find("?"), 1, "_nz");
+
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile(px));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile(nx));
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile(py));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile(ny));
+    tcm->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile(pz));
+    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile(nz));
 
     stateSet->setTextureAttributeAndModes(0, tcm, osg::StateAttribute::ON);
 
@@ -187,7 +202,14 @@ void MoonGeode::setupTextures(osg::StateSet* stateSet)
 
 const float MoonGeode::setScale(const float scale)
 {
+    osg::Vec4 temp;
+    u_moon->get(temp);
+
+    temp._v[3] = temp._v[3] / m_scale * scale;
+    u_moon->set(temp);
+
     m_scale = scale;
+
     return getScale();
 }
 

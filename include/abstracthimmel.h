@@ -57,7 +57,7 @@ private:
 
 public:
 
-    AbstractHimmel(); // Inheriting constructors should add m_hQuad as child as desired.
+    AbstractHimmel();
     virtual ~AbstractHimmel();
 
     // The timef gets updated but takes no ownership.
@@ -131,7 +131,7 @@ protected:
     // m_timef can be updated from outsite, so we need check for changes manually.
     long double m_lastElapsed;
 
-    // TODO  temp
+    // TODO: maybe there is a better, cleaner solution to get this information from osg...
     osg::Camera *m_cameraHint;
     unsigned int m_widthHint;
     unsigned int m_heightHint;
