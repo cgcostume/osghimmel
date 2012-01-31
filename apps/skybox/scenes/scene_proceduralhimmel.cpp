@@ -33,6 +33,7 @@
 #include "include/atmospheregeode.h"
 #include "include/moongeode.h"
 #include "include/starsgeode.h"
+#include "include/milkywaygeode.h"
 #include "include/abstractastronomy.h"
 
 #include "utils/qt2osg.h"
@@ -68,7 +69,11 @@ namespace
     static const QString PROPERTY_STARS_SCATTERING     (TR("Scattering"));
     static const QString PROPERTY_STARS_SCINTILLATION  (TR("Scintillation"));
 
-    static const QString GROUP_PROCEDURAL_GALAXY(TR("Galaxy"));
+    static const QString GROUP_PROCEDURAL_MILKYWAY(TR("Milkyway"));
+
+    static const QString PROPERTY_MILKYWAY_COLOR      (TR("Color Overlay"));
+    static const QString PROPERTY_MILKYWAY_INTENSITY  (TR("Intensity"));
+
 }
 
 Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
@@ -122,6 +127,12 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*starsGroup, PROPERTY_STARS_SCATTERING, 1.0, 0.0, 10.0, 0.1); 
     createProperty(*starsGroup, PROPERTY_STARS_SCINTILLATION, 1.0, 0.0, 10.0, 0.1); 
     createProperty(*starsGroup, PROPERTY_STARS_MAX_VMAG, StarsGeode::defaultMaxVMag(), -32.0, 32.0, 0.1); 
+
+
+    QtProperty *milkywayGroup = createGroup(GROUP_PROCEDURAL_MILKYWAY);
+
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR, toQColor(MilkywayGeode::defaultColor())); 
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_INTENSITY, MilkywayGeode::defaultIntensity(), 0.0, 10.0, 0.25); 
 }
 
 
@@ -170,6 +181,13 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->stars()->setScintillation(doubleValue(PROPERTY_STARS_SCINTILLATION));
     else if(PROPERTY_STARS_MAX_VMAG == name)
         m_himmel->stars()->setMaxVMag(doubleValue(PROPERTY_STARS_MAX_VMAG));
+
+
+    else if(PROPERTY_MILKYWAY_COLOR == name)
+        m_himmel->milkyway()->setColor(toVec3(colorValue(PROPERTY_MILKYWAY_COLOR)));
+    else if(PROPERTY_MILKYWAY_INTENSITY == name)
+        m_himmel->milkyway()->setIntensity(doubleValue(PROPERTY_MILKYWAY_INTENSITY));
+
 }
 
 

@@ -42,7 +42,7 @@ set(LIB_SOURCES
     coords.cpp
     cubemappedhimmel.cpp
     earth.cpp
-    galaxygeode.cpp
+    milkywaygeode.cpp
     gaussianmapgenerator.cpp
     himmelenvmap.cpp
     himmelquad.cpp
@@ -76,7 +76,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/earth.h
-    ${HEADER_PATH}/galaxygeode.h
+    ${HEADER_PATH}/milkywaygeode.h
     ${HEADER_PATH}/gaussianmapgenerator.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h

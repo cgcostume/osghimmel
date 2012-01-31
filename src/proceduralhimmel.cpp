@@ -35,7 +35,7 @@
 #include "atmospheregeode.h"
 #include "moongeode.h"
 #include "starsgeode.h"
-#include "galaxygeode.h"
+#include "milkywaygeode.h"
 
 #include <assert.h>
 
@@ -47,23 +47,25 @@ ProceduralHimmel::ProceduralHimmel()
 ,   m_atmosphere(NULL)
 ,   m_moon(NULL)
 ,   m_stars(NULL)
-,   m_galaxy(NULL)
+,   m_milkyway(NULL)
 {
     m_astronomy = new Astronomy(); // LowAccuracyAstronomy();
 
 
     setCullingActive(false);
 
-    m_atmosphere = new AtmosphereGeode(*this);
+
+    m_milkyway = new MilkywayGeode(*this);
     m_moon = new MoonGeode(*this);
     m_stars = new StarsGeode(*this);
+    m_atmosphere = new AtmosphereGeode(*this);
 
-    addAntiCull(); // Required to be added prior to atmosphere.
+    addAntiCull(); // Required to be added prior to milkyway.
 
-    addChild(m_atmosphere);
+    addChild(m_milkyway);
     addChild(m_moon);
     addChild(m_stars);
-    //addChild(m_galaxy);
+    addChild(m_atmosphere);
 };
 
 
@@ -84,6 +86,7 @@ void ProceduralHimmel::update()
         m_atmosphere->update();
         m_moon->update();
         m_stars->update();
+        m_milkyway->update();
 
         dirty(false);
     }

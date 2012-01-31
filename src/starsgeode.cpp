@@ -38,7 +38,6 @@
 
 #include "coords.h"
 #include "earth.h"
-#include "sideraltime.h"
 #include "stars.h"
 
 #include <osg/Geometry>
@@ -63,6 +62,7 @@ StarsGeode::StarsGeode(const ProceduralHimmel &himmel)
 ,   m_gShader(new osg::Shader(osg::Shader::GEOMETRY))
 ,   m_fShader(new osg::Shader(osg::Shader::FRAGMENT))
 
+,   u_R(NULL)
 ,   u_quadWidth(NULL)
 ,   u_noise1(NULL)
 
@@ -397,7 +397,7 @@ const std::string StarsGeode::getVertexShaderSource()
         // Also called optical path length: http://en.wikipedia.org/wiki/Air_mass_(astronomy).
         // y = x^5.37 -> y is 39 times higher for x = 0 than for x = 1 which correlates the relative 
         // air mass ratio from zenith to horizon.
-        "    float w1 = pow(1.0 - gl_Vertex.b, 5.37);\n"
+        "    float w1 = pow(1.0 - v.z, 5.37);\n"
         "\n"
         "    vec3 c = mix(gl_Color.rgb, color.rgb, color.a)\n"
         "        - lambda * w1 * 4 * (scattering + s);\n"
@@ -406,37 +406,6 @@ const std::string StarsGeode::getVertexShaderSource()
         "\n"
         "    gl_Position = v;\n"
         "}\n\n";
-
-
-/* equ to hor conversion for vertex shader:
-
-         ...
-
-        float sinDE = gl_Vertex[0];
-        float cosDE = gl_Vertex[1];
-        float tanDE = gl_Vertex[2];
-        float    RA = gl_Vertex[3];
-
-        float H = equ2hor[0] - RA;
-        float sinH = sin(H);
-        float cosH = cos(H);
-
-        float sinLa = equ2hor[1];
-        float cosLa = equ2hor[2];
-
-        float h = atan(sinH, cosH * sinLa - cosLa * tanDE);
-        float A = asin(sinLa * sinDE + cosH * cosLa * cosDE);
-
-        float cosA = cos(A);
-
-        float x = sin(h) * cosA;
-        float y = cos(h) * cosA;
-        float z = sin(A);
-
-        gl_Position = vec4(x, y, z, 1.0);
-
-        ...
-*/
 }
 
 

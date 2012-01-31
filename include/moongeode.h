@@ -92,7 +92,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_moon;
 
     osg::ref_ptr<osg::Uniform> u_moonCube;
-    osg::ref_ptr<osg::Uniform> u_rotation;
+    osg::ref_ptr<osg::Uniform> u_R;
     osg::ref_ptr<osg::Uniform> u_sunShine;
     osg::ref_ptr<osg::Uniform> u_earthShine;
 

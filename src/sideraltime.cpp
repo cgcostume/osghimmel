@@ -56,8 +56,8 @@ const long double siderealTime_la(const t_aTime &aTime)
 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 
-    const long double T(jCenturiesSinceSE(JD));
-    const float t = 4.894961 + 230121.675315 * T;
+    const float T(static_cast<float>(jCenturiesSinceSE(JD)));
+    const float t = 4.894961f + 230121.675315f * T;
 
     return _revd(_deg(t));
 }

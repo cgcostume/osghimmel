@@ -38,7 +38,7 @@ class AbstractAstronomy;
 class AtmosphereGeode;
 class MoonGeode;
 class StarsGeode;
-class GalaxyGeode;
+class MilkywayGeode;
 
 
 class ProceduralHimmel : public AbstractHimmel
@@ -71,9 +71,9 @@ public:
         return m_stars;
     }
 
-    inline GalaxyGeode *galaxy() const
+    inline MilkywayGeode *milkyway() const
     {
-        return m_galaxy;
+        return m_milkyway;
     }
 
 
@@ -98,7 +98,7 @@ protected:
     osg::ref_ptr<AtmosphereGeode>   m_atmosphere;
     osg::ref_ptr<MoonGeode>         m_moon;
     osg::ref_ptr<StarsGeode>        m_stars;
-    osg::ref_ptr<GalaxyGeode>       m_galaxy;
+    osg::ref_ptr<MilkywayGeode>       m_milkyway;
 };
 
 #endif // __PROCEDURALHIMMEL_H__
