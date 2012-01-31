@@ -27,15 +27,61 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "galaxygeode.h"
+#pragma once
+#ifndef __MILKYWAYGEODE_H__
+#define __MILKYWAYGEODE_H__
+
+#include <osg/Geode>
 
 
-GalaxyGeode::GalaxyGeode()
-:   osg::Geode()
+class ProceduralHimmel;
+class HimmelQuad;
+
+
+class MilkywayGeode : public osg::Geode
 {
+public:
+
+    MilkywayGeode(const ProceduralHimmel &himmel);
+    virtual ~MilkywayGeode();
+
+    void update();
+
+    const float setIntensity(const float intensity);
+    const float getIntensity() const;
+    static const float defaultIntensity();
+
+    const osg::Vec3 setColor(const osg::Vec3 &color);
+    const osg::Vec3 getColor() const;
+    static const osg::Vec3 defaultColor();
+
+protected:
+        
+    void setupUniforms(osg::StateSet* stateSet);
+    void setupNode    (osg::StateSet* stateSet);
+    void setupTextures(osg::StateSet* stateSet);
+    void setupShader  (osg::StateSet* stateSet);
+
+    void createAndAddDrawable();
+
+    const std::string getVertexShaderSource();
+    const std::string getGeometryShaderSource();
+    const std::string getFragmentShaderSource();
+
+protected:
+
+    const ProceduralHimmel &m_himmel;
+
+    HimmelQuad *m_hquad;
+
+    osg::Program *m_program;
+    osg::Shader *m_vShader;
+    osg::Shader *m_fShader;
+
+    osg::ref_ptr<osg::Uniform> u_R;
+    osg::ref_ptr<osg::Uniform> u_milkywayCube;
+    osg::ref_ptr<osg::Uniform> u_color;
+    
 };
 
-
-GalaxyGeode::~GalaxyGeode()
-{
-};
+#endif // __MILKYWAYGEODE_H__

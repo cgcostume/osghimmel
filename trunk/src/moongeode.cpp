@@ -37,10 +37,8 @@
 #include <osg/Geometry>
 #include <osg/BlendFunc>
 #include <osg/Depth>
-
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
-
 #include <osgDB/ReadFile>
 
 
@@ -64,7 +62,7 @@ MoonGeode::MoonGeode(const ProceduralHimmel &himmel)
 ,   u_moon(NULL)
 ,   u_sun(NULL)
 ,   u_moonCube(NULL)
-,   u_rotation(NULL)
+,   u_R(NULL)
 ,   u_sunShine(NULL)    // [0,1,2] = color; [3] = intensity
 ,   u_earthShine(NULL)  // [0,1,2] = color; [3] = intensity
 {
@@ -98,7 +96,7 @@ void MoonGeode::update()
 
     // HACK: just orient the moon towards the earth. 
     // TODO: apply optical libration and real phase of the moon.
-    u_rotation->set(osg::Matrix::rotate(osg::Vec3(0.0, 1.0, 0.0), moonv));
+    u_R->set(osg::Matrix::rotate(osg::Vec3(0.0, 1.0, 0.0), moonv));
 }
 
 
@@ -113,8 +111,8 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
     u_moonCube = new osg::Uniform("moonCube", 0);
     stateSet->addUniform(u_moonCube);
 
-    u_rotation = new osg::Uniform("rotation", osg::Matrixd());
-    stateSet->addUniform(u_rotation);
+    u_R = new osg::Uniform("R", osg::Matrixd());
+    stateSet->addUniform(u_R);
 
     u_sunShine = new osg::Uniform("sunShine"
         , osg::Vec4(defaultSunShineColor(), defaultSunShineIntensity()));
@@ -133,8 +131,8 @@ void MoonGeode::setupNode(osg::StateSet* stateSet)
     osg::Depth* depth = new osg::Depth(osg::Depth::LESS);    
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
     
-    osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
-    stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
+    //osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
 
@@ -367,7 +365,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         "uniform samplerCube moonCube;\n"
         "\n"
-        "uniform mat4 rotation;\n"
+        "uniform mat4 R;\n"
         "\n"
         "uniform vec4 sunShine;   // rgb as color and w as intensity.\n"
         "uniform vec4 earthShine; // rgb as color and w as intensity.\n"
@@ -403,7 +401,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
 
         // Texture Lookup direction -> "FrontFacing".
-        "    vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * rotation).xyz;\n"
+        "    vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * R).xyz;\n"
         "\n"
         "    vec4 c  = textureCube(moonCube, vec3(-q.x, q.y, -q.z));\n"
         "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"

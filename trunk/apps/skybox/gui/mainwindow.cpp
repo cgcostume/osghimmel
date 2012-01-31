@@ -85,7 +85,7 @@ namespace
     const QString SETTINGS_GEOMETRY("Geometry");
     const QString SETTINGS_STATE("State");
 
-    const float INITIAL_CAMERA_FOV(45.f);
+    const float INITIAL_CAMERA_FOV(56.f);
 }
 
 

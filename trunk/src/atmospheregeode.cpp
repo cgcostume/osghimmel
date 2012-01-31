@@ -34,6 +34,9 @@
 #include "himmelquad.h"
 #include "abstractastronomy.h"
 
+#include <osg/Depth>
+#include <osg/BlendFunc>
+
 
 AtmosphereGeode::AtmosphereGeode(const ProceduralHimmel &himmel)
 :   osg::Geode()
@@ -86,6 +89,11 @@ void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
 
 void AtmosphereGeode::setupNode(osg::StateSet* stateSet)
 {
+    osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);    
+    stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+    osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+    stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
 
@@ -203,13 +211,6 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
     return glsl_f_version_150
 
     +   
-        "uniform int osg_FrameNumber;\n"    // required by pseudo_rand
-        "\n"
-
-    +   glsl_f_pseudo_rand
-    +   glsl_f_dither
-
-    +
         "uniform float planetRadius = 6367.46;\n"           // in km\n (e.g. 6367.46)
         "uniform float atmoshpereThickness = 8.0;\n"    // height to troposphere end in km (e.g. 6.f to 20.f for earth)
         "\n"
@@ -315,15 +316,14 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "\n"
         //  Tweaked background color.
         "   c.xyz += (1.0 - Fex) * (bgColor.xyz * bgIntensity * dayIntensity);\n"
-        "   c.w = gl_FragDepth = 1.0;\n"
+        "   c.w = 1.0;\n"
         "\n"
         "   return c;\n"
         "}\n"
         "\n"
-        "\n"
 
         "void main(void)\n"
         "{\n"
-        "   gl_FragColor = 0 * color() * smoothstep(0.0, 1.0, asin(clamp((sun.z + 0.8), -1.0, 1.0))) + dither();\n"
+        "   gl_FragColor = color();\n"
         "}\n\n";
 }
