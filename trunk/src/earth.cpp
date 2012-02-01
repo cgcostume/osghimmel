@@ -305,6 +305,13 @@ const long double earth_atmosphereThickness()
 }
 
 
+const long double earth_apparentMagnitudeLimit()
+{
+    // http://www.astronomynotes.com/starprop/s4.htm
+    return 6.5;
+}
+
+
 // LOW ACCURACY
 
 const float earth_orbitEccentricity_la(const t_julianDay t)

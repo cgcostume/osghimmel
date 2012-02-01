@@ -48,27 +48,33 @@ public:
 
     void update(const Himmel &himmel);
 
-    const float setMaxVMag(const float vMag);
-    const float getMaxVMag() const;
-    static const float defaultMaxVMag();
+    const float setApparentMagnitude(const float vMag);
+    const float getApparentMagnitude() const;
+    static const float defaultApparentMagnitude();
 
     const osg::Vec3 setColor(const osg::Vec3 color);
     const osg::Vec3 getColor() const;
+    static const osg::Vec3 defaultColor();
 
     const float setColorRatio(const float ratio);
     const float getColorRatio() const;
+    static const float defaultColorRatio();
+    
 
     const float setGlareIntensity(const float intensity);
     const float getGlareIntensity() const;
 
     const float setGlareScale(const float scale);
     const float getGlareScale() const;
+    static const float defaultGlareScale();
 
     const float setScintillation(const float scintillation);
     const float getScintillation() const;
+    static const float defaultScintillation();
 
     const float setScattering(const float scattering);
     const float getScattering() const;
+    static const float defaultScattering();
 
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
@@ -111,7 +117,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_color;
     osg::ref_ptr<osg::Uniform> u_glareIntensity;
     osg::ref_ptr<osg::Uniform> u_glareScale;
-    osg::ref_ptr<osg::Uniform> u_maxVMag;
+    osg::ref_ptr<osg::Uniform> u_apparentMagnitude;
     osg::ref_ptr<osg::Uniform> u_scattering;
     osg::ref_ptr<osg::Uniform> u_scintillation;
 

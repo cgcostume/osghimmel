@@ -35,7 +35,6 @@
 #include "abstractastronomy.h"
 
 #include <osg/Geometry>
-#include <osg/BlendFunc>
 #include <osg/Depth>
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
@@ -433,7 +432,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    vec3 m = moon.xyz;\n"
         "    vec3 s = sun;\n"
         "    vec3 e = normalize(m_eye.xyz);\n"
-
+        "\n"
 
         // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
 
@@ -467,7 +466,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "        F = 0.0;\n"
         "\n"
         
-
+        // Approximate earthshine intensity.
         // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
         // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
         "    float op2 = (PI - acos(dot(-m, s))) * 0.5; // opposite phase over 2\n"
@@ -480,7 +479,13 @@ const std::string MoonGeode::getFragmentShaderSource()
         //"\n"
 
         "    gl_FragDepth = 0.99999996;\n"
-        "    gl_FragColor = vec4(c.a * (earthShine.w * earthShine.rgb * Eem + sunShine.w * sunShine.rgb * F), 1.0);\n"
+        "\n"
+        "    vec3 diffuse = vec3(0);\n"
+        "    diffuse += earthShine.w * earthShine.rgb * Eem;\n"
+        "    diffuse += sunShine.w * sunShine.rgb * F;\n"
+        "    diffuse *= c.a;\n"
+        "\n"
+        "    gl_FragColor = vec4(diffuse, 1.0);\n"
         "}\n\n";
 
 

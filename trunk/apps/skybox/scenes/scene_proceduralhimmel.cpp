@@ -43,12 +43,13 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_PROCEDURAL(TR("Procedrual"));
+    static const QString GROUP_PROCEDURAL                  (TR("Procedrual"));
 
-    static const QString GROUP_PROCEDURAL_ATMOSPHERE(TR("Atmosphere"));
-    static const QString PROPERTY_DITHERING_MULTIPLIER (TR("Dithering Multiplier"));
+    static const QString GROUP_PROCEDURAL_ATMOSPHERE       (TR("Atmosphere"));
+
+    static const QString PROPERTY_DITHERING_MULTIPLIER     (TR("Dithering Multiplier"));
     
-    static const QString GROUP_PROCEDURAL_MOON(TR("Moon"));
+    static const QString GROUP_PROCEDURAL_MOON             (TR("Moon"));
     static const QString PROPERTY_MOON_SCALE               (TR("Scale"));
     static const QString PROPERTY_MOON_SUNSHINE_COLOR      (TR("Sun Shine Color"));
     static const QString PROPERTY_MOON_SUNSHINE_INTENSITY  (TR("Sun Shine Intensity"));
@@ -59,21 +60,22 @@ namespace
     static const QString PROPERTY_MOON_POSITION_Y          (TR("Moon Position Y"));
     static const QString PROPERTY_MOON_POSITION_Z          (TR("Moon Position Z"));
 
-    static const QString GROUP_PROCEDURAL_STARS(TR("Stars"));
+    static const QString GROUP_PROCEDURAL_STARS            (TR("Stars"));
 
-    static const QString PROPERTY_STARS_COLOR          (TR("Color"));
-    static const QString PROPERTY_STARS_COLOR_RATIO    (TR("Color Ratio"));
-    static const QString PROPERTY_STARS_GLARE_INTENSITY(TR("Glare Intensity"));
-    static const QString PROPERTY_STARS_GLARE_SCALE    (TR("Glare Scale"));
-    static const QString PROPERTY_STARS_MAX_VMAG       (TR("Max Visible Magnitude"));
-    static const QString PROPERTY_STARS_SCATTERING     (TR("Scattering"));
-    static const QString PROPERTY_STARS_SCINTILLATION  (TR("Scintillation"));
+    static const QString PROPERTY_STARS_COLOR              (TR("Color (Stars)"));
+    static const QString PROPERTY_STARS_COLOR_RATIO        (TR("Color Ratio (Stars)"));
+    static const QString PROPERTY_STARS_GLARE_INTENSITY    (TR("Glare Intensity"));
+    static const QString PROPERTY_STARS_GLARE_SCALE        (TR("Glare Scale"));
+    static const QString PROPERTY_STARS_APPARENT_MAG       (TR("Apprant Magnitude (Stars)"));
+    static const QString PROPERTY_STARS_SCATTERING         (TR("Scattering (Stars)"));
+    static const QString PROPERTY_STARS_SCINTILLATION      (TR("Scintillation"));
 
-    static const QString GROUP_PROCEDURAL_MILKYWAY(TR("MilkyWay"));
+    static const QString GROUP_PROCEDURAL_MILKYWAY         (TR("MilkyWay"));
 
-    static const QString PROPERTY_MILKYWAY_COLOR      (TR("Color Overlay"));
-    static const QString PROPERTY_MILKYWAY_INTENSITY  (TR("Intensity"));
-
+    static const QString PROPERTY_MILKYWAY_COLOR           (TR("Color (MilkyWay)"));
+    static const QString PROPERTY_MILKYWAY_COLOR_RATIO     (TR("Color Ratio (MilkyWay)"));
+    static const QString PROPERTY_MILKYWAY_APPARENT_MAG    (TR("Apparent Magnitude (MilkyWay)"));
+    static const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (MilkyWay)"));
 }
 
 Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
@@ -120,19 +122,21 @@ void Scene_ProceduralHimmel::registerProperties()
 
     QtProperty *starsGroup = createGroup(GROUP_PROCEDURAL_STARS);
 
-    createProperty(*starsGroup, PROPERTY_STARS_COLOR, QColor(Qt::white)); 
-    createProperty(*starsGroup, PROPERTY_STARS_COLOR_RATIO, 0.0, 0.0, 1.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_COLOR, toQColor(StarsGeode::defaultColor())); 
+    createProperty(*starsGroup, PROPERTY_STARS_COLOR_RATIO, StarsGeode::defaultColorRatio(), 0.0, 1.0, 0.1); 
     createProperty(*starsGroup, PROPERTY_STARS_GLARE_INTENSITY, 1.0, 0.0, 100.0, 0.1); 
-    createProperty(*starsGroup, PROPERTY_STARS_GLARE_SCALE, 1.0, 0.0, 100.0, 0.1); 
-    createProperty(*starsGroup, PROPERTY_STARS_SCATTERING, 1.0, 0.0, 10.0, 0.1); 
-    createProperty(*starsGroup, PROPERTY_STARS_SCINTILLATION, 1.0, 0.0, 10.0, 0.1); 
-    createProperty(*starsGroup, PROPERTY_STARS_MAX_VMAG, StarsGeode::defaultMaxVMag(), -32.0, 32.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_GLARE_SCALE, StarsGeode::defaultGlareScale(), 0.0, 100.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_SCATTERING, StarsGeode::defaultScattering(), 0.0, 10.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_SCINTILLATION, StarsGeode::defaultScintillation(), 0.0, 10.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_APPARENT_MAG, StarsGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
 
 
     QtProperty *milkywayGroup = createGroup(GROUP_PROCEDURAL_MILKYWAY);
 
     createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR, toQColor(MilkyWayGeode::defaultColor())); 
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_INTENSITY, MilkyWayGeode::defaultIntensity(), 0.0, 10.0, 0.25); 
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR_RATIO, MilkyWayGeode::defaultColorRatio(), 0.0, 10.0, 0.25); 
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_APPARENT_MAG, MilkyWayGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_SCATTERING, MilkyWayGeode::defaultScattering(), 0.0, 10.0, 0.1);
 }
 
 
@@ -179,15 +183,18 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->stars()->setScattering(doubleValue(PROPERTY_STARS_SCATTERING));
     else if(PROPERTY_STARS_SCINTILLATION == name)
         m_himmel->stars()->setScintillation(doubleValue(PROPERTY_STARS_SCINTILLATION));
-    else if(PROPERTY_STARS_MAX_VMAG == name)
-        m_himmel->stars()->setMaxVMag(doubleValue(PROPERTY_STARS_MAX_VMAG));
+    else if(PROPERTY_STARS_APPARENT_MAG == name)
+        m_himmel->stars()->setApparentMagnitude(doubleValue(PROPERTY_STARS_APPARENT_MAG));
 
 
     else if(PROPERTY_MILKYWAY_COLOR == name)
         m_himmel->milkyway()->setColor(toVec3(colorValue(PROPERTY_MILKYWAY_COLOR)));
-    else if(PROPERTY_MILKYWAY_INTENSITY == name)
-        m_himmel->milkyway()->setIntensity(doubleValue(PROPERTY_MILKYWAY_INTENSITY));
-
+    else if(PROPERTY_MILKYWAY_COLOR_RATIO == name)
+        m_himmel->milkyway()->setColorRatio(doubleValue(PROPERTY_MILKYWAY_COLOR_RATIO));
+    else if(PROPERTY_MILKYWAY_APPARENT_MAG == name)
+        m_himmel->milkyway()->setApparentMagnitude(doubleValue(PROPERTY_MILKYWAY_APPARENT_MAG));
+    else if(PROPERTY_MILKYWAY_SCATTERING == name)
+        m_himmel->milkyway()->setScattering(doubleValue(PROPERTY_MILKYWAY_SCATTERING));
 }
 
 

@@ -68,7 +68,7 @@ StarsGeode::StarsGeode(const std::string &brightStarsFilePath)
 ,   u_color(NULL)
 ,   u_glareIntensity(NULL)
 ,   u_glareScale(NULL)
-,   u_maxVMag(NULL)
+,   u_apparentMagnitude(NULL)
 ,   u_scattering(NULL)
 ,   u_scintillation(NULL)
 {
@@ -116,23 +116,23 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
     stateSet->addUniform(u_noise1);
 
 
-    u_color = new osg::Uniform("color", osg::Vec4(1.0, 1.0, 1.0, 0.0));
+    u_color = new osg::Uniform("color", osg::Vec4(defaultColor(), defaultColorRatio()));
     stateSet->addUniform(u_color);
 
 
     u_glareIntensity = new osg::Uniform("glareIntensity", 1.0f);
     stateSet->addUniform(u_glareIntensity);
 
-    u_glareScale = new osg::Uniform("glareScale", 1.0f);
+    u_glareScale = new osg::Uniform("glareScale", defaultGlareScale());
     stateSet->addUniform(u_glareScale);
 
-    u_maxVMag = new osg::Uniform("maxVMag", defaultMaxVMag());
-    stateSet->addUniform(u_maxVMag);
+    u_apparentMagnitude = new osg::Uniform("apparentMagnitude", defaultApparentMagnitude());
+    stateSet->addUniform(u_apparentMagnitude);
 
-    u_scintillation = new osg::Uniform("scintillation", 1.0f);
+    u_scintillation = new osg::Uniform("scintillation", defaultScintillation());
     stateSet->addUniform(u_scintillation);
 
-    u_scattering = new osg::Uniform("scattering", 1.0f);
+    u_scattering = new osg::Uniform("scattering", defaultScattering());
     stateSet->addUniform(u_scattering);
 
 
@@ -225,12 +225,12 @@ void StarsGeode::setupTextures(osg::StateSet* stateSet)
 {   
     const int noiseN = 256;
 
-    unsigned char *noiseMap = new unsigned char[noiseN * 3];
-    RandomMapGenerator::generate3(noiseN, 1, noiseMap);
+    unsigned char *noiseMap = new unsigned char[noiseN];
+    RandomMapGenerator::generate1(noiseN, 1, noiseMap);
 
     osg::ref_ptr<osg::Image> noiseImage = new osg::Image();
     noiseImage->setImage(noiseN, 1, 1
-        , GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE
+        , GL_LUMINANCE8, GL_LUMINANCE, GL_UNSIGNED_BYTE
         , noiseMap, osg::Image::USE_NEW_DELETE);
 
     osg::ref_ptr<osg::Texture1D> noise = new osg::Texture1D(noiseImage);
@@ -270,6 +270,11 @@ const float StarsGeode::getGlareScale() const
     return scale;
 }
 
+const float StarsGeode::defaultGlareScale()
+{
+    return 2.0f;
+}
+
 
 const float StarsGeode::setScintillation(const float scintillation)
 {
@@ -283,6 +288,11 @@ const float StarsGeode::getScintillation() const
     u_scintillation->get(scintillation);
 
     return scintillation;
+}
+
+const float StarsGeode::defaultScintillation()
+{
+    return 1.0f;
 }
 
 
@@ -300,24 +310,29 @@ const float StarsGeode::getScattering() const
     return scattering;
 }
 
-
-const float StarsGeode::setMaxVMag(const float vMag)
+const float StarsGeode::defaultScattering()
 {
-    u_maxVMag->set(vMag);
-    return getMaxVMag();
+    return 0.33f;
 }
 
-const float StarsGeode::getMaxVMag() const
+
+const float StarsGeode::setApparentMagnitude(const float vMag)
+{
+    u_apparentMagnitude->set(vMag);
+    return getApparentMagnitude();
+}
+
+const float StarsGeode::getApparentMagnitude() const
 {
     float vMag;
-    u_maxVMag->get(vMag);
+    u_apparentMagnitude->get(vMag);
 
     return vMag;
 }
 
-const float StarsGeode::defaultMaxVMag() 
+const float StarsGeode::defaultApparentMagnitude() 
 {
-    return 6.0f;
+    return 3.5f;
 }
 
 
@@ -342,6 +357,11 @@ const osg::Vec3 StarsGeode::getColor() const
     return osg::Vec3(colorAndRatio._v[0], colorAndRatio._v[1], colorAndRatio._v[2]);
 }
 
+const osg::Vec3 StarsGeode::defaultColor()
+{
+    return osg::Vec3(0.66, 0.78, 1.00);
+}
+
 
 const float StarsGeode::setColorRatio(const float ratio)
 {
@@ -362,11 +382,19 @@ const float StarsGeode::getColorRatio() const
     return colorAndRatio._v[3];
 }
 
+const float StarsGeode::defaultColorRatio()
+{
+    return 0.5f;
+}
+
 
 // VertexShader
 
 const std::string StarsGeode::getVertexShaderSource()
 {
+    char apparentMagLimit[8];
+    sprintf(apparentMagLimit, "%.2f", earth_apparentMagnitudeLimit());
+
     return 
 
         "#version 150 compatibility\n"
@@ -378,7 +406,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "uniform float scattering;\n"
         "\n"
         "uniform float quadWidth;\n"
-        "uniform float maxVMag;\n"
+        "uniform float apparentMagnitude;\n"
         "\n"
         "uniform sampler1D noise1;\n"
         "\n"
@@ -386,20 +414,21 @@ const std::string StarsGeode::getVertexShaderSource()
         "\n"
         "out vec4 m_color;\n"
         "\n"
-        "const float minB = pow(2.512, -6.5) * 0.1;\n"
-        
-        //  ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
-        "const vec3 lambda = vec3(0.058, 0.135, 0.331);\n"
+        "const float minB = pow(2.512, -" + std::string(apparentMagLimit) + ") * 0.1;\n"
+
+        // ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
+        // This is used only for the ratio, not for exact physical scale.
+        "const vec3 lambda = normalize(vec3(0.058, 0.135, 0.331)) * 2;\n"
         "\n"
         "void main(void)\n"
         "{\n"
         "    float vMag = gl_Color.w;\n"
         "\n"
-        "    float estB = pow(2.512, maxVMag - vMag);\n"
+        "    float estB = pow(2.512, apparentMagnitude - vMag);\n"
         "    float scaledB = minB * estB / quadWidth;\n"
         "\n"
         "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
-        "    vec3 s = (texture(noise1, i / 256.0).rgb - 0.5) * scintillation;\n"
+        "    float s = (texture(noise1, i / 256.0).r - 0.5);\n"
         "\n"
         "	 vec4 v = gl_Vertex * R;\n"
         "\n"
@@ -407,12 +436,13 @@ const std::string StarsGeode::getVertexShaderSource()
         // Also called optical path length: http://en.wikipedia.org/wiki/Air_mass_(astronomy).
         // y = x^5.37 -> y is 39 times higher for x = 0 than for x = 1 which correlates the relative 
         // air mass ratio from zenith to horizon.
-        "    float w1 = pow(1.0 - v.z, 5.37);\n"
+        "    float w1 = pow(1.0 - v.z, 5.37) * scattering;\n"
+        "    float w2 = clamp((1.0 - v.z) * scintillation * s, -0.5, 0.5);\n"
         "\n"
         "    vec3 c = mix(gl_Color.rgb, color.rgb, color.a)\n"
-        "        - lambda * w1 * 4 * (scattering + s);\n"
+        "        - lambda * (w1 - w2);\n"
         "\n"
-        "    m_color = vec4(c, scaledB - w1 * s * 0.1);\n"
+        "    m_color = vec4(c, scaledB - w1 - w2 * 0.05);\n"
         "\n"
         "    gl_Position = v;\n"
         "}\n\n";
@@ -446,6 +476,12 @@ const std::string StarsGeode::getGeometryShaderSource()
         "\n"
         "    float scaledB = m_color[0].w;\n"
         "\n"
+
+        // Ignore stars with less than 1% Brightness.
+        "    if(scaledB < 0.01)\n"
+        "        return;\n"
+        "\n"
+
         "    m_c = vec4(m_color[0].rgb, scaledB);\n"
         "\n"
         "    gl_TexCoord[0].z = (1.0 + sqrt(scaledB)) * max(1.0, glareScale);\n"

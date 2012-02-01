@@ -55,13 +55,22 @@ public:
 
     void update(const Himmel &himmel);
 
-    const float setIntensity(const float intensity);
-    const float getIntensity() const;
-    static const float defaultIntensity();
+    const float setColorRatio(const float ratio);
+    const float getColorRatio() const;
+    static const float defaultColorRatio();
 
     const osg::Vec3 setColor(const osg::Vec3 &color);
     const osg::Vec3 getColor() const;
     static const osg::Vec3 defaultColor();
+
+    const float setApparentMagnitude(const float vMag);
+    const float getApparentMagnitude() const;
+    static const float defaultApparentMagnitude();
+
+    const float setScattering(const float scattering);
+    const float getScattering() const;
+    static const float defaultScattering();
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 
@@ -84,6 +93,8 @@ protected:
     const std::string getGeometryShaderSource();
     const std::string getFragmentShaderSource();
 
+    void updateScaledB();
+
 protected:
 
     HimmelQuad *m_hquad;
@@ -92,10 +103,13 @@ protected:
     osg::Shader *m_vShader;
     osg::Shader *m_fShader;
 
+    float m_apparentMagnitude;
+
     osg::ref_ptr<osg::Uniform> u_R;
     osg::ref_ptr<osg::Uniform> u_milkywayCube;
     osg::ref_ptr<osg::Uniform> u_color;
-    
+    osg::ref_ptr<osg::Uniform> u_scaledB;
+    osg::ref_ptr<osg::Uniform> u_scattering;    
 };
 
 #endif // __MILKYWAYGEODE_H__
