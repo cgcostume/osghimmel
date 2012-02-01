@@ -331,6 +331,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
 
         "void main(void)\n"
         "{\n"
+        "   gl_FragDepth = 1.0;\n"
         "   gl_FragColor = color();\n"
         "}\n\n";
 }

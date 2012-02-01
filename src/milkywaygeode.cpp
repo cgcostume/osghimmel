@@ -32,11 +32,13 @@
 #include "himmel.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
+#include "earth.h"
 
 #include <osg/Geometry>
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
+
 
 MilkyWayGeode::MilkyWayGeode(const std::string &cubeMapFilePath)
 :   osg::Geode()
@@ -49,7 +51,10 @@ MilkyWayGeode::MilkyWayGeode(const std::string &cubeMapFilePath)
 
 ,   u_R(NULL)
 ,   u_color(NULL) // [0,1,2] = color; [3] = intensity
+,   u_scaledB(NULL)
+,   u_scattering(NULL)
 ,   u_milkywayCube(NULL)
+
 {
     setName("MilkyWay");
 
@@ -80,8 +85,17 @@ void MilkyWayGeode::setupUniforms(osg::StateSet* stateSet)
     u_R = new osg::Uniform("R", osg::Matrix::identity());
     stateSet->addUniform(u_R);
 
-    u_color = new osg::Uniform("color", osg::Vec4(defaultColor(), defaultIntensity()));
+    u_color = new osg::Uniform("color", osg::Vec4(defaultColor(), defaultColorRatio()));
     stateSet->addUniform(u_color);
+
+    u_scaledB = new osg::Uniform("scaledB", 1.f);
+    stateSet->addUniform(u_scaledB);
+
+    setApparentMagnitude(defaultApparentMagnitude()); // This calls updateScaledB.
+
+    u_scattering = new osg::Uniform("scattering", defaultScattering());
+    stateSet->addUniform(u_scattering);
+
 
     u_milkywayCube = new osg::Uniform("milkywayCube", 0);
     stateSet->addUniform(u_milkywayCube);
@@ -135,7 +149,6 @@ void MilkyWayGeode::setupTextures(
     tcm->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
     tcm->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 
-    
     std::string px = cubeMapFilePath; px.replace(px.find("?"), 1, "_px");
     std::string nx = cubeMapFilePath; nx.replace(nx.find("?"), 1, "_nx");
     std::string py = cubeMapFilePath; py.replace(py.find("?"), 1, "_py");
@@ -156,6 +169,20 @@ void MilkyWayGeode::setupTextures(
 }
 
 
+void MilkyWayGeode::updateScaledB()
+{
+    // Precompute brightness based on logarithmic scale. 
+    // (Similar to starsgeode vertex shader.)
+
+    static const float minB = pow(2.512, static_cast<double>(-earth_apparentMagnitudeLimit()));
+
+    float estB = pow(2.512, m_apparentMagnitude + 0.0);
+    float scaledB = minB * estB;
+
+    u_scaledB->set(scaledB);
+}
+
+
 const osg::Vec3 MilkyWayGeode::setColor(const osg::Vec3 &color)
 {
     osg::Vec4 temp;
@@ -172,30 +199,30 @@ const osg::Vec3 MilkyWayGeode::setColor(const osg::Vec3 &color)
 
 const osg::Vec3 MilkyWayGeode::getColor() const
 {
-    osg::Vec4 earthShine;
-    u_color->get(earthShine);
+    osg::Vec4 color;
+    u_color->get(color);
 
-    return osg::Vec3(earthShine[0], earthShine[1], earthShine[2]);
+    return osg::Vec3(color[0], color[1], color[2]);
 }
 
 const osg::Vec3 MilkyWayGeode::defaultColor()
 {
-    return osg::Vec3(0.84, 0.9, 1.0);
+    return osg::Vec3(0.66, 0.78, 1.00);
 }
 
 
-const float MilkyWayGeode::setIntensity(const float intensity)
+const float MilkyWayGeode::setColorRatio(const float ratio)
 {
     osg::Vec4 color;
     u_color->get(color);
 
-    color[3] = intensity;
+    color[3] = ratio;
     u_color->set(color);
 
-    return getIntensity();
+    return getColorRatio();
 }
 
-const float MilkyWayGeode::getIntensity() const
+const float MilkyWayGeode::getColorRatio() const
 {
     osg::Vec4 color;
     u_color->get(color);
@@ -203,11 +230,49 @@ const float MilkyWayGeode::getIntensity() const
     return color[3];
 }
 
-const float MilkyWayGeode::defaultIntensity()
+const float MilkyWayGeode::defaultColorRatio()
 {
     return 0.33f;
 }
 
+
+const float MilkyWayGeode::setApparentMagnitude(const float vMag)
+{
+    m_apparentMagnitude = vMag;
+    updateScaledB();
+
+    return getApparentMagnitude();
+}
+
+const float MilkyWayGeode::getApparentMagnitude() const
+{
+    return m_apparentMagnitude;
+}
+
+const float MilkyWayGeode::defaultApparentMagnitude() 
+{
+    return 3.5f;
+}
+
+
+const float MilkyWayGeode::setScattering(const float scattering)
+{
+    u_scattering->set(scattering);
+    return getScattering();
+}
+
+const float MilkyWayGeode::getScattering() const
+{
+    float scattering;
+    u_scattering->get(scattering);
+
+    return scattering;
+}
+
+const float MilkyWayGeode::defaultScattering()
+{
+    return 0.33f;
+}
 
 
 // VertexShader
@@ -223,12 +288,15 @@ const std::string MilkyWayGeode::getVertexShaderSource()
     +   glsl_v_quadRetrieveRay
     +   glsl_v_quadTransform
     +
+        "out vec4 m_eye;\n"
         "out vec4 m_ray;\n"
+        "\n"
         "uniform mat4 R;\n"
         "\n"
         "void main(void)\n"
         "{\n"
-        "    m_ray = R * quadRetrieveRay();\n"
+        "    m_eye = quadRetrieveRay();\n"
+        "    m_ray = R * m_eye;\n"
         "    quadTransform();\n"
         "}\n\n";
 }
@@ -244,17 +312,30 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
 
     +
         "uniform vec4 color;\n"
+        "\n"
+        "uniform float scaledB;\n"
+        "uniform float scattering;\n"
+        "\n"
         "uniform samplerCube milkywayCube;\n"
         "\n"
 
+        "in vec4 m_eye;\n"
         "in vec4 m_ray;\n"
+        "\n"
+
+        "const vec3 lambda = vec3(0.058, 0.135, 0.331);\n"
         "\n"
 
         "void main(void)\n"
         "{\n"
+        "    vec3 eye = normalize(m_eye.xyz);\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "    vec4 fc = textureCube(milkywayCube, stu);\n"
         "\n"
-        "    gl_FragColor = vec4(fc.rgb * color.w * color.rgb, 1.0);\n"
+        "    float w1 = pow(1.0 - eye.z, 5.37) * scattering;\n"
+        "\n"
+        "    vec3 c = mix(fc.rgb, fc.rgb * color.rgb, color.w)\n"
+        "        * scaledB - w1 * (.125 + lambda);\n"
+        "    gl_FragColor = vec4(c, 1.0);\n"
         "}\n\n";
 }

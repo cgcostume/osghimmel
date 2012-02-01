@@ -53,6 +53,8 @@ const long double earth_viewDistanceWithinAtmosphere(
 const long double earth_meanRadius();
 const long double earth_atmosphereThickness(); // if its density were uniform...
 
+const long double earth_apparentMagnitudeLimit();
+
 // Low Accuracy
 
 const float earth_orbitEccentricity_la(const t_julianDay t);
