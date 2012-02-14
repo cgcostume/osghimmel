@@ -251,7 +251,7 @@ const float MilkyWayGeode::getApparentMagnitude() const
 
 const float MilkyWayGeode::defaultApparentMagnitude() 
 {
-    return 3.5f;
+    return 4.0f;
 }
 
 
@@ -271,7 +271,7 @@ const float MilkyWayGeode::getScattering() const
 
 const float MilkyWayGeode::defaultScattering()
 {
-    return 0.33f;
+    return 2.0f;
 }
 
 

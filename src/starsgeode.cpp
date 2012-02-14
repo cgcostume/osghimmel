@@ -272,7 +272,7 @@ const float StarsGeode::getGlareScale() const
 
 const float StarsGeode::defaultGlareScale()
 {
-    return 2.0f;
+    return 4.0f;
 }
 
 
@@ -312,7 +312,7 @@ const float StarsGeode::getScattering() const
 
 const float StarsGeode::defaultScattering()
 {
-    return 0.33f;
+    return 2.0f;
 }
 
 
@@ -332,7 +332,7 @@ const float StarsGeode::getApparentMagnitude() const
 
 const float StarsGeode::defaultApparentMagnitude() 
 {
-    return 3.5f;
+    return 4.0f;
 }
 
 
@@ -418,7 +418,7 @@ const std::string StarsGeode::getVertexShaderSource()
 
         // ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
         // This is used only for the ratio, not for exact physical scale.
-        "const vec3 lambda = normalize(vec3(0.058, 0.135, 0.331)) * 2;\n"
+        "const vec3 lambda = normalize(vec3(0.58, 1.35, 3.31));\n"
         "\n"
         "void main(void)\n"
         "{\n"
@@ -428,7 +428,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float scaledB = minB * estB / quadWidth;\n"
         "\n"
         "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
-        "    float s = (texture(noise1, i / 256.0).r - 0.5);\n"
+        "    float s = (texture(noise1, i / 256.0).r - 0.5) * 10;\n"
         "\n"
         "	 vec4 v = gl_Vertex * R;\n"
         "\n"
@@ -437,12 +437,12 @@ const std::string StarsGeode::getVertexShaderSource()
         // y = x^5.37 -> y is 39 times higher for x = 0 than for x = 1 which correlates the relative 
         // air mass ratio from zenith to horizon.
         "    float w1 = pow(1.0 - v.z, 5.37) * scattering;\n"
-        "    float w2 = clamp((1.0 - v.z) * scintillation * s, -0.5, 0.5);\n"
+        "    float w2 = min(1.0, (1.0 - v.z) * s * scintillation);\n"
         "\n"
         "    vec3 c = mix(gl_Color.rgb, color.rgb, color.a)\n"
-        "        - lambda * (w1 - w2);\n"
+        "        - lambda * (w1 * 0.25 + w2);\n"
         "\n"
-        "    m_color = vec4(c, scaledB - w1 - w2 * 0.05);\n"
+        "    m_color = vec4(c, scaledB - w1);\n"
         "\n"
         "    gl_Position = v;\n"
         "}\n\n";
