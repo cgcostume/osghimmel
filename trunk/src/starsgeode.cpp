@@ -390,15 +390,15 @@ const float StarsGeode::defaultColorRatio()
 
 // VertexShader
 
+#include "shaderfragment/version.hpp"
+
 const std::string StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
     sprintf(apparentMagLimit, "%.2f", earth_apparentMagnitudeLimit());
 
-    return 
+    return glsl_version_150 +
 
-        "#version 150 compatibility\n"
-        "\n"
         "uniform mat4 R;\n" // rgb and alpha for mix
         "uniform vec4 color;\n" // rgb and alpha for mix
         "\n"
@@ -415,7 +415,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "out vec4 m_color;\n"
         "\n"
         "const float minB = pow(2.512, -" + std::string(apparentMagLimit) + ") * 0.1;\n"
-
+        "\n"
         // ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
         // This is used only for the ratio, not for exact physical scale.
         "const vec3 lambda = normalize(vec3(0.58, 1.35, 3.31));\n"
@@ -453,11 +453,10 @@ const std::string StarsGeode::getVertexShaderSource()
 
 const std::string StarsGeode::getGeometryShaderSource()
 {
-    return
-        "#version 150 compatibility\n"
-        "\n"
-        "#extension GL_EXT_geometry_shader4 : enable\n"
-        "\n"
+    return glsl_version_150 +
+
+        glsl_geometry_ext
+    +
         "layout (points) in;\n"
         "layout (triangle_Strip, max_vertices = 4) out;\n"
         "\n"
@@ -476,17 +475,14 @@ const std::string StarsGeode::getGeometryShaderSource()
         "\n"
         "    float scaledB = m_color[0].w;\n"
         "\n"
-
         // Ignore stars with less than 1% Brightness.
         "    if(scaledB < 0.01)\n"
         "        return;\n"
         "\n"
-
         "    m_c = vec4(m_color[0].rgb, scaledB);\n"
         "\n"
         "    gl_TexCoord[0].z = (1.0 + sqrt(scaledB)) * max(1.0, glareScale);\n"
         "\n"
-
         "    float k = quadWidth * gl_TexCoord[0].z;\n"
         "\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
@@ -512,10 +508,8 @@ const std::string StarsGeode::getGeometryShaderSource()
 
 const std::string StarsGeode::getFragmentShaderSource()
 {
-    return 
+    return glsl_version_150 +
 
-        "#version 150 compatibility\n"
-        "\n"
         "uniform float quadWidth;\n"
         "uniform float glareIntensity;\n"
         "\n"
@@ -541,6 +535,6 @@ const std::string StarsGeode::getFragmentShaderSource()
         "    float t = smoothstep(1.0, 0.0, l * s);\n"
         "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
         "\n"
-        "    gl_FragColor = m_c * (t + g);// * clamp(-asin(sun.z - 0.1) * 2, 0.0, 1.0);\n"
+        "    gl_FragColor = m_c * (t + g);\n"
         "}\n\n";
 }

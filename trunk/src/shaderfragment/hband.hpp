@@ -28,33 +28,28 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_FAKESUN_FSF__
-#define __GLSL_FAKESUN_FSF__
+#ifndef __GLSL_HBAND_HPP__
+#define __GLSL_HBAND_HPP__
 
 namespace 
 {
-    static const std::string glsl_f_fakesun
+    static const std::string glsl_hband
     (
-        "in vec4 m_rayFixed;\n"
+        "uniform vec3 hbandParams;\n"   // { 0: Scale, 1: Width, 2: Offset }
         "\n"
-        "uniform vec3  sun;\n"
-        "uniform vec4  sunCoeffs;\n"
-        "uniform float sunScale;\n"
+        "uniform vec4 hbandBottomColor;\n"
+        "uniform vec4 hbandColor;\n"
         "\n"
-        "vec4 fakeSun(float alpha)\n"
+        "vec4 hband(float z, vec4 fc)\n"
         "{\n"
-        "    vec3 fix = normalize(m_rayFixed.xyz);\n"
+        "    if(z < hbandParams[2])\n"
+        "        fc = hbandBottomColor;\n"
         "\n"
-        "    float d = sunScale * 2.0 / length(normalize(sun) - fix);\n"
-        
-        "    d *= alpha * 0.1 + 0.2;\n"             // Reduce suns' size on low alpha.
-        "    d *= clamp(fix.z + 0.1, 0.0, 0.1);\n"  // Disappear in lower hemisphere.
-        
-        "    d  = clamp(clamp(d, 0.0, 2.0) - (1.0 - alpha) * 2.0, 0.0, 2.0);\n"
+        "    float b = abs((z - hbandParams[2]) / hbandParams[0]) - hbandParams[1];\n"
         "\n"
-        "    return vec4(sunCoeffs.rgb * d, sunCoeffs.a);\n"
+        "    return blend_normal(hbandColor, fc, smoothstep(0.0, 1.0, b));\n"
         "}\n\n"
     );
 }
 
-#endif // __GLSL_FAKESUN_FSF__
+#endif // __GLSL_HBAND_HPP__

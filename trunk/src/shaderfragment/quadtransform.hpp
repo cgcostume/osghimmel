@@ -28,17 +28,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_LINEARDODGE_FSF__
-#define __GLSL_BLEND_LINEARDODGE_FSF__
+#ifndef __GLSL_QUADTRANSFORM_HPP__
+#define __GLSL_QUADTRANSFORM_HPP__
 
-#include "compose.fsf"
-
-namespace
+namespace 
 {
-    static const std::string glsl_f_blendLinearDodge(
-        IMP_COMPOSE(lineardodge, b + s));
-    static const std::string glsl_f_blendLinearDodgeExt(
-        IMP_COMPOSE_SRC_ALPHA(lineardodge, b + s));
+    static const std::string glsl_quadTransform
+    (
+        "void quadTransform()\n"
+        "{\n"
+        "    gl_Position = gl_Vertex;\n"
+        "}\n\n"
+    );
 }
 
-#endif // __GLSL_BLEND_LINEARDODGE_FSF__
+#endif // __GLSL_QUADTRANSFORM_HPP__

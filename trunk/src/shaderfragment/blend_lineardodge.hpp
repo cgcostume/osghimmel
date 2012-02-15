@@ -28,28 +28,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_HBAND_FSF__
-#define __GLSL_HBAND_FSF__
+#ifndef __GLSL_BLEND_LINEARDODGE_HPP__
+#define __GLSL_BLEND_LINEARDODGE_HPP__
 
-namespace 
+#include "compose.hpp"
+
+namespace
 {
-    static const std::string glsl_f_hband
-    (
-        "uniform vec3 hbandParams;\n"   // { 0: Scale, 1: Width, 2: Offset }
-        "\n"
-        "uniform vec4 hbandBottomColor;\n"
-        "uniform vec4 hbandColor;\n"
-        "\n"
-        "vec4 hband(float z, vec4 fc)\n"
-        "{\n"
-        "    if(z < hbandParams[2])\n"
-        "        fc = hbandBottomColor;\n"
-        "\n"
-        "    float b = abs((z - hbandParams[2]) / hbandParams[0]) - hbandParams[1];\n"
-        "\n"
-        "    return blend_normal(hbandColor, fc, smoothstep(0.0, 1.0, b));\n"
-        "}\n\n"
-    );
+    static const std::string glsl_blendLinearDodge(
+        IMP_COMPOSE(lineardodge, b + s));
+    static const std::string glsl_blendLinearDodgeExt(
+        IMP_COMPOSE_SRC_ALPHA(lineardodge, b + s));
 }
 
-#endif // __GLSL_HBAND_FSF__
+#endif // __GLSL_BLEND_LINEARDODGE_HPP__

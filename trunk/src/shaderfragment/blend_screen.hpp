@@ -28,39 +28,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_DITHER_FSF__
-#define __GLSL_DITHER_FSF__
+#ifndef __GLSL_BLEND_SCREEN_HPP__
+#define __GLSL_BLEND_SCREEN_HPP__
 
-// requires: pseudo_rand
-
-// The dithering mainly relies on a frame-to-frame coherent pseudo 
-// random number, described in pseudo_rand.fsf. The rand value used 
-// non-uniformly for all 4 color channels and modulated by some 
-// primes. The 0.0001 weight is good for default appliance (change 
-// it as required). Depends on strength of color banding and the 
-// displays color scheme and settings. 
-// The exact value of most of the used constant values where gathered 
-// by trial and error and benchmarked by subjective perception.
+#include "compose.hpp"
 
 namespace 
 {
-    static const std::string glsl_f_dither
-    (
-        "uniform float ditheringMultiplier = 1.0;\n"
-        "\n"
-        "vec4 dither()\n"
-        "{\n"
-        "    float r = pseudo_rand(gl_FragCoord.xy);\n"
-        "    uvec4 v = uint(r * 3571) * uvec4(67, 89, 23, 71);\n"
-        "\n"
-
-        // A ditheringMultiplier of 1 will add frame to frame coherent noise for each pixel of about +-1.
-        // The average brightness of the rendering will roughly remain unchanged.
-
-        "    return (vec4(v % uvec4(853)) - 241 - ditheringMultiplier * 1.41) * 0.00001 * ditheringMultiplier;\n"
-
-        "}\n\n"
-    );
+    static const std::string glsl_blendScreen(
+        IMP_COMPOSE(screen, b + s - (b * s)));
+    static const std::string glsl_blendScreenExt(
+        IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s)));
 }
 
-#endif // __GLSL_DITHER_FSF__
+#endif // __GLSL_BLEND_SCREEN_HPP__

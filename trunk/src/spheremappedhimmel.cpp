@@ -95,21 +95,20 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 // FragmentShader
 
-#include "shaderfragment/version.fsf"
-#include "shaderfragment/blend_normal.fsf"
-#include "shaderfragment/fakesun.fsf"
+#include "shaderfragment/version.hpp"
+#include "shaderfragment/blend_normal.hpp"
+#include "shaderfragment/fakesun.hpp"
 
 const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_f_version_150
+    return glsl_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 
-    +   (m_withFakeSun ? glsl_f_fakesun : "")
+    +   (m_withFakeSun ? glsl_fakesun : "")
     +
         "in vec4 m_ray;\n"
         "\n"
-
         // From AbstractMappedHimmel
 
         "uniform float srcAlpha;\n"
@@ -117,14 +116,12 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "uniform sampler2D back;\n"
         "uniform sampler2D src;\n"
         "\n"
-
         // Color Retrieval
 
         "void main(void)\n"
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-
     +   (getMappingMode() == MM_TowardsPosZ ?
         // MM_TowardsPosZ
         "    float m = 2.0 * sqrt(stu.x * stu.x + stu.y * stu.y + (stu.z + 1.0) * (stu.z + 1.0));\n"
@@ -132,8 +129,7 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         // MM_TowardsNegY
     :   "    float m = 2.0 * sqrt(stu.x * stu.x + stu.z * stu.z + (-stu.y + 1.0) * (-stu.y + 1.0));\n"
         "    vec2 uv = vec2(-stu.x / m + 0.5, stu.z / m + 0.5);\n")
-    +
-        "\n"
+    +   "\n"
         "    vec4 fc = mix(\n"
         "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
         "\n"

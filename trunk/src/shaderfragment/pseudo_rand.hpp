@@ -28,15 +28,42 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_VERSION_VSF__
-#define __GLSL_VERSION_VSF__
+#ifndef __GLSL_PSEUDO_RAND_HPP__
+#define __GLSL_PSEUDO_RAND_HPP__
+
+// requires: uniform int osg_FrameNumber;
+
+// The generated pseudo random number is good for frame-to-frame 
+// coherent dithering.
+
+// Two static, pseudo random signals, one moving vertically and one
+// horizontally over time, are overlapped. If frame-to-frame coherence
+// is not required, osg_FrameNumber can be changed to any random seed,
+// given via an uniform.
+
+// The algorithm was inspired and partially relies on techniques 
+// described in: http://zfx.info/viewtopic.php?f=11&t=8#p19
+// and http://www.geeks3d.com/20100831/shader-library-noise-and-pseudo-random-number-generator-in-glsl/
+
+// The exact value of most of the used constant values where gathered 
+// by trial and error and benchmarked by subjective perception.
 
 namespace 
 {
-    static const std::string glsl_v_version_150
+    static const std::string glsl_pseudo_rand
     (
-        "#version 150 compatibility\n\n"
+        "float pseudo_rand(vec2 seed)\n"
+        "{\n"
+        "    int i1 = int(seed.x + seed.y * 1733);\n"
+        "    i1 = (i1 << 7) ^ i1 + osg_FrameNumber;\n"  // seed
+        "\n"
+        "    int i2 = int(seed.y + seed.x * 1103);\n"
+        "    i2 = (i2 << 7) ^ i2 + osg_FrameNumber;\n"  // seed
+        "\n"
+        "    i1 ^= i2;\n"
+        "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
+        "}\n\n"
     );
 }
 
-#endif // __GLSL_VERSION_VSF__
+#endif // __GLSL_PSEUDO_RAND_HPP__

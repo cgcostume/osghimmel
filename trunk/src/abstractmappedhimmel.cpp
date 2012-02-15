@@ -344,17 +344,17 @@ const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
 
 // VertexShader
 
-#include "shaderfragment/version.vsf"
-#include "shaderfragment/quadretrieveray.vsf"
-#include "shaderfragment/quadtransform.vsf"
+#include "shaderfragment/version.hpp"
+#include "shaderfragment/quadretrieveray.hpp"
+#include "shaderfragment/quadtransform.hpp"
 
 const std::string AbstractMappedHimmel::getVertexShaderSource()
 {
-    return glsl_v_version_150
+    return glsl_version_150
 
-        +   glsl_v_quadRetrieveRay
-        +   glsl_v_quadTransform
-        +
+    +   glsl_quadRetrieveRay
+    +   glsl_quadTransform
+    +
         "uniform mat4 razInverse;\n"
         "\n"
         "out vec4 m_ray;\n"

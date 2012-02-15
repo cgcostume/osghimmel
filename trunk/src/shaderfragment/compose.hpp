@@ -28,8 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_COMPOSE_FSF__
-#define __GLSL_COMPOSE_FSF__
+#ifndef __GLSL_COMPOSE_HPP__
+#define __GLSL_COMPOSE_HPP__
 
 // The general composition of two colors is specified in these two macros:
 // The first (default) uses the alpha value of src, the other allows over-
@@ -80,4 +80,4 @@ namespace
         "}\n\n"
 }
 
-#endif // __GLSL_COMPOSE_FSF__
+#endif // __GLSL_COMPOSE_HPP__

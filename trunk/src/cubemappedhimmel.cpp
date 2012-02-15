@@ -95,17 +95,17 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 
 // FragmentShader
 
-#include "shaderfragment/version.fsf"
-#include "shaderfragment/blend_normal.fsf"
-#include "shaderfragment/fakesun.fsf"
+#include "shaderfragment/version.hpp"
+#include "shaderfragment/blend_normal.hpp"
+#include "shaderfragment/fakesun.hpp"
 
 const std::string CubeMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_f_version_150
+    return glsl_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
-    
-    +   (m_withFakeSun ? glsl_f_fakesun : "")
+
+    +   (m_withFakeSun ? glsl_fakesun : "")
     +
         "in vec4 m_ray;\n"
         "\n"
