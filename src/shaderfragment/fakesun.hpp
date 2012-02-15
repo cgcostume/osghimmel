@@ -28,15 +28,33 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_VERSION_FSF__
-#define __GLSL_VERSION_FSF__
+#ifndef __GLSL_FAKESUN_HPP__
+#define __GLSL_FAKESUN_HPP__
 
 namespace 
 {
-    static const std::string glsl_f_version_150
+    static const std::string glsl_fakesun
     (
-        "#version 150 compatibility\n\n"
+        "in vec4 m_rayFixed;\n"
+        "\n"
+        "uniform vec3  sun;\n"
+        "uniform vec4  sunCoeffs;\n"
+        "uniform float sunScale;\n"
+        "\n"
+        "vec4 fakeSun(float alpha)\n"
+        "{\n"
+        "    vec3 fix = normalize(m_rayFixed.xyz);\n"
+        "\n"
+        "    float d = sunScale * 2.0 / length(normalize(sun) - fix);\n"
+        "\n"
+        "    d *= alpha * 0.1 + 0.2;\n"             // Reduce suns' size on low alpha.
+        "    d *= clamp(fix.z + 0.1, 0.0, 0.1);\n"  // Disappear in lower hemisphere.
+        "\n"
+        "    d  = clamp(clamp(d, 0.0, 2.0) - (1.0 - alpha) * 2.0, 0.0, 2.0);\n"
+        "\n"
+        "    return vec4(sunCoeffs.rgb * d, sunCoeffs.a);\n"
+        "}\n\n"
     );
 }
 
-#endif // __GLSL_VERSION_FSF__
+#endif // __GLSL_FAKESUN_HPP__

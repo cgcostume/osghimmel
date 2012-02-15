@@ -28,17 +28,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_MULTIPLY_FSF__
-#define __GLSL_BLEND_MULTIPLY_FSF__
-
-#include "compose.fsf"
+#ifndef __GLSL_QUADRETRIEVERAY_HPP__
+#define __GLSL_QUADRETRIEVERAY_HPP__
 
 namespace 
 {
-    static const std::string glsl_f_blendMultiply(
-        IMP_COMPOSE(multiply, b * s));
-    static const std::string glsl_f_blendMultiplyExt(
-        IMP_COMPOSE_SRC_ALPHA(multiply, b * s));
+    static const std::string glsl_quadRetrieveRay
+    (
+        "vec4 quadRetrieveRay()\n"
+        "{\n"
+        "    return gl_ProjectionMatrixInverse * gl_Vertex * gl_ModelViewMatrix;\n"
+        "}\n\n"
+    );
 }
 
-#endif // __GLSL_BLEND_MULTIPLY_FSF__
+#endif // __GLSL_QUADRETRIEVERAY_HPP__

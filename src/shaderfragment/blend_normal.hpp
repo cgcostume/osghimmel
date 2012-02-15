@@ -28,17 +28,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_DIFFERENCE_FSF__
-#define __GLSL_BLEND_DIFFERENCE_FSF__
+#ifndef __GLSL_BLEND_NORMAL_HPP__
+#define __GLSL_BLEND_NORMAL_HPP__
 
-#include "compose.fsf"
+#include "compose.hpp"
 
-namespace
+namespace 
 {
-    static const std::string glsl_f_blendDifference(
-        IMP_COMPOSE(difference, fabs(b - s)));
-    static const std::string glsl_f_blendDifferenceExt(
-        IMP_COMPOSE_SRC_ALPHA(difference, fabs(b - s)));
+    // Use glsl mix if alpha is 1.0, since it is much faster due to 'collapsed' math.
+
+    static const std::string glsl_blendNormal(
+        IMP_COMPOSE(normal, s));
+    static const std::string glsl_blendNormalExt(
+        IMP_COMPOSE_SRC_ALPHA(normal, s));
 }
 
-#endif // __GLSL_BLEND_DIFFERENCE_FSF__
+#endif // __GLSL_BLEND_NORMAL_HPP__

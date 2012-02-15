@@ -28,18 +28,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_QUADTRANSFORM_VSF__
-#define __GLSL_QUADTRANSFORM_VSF__
+#ifndef __GLSL_BLEND_MULTIPLY_HPP__
+#define __GLSL_BLEND_MULTIPLY_HPP__
+
+#include "compose.hpp"
 
 namespace 
 {
-    static const std::string glsl_v_quadTransform
-    (
-        "void quadTransform()\n"
-        "{\n"
-        "    gl_Position = gl_Vertex;\n"
-        "}\n\n"
-    );
+    static const std::string glsl_blendMultiply(
+        IMP_COMPOSE(multiply, b * s));
+    static const std::string glsl_blendMultiplyExt(
+        IMP_COMPOSE_SRC_ALPHA(multiply, b * s));
 }
 
-#endif // __GLSL_QUADTRANSFORM_VSF__
+#endif // __GLSL_BLEND_MULTIPLY_HPP__

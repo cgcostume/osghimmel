@@ -333,16 +333,16 @@ const float MoonGeode::defaultEarthShineIntensity()
 
 // VertexShader
 
-#include "shaderfragment/version.vsf"
+#include "shaderfragment/version.hpp"
 
 const std::string MoonGeode::getVertexShaderSource()
 {
-    return glsl_v_version_150
+    return glsl_version_150 +
 
-    +   
-        "uniform vec4 moon; // moon.xyz is expected to be normalized and\n"
-        "                   // moon.a the moons angular radius in rad.\n"
-
+        // moon.xyz is expected to be normalized and moon.a the moons
+        // angular diameter in rad.
+        "uniform vec4 moon;\n"
+        "\n"
         "out mat4 m_tangent;\n"
         "out vec3 m_eye;\n"
         "\n"
@@ -352,15 +352,11 @@ const std::string MoonGeode::getVertexShaderSource()
         "{\n"
         "    vec3 m = moon.xyz;\n"
         "\n"
-
         //  tangent space of the unitsphere at m.
-
         "    vec3 u = normalize(cross(m, vec3(1)));\n"
         "    vec3 v = normalize(cross(u, m));\n"
-        "\n"
         "    m_tangent = mat4(vec4(u, 0.0), vec4(v, 0.0), vec4(m, 0.0), vec4(vec3(0.0), 1.0));\n"
         "\n"
-
         "    float mScale = tan(moon.a) * SQRT2;\n"
         "\n"
         "    m_eye = m - normalize(gl_Vertex.x * u + gl_Vertex.y * v) * mScale;\n"
@@ -373,54 +369,46 @@ const std::string MoonGeode::getVertexShaderSource()
 
 // FragmentShader
 
-#include "shaderfragment/version.fsf"
-
 const std::string MoonGeode::getFragmentShaderSource()
 {
-    return glsl_f_version_150
+    return glsl_version_150 +
     
-    +   
-        "uniform vec4 moon; // moon.xyz is expected to be normalized and\n"
-        "                   // moon.a the moons angular diameter in rad.\n"
-        "uniform vec3 sun;  // Expected to be normalized.\n"
+        // moon.xyz is expected to be normalized and moon.a the moons
+        // angular diameter in rad.
+        "uniform vec4 moon;\n" 
+        "\n"
+        "uniform vec3 sun;\n" // Expected to be normalized.
         "\n"
         "uniform samplerCube moonCube;\n"
         "\n"
         "uniform mat4 R;\n"
         "\n"
-        "uniform vec4 sunShine;   // rgb as color and w as intensity.\n"
-        "uniform vec4 earthShine; // rgb as color and w as intensity.\n"
+        "uniform vec4 sunShine;\n"   // rgb as color and w as intensity.
+        "uniform vec4 earthShine;\n" // rgb as color and w as intensity.
         "\n"
-
         "const float radius = 0.98;\n"
         "\n"
         "in vec3 m_eye;\n"
         "in mat4 m_tangent;\n"
         "\n"
-
         "const float PI               = 3.1415926535897932;\n"
         "const float TWO_OVER_THREEPI = 0.2122065907891938;\n"
         "\n"
-
         "void main(void)\n"
         "{\n"
         "    float x = gl_TexCoord[0].x;\n"
         "    float y = gl_TexCoord[0].y;\n"
         "\n"
         "    float zz = radius * radius - x * x - y * y;\n"
-        "\n"
         "    if(zz < 1.0 - radius)\n"
         "        discard;\n"
-        "\n"
         "    float z = sqrt(zz);\n"
         "\n"
-
         // Moon Tanget Space
         "    vec3 mn = (m_tangent * vec4(x, y, z, 1.0)).xyz;\n"
         "    vec3 mt = mn.zyx;\n"
         "    vec3 mb = mn.xzy;\n"
         "\n"
-
         // Texture Lookup direction -> "FrontFacing".
         "    vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * R).xyz;\n"
         "\n"
@@ -428,12 +416,10 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"
         "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
         "\n"
-
         "    vec3 m = moon.xyz;\n"
         "    vec3 s = sun;\n"
         "    vec3 e = normalize(m_eye.xyz);\n"
         "\n"
-
         // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
 
         "    float cos_p = clamp(dot(e, s), 0.0, 1.0);\n"
@@ -443,40 +429,33 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    float dot_ne = dot(n, e);\n"
         "    float dot_nl = dot(n, s);\n"
         "\n"
-        "    float g = 0.6; // surface densitiy parameter which determines the sharpness of the peak at the full Moon\n"
-        "    float t = 0.1; // small amount of forward scattering\n"
+        "    float g = 0.6;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
+        "    float t = 0.1;\n" // small amount of forward scattering
         "\n"
-
         // Retrodirective.
         "    float R = 2.0 - tan_p / (2.0 * g) \n"
         "        * (1.0 - exp(-g / tan_p))     \n"
         "        * (3.0 - exp(-g / tan_p));    \n"
         "\n"
-
         // Scattering.
         "    float S = (sin(p) + (PI - p) * cos_p) / PI \n"
         "        + t * (1.0 - cos_p) * (1.0 - cos_p);\n"
         "\n"
-
         // BRDF
         "    float F = TWO_OVER_THREEPI * R * S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
         "\n"
-
         "    if(dot_nl > 0.0)\n"
         "        F = 0.0;\n"
         "\n"
-        
         // Approximate earthshine intensity.
         // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
         // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
         "    float op2 = (PI - acos(dot(-m, s))) * 0.5; // opposite phase over 2\n"
         "    float Eem = 0.19 * 0.5 * (1.0 - sin(op2) * tan(op2) * log(1.0 / tan(op2 * 0.5)));\n"
         "\n"
-
         // My approximation with non-perceivable difference.
         //"    float op2 = dot(-m, s);
         //"    float Eem = 0.1 * op2 * op2;
-        //"\n"
 
         "    gl_FragDepth = 0.99999996;\n"
         "\n"

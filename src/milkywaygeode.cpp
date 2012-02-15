@@ -277,16 +277,16 @@ const float MilkyWayGeode::defaultScattering()
 
 // VertexShader
 
-#include "shaderfragment/version.vsf"
-#include "shaderfragment/quadretrieveray.vsf"
-#include "shaderfragment/quadtransform.vsf"
+#include "shaderfragment/version.hpp"
+#include "shaderfragment/quadretrieveray.hpp"
+#include "shaderfragment/quadtransform.hpp"
 
 const std::string MilkyWayGeode::getVertexShaderSource()
 {
-    return glsl_v_version_150
+    return glsl_version_150
 
-    +   glsl_v_quadRetrieveRay
-    +   glsl_v_quadTransform
+    +   glsl_quadRetrieveRay
+    +   glsl_quadTransform
     +
         "out vec4 m_eye;\n"
         "out vec4 m_ray;\n"
@@ -304,13 +304,10 @@ const std::string MilkyWayGeode::getVertexShaderSource()
 
 // FragmentShader
 
-#include "shaderfragment/version.fsf"
-
 const std::string MilkyWayGeode::getFragmentShaderSource()
 {
-    return glsl_f_version_150
+    return glsl_version_150 +
 
-    +
         "uniform vec4 color;\n"
         "\n"
         "uniform float scaledB;\n"
@@ -318,14 +315,11 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "\n"
         "uniform samplerCube milkywayCube;\n"
         "\n"
-
         "in vec4 m_eye;\n"
         "in vec4 m_ray;\n"
         "\n"
-
         "const vec3 lambda = vec3(0.058, 0.135, 0.331);\n"
         "\n"
-
         "void main(void)\n"
         "{\n"
         "    vec3 eye = normalize(m_eye.xyz);\n"

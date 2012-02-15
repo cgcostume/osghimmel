@@ -114,10 +114,10 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 // FragmentShader
 
-#include "shaderfragment/version.fsf"
-#include "shaderfragment/blend_normal.fsf"
-#include "shaderfragment/hband.fsf"
-#include "shaderfragment/fakesun.fsf"
+#include "shaderfragment/version.hpp"
+#include "shaderfragment/blend_normal.hpp"
+#include "shaderfragment/hband.hpp"
+#include "shaderfragment/fakesun.hpp"
 
 const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
@@ -125,54 +125,50 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
     {
     case MM_Half:
 
-    return glsl_f_version_150
+    return glsl_version_150
 
-    +   glsl_f_blendNormalExt
+    +   glsl_blendNormalExt
 
-    +   (m_withFakeSun ? glsl_f_fakesun : "")
-    +   (m_withHBand ? glsl_f_hband : "")
+    +   (m_withFakeSun ? glsl_fakesun : "")
+    +   (m_withHBand ? glsl_hband : "")
     +
         "in vec4 m_ray;\n"
-        "\n"
 
         // From AbstractMappedHimmel
 
         "uniform float srcAlpha;\n"
-        "\n"
+
         "uniform sampler2D back;\n"
         "uniform sampler2D src;\n"
-        "\n"
 
         // Color Retrieval
 
         "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
         "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
-        "\n"
+
         "void main(void)\n"
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
-        "\n"
+
         "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);\n"
-        "\n"
+
         "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
     +   (m_withFakeSun ? "fc += fakeSun(fc.a);\n" : "")
     +
-        "\n"
         "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
         "}\n\n";
 
 
     case MM_Full:
 
-    return glsl_f_version_150
+    return glsl_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 
-    +   (m_withFakeSun ? glsl_f_fakesun : "")
+    +   (m_withFakeSun ? glsl_fakesun : "")
     +
         "in vec4 m_ray;\n"
         "\n"
-
         // From AbstractMappedHimmel
 
         "uniform float srcAlpha;\n"
@@ -180,7 +176,6 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
         "uniform sampler2D back;\n"
         "uniform sampler2D src;\n"
         "\n"
-
         // Color Retrieval
 
         "const float c_1OverPi  = 0.3183098861837906715377675267450;\n"

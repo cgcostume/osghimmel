@@ -28,19 +28,20 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_NORMAL_FSF__
-#define __GLSL_BLEND_NORMAL_FSF__
-
-#include "compose.fsf"
+#ifndef __GLSL_VERSION_HPP__
+#define __GLSL_VERSION_HPP__
 
 namespace 
 {
-    // Use glsl mix if alpha is 1.0, since it is much faster due to 'collapsed' math.
+    static const std::string glsl_version_150
+    (
+        "#version 150 compatibility\n\n"
+    );
 
-    static const std::string glsl_f_blendNormal(
-        IMP_COMPOSE(normal, s));
-    static const std::string glsl_f_blendNormalExt(
-        IMP_COMPOSE_SRC_ALPHA(normal, s));
+    static const std::string glsl_geometry_ext
+    (
+        "#extension GL_EXT_geometry_shader4 : enable\n"
+    );    
 }
 
-#endif // __GLSL_BLEND_NORMAL_FSF__
+#endif // __GLSL_VERSION_HPP__

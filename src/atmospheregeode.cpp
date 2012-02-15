@@ -154,21 +154,22 @@ const float AtmosphereGeode::defaultDitheringMultiplier()
 
 
 
+#include "shaderfragment/version.hpp"
+
 // VertexShader
 
-#include "shaderfragment/version.vsf"
-#include "shaderfragment/quadretrieveray.vsf"
-#include "shaderfragment/quadtransform.vsf"
+#include "shaderfragment/quadretrieveray.hpp"
+#include "shaderfragment/quadtransform.hpp"
 
 const std::string AtmosphereGeode::getVertexShaderSource()
 {
-    return glsl_v_version_150
+    return glsl_version_150
 
-        +   glsl_v_quadRetrieveRay
-        +   glsl_v_quadTransform
-        +
+    +   glsl_quadRetrieveRay
+    +   glsl_quadTransform
+    +
         "out vec4 m_ray;\n"
-        "\n"
+
         "void main(void)\n"
         "{\n"
         "    m_ray = quadRetrieveRay();\n"
@@ -178,8 +179,6 @@ const std::string AtmosphereGeode::getVertexShaderSource()
 
 
 // FragmentShader
-
-#include "shaderfragment/version.fsf"
 
 const std::string AtmosphereGeode::getFragmentShaderSource()
 {
@@ -215,9 +214,8 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    gl_FragColor = vec4(su, 1.0) + dither();\n"
         "}\n\n";
 */
-    return glsl_f_version_150
+    return glsl_version_150 +
 
-    +   
         "uniform float planetRadius = 6367.46;\n"           // in km\n (e.g. 6367.46)
         "uniform float atmoshpereThickness = 8.0;\n"    // height to troposphere end in km (e.g. 6.f to 20.f for earth)
         "\n"
