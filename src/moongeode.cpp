@@ -300,7 +300,7 @@ const osg::Vec3 MoonGeode::getEarthShineColor() const
 
 const osg::Vec3 MoonGeode::defaultEarthShineColor()
 {
-    return osg::Vec3(1.0, 1.02, 1.04);
+    return osg::Vec3(0.92, 0.96, 1.00);
 }
 
 

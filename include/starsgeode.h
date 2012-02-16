@@ -47,6 +47,7 @@ public:
     virtual ~StarsGeode();
 
     void update(const Himmel &himmel);
+    void updateSeed();
 
     const float setApparentMagnitude(const float vMag);
     const float getApparentMagnitude() const;
@@ -113,6 +114,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_R;
     osg::ref_ptr<osg::Uniform> u_quadWidth;
     osg::ref_ptr<osg::Uniform> u_noise1;
+    osg::ref_ptr<osg::Uniform> u_seed;
 
     osg::ref_ptr<osg::Uniform> u_color;
     osg::ref_ptr<osg::Uniform> u_glareIntensity;

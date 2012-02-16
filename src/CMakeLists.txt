@@ -110,6 +110,10 @@ set(LIB_SOURCES
     shaderfragment/blend_multiply.hpp
     shaderfragment/blend_normal.hpp
     shaderfragment/blend_screen.hpp
+	shaderfragment/bruneton_common.hpp
+	shaderfragment/bruneton_inscatter.hpp
+	shaderfragment/bruneton_irradiance.hpp
+	shaderfragment/bruneton_transmittance.hpp	
     shaderfragment/compose.hpp
     shaderfragment/dither.hpp
     shaderfragment/hband.hpp

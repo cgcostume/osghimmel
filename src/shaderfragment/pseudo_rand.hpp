@@ -31,7 +31,8 @@
 #ifndef __GLSL_PSEUDO_RAND_HPP__
 #define __GLSL_PSEUDO_RAND_HPP__
 
-// requires: uniform int osg_FrameNumber;
+// requires: uniform int osg_FrameNumber; 
+// TODO: osg_FrameNumber throws error... use rand seed...
 
 // The generated pseudo random number is good for frame-to-frame 
 // coherent dithering.
