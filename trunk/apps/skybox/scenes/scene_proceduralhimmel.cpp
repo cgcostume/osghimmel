@@ -47,8 +47,6 @@ namespace
 
     static const QString GROUP_PROCEDURAL_ATMOSPHERE       (TR("Atmosphere"));
 
-    static const QString PROPERTY_DITHERING_MULTIPLIER     (TR("Dithering Multiplier"));
-    
     static const QString GROUP_PROCEDURAL_MOON             (TR("Moon"));
     static const QString PROPERTY_MOON_SCALE               (TR("Scale"));
     static const QString PROPERTY_MOON_SUNSHINE_COLOR      (TR("Sun Shine Color"));
@@ -106,8 +104,6 @@ void Scene_ProceduralHimmel::registerProperties()
 
     QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
 
-    createProperty(*proceduralGroup, PROPERTY_DITHERING_MULTIPLIER, AtmosphereGeode::defaultDitheringMultiplier(), 0.0, 255.0, 1.00);
-
     QtProperty *moonGroup = createGroup(GROUP_PROCEDURAL_MOON);
 
     createProperty(*moonGroup, PROPERTY_MOON_SCALE, MoonGeode::defaultScale(), 0.0, 100.0, 0.25); 
@@ -144,11 +140,7 @@ void Scene_ProceduralHimmel::propertyChanged(
     QtProperty *p
 ,   const QString &name)
 {
-         if(PROPERTY_DITHERING_MULTIPLIER == name)
-        m_himmel->atmosphere()->setDitheringMultiplier(doubleValue(PROPERTY_DITHERING_MULTIPLIER));
-
-
-    else if(PROPERTY_MOON_SCALE == name)
+         if(PROPERTY_MOON_SCALE == name)
         m_himmel->moon()->setScale(doubleValue(PROPERTY_MOON_SCALE));
     else if(PROPERTY_MOON_SUNSHINE_COLOR == name)
         m_himmel->moon()->setSunShineColor(toVec3(colorValue(PROPERTY_MOON_SUNSHINE_COLOR)));

@@ -192,7 +192,7 @@ if(OPTION_MAKE_DEMOS OR OPTION_MAKE_SKYBOX)
     string(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
 
     set(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
-    set(OSG_SOVERSION "74" CACHE STRING "OSG binaries version (osg##.dll).")
+    set(OSG_SOVERSION "80" CACHE STRING "OSG binaries version (osg##.dll).")
     
 endif()
 

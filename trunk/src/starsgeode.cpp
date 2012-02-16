@@ -64,6 +64,7 @@ StarsGeode::StarsGeode(const std::string &brightStarsFilePath)
 ,   u_R(NULL)
 ,   u_quadWidth(NULL)
 ,   u_noise1(NULL)
+,   u_seed(NULL)
 
 ,   u_color(NULL)
 ,   u_glareIntensity(NULL)
@@ -88,18 +89,22 @@ StarsGeode::~StarsGeode()
 };
 
 
+void StarsGeode::updateSeed()
+{
+    u_seed->set(rand());
+}
+
+
 void StarsGeode::update(const Himmel &himmel)
 {
-    float fov = himmel.getCameraFovHint();
-    float height = himmel.getViewSizeHeightHint();
-    
+    const float fov = himmel.getCameraFovHint();
+    const float height = himmel.getViewSizeHeightHint();
+
     u_quadWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
 
     u_R->set(himmel.astro()->equToLocalHorizonMatrix());
 
-    // TEMP
-
-    u_sun->set(himmel.astro()->getSunPosition());
+    updateSeed();
 }
 
 
@@ -107,7 +112,6 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 {
     u_R = new osg::Uniform("R", osg::Matrix::identity());
     stateSet->addUniform(u_R);
-
 
     u_quadWidth = new osg::Uniform("quadWidth", 0.0f);
     stateSet->addUniform(u_quadWidth);
@@ -135,10 +139,8 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
     u_scattering = new osg::Uniform("scattering", defaultScattering());
     stateSet->addUniform(u_scattering);
 
-
-    // TEMP - use correct function in cpu for that
-    u_sun = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 0.0));
-    stateSet->addUniform(u_sun);
+    u_seed = new osg::Uniform("seed", 1);
+    stateSet->addUniform(u_seed);
 }
 
 
@@ -236,8 +238,6 @@ void StarsGeode::setupTextures(osg::StateSet* stateSet)
     osg::ref_ptr<osg::Texture1D> noise = new osg::Texture1D(noiseImage);
 
     stateSet->setTextureAttributeAndModes(0, noise, osg::StateAttribute::ON);
-
-    u_noise1->set(0);
 }
 
 
@@ -409,8 +409,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "uniform float apparentMagnitude;\n"
         "\n"
         "uniform sampler1D noise1;\n"
-        "\n"
-        "uniform int osg_FrameNumber;\n"
+        "uniform int seed;\n"
         "\n"
         "out vec4 m_color;\n"
         "\n"
@@ -427,8 +426,8 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float estB = pow(2.512, apparentMagnitude - vMag);\n"
         "    float scaledB = minB * estB / quadWidth;\n"
         "\n"
-        "    float i = mod(osg_FrameNumber ^ int(gl_Vertex.w), 251);\n"
-        "    float s = (texture(noise1, i / 256.0).r - 0.5) * 10;\n"
+        "    float i = mod(seed ^ int(gl_Vertex.w), 251);\n"
+        "    float s = pow(texture(noise1, i / 256.0).r , 8) / (scaledB * 0.05);\n"
         "\n"
         "	 vec4 v = gl_Vertex * R;\n"
         "\n"

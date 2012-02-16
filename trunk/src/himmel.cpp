@@ -54,7 +54,7 @@ Himmel *Himmel::create()
         new MilkyWayGeode("resources/milkyway?.png")
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
-    ,   new AtmosphereGeode()
+    ,   NULL //new AtmosphereGeode()
     ,   new Astronomy());
 }
 
@@ -156,6 +156,11 @@ void Himmel::update()
             m_atmosphere->update(*this);
 
         dirty(false);
+    }
+    else
+    {
+        if(m_stars)
+            m_stars->updateSeed();
     }
 }
 
