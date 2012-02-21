@@ -46,9 +46,11 @@ namespace
     static const QString GROUP_PROCEDURAL                  (TR("Procedrual"));
 
     static const QString GROUP_PROCEDURAL_ATMOSPHERE       (TR("Atmosphere"));
+    static const QString PROPERTY_ATM_SUNSCALE             (TR("Sun Scale"));
+    static const QString PROPERTY_ATM_ALTITUDE             (TR("Altitude"));
 
     static const QString GROUP_PROCEDURAL_MOON             (TR("Moon"));
-    static const QString PROPERTY_MOON_SCALE               (TR("Scale"));
+    static const QString PROPERTY_MOON_SCALE               (TR("Moon Scale"));
     static const QString PROPERTY_MOON_SUNSHINE_COLOR      (TR("Sun Shine Color"));
     static const QString PROPERTY_MOON_SUNSHINE_INTENSITY  (TR("Sun Shine Intensity"));
     static const QString PROPERTY_MOON_EARTHSHINE_COLOR    (TR("Earth Shine Color"));
@@ -104,6 +106,10 @@ void Scene_ProceduralHimmel::registerProperties()
 
     QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
 
+    createProperty(*proceduralGroup, PROPERTY_ATM_SUNSCALE, AtmosphereGeode::defaultSunScale(), 0.0,   100.0, 0.25); 
+    createProperty(*proceduralGroup, PROPERTY_ATM_ALTITUDE, AtmosphereGeode::defaultAltitude(), 0.0, 10000.0, 0.25); 
+    
+
     QtProperty *moonGroup = createGroup(GROUP_PROCEDURAL_MOON);
 
     createProperty(*moonGroup, PROPERTY_MOON_SCALE, MoonGeode::defaultScale(), 0.0, 100.0, 0.25); 
@@ -122,8 +128,8 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*starsGroup, PROPERTY_STARS_COLOR_RATIO, StarsGeode::defaultColorRatio(), 0.0, 1.0, 0.1); 
     createProperty(*starsGroup, PROPERTY_STARS_GLARE_INTENSITY, 1.0, 0.0, 100.0, 0.1); 
     createProperty(*starsGroup, PROPERTY_STARS_GLARE_SCALE, StarsGeode::defaultGlareScale(), 0.0, 100.0, 0.1); 
-    createProperty(*starsGroup, PROPERTY_STARS_SCATTERING, StarsGeode::defaultScattering(), 0.0, 10.0, 0.1); 
-    createProperty(*starsGroup, PROPERTY_STARS_SCINTILLATION, StarsGeode::defaultScintillation(), 0.0, 10.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_SCATTERING, StarsGeode::defaultScattering(), 0.0, 100.0, 0.1); 
+    createProperty(*starsGroup, PROPERTY_STARS_SCINTILLATION, StarsGeode::defaultScintillation(), 0.0, 100.0, 0.1); 
     createProperty(*starsGroup, PROPERTY_STARS_APPARENT_MAG, StarsGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
 
 
@@ -132,7 +138,7 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR, toQColor(MilkyWayGeode::defaultColor())); 
     createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR_RATIO, MilkyWayGeode::defaultColorRatio(), 0.0, 10.0, 0.25); 
     createProperty(*milkywayGroup, PROPERTY_MILKYWAY_APPARENT_MAG, MilkyWayGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_SCATTERING, MilkyWayGeode::defaultScattering(), 0.0, 10.0, 0.1);
+    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_SCATTERING, MilkyWayGeode::defaultScattering(), 0.0, 100.0, 0.1);
 }
 
 
@@ -140,7 +146,14 @@ void Scene_ProceduralHimmel::propertyChanged(
     QtProperty *p
 ,   const QString &name)
 {
-         if(PROPERTY_MOON_SCALE == name)
+
+         if(PROPERTY_ATM_SUNSCALE == name)
+        m_himmel->atmosphere()->setSunScale(doubleValue(PROPERTY_ATM_SUNSCALE));
+    else if(PROPERTY_ATM_ALTITUDE == name)
+        m_himmel->atmosphere()->setAltitude(doubleValue(PROPERTY_ATM_ALTITUDE)); 
+
+
+    else if(PROPERTY_MOON_SCALE == name)
         m_himmel->moon()->setScale(doubleValue(PROPERTY_MOON_SCALE));
     else if(PROPERTY_MOON_SUNSHINE_COLOR == name)
         m_himmel->moon()->setSunShineColor(toVec3(colorValue(PROPERTY_MOON_SUNSHINE_COLOR)));

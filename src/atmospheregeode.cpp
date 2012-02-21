@@ -33,13 +33,22 @@
 #include "shadermodifier.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
+#include "atmosphereprecompute.h"
 
+#include <osg/Texture2D>
+#include <osg/Texture3D>
 #include <osg/Depth>
 #include <osg/BlendFunc>
 
+#include <osg/Geode>
+
+#include <assert.h>
+
 
 AtmosphereGeode::AtmosphereGeode()
-:   osg::Geode()
+:   osg::Group()
+
+,   m_precompute(NULL)
 
 ,   m_program(new osg::Program)
 ,   m_vShader(new osg::Shader(osg::Shader::VERTEX))
@@ -47,42 +56,47 @@ AtmosphereGeode::AtmosphereGeode()
 
 ,   m_hquad(new HimmelQuad())
 
+,   m_transmittance(NULL)
+,   m_irradiance(NULL)
+,   m_inscatter(NULL)
+
 ,   u_sun(NULL)
-,   u_ditheringMultiplier(NULL)
+,   u_altitude(NULL)
 {
     setName("Atmosphere");
 
+    m_scale = defaultSunScale();
+
     osg::StateSet* stateSet = getOrCreateStateSet();
+
+    m_precompute = new AtmospherePrecompute();
+    m_precompute->compute();
 
     setupNode(stateSet);
     setupUniforms(stateSet);
     setupShader(stateSet);
     setupTextures(stateSet);
 
+//    precompute();
 
-    addDrawable(m_hquad);
+    osg::Geode *geode = new osg::Geode;
+    geode->addDrawable(m_hquad);
+    addChild(geode);
 };
 
 
 AtmosphereGeode::~AtmosphereGeode()
 {
+    delete m_precompute;
 };
 
 
 void AtmosphereGeode::update(const Himmel &himmel)
 {
     osg::Vec3 sunv = himmel.astro()->getSunPosition();
-    u_sun->set(osg::Vec4(sunv, himmel.astro()->getAngularSunRadius()/* * m_scale*/));
-}
+    u_sun->set(osg::Vec4(sunv, himmel.astro()->getAngularSunRadius() * m_scale));
 
-
-void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
-{
-    u_sun = new osg::Uniform("sun", osg::Vec4(1.0, 0.0, 0.0, 1.0)); // [3] = apparent angular radius (not diameter!)
-    stateSet->addUniform(u_sun);
-
-    u_ditheringMultiplier = new osg::Uniform("ditheringMultiplier", defaultDitheringMultiplier());
-    stateSet->addUniform(u_ditheringMultiplier);
+//    precompute();
 }
 
 
@@ -99,12 +113,22 @@ void AtmosphereGeode::setupNode(osg::StateSet* stateSet)
 void AtmosphereGeode::setupShader(osg::StateSet* stateSet)
 {
     m_vShader->setShaderSource(getVertexShaderSource());
-    m_fShader->setShaderSource(getFragmentShaderSource());
+
+    updateShader(stateSet);
 
     m_program->addShader(m_vShader);
     m_program->addShader(m_fShader);
 
     stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
+}
+
+
+void AtmosphereGeode::updateShader(osg::StateSet* stateSet)
+{
+    std::string fSource(getFragmentShaderSource());
+    m_precompute->substituteMacros(fSource);
+
+    m_fShader->setShaderSource(fSource);
 }
 
 
@@ -126,32 +150,83 @@ osg::Shader *AtmosphereGeode::fragmentShader()
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
+void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
+{
+    u_sun = new osg::Uniform("sun", osg::Vec4(1.0, 0.0, 0.0, 1.0)); // [3] = apparent angular radius (not diameter!)
+    stateSet->addUniform(u_sun);
+
+    u_altitude = new osg::Uniform("altitude", defaultAltitude());
+    stateSet->addUniform(u_altitude);
+}
+
+
 void AtmosphereGeode::setupTextures(osg::StateSet* stateSet)
 {
+    assert(m_precompute);
 
+    m_transmittance = m_precompute->getTransmittanceTexture();
+    stateSet->setTextureAttributeAndModes(0, m_transmittance);
+
+    m_irradiance = m_precompute->getIrradianceTexture();
+    stateSet->setTextureAttributeAndModes(1, m_irradiance);
+
+    m_inscatter = m_precompute->getInscatterTexture();
+    stateSet->setTextureAttributeAndModes(2, m_inscatter);
+
+    stateSet->addUniform(new osg::Uniform("transmittanceSampler", 0));
+    stateSet->addUniform(new osg::Uniform("irradianceSampler", 1));
+    stateSet->addUniform(new osg::Uniform("inscatterSampler", 2));
 }
 
 
-const float AtmosphereGeode::setDitheringMultiplier(const float multiplier)
+//void AtmosphereGeode::precompute()
+//{
+//    m_precompute->compute();
+//    updateShader(getOrCreateStateSet());
+//}
+
+
+const float AtmosphereGeode::setSunScale(const float scale)
 {
-    u_ditheringMultiplier->set(multiplier);
-    return getDitheringMultiplier();
+    osg::Vec4 temp;
+    u_sun->get(temp);
+
+    temp._v[3] = temp._v[3] / m_scale * scale;
+    u_sun->set(temp);
+
+    m_scale = scale;
+
+    return getSunScale();
 }
 
-const float AtmosphereGeode::getDitheringMultiplier() const
+const float AtmosphereGeode::getSunScale() const
 {
-    float multiplier;
-    u_ditheringMultiplier->get(multiplier);
-
-    return multiplier;
+    return m_scale;
 }
 
-const float AtmosphereGeode::defaultDitheringMultiplier()
+const float AtmosphereGeode::defaultSunScale()
 {
-    return 4.0;
+    return 4.f;
 }
 
 
+const float AtmosphereGeode::setAltitude(const float altitude)
+{
+    u_altitude->set(altitude);
+    return getAltitude();
+}
+
+const float AtmosphereGeode::getAltitude() const
+{
+    float altitude;
+    u_altitude->get(altitude);
+    return altitude;
+}
+
+const float AtmosphereGeode::defaultAltitude()
+{
+    return 0.2f;
+}
 
 
 #include "shaderfragment/version.hpp"
@@ -160,6 +235,7 @@ const float AtmosphereGeode::defaultDitheringMultiplier()
 
 #include "shaderfragment/quadretrieveray.hpp"
 #include "shaderfragment/quadtransform.hpp"
+#include "shaderfragment/bruneton_common.hpp"
 
 const std::string AtmosphereGeode::getVertexShaderSource()
 {
@@ -169,167 +245,214 @@ const std::string AtmosphereGeode::getVertexShaderSource()
     +   glsl_quadTransform
     +
         "out vec4 m_ray;\n"
-
+        "\n"
         "void main(void)\n"
         "{\n"
+        "    gl_TexCoord[0] = gl_Vertex * 0.5 + 0.5;\n"
+        "\n"
         "    m_ray = quadRetrieveRay();\n"
         "    quadTransform();\n"
         "}\n\n";
 }
 
-
 // FragmentShader
 
 const std::string AtmosphereGeode::getFragmentShaderSource()
 {
-/*    return glsl_f_version_150
-    
-    +
-        "in vec4 m_ray;\n"
-        "\n"
-        "uniform int osg_FrameNumber;\n"    // required by pseudo_rand
-        "\n"
+    return glsl_version_150
+  
+    +   glsl_bruneton_const_RgRtRL
+    +   glsl_bruneton_const_RSize
+    +   glsl_bruneton_const_R
+    +   glsl_bruneton_const_M
+    +   glsl_bruneton_const_PI
 
-    +   glsl_f_pseudo_rand
-    +   glsl_f_dither
-    +
-        // Color Retrieval
 
+    +   "in vec4 m_ray;\n"
+        "\n"
+        "const float ISun = 100.0;\n"
+        "\n"
+        //"uniform vec3 c = vec3(Rg + 0.2, 0.0, 0.0);\n"
+        "uniform float altitude;\n"
         "uniform vec4 sun;\n"
-        //"uniform vec3 moon;\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "    vec3 stu = normalize(m_ray.xyz);\n"
-        "\n"
-        "    float s = 1.0 / length(normalize(sun.xyz) - stu)  * 0.08;\n"
-        //"    float m = 1.0 / length(normalize(moon) - stu) * 0.08;\n"
-        "\n"
-        "    vec3 su = vec3(0.6, .5, 0.4) * s;\n"
-        //"    vec3 mo = vec3(0.6, .6, 0.5) * clamp(m, 0.0, 2.0) * 0.66;\n"
-        //"\n"
-        //"    vec3 h = vec3(pow(1.0 - abs(stu.z), 2) * 0.8);\n"
-        //"\n"
-        //"    gl_FragColor = vec4(mo + su + h, 1.0) + dither();\n"
-        "    gl_FragColor = vec4(su, 1.0) + dither();\n"
-        "}\n\n";
-*/
-    return glsl_version_150 +
-
-        "uniform float planetRadius = 6367.46;\n"           // in km\n (e.g. 6367.46)
-        "uniform float atmoshpereThickness = 8.0;\n"    // height to troposphere end in km (e.g. 6.f to 20.f for earth)
+        "uniform float exposure = 0.4;\n"
         "\n"
 
-//        "uniform vec3 rayleighCoeffs;\n"          // contains precomputed coefficents - if these are undefined you get the sun only ;)
-
-        "uniform float mieCoeff = 0.1e-6;\n"               // (e.g. 0.1e-6)
-        "uniform float rayleighCoeff = 0.0303;\n"          // (e.g. 0.0303)
-        "uniform float excentricity = 0.998;\n"           // (e.g. 0.95)
+        //"uniform sampler2D reflectanceSampler;\n" // ground reflectance texture
+        "uniform sampler2D irradianceSampler;\n"    // precomputed skylight irradiance (E table)
+        "uniform sampler3D inscatterSampler;\n"     // precomputed inscattered light (S table)
         "\n"
 
-        "uniform float intensity = 32.0;\n"              // (e.g. 20.0)
-        "\n"
+    +   glsl_bruneton_opticalDepth
+    +   glsl_bruneton_transmittanceUV
+    +   glsl_bruneton_transmittance
+    +   glsl_bruneton_transmittanceWithShadow
+    +   glsl_bruneton_analyticTransmittance
+    +   glsl_bruneton_irradianceUV
+    +   glsl_bruneton_irradiance
+    +   glsl_bruneton_texture4D
+    +   glsl_bruneton_phaseFunctionR
+    +   glsl_bruneton_phaseFunctionM
+    +   glsl_bruneton_mie
+    +   glsl_bruneton_hdr
 
-        "uniform float bgIntensity =  0.33;\n"
-        "uniform vec4 bgColor = vec4(0.0f, 0.0, 0.0f, 1.f);\n"
+    +
+        // inscattered light along ray x+tv, when sun in direction s (=S[L]-T(x,x0)S[L]|x0)
+        "vec3 inscatter(inout vec3 x, inout float t, vec3 v, vec3 s, out float r, out float mu, out vec3 attenuation) {\n"
+        "    vec3 result;\n"
+        "    r = length(x);\n"
+        "    mu = dot(x, v) / r;\n"
+        "    float d = -r * mu - sqrt(r * r * (mu * mu - 1.0) + Rt * Rt);\n"
+        "    if (d > 0.0) {\n" // if x in space and ray intersects atmosphere
+                // move x to nearest intersection of ray with top atmosphere boundary
+        "        x += d * v;\n"
+        "        t -= d;\n"
+        "        mu = (r * mu + d) / Rt;\n"
+        "        r = Rt;\n"
+        "    }\n"
+        "    if (r <= Rt) {\n" // if ray intersects atmosphere
+        "        float nu = dot(v, s);\n"
+        "        float muS = dot(x, s) / r;\n"
+        "        float phaseR = phaseFunctionR(nu);\n"
+        "        float phaseM = phaseFunctionM(nu);\n"
+        "        vec4 inscatter = max(texture4D(inscatterSampler, r, mu, muS, nu), 0.0);\n"
+        "        if (t > 0.0) {\n"
+        "            vec3 x0 = x + t * v;\n"
+        "            float r0 = length(x0);\n"
+        "            float rMu0 = dot(x0, v);\n"
+        "            float mu0 = rMu0 / r0;\n"
+        "            float muS0 = dot(x0, s) / r0;\n"
+        //"#ifdef FIX\n"
+                    // avoids imprecision problems in transmittance computations based on textures
+        "            attenuation = analyticTransmittance(r, mu, t);\n"
+        //"#else\n"
+        //"            attenuation = transmittance(r, mu, v, x0);
+        //"#endif\n"
+        "            if (r0 > Rg + 0.01) {\n"
+                        // computes S[L]-T(x,x0)S[L]|x0
+        "                inscatter = max(inscatter - attenuation.rgbr * texture4D(inscatterSampler, r0, mu0, muS0, nu), 0.0);\n"
+        //"#ifdef FIX\n"
+                        // avoids imprecision problems near horizon by interpolating between two points above and below horizon
+        "                const float EPS = 0.004;\n"
+        "                float muHoriz = -sqrt(1.0 - (Rg / r) * (Rg / r));\n"
+        "                if (abs(mu - muHoriz) < EPS) {\n"
+        "                    float a = ((mu - muHoriz) + EPS) / (2.0 * EPS);\n"
         "\n"
-
-        "uniform vec4 sun;\n"
-//        "uniform float sunScale;\n"
+        "                    mu = muHoriz - EPS;\n"
+        "                    r0 = sqrt(r * r + t * t + 2.0 * r * t * mu);\n"
+        "                    mu0 = (r * mu + t) / r0;\n"
+        "                    vec4 inScatter0 = texture4D(inscatterSampler, r, mu, muS, nu);\n"
+        "                    vec4 inScatter1 = texture4D(inscatterSampler, r0, mu0, muS0, nu);\n"
+        "                    vec4 inScatterA = max(inScatter0 - attenuation.rgbr * inScatter1, 0.0);\n"
         "\n"
-
-//      "in float m_distance;\n"
-        "in vec4 m_ray;\n"
+        "                    mu = muHoriz + EPS;\n"
+        "                    r0 = sqrt(r * r + t * t + 2.0 * r * t * mu);\n"
+        "                    mu0 = (r * mu + t) / r0;\n"
+        "                    inScatter0 = texture4D(inscatterSampler, r, mu, muS, nu);\n"
+        "                    inScatter1 = texture4D(inscatterSampler, r0, mu0, muS0, nu);\n"
+        "                    vec4 inScatterB = max(inScatter0 - attenuation.rgbr * inScatter1, 0.0);\n"
         "\n"
-
-        "const float c_PI        = 3.1415926535897932384626433832795;\n"
-        "const float c_3Over16PI = 0.0596831036594607509133314112647;\n"
-        "const float c_1Over4PI  = 0.0795774715459476678844418816863;\n"
-        "\n"
-        "\n"
-
-
-        "float opticalDensity()\n"
-        "{\n"
-        "   float a = (planetRadius + atmoshpereThickness) * 1000.0;\n"
-        "   float c = planetRadius * 1000.0;\n"
-        "\n"
-
-        //  If sin_alpha is < 0.04 precision errors will occur -> resulting in black dot on up
-        //  -> the if-else-approach works for vertex based, precomputed distances
-        //  -> works not here -> just scale up the whole distance by 0.998
-
-        "   // .98 is to prevent unprecize angle close to up vector\n"
-        "\n"
-        //  a = 180° - sin^(-1)(dot(up, dir))
-        "   float alpha = c_PI - acos(dot(vec3(0, 0, 1), normalize(m_ray.xyz)) * 0.98);\n" // the 0.98 fixes the black hole at the top
-        "\n"
-        //  ? = sin^(-1)(c sin a/a)
-        "   float gamma = asin(c * sin(alpha) / a);\n"
-        "\n"
-        //  ß = 180° - a - ?
-        "   float beta = c_PI - alpha - gamma;\n"
-        "\n"
-        //  b = a/sin a * sin ß
-        "   return a / sin(alpha) * sin(beta);\n"
-        "}\n"
-        "\n"
-        "\n"
-
-        "vec4 color()\n"
-        "{\n"
-        "   vec3 Esun = vec3(intensity);\n"
-     "   vec3 lambda = vec3(650.f, 600.f, 500.f);\n"
-     "\n"
-
-     "   vec3 rayleighCoeffs = vec3(\n"
-     "       pow(lambda.r * rayleighCoeff, -4.f),\n"
-     "       pow(lambda.g * rayleighCoeff, -4.f),\n"
-     "       pow(lambda.b * rayleighCoeff, -4.f));\n"
-     "\n"
-
-        "   float distance = opticalDensity();\n"
-        "\n"
-
-        "   vec3 Fex = exp(-(rayleighCoeffs + mieCoeff) * distance);\n"
-        "\n"
-
-        "   Esun *= (1.0 - Fex) * Fex;\n"
-        "\n"
-
-        "   float cos_theta = dot(normalize(sun.xyz), normalize(m_ray.xyz));\n"
-        "\n"
-
-        //  Rayleigh-Streuung: ?_R(?) = 3/4 (1+ cos²(?))
-        "   float rayleighPhase = 0.75 * (1.0 + cos_theta * cos_theta);\n"
-        "\n"
-        
-        //  Rayleigh-Streuungskoeffizienten: ß_R(?) = 3/16p ß_R ?_R(?)
-        "   vec3 rayleighBeta = c_3Over16PI * rayleighCoeffs * rayleighPhase;\n"
-        "\n"
-
-        "   float g = excentricity; float gg = excentricity * excentricity;\n"
-        "   float miePhase = (1.0) * 0.2666 * (1.0 - gg) / pow(1.0 + gg - 2.0 * g * cos_theta, 1.5);\n" // by default scale with 0.2666
-        "   float mieBeta = mieCoeff * miePhase * c_1Over4PI;\n"
-        "\n"
-        //  Darker night tweak.
-        "   float dayIntensity = 0.2 + 0.8 * smoothstep(0.0, 1.0, atan(sun.z * 2.0 + 0.66));\n"
-        "\n"
-        "   vec4 c;\n"
-        "   c.xyz = (rayleighBeta + mieBeta) / (rayleighCoeffs + mieCoeff);\n"
-        "   c.xyz *= Esun * dayIntensity;\n"
-        "\n"
-        //  Tweaked background color.
-        "   c.xyz += (1.0 - Fex) * (bgColor.xyz * bgIntensity * dayIntensity);\n"
-        "   c.w = 1.0;\n"
-        "\n"
-        "   return c;\n"
+        "                    inscatter = mix(inScatterA, inScatterB, a);\n"
+        "                }\n"
+        //"#endif\n"
+        "            }\n"
+        "        }\n"
+        //"#ifdef FIX\n"
+                // avoids imprecision problems in Mie scattering when sun is below horizon
+        "        inscatter.w *= smoothstep(0.00, 0.02, muS);\n"
+        //"#endif\n"
+        "        result = max(inscatter.rgb * phaseR + getMie(inscatter) * phaseM, 0.0);\n"
+        "    } else {\n" // x in space and ray looking in space
+        "        result = vec3(0.0);\n"
+        "    }\n"
+        "    return result * ISun;\n"
         "}\n"
         "\n"
 
-        "void main(void)\n"
+        // ground radiance at end of ray x+tv, when sun in direction s
+        // attenuated bewteen ground and viewer (=R[L0]+R[L*])
+
+        "vec3 groundColor(vec3 x, float t, vec3 v, vec3 s, float r, float mu, vec3 attenuation)\n"
         "{\n"
-        "   gl_FragDepth = 1.0;\n"
-        "   gl_FragColor = color();\n"
-        "}\n\n";
+        "    vec3 result;\n"
+        "    if (t > 0.0) {\n" // if ray hits ground surface
+        "        // ground reflectance at end of ray, x0\n"
+        "        vec3 x0 = x + t * v;\n"
+        "        float r0 = length(x0);\n"
+        "        vec3 n = x0 / r0;\n"
+        //"        vec2 coords = vec2(atan(n.y, n.x), acos(n.z)) * vec2(0.5, 1.0) / M_PI + vec2(0.5, 0.0);\n"
+        //"        vec4 reflectance = texture2D(reflectanceSampler, coords) * vec4(0.2, 0.2, 0.2, 1.0);\n"
+        "        vec4 reflectance = vec4(0.0, 0.0, 0.0, 1.0);\n"
+        "        if (r0 > Rg + 0.01) {\n"
+        "            reflectance = vec4(0.4, 0.4, 0.4, 0.0);\n"
+        "        }\n"
+        "\n"
+                // direct sun light (radiance) reaching x0
+        "        float muS = dot(n, s);\n"
+        "        vec3 sunLight = transmittanceWithShadow(r0, muS);\n"
+        "\n"
+                // precomputed sky light (irradiance) (=E[L*]) at x0
+        "        vec3 groundSkyLight = irradiance(irradianceSampler, r0, muS);\n"
+        "\n"
+                // light reflected at x0 (=(R[L0] + R[L*]) / T(x, x0))
+        "        vec3 groundColor = reflectance.rgb * (max(muS, 0.0) * sunLight + groundSkyLight) * ISun / M_PI;\n"
+        "\n"
+        //"        // water specular color due to sunLight\n"
+        //"        if (reflectance.w > 0.0) {\n"
+        //"            vec3 h = normalize(s - v);\n"
+        //"            float fresnel = 0.02 + 0.98 * pow(1.0 - dot(-v, h), 5.0);\n"
+        //"            float waterBrdf = fresnel * pow(max(dot(h, n), 0.0), 150.0);\n"
+        //"            groundColor += reflectance.w * max(waterBrdf, 0.0) * sunLight * ISun;\n"
+        //"        }\n"
+        //"\n"
+        "        result = attenuation * groundColor;\n" // = R[L0] + R[L*]
+        "    } else { // ray looking at the sky\n"
+        "        result = vec3(0.0);\n"
+        "    }\n"
+        "    return result;\n"
+        "}\n"
+        "\n"
+
+        // direct sun light for ray x+tv, when sun in direction s (=L0)
+        "vec3 sunColor(vec3 x, float t, vec3 v, vec3 s, float r, float mu) {\n"
+        "    if (t > 0.0) {\n"
+        "        return vec3(0.0);\n"
+        "    } else {\n"
+        "        vec3 transmittance = r <= Rt ? transmittanceWithShadow(r, mu) : vec3(1.0);\n" // T(x, xo)
+        "        float isun = step(cos(sun.a), dot(v, s)) * ISun;\n" // Lsun
+        "        return transmittance * isun;\n" // Eq (9)
+        "    }\n"
+        "}\n"
+        "\n"
+
+        "void main() {\n"
+        "    vec3 x = vec3(Rg + altitude, 0.0, 0.0);\n"
+        "    vec3 v = normalize(m_ray.zyx);\n"
+        "    vec3 s = normalize(sun.zyx);\n"
+        "\n"
+        "    float r = length(x);\n"
+        "    float mu = dot(x, v) / r;\n"
+        "    float t = -r * mu - sqrt(r * r * (mu * mu - 1.0) + Rg * Rg);\n"
+        "\n"
+        "    vec3 g = x - vec3(0.0, 0.0, Rg + 10.0);\n"
+        "    float a = v.x * v.x + v.y * v.y - v.z * v.z;\n"
+        "    float b = 2.0 * (g.x * v.x + g.y * v.y - g.z * v.z);\n"
+        "    float c = g.x * g.x + g.y * g.y - g.z * g.z;\n"
+        "    float d = -(b + sqrt(b * b - 4.0 * a * c)) / (2.0 * a);\n"
+        "    bool cone = d > 0.0 && abs(x.z + d * v.z - Rg) <= 10.0;\n"
+        "\n"
+        "    if (t > 0.0) {\n"
+        "        if (cone && d < t) {\n"
+        "            t = d;\n"
+        "        }\n"
+        "    } else if (cone) {\n"
+        "        t = d;\n"
+        "    }\n"
+        "\n"
+        "    vec3 attenuation;\n"
+        "    vec3 inscatterColor = inscatter(x, t, v, s, r, mu, attenuation);\n" // S[L]  - T(x, xs) S[l] | xs"
+        "    vec3 groundColor = groundColor(x, t, v, s, r, mu, attenuation);\n"  // R[L0] + R[L*]
+        "    vec3 sunColor = sunColor(x, t, v, s, r, mu);\n" // L0
+        "    gl_FragColor = vec4(HDR(sunColor + groundColor + inscatterColor), 1.0);\n" // Eq (16)
+        "}\n";
 }

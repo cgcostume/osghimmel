@@ -28,17 +28,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __ATMOSPHERE_H__
-#define __ATMOSPHERE_H__
+#ifndef __ATMOSPHEREGEODE_H__
+#define __ATMOSPHEREGEODE_H__
 
-#include <osg/Geode>
+#include <osg/Group>
 
+namespace osg
+{
+    class Texture2D;
+    class Texture3D;
+}
 
+class AtmospherePrecompute;
 class Himmel;
 class HimmelQuad;
 
 
-class AtmosphereGeode : public osg::Geode
+class AtmosphereGeode : public osg::Group
 {
 public:
 
@@ -46,11 +52,17 @@ public:
     virtual ~AtmosphereGeode();
 
     void update(const Himmel &himmel);
+    //void precompute();
 
 
-    const float setDitheringMultiplier(const float multiplier);
-    const float getDitheringMultiplier() const;
-    static const float defaultDitheringMultiplier();
+    const float setSunScale(const float scale);
+    const float getSunScale() const;
+    static const float defaultSunScale();
+
+    const float setAltitude(const float altitude);
+    const float getAltitude() const;
+    static const float defaultAltitude();
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 
@@ -66,6 +78,7 @@ protected:
     void setupNode    (osg::StateSet* stateSet);
     void setupTextures(osg::StateSet* stateSet);
     void setupShader  (osg::StateSet* stateSet);
+    void updateShader (osg::StateSet* stateSet);
 
     const std::string getVertexShaderSource();
     const std::string getFragmentShaderSource();
@@ -74,13 +87,20 @@ protected:
 
     HimmelQuad *m_hquad;
 
+    AtmospherePrecompute *m_precompute;
+
+    osg::Texture2D *m_transmittance;
+    osg::Texture2D *m_irradiance;
+    osg::Texture3D *m_inscatter;
+
     osg::Program *m_program;
     osg::Shader *m_vShader;
     osg::Shader *m_fShader;
 
     osg::ref_ptr<osg::Uniform> u_sun;
-    osg::ref_ptr<osg::Uniform> u_ditheringMultiplier;
+    osg::ref_ptr<osg::Uniform> u_altitude; // above mean sea level in km
 
+    float m_scale;
 };
 
-#endif // __ATMOSPHERE_H__
+#endif // __ATMOSPHEREGEODE_H__

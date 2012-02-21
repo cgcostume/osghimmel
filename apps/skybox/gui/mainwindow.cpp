@@ -127,6 +127,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_ui->centralWidget, SIGNAL(widgetResized(unsigned int, unsigned int))
         , this, SLOT(hintViewSize(unsigned int, unsigned int)));
+
+
+    on_proceduralHimmelAction_triggered(true);
 }
 
 
