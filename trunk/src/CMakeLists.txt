@@ -38,6 +38,7 @@ set(LIB_SOURCES
     astronomyla.cpp
     atime.cpp
     atmospheregeode.cpp
+	atmosphereprecompute.cpp
     brightstars.cpp
     coords.cpp
     cubemappedhimmel.cpp
@@ -72,6 +73,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/astronomyla.h
     ${HEADER_PATH}/atime.h
     ${HEADER_PATH}/atmospheregeode.h
+	${HEADER_PATH}/atmosphereprecompute.h
     ${HEADER_PATH}/brightstars.h
     ${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h

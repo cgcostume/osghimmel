@@ -131,7 +131,7 @@ void QOsgWidget::createContext()
     traits->doubleBuffer = true;
     traits->sharedContext = 0;
     traits->sampleBuffers = 1; //ds->getMultiSamples();
-    traits->samples = 1;    // TODO: make adjustable
+    traits->samples = 16;    // TODO: make adjustable
 
     traits->setInheritedWindowPixelFormat = true;
 
@@ -147,7 +147,7 @@ void QOsgWidget::createContext()
 
     traits->vsync = false;  // Do not force vsync here (let driver decide).
 
-     osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+    osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
     m_gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
 }
 
