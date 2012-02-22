@@ -458,7 +458,10 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    diffuse += sunShine.w * sunShine.rgb * F;\n"
         "    diffuse *= c.a;\n"
         "\n"
-        "    gl_FragColor = vec4(diffuse, 1.0);\n"
+            // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
+        "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
+        "\n"
+        "    gl_FragColor = vec4(diffuse * b, 1.0);\n"
         "}\n\n";
 
 

@@ -443,7 +443,10 @@ const std::string StarsGeode::getVertexShaderSource()
         "    vec3 c = mix(gl_Color.rgb, color.rgb, color.a)\n"
         "        - lambda * (w1 * 0.25 + w2);\n"
         "\n"
-        "    m_color = vec4(c, scaledB - w1);\n"
+            // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
+        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.2, 16));\n"
+        "\n"
+        "    m_color = vec4(c, scaledB - w1) * b;\n"
         "\n"
         "    gl_Position = v;\n"
         "}\n\n";
