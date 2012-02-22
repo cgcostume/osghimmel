@@ -111,6 +111,8 @@ protected:
 
 protected:
 
+    osg::ref_ptr<osg::Uniform> u_sun;
+
     AbstractAstronomy *m_astronomy;
 
     osg::ref_ptr<AtmosphereGeode> m_atmosphere;

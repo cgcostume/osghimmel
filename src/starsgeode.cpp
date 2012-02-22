@@ -399,6 +399,8 @@ const std::string StarsGeode::getVertexShaderSource()
 
     return glsl_version_150 +
 
+        "uniform vec3 sun;\n"
+        "\n"
         "uniform mat4 R;\n" // rgb and alpha for mix
         "uniform vec4 color;\n" // rgb and alpha for mix
         "\n"

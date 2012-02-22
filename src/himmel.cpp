@@ -71,10 +71,15 @@ Himmel::Himmel(
 ,   m_stars(stars)
 ,   m_atmosphere(atmosphere)
 ,   m_astronomy(astronomy)
+
+,   u_sun(NULL)
 {
     setCullingActive(false);
 
     addAntiCull(); // Required to be added prior to milkyway.
+
+    u_sun = new osg::Uniform("sun", osg::Vec3(0.0, 0.0, 0.0));
+    getOrCreateStateSet()->addUniform(u_sun);
 
     if(m_milkyway)
         addChild(m_milkyway);
@@ -145,6 +150,9 @@ void Himmel::update()
     if(isDirty())
     {
         astro()->update(t_aTime::fromTimeF(*getTime()));
+
+        osg::Vec3 sunv = astro()->getSunPosition();
+        u_sun->set(sunv);
 
         if(m_milkyway)
             m_milkyway->update(*this);

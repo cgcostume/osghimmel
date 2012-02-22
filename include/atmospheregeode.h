@@ -63,6 +63,27 @@ public:
     const float getAltitude() const;
     static const float defaultAltitude();
 
+    const float setExposure(const float exposure);
+    const float getExposure() const;
+    static const float defaultExposure();
+
+    const osg::Vec3 setLHeureBleueColor(const osg::Vec3 &color);
+    const osg::Vec3 getLHeureBleueColor() const;
+    static const osg::Vec3 defaultLHeureBleueColor();
+    
+    const float setLHeureBleueIntensity(const float intensity);
+    const float getLHeureBleueIntensity() const;
+    static const float defaultLHeureBleueIntensity();
+
+
+    void setPlanetGroundRadius(const float radius); 
+    void setPlanetTroposphereRadius(const float radius); 
+    void setAverageGroundReflectance(const float reflectance); // [0;1]
+    void setThicknessRayleigh(const float thickness); 
+    void setScatteringRayleigh(const osg::Vec3 &coefficients); 
+    void setThicknessMie(const float thickness); 
+    void setScatteringMie(const float coefficient); 
+    void setPhaseG(const float g);  // [-1;+1]
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 
@@ -73,6 +94,8 @@ public:
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
+
+    void precompute();
 
     void setupUniforms(osg::StateSet* stateSet);
     void setupNode    (osg::StateSet* stateSet);
@@ -97,8 +120,10 @@ protected:
     osg::Shader *m_vShader;
     osg::Shader *m_fShader;
 
-    osg::ref_ptr<osg::Uniform> u_sun;
+    osg::ref_ptr<osg::Uniform> u_sunScale;
     osg::ref_ptr<osg::Uniform> u_altitude; // above mean sea level in km
+    osg::ref_ptr<osg::Uniform> u_exposure;
+    osg::ref_ptr<osg::Uniform> u_lheurebleue;
 
     float m_scale;
 };

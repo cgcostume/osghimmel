@@ -58,7 +58,6 @@ MoonGeode::MoonGeode(const std::string &cubeMapFilePath)
 ,   m_hquad(new HimmelQuad())
 
 ,   u_moon(NULL)
-,   u_sun(NULL)
 ,   u_moonCube(NULL)
 ,   u_R(NULL)
 ,   u_sunShine(NULL)    // [0,1,2] = color; [3] = intensity
@@ -90,8 +89,6 @@ void MoonGeode::update(const Himmel &himmel)
     osg::Vec3 moonv = himmel.astro()->getMoonPosition();
     u_moon->set(osg::Vec4(moonv, himmel.astro()->getAngularMoonRadius() * m_scale));
 
-    u_sun->set(himmel.astro()->getSunPosition());
-
     // HACK: just orient the moon towards the earth. 
     // TODO: apply optical libration and real phase of the moon.
     u_R->set(osg::Matrix::rotate(osg::Vec3(0.0, 1.0, 0.0), moonv));
@@ -100,9 +97,6 @@ void MoonGeode::update(const Himmel &himmel)
 
 void MoonGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    u_sun = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 0.0)); 
-    stateSet->addUniform(u_sun);
-
     u_moon = new osg::Uniform("moon", osg::Vec4(0.0, 0.0, 1.0, 1.0)); // [3] = apparent angular radius (not diameter!)
     stateSet->addUniform(u_moon);
 
@@ -373,11 +367,11 @@ const std::string MoonGeode::getFragmentShaderSource()
 {
     return glsl_version_150 +
     
+        "uniform vec3 sun;\n"
+        "\n"
         // moon.xyz is expected to be normalized and moon.a the moons
         // angular diameter in rad.
         "uniform vec4 moon;\n" 
-        "\n"
-        "uniform vec3 sun;\n" // Expected to be normalized.
         "\n"
         "uniform samplerCube moonCube;\n"
         "\n"

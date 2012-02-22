@@ -60,8 +60,10 @@ AtmosphereGeode::AtmosphereGeode()
 ,   m_irradiance(NULL)
 ,   m_inscatter(NULL)
 
-,   u_sun(NULL)
+,   u_sunScale(NULL)
 ,   u_altitude(NULL)
+,   u_lheurebleue(NULL)
+,   u_exposure(NULL)
 {
     setName("Atmosphere");
 
@@ -70,14 +72,13 @@ AtmosphereGeode::AtmosphereGeode()
     osg::StateSet* stateSet = getOrCreateStateSet();
 
     m_precompute = new AtmospherePrecompute();
-    m_precompute->compute();
 
     setupNode(stateSet);
     setupUniforms(stateSet);
     setupShader(stateSet);
     setupTextures(stateSet);
 
-//    precompute();
+    precompute();
 
     osg::Geode *geode = new osg::Geode;
     geode->addDrawable(m_hquad);
@@ -93,10 +94,9 @@ AtmosphereGeode::~AtmosphereGeode()
 
 void AtmosphereGeode::update(const Himmel &himmel)
 {
-    osg::Vec3 sunv = himmel.astro()->getSunPosition();
-    u_sun->set(osg::Vec4(sunv, himmel.astro()->getAngularSunRadius() * m_scale));
+    u_sunScale->set(himmel.astro()->getAngularSunRadius() * m_scale);
 
-//    precompute();
+    precompute();
 }
 
 
@@ -152,11 +152,20 @@ osg::Shader *AtmosphereGeode::fragmentShader()
 
 void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    u_sun = new osg::Uniform("sun", osg::Vec4(1.0, 0.0, 0.0, 1.0)); // [3] = apparent angular radius (not diameter!)
-    stateSet->addUniform(u_sun);
+    u_sunScale = new osg::Uniform("sunScale", 1.f); // apparent angular radius (not diameter!)
+    stateSet->addUniform(u_sunScale);
 
     u_altitude = new osg::Uniform("altitude", defaultAltitude());
     stateSet->addUniform(u_altitude);
+
+    u_exposure = new osg::Uniform("exposure", defaultExposure());
+    stateSet->addUniform(u_exposure);
+
+    const osg::Vec3f hb(defaultLHeureBleueColor());
+
+    u_lheurebleue = new osg::Uniform("lheurebleue", osg::Vec4(hb._v[0], hb._v[1], hb._v[2], defaultLHeureBleueIntensity()));
+    stateSet->addUniform(u_lheurebleue);
+    
 }
 
 
@@ -179,20 +188,20 @@ void AtmosphereGeode::setupTextures(osg::StateSet* stateSet)
 }
 
 
-//void AtmosphereGeode::precompute()
-//{
-//    m_precompute->compute();
-//    updateShader(getOrCreateStateSet());
-//}
+void AtmosphereGeode::precompute()
+{
+    m_precompute->compute();
+    updateShader(getOrCreateStateSet());
+}
 
 
 const float AtmosphereGeode::setSunScale(const float scale)
 {
-    osg::Vec4 temp;
-    u_sun->get(temp);
+    float temp;
+    u_sunScale->get(temp);
 
-    temp._v[3] = temp._v[3] / m_scale * scale;
-    u_sun->set(temp);
+    temp = temp / m_scale * scale;
+    u_sunScale->set(temp);
 
     m_scale = scale;
 
@@ -226,6 +235,127 @@ const float AtmosphereGeode::getAltitude() const
 const float AtmosphereGeode::defaultAltitude()
 {
     return 0.2f;
+}
+
+
+const float AtmosphereGeode::setExposure(const float exposure)
+{
+    u_exposure->set(exposure);
+    return getExposure();
+}
+
+const float AtmosphereGeode::getExposure() const
+{
+    float exposure;
+    u_exposure->get(exposure);
+    return exposure;
+}
+
+const float AtmosphereGeode::defaultExposure()
+{
+    return 0.4f;
+}
+
+
+const osg::Vec3 AtmosphereGeode::setLHeureBleueColor(const osg::Vec3 &color)
+{
+    osg::Vec4 temp;
+    u_lheurebleue->get(temp);
+
+    temp._v[0] = color._v[0];
+    temp._v[1] = color._v[1];
+    temp._v[2] = color._v[2];
+
+    u_lheurebleue->set(temp);
+
+    return getLHeureBleueColor();
+}
+
+const osg::Vec3 AtmosphereGeode::getLHeureBleueColor() const
+{
+    osg::Vec4 temp;
+    u_lheurebleue->get(temp);
+    return osg::Vec3(temp._v[0], temp._v[1], temp._v[2]);
+}
+
+const osg::Vec3 AtmosphereGeode::defaultLHeureBleueColor()
+{
+    return osg::Vec3(0.0, 0.1, 0.8);
+}
+
+
+const float AtmosphereGeode::setLHeureBleueIntensity(const float intensity)
+{
+    osg::Vec4 temp;
+    u_lheurebleue->get(temp);
+
+    temp._v[3] = intensity;
+    u_lheurebleue->set(temp);
+
+    return getLHeureBleueIntensity();
+}
+
+const float AtmosphereGeode::getLHeureBleueIntensity() const
+{
+    osg::Vec4 temp;
+    u_lheurebleue->get(temp);
+    return temp._v[3];
+}
+
+const float AtmosphereGeode::defaultLHeureBleueIntensity()
+{
+    return 0.5f;
+}
+
+
+void AtmosphereGeode::setPlanetGroundRadius(const float radius)
+{
+    m_precompute->getModelConfig().Rg = radius;
+    m_precompute->dirty();
+}
+
+void AtmosphereGeode::setPlanetTroposphereRadius(const float radius)
+{
+    m_precompute->getModelConfig().Rt = radius;
+    m_precompute->getModelConfig().RL = radius + 1.0;
+    m_precompute->dirty();
+}
+
+void AtmosphereGeode::setAverageGroundReflectance(const float reflectance)
+{
+    m_precompute->getModelConfig().avgGroundReflectance = reflectance;
+    m_precompute->dirty();
+}
+
+void AtmosphereGeode::setThicknessRayleigh(const float thickness)
+{
+    m_precompute->getModelConfig().HR = thickness;
+    m_precompute->dirty();
+}
+
+void AtmosphereGeode::setScatteringRayleigh(const osg::Vec3 &coefficients)
+{
+    m_precompute->getModelConfig().betaR = coefficients;
+    m_precompute->dirty();
+}
+
+void AtmosphereGeode::setThicknessMie(const float thickness)
+{
+    m_precompute->getModelConfig().HM = thickness;
+    m_precompute->dirty();
+}
+
+void AtmosphereGeode::setScatteringMie(const float coefficient)
+{
+    m_precompute->getModelConfig().betaMSca = osg::Vec3f(1, 1, 1) * coefficient;
+    m_precompute->getModelConfig().betaMEx = m_precompute->getModelConfig().betaMSca / 0.9;
+    m_precompute->dirty();
+}
+
+void AtmosphereGeode::setPhaseG(const float g)
+{
+    m_precompute->getModelConfig().mieG = g;
+    m_precompute->dirty();
 }
 
 
@@ -274,8 +404,11 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "\n"
         //"uniform vec3 c = vec3(Rg + 0.2, 0.0, 0.0);\n"
         "uniform float altitude;\n"
-        "uniform vec4 sun;\n"
-        "uniform float exposure = 0.4;\n"
+        "uniform vec3 sun;\n"
+        "uniform float sunScale;\n"
+        "uniform float exposure;\n"
+        "\n"
+        "uniform vec4 lheurebleue;\n" // rgb and w for instensity
         "\n"
 
         //"uniform sampler2D reflectanceSampler;\n" // ground reflectance texture
@@ -419,7 +552,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "        return vec3(0.0);\n"
         "    } else {\n"
         "        vec3 transmittance = r <= Rt ? transmittanceWithShadow(r, mu) : vec3(1.0);\n" // T(x, xo)
-        "        float isun = step(cos(sun.a), dot(v, s)) * ISun;\n" // Lsun
+        "        float isun = step(cos(sunScale), dot(v, s)) * ISun;\n" // Lsun
         "        return transmittance * isun;\n" // Eq (9)
         "    }\n"
         "}\n"
@@ -453,6 +586,15 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    vec3 inscatterColor = inscatter(x, t, v, s, r, mu, attenuation);\n" // S[L]  - T(x, xs) S[l] | xs"
         "    vec3 groundColor = groundColor(x, t, v, s, r, mu, attenuation);\n"  // R[L0] + R[L*]
         "    vec3 sunColor = sunColor(x, t, v, s, r, mu);\n" // L0
-        "    gl_FragColor = vec4(HDR(sunColor + groundColor + inscatterColor), 1.0);\n" // Eq (16)
+        "\n"
+
+            // l'heure bleue (blaue stunde des ozons)
+
+            // gauss between -12° and +0° sun altitude (Civil & Nautical twilight) 
+            // http://en.wikipedia.org/wiki/Twilight
+        "    float hb = exp(-pow(sun.z + 0.1, 2.0) * 166);\n" 
+        "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(v, s) + 1.5) * hb * mu;\n"
+
+        "    gl_FragColor = vec4(HDR(bluehour + sunColor + groundColor + inscatterColor), 1.0);\n" // Eq (16)
         "}\n";
 }
