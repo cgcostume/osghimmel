@@ -53,7 +53,7 @@ namespace
         "\n"
         // A ditheringMultiplier of 1 will add frame to frame coherent noise for each pixel of about +-1.
         // The average brightness of the rendering will roughly remain unchanged.
-        "    return (vec4(v % uvec4(853)) - 241 - multiplier * 1.41) * 0.00001 * ditheringMultiplier;\n"
+        "    return (vec4(v % uvec4(853)) - 241 - multiplier * 1.41) * 0.00001 * multiplier;\n"
         "}\n\n"
     );
 }
