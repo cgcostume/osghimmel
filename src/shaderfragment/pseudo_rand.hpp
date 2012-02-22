@@ -53,13 +53,13 @@ namespace
 {
     static const std::string glsl_pseudo_rand
     (
-        "float pseudo_rand(vec2 seed)\n"
+        "float pseudo_rand(vec2 s)\n"
         "{\n"
-        "    int i1 = int(seed.x + seed.y * 1733);\n"
-        "    i1 = (i1 << 7) ^ i1 + osg_FrameNumber;\n"  // seed
+        "    int i1 = int(s.x + s.y * 1733);\n"
+        "    i1 = (i1 << 7) ^ i1 + seed;\n"  // seed
         "\n"
-        "    int i2 = int(seed.y + seed.x * 1103);\n"
-        "    i2 = (i2 << 7) ^ i2 + osg_FrameNumber;\n"  // seed
+        "    int i2 = int(s.y + s.x * 1103);\n"
+        "    i2 = (i2 << 7) ^ i2 + seed;\n"  // seed
         "\n"
         "    i1 ^= i2;\n"
         "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
