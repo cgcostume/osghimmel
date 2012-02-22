@@ -103,16 +103,16 @@ public:
 
     } t_modelCfg;
 
+    t_modelCfg &getModelConfig()
+    {
+        return m_modelCfg;
+    }
+
 protected:
 
     t_preTexCfg &getTextureConfig()
     {
         return m_preTexCfg;
-    }
-
-    t_modelCfg &getModelConfig()
-    {
-        return m_modelCfg;
     }
 
 protected:
@@ -131,7 +131,8 @@ public:
     osg::Texture2D *getIrradianceTexture();
     osg::Texture3D *getInscatterTexture();
 
-    void compute();
+    void compute(const bool ifDirtyOnly = true);
+    void dirty();
 
     void substituteMacros(std::string &source);
 
@@ -165,7 +166,7 @@ protected:
     ,   const int depth
     ,   osg::Image *image = NULL);
 
-    osg::Image* getLayerFrom3DImage(
+    osg::Image *getLayerFrom3DImage(
         osg::Image *source
     ,   const int layer);
 
@@ -197,6 +198,9 @@ protected:
         osg::StateSet *stateSet
     ,   t_tex2DsByUnit &samplers2D
     ,   t_tex3DsByUnit &samplers3D);
+
+    void dirtyTargets(t_tex2DsByUnit &targets2D);
+    void dirtyTargets(t_tex3DsByUnit &targets3D);
 
     void render2D(
         osgViewer::CompositeViewer *viewer
@@ -240,6 +244,8 @@ protected:
     ,   const std::string &replace);
 
 protected:
+
+    bool m_dirty;
 
     t_preTexCfg m_preTexCfg;
     t_modelCfg m_modelCfg;

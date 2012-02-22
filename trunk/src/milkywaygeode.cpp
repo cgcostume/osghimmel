@@ -308,6 +308,8 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
 {
     return glsl_version_150 +
 
+        "uniform vec3 sun;\n"
+        "\n"
         "uniform vec4 color;\n"
         "\n"
         "uniform float scaledB;\n"

@@ -98,7 +98,6 @@ protected:
     osg::Shader *m_vShader;
     osg::Shader *m_fShader;
 
-    osg::ref_ptr<osg::Uniform> u_sun;
     osg::ref_ptr<osg::Uniform> u_moon;
 
     osg::ref_ptr<osg::Uniform> u_moonCube;

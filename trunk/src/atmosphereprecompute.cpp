@@ -57,6 +57,7 @@ AtmospherePrecompute::AtmospherePrecompute()
 :   m_transmittanceImage(new osg::Image)
 ,   m_irradianceImage(new osg::Image)
 ,   m_inscatterImage(new osg::Image)
+,   m_dirty(true)
 {
     m_preTexCfg.transmittanceWidth  = 256;
     m_preTexCfg.transmittanceHeight =  64;
@@ -124,8 +125,21 @@ osg::Texture3D *AtmospherePrecompute::getInscatterTexture()
 }
 
 
-void AtmospherePrecompute::compute()
+void AtmospherePrecompute::dirty()
 {
+    if(!m_dirty)
+        m_dirty = true;
+}
+
+
+void AtmospherePrecompute::compute(const bool ifDirtyOnly)
+{
+    if(ifDirtyOnly && !m_dirty)
+        return;
+
+    m_dirty = false;
+
+
     osg::Timer_t t = osg::Timer::instance()->tick();
 
     // Setup Viewer
@@ -203,7 +217,7 @@ void AtmospherePrecompute::compute()
      
     // loop for each scattering order (line 6 in algorithm 4.1)
 
-    for(int order = 2; order <= 3; ++order)
+    for(int order = 2; order <= 4; ++order)
     {
         const float first = order == 2 ? 1.f : 0.f;
 
@@ -413,7 +427,7 @@ osg::Texture3D *AtmospherePrecompute::setupTexture3D(
 // required for rendering into a Texture3D based on its image
 // (at least when using one camera per layer...).
 
-osg::Image* AtmospherePrecompute::getLayerFrom3DImage(
+osg::Image *AtmospherePrecompute::getLayerFrom3DImage(
     osg::Image *source
 ,   const int layer)
 {
@@ -422,6 +436,7 @@ osg::Image* AtmospherePrecompute::getLayerFrom3DImage(
     osg::Image *image(new osg::Image());
 
     unsigned char *data = source->data(0, 0, layer);
+
     image->setImage(source->s(), source->t(), 1
         , source->getInternalTextureFormat()
         , source ->getPixelFormat()
@@ -449,8 +464,15 @@ void AtmospherePrecompute::setupLayerUniforms(
     double dminp = r - getModelConfig().Rg;
     double dmaxp = sqrt(r * r - Rg2);
 
-    stateSet->addUniform(new osg::Uniform("r", static_cast<float>(r)));
-    stateSet->addUniform(new osg::Uniform("dhdH", osg::Vec4(dmin, dmax, dminp, dmaxp)));
+    if(stateSet->getUniform("r"))
+        stateSet->getUniform("r")->set(static_cast<float>(r));
+    else
+        stateSet->addUniform(new osg::Uniform("r", static_cast<float>(r)));
+
+    if(stateSet->getUniform("dhdH"))
+        stateSet->getUniform("dhdH")->set(osg::Vec4(dmin, dmax, dminp, dmaxp));
+    else
+        stateSet->addUniform(new osg::Uniform("dhdH", osg::Vec4(dmin, dmax, dminp, dmaxp)));
 }
 
 
@@ -505,11 +527,38 @@ osg::Group *AtmospherePrecompute::setupGroup(
 }
 
 
+void AtmospherePrecompute::dirtyTargets(t_tex2DsByUnit &targets2D)
+{
+    t_tex2DsByUnit::const_iterator i2 = targets2D.begin();
+    const t_tex2DsByUnit::const_iterator t2End = targets2D.end();
+
+    for(; i2 != t2End; ++i2)
+    {
+        if(i2->second->getImage())
+            i2->second->getImage()->dirty();
+    }
+}
+
+
+void AtmospherePrecompute::dirtyTargets(t_tex3DsByUnit &targets3D)
+{
+    t_tex3DsByUnit::const_iterator i3 = targets3D.begin();
+    const t_tex3DsByUnit::const_iterator t3End = targets3D.end();
+
+    for(; i3 != t3End; ++i3)
+    {
+        if(i3->second->getImage())
+            i3->second->getImage()->dirty();
+    }
+}
+
+
 void AtmospherePrecompute::cleanUp(
     osgViewer::CompositeViewer *viewer)
 {
     osg::Group *root(dynamic_cast<osg::Group*>(viewer->getView(0)->getSceneData()));
     root->removeChildren(0, root->getNumChildren());
+    assert(root->getNumChildren() == 0);
 }
 
 
@@ -596,6 +645,9 @@ void AtmospherePrecompute::render2D(
     osg::StateSet *ss(group->getOrCreateStateSet());
     ss->setAttributeAndModes(program);
 
+    assignSamplers(ss, samplers2D, samplers3D);
+    assignUniforms(ss, uniforms);
+
     // Setup local camera
 
     osg::ref_ptr<osg::Camera> camera = setupCamera(width, height, geode, 0);
@@ -611,15 +663,14 @@ void AtmospherePrecompute::render2D(
         else
             camera->attach(static_cast<osg::Camera::BufferComponent>(osg::Camera::COLOR_BUFFER0 + i2->first), i2->second);
     }
-    targets2D.clear();
-
-    assignSamplers(ss, samplers2D, samplers3D);
-    assignUniforms(ss, uniforms);
 
     //
 
     viewer->frame(); // Render single frame
     cleanUp(viewer);
+
+    dirtyTargets(targets2D);
+    targets2D.clear();
 }
 
 
@@ -657,15 +708,16 @@ void AtmospherePrecompute::render3D(
     osg::StateSet *ss(group->getOrCreateStateSet());
     ss->setAttributeAndModes(program);
 
-    // 
+    assignSamplers(ss, samplers2D, samplers3D);
+    assignUniforms(ss, uniforms);
 
-    int orderNum = 0;
+    // 
 
     for(int layer = 0; layer < depth; ++layer)
     {
         // Setup local camera
 
-        osg::ref_ptr<osg::Camera> camera = setupCamera(width, height, geode, orderNum++);
+        osg::ref_ptr<osg::Camera> camera = setupCamera(width, height, geode, layer);
         group->addChild(camera.get());
 
         setupLayerUniforms(camera->getOrCreateStateSet(), depth, layer);
@@ -677,20 +729,18 @@ void AtmospherePrecompute::render3D(
             if(i3->second->getImage())
             {
                 // workaround: use a slice here instead of the whole image, since osg does not support this directly...
-                osg::Image *imageLayer = getLayerFrom3DImage(i3->second->getImage(), layer);
-                camera->attach(static_cast<osg::Camera::BufferComponent>(osg::Camera::COLOR_BUFFER0 + i3->first), imageLayer);
+                osg::Image *slice = getLayerFrom3DImage(i3->second->getImage(), layer);
+                camera->attach(static_cast<osg::Camera::BufferComponent>(osg::Camera::COLOR_BUFFER0 + i3->first), slice);
             }
             else
                 camera->attach(static_cast<osg::Camera::BufferComponent>(osg::Camera::COLOR_BUFFER0 + i3->first), i3->second, 0U, layer);
         }
     }
-    targets3D.clear();
-
-    assignSamplers(ss, samplers2D, samplers3D);
-    assignUniforms(ss, uniforms);
-
     viewer->frame(); // Render single frame
     cleanUp(viewer);
+
+    dirtyTargets(targets3D);
+    targets3D.clear();
 }
 
 
