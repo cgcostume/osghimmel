@@ -132,10 +132,10 @@ void AtmospherePrecompute::dirty()
 }
 
 
-void AtmospherePrecompute::compute(const bool ifDirtyOnly)
+const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
 {
     if(ifDirtyOnly && !m_dirty)
-        return;
+        return false;
 
     m_dirty = false;
 
@@ -156,7 +156,7 @@ void AtmospherePrecompute::compute(const bool ifDirtyOnly)
     if(!gc->valid())
     {
         OSG_FATAL << "Initialize PBuffer graphics context failed" << std::endl;
-        return;
+        return false;
     }
 
 
@@ -278,6 +278,8 @@ void AtmospherePrecompute::compute(const bool ifDirtyOnly)
 
     OSG_NOTICE << "Atmopshere Precomputed (took " 
         << osg::Timer::instance()->delta_s(t,  osg::Timer::instance()->tick()) << " s)" << std::endl;
+
+    return true;
 }
 
 

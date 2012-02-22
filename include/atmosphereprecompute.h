@@ -131,7 +131,7 @@ public:
     osg::Texture2D *getIrradianceTexture();
     osg::Texture3D *getInscatterTexture();
 
-    void compute(const bool ifDirtyOnly = true);
+    const bool compute(const bool ifDirtyOnly = true);
     void dirty();
 
     void substituteMacros(std::string &source);

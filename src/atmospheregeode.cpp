@@ -189,9 +189,9 @@ void AtmosphereGeode::setupTextures(osg::StateSet* stateSet)
 
 
 void AtmosphereGeode::precompute()
-{
-    m_precompute->compute();
-    updateShader(getOrCreateStateSet());
+{   
+    if(m_precompute->compute())
+        updateShader(getOrCreateStateSet());
 }
 
 
@@ -592,7 +592,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
 
             // gauss between -12° and +0° sun altitude (Civil & Nautical twilight) 
             // http://en.wikipedia.org/wiki/Twilight
-        "    float hb = exp(-pow(sun.z + 0.1, 2.0) * 166);\n" 
+        "    float hb = exp(-pow(sun.z + 0.1, 2.0) * 166) + 0.1;\n"     // the +0.1 is for a slight blueish tint at night
         "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(v, s) + 1.5) * hb * mu;\n"
 
         "    gl_FragColor = vec4(HDR(bluehour + sunColor + groundColor + inscatterColor), 1.0);\n" // Eq (16)
