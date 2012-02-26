@@ -58,6 +58,9 @@ Himmel *Himmel::create()
     ,   new Astronomy());
 }
 
+// TODO: remove
+osg::ref_ptr<osg::Uniform> useed = new osg::Uniform("seed", 0);
+
 
 Himmel::Himmel(
     MilkyWayGeode *milkyWay
@@ -80,6 +83,8 @@ Himmel::Himmel(
 
     u_sun = new osg::Uniform("sun", osg::Vec3(0.0, 0.0, 0.0));
     getOrCreateStateSet()->addUniform(u_sun);
+
+    getOrCreateStateSet()->addUniform(useed);
 
     if(m_milkyway)
         addChild(m_milkyway);
@@ -142,10 +147,11 @@ void Himmel::registerShader() const
 
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
-
 void Himmel::update()
 {
     AbstractHimmel::update();
+
+    useed->set(rand());
 
     if(isDirty())
     {

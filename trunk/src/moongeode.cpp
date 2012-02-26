@@ -319,7 +319,7 @@ const float MoonGeode::getEarthShineIntensity() const
 
 const float MoonGeode::defaultEarthShineIntensity()
 {
-    return 0.5f;
+    return 0.2f;
 }
 
 

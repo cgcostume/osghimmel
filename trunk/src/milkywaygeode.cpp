@@ -334,7 +334,7 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "        * scaledB - w1 * (.125 + lambda);\n"
         "\n"
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
-        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.2, 16));\n"
+        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    gl_FragColor = vec4(c * b, 1.0);\n"
         "}\n\n";

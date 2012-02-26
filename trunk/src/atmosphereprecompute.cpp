@@ -86,9 +86,9 @@ AtmospherePrecompute::AtmospherePrecompute()
     m_modelCfg.betaR = osg::Vec3f(5.8e-3, 1.35e-2, 3.31e-2);
     
     m_modelCfg.HM = 1.2f;
-    m_modelCfg.betaMSca = osg::Vec3f(1.f, 1.f, 1.f) * 4e-3; 
+    m_modelCfg.betaMSca = osg::Vec3f(1.f, 1.f, 1.f) * 8e-3; 
     m_modelCfg.betaMEx = m_modelCfg.betaMSca / 0.9f;
-    m_modelCfg.mieG = 0.8;
+    m_modelCfg.mieG = 0.76;
 
 
     // Setup Textures

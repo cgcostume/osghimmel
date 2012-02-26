@@ -280,7 +280,7 @@ const osg::Vec3 AtmosphereGeode::getLHeureBleueColor() const
 
 const osg::Vec3 AtmosphereGeode::defaultLHeureBleueColor()
 {
-    return osg::Vec3(0.0, 0.1, 0.8);
+    return osg::Vec3(0.08, 0.3, 1.0);
 }
 
 
@@ -385,12 +385,22 @@ const std::string AtmosphereGeode::getVertexShaderSource()
         "}\n\n";
 }
 
+#include "shaderfragment/pseudo_rand.hpp"
+#include "shaderfragment/dither.hpp"
+
 // FragmentShader
 
 const std::string AtmosphereGeode::getFragmentShaderSource()
 {
     return glsl_version_150
-  
+
+    +
+        "uniform int seed;\n"
+        "\n"
+
+    +   glsl_pseudo_rand
+    +   glsl_dither
+
     +   glsl_bruneton_const_RgRtRL
     +   glsl_bruneton_const_RSize
     +   glsl_bruneton_const_R
@@ -457,15 +467,15 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "            float muS0 = dot(x0, s) / r0;\n"
         //"#ifdef FIX\n"
                     // avoids imprecision problems in transmittance computations based on textures
-        "            attenuation = analyticTransmittance(r, mu, t);\n"
+        //"            attenuation = analyticTransmittance(r, mu, t);\n"
         //"#else\n"
-        //"            attenuation = transmittance(r, mu, v, x0);
+        "            attenuation = transmittance(r, mu, v, x0);\n"
         //"#endif\n"
         "            if (r0 > Rg + 0.01) {\n"
                         // computes S[L]-T(x,x0)S[L]|x0
         "                inscatter = max(inscatter - attenuation.rgbr * texture4D(inscatterSampler, r0, mu0, muS0, nu), 0.0);\n"
         //"#ifdef FIX\n"
-                        // avoids imprecision problems near horizon by interpolating between two points above and below horizon
+        /*                // avoids imprecision problems near horizon by interpolating between two points above and below horizon
         "                const float EPS = 0.004;\n"
         "                float muHoriz = -sqrt(1.0 - (Rg / r) * (Rg / r));\n"
         "                if (abs(mu - muHoriz) < EPS) {\n"
@@ -488,6 +498,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "                    inscatter = mix(inScatterA, inScatterB, a);\n"
         "                }\n"
         //"#endif\n"
+        */
         "            }\n"
         "        }\n"
         //"#ifdef FIX\n"
@@ -505,6 +516,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         // ground radiance at end of ray x+tv, when sun in direction s
         // attenuated bewteen ground and viewer (=R[L0]+R[L*])
 
+        /*        
         "vec3 groundColor(vec3 x, float t, vec3 v, vec3 s, float r, float mu, vec3 attenuation)\n"
         "{\n"
         "    vec3 result;\n"
@@ -545,6 +557,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    return result;\n"
         "}\n"
         "\n"
+        */
 
         // direct sun light for ray x+tv, when sun in direction s (=L0)
         "vec3 sunColor(vec3 x, float t, vec3 v, vec3 s, float r, float mu) {\n"
@@ -584,7 +597,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "\n"
         "    vec3 attenuation;\n"
         "    vec3 inscatterColor = inscatter(x, t, v, s, r, mu, attenuation);\n" // S[L]  - T(x, xs) S[l] | xs"
-        "    vec3 groundColor = groundColor(x, t, v, s, r, mu, attenuation);\n"  // R[L0] + R[L*]
+        //"    vec3 groundColor = groundColor(x, t, v, s, r, mu, attenuation);\n"  // R[L0] + R[L*]
         "    vec3 sunColor = sunColor(x, t, v, s, r, mu);\n" // L0
         "\n"
 
@@ -592,9 +605,9 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
 
             // gauss between -12° and +0° sun altitude (Civil & Nautical twilight) 
             // http://en.wikipedia.org/wiki/Twilight
-        "    float hb = exp(-pow(sun.z + 0.1, 2.0) * 166) + 0.1;\n"     // the +0.1 is for a slight blueish tint at night
-        "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(v, s) + 1.5) * hb * mu;\n"
+        "    float hb = t > 0.0 ? 0.0 : exp(-pow(sun.z, 2.0) * 166) + 0.03;\n"     // the +0.03 is for a slight blueish tint at night
+        "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(v, s) + 1.5) * hb;\n" // * mu (optional..)
 
-        "    gl_FragColor = vec4(HDR(bluehour + sunColor + groundColor + inscatterColor), 1.0);\n" // Eq (16)
+        "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0) + dither(4);\n" // Eq (16)
         "}\n";
 }
