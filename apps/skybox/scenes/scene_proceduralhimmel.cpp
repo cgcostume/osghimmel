@@ -132,8 +132,8 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*proceduralGroup, PROPERTY_ATM_BETARG, 13.5, 0.0, 999.0, 0.1); 
     createProperty(*proceduralGroup, PROPERTY_ATM_BETARB, 33.1, 0.0, 999.0, 0.1); 
     createProperty(*proceduralGroup, PROPERTY_ATM_HM, 1.2, 0.0, 999.0, 0.1); 
-    createProperty(*proceduralGroup, PROPERTY_ATM_BETAM, 4.0, 0.0, 999.0, 0.1); 
-    createProperty(*proceduralGroup, PROPERTY_ATM_MIEG,  0.8, -1.0, 1.0, 0.02); 
+    createProperty(*proceduralGroup, PROPERTY_ATM_BETAM, 8.0, 0.0, 999.0, 0.1); 
+    createProperty(*proceduralGroup, PROPERTY_ATM_MIEG,  0.76, -1.0, 1.0, 0.02); 
 
     QtProperty *moonGroup = createGroup(GROUP_PROCEDURAL_MOON);
 
