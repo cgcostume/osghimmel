@@ -186,8 +186,6 @@ void StarsGeode::setupNode(
 
     osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
     stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
-
-    stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
 }
 
 

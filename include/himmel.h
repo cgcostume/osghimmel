@@ -32,7 +32,7 @@
 #define __PROCEDURALHIMMEL_H__
 
 #include "abstracthimmel.h"
-
+#include "atime.h"
 
 class AbstractAstronomy;
 class AtmosphereGeode;
@@ -90,6 +90,10 @@ public:
     {
         return m_astronomy;
     }
+
+
+    const osg::Vec3 getSunPosition() const;
+    const osg::Vec3 getSunPosition(const t_aTime &aTime) const;
 
 protected:
 

@@ -102,7 +102,7 @@ void AtmosphereGeode::update(const Himmel &himmel)
 
 void AtmosphereGeode::setupNode(osg::StateSet* stateSet)
 {
-    osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);    
+    osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);    
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 
     osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -609,6 +609,6 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(v, s) + 1.5) * hb;\n" // * mu (optional..)
 
         "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0) + dither(4);\n" // Eq (16)
-        "    gl_FragDepth = 1.0;\n"
+        //"    gl_FragDepth = 1.0;\n"
         "}\n";
 }
