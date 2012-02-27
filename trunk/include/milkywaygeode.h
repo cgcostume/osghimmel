@@ -81,7 +81,7 @@ public:
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
-        
+
     void setupUniforms(osg::StateSet* stateSet);
     void setupTextures(
         osg::StateSet* stateSet

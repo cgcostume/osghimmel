@@ -337,5 +337,6 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    gl_FragColor = vec4(c * b, 1.0);\n"
+        "    gl_FragDepth = 1.0;\n"
         "}\n\n";
 }
