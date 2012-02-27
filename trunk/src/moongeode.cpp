@@ -115,13 +115,17 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
     stateSet->addUniform(u_earthShine);
 }
 
+#include <osg/BlendFunc>
 
 void MoonGeode::setupNode(osg::StateSet* stateSet)
 {
-    // This prevents objects rendered afterwards to appear inside the moon.
+//    // This prevents objects rendered afterwards to appear inside the moon.
 
-    osg::Depth* depth = new osg::Depth(osg::Depth::LESS);    
-    stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+    //osg::Depth* depth = new osg::Depth(osg::Depth::LESS);    
+    //stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+    //osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
 
@@ -451,7 +455,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         //"    float op2 = dot(-m, s);
         //"    float Eem = 0.1 * op2 * op2;
 
-        "    gl_FragDepth = 0.99999996;\n"
+        //"    gl_FragDepth = 0.99999996;\n"
         "\n"
         "    vec3 diffuse = vec3(0);\n"
         "    diffuse += earthShine.w * earthShine.rgb * Eem;\n"

@@ -82,6 +82,7 @@ public:
 
 protected:
 
+    void setupNode(osg::StateSet* stateSet);
     void setupUniforms(osg::StateSet* stateSet);
     void setupTextures(
         osg::StateSet* stateSet

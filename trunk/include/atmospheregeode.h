@@ -54,7 +54,6 @@ public:
     void update(const Himmel &himmel);
     //void precompute();
 
-
     const float setSunScale(const float scale);
     const float getSunScale() const;
     static const float defaultSunScale();

@@ -60,10 +60,10 @@ MilkyWayGeode::MilkyWayGeode(const std::string &cubeMapFilePath)
 
     osg::StateSet* stateSet = getOrCreateStateSet();
 
+    setupNode(stateSet);
     setupUniforms(stateSet);
     setupShader(stateSet);
     setupTextures(stateSet, cubeMapFilePath);
-
 
     addDrawable(m_hquad);
 };
@@ -77,6 +77,11 @@ MilkyWayGeode::~MilkyWayGeode()
 void MilkyWayGeode::update(const Himmel &himmel)
 {
     u_R->set(himmel.astro()->equToLocalHorizonMatrix());
+}
+
+
+void MilkyWayGeode::setupNode(osg::StateSet* stateSet)
+{
 }
 
 

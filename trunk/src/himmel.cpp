@@ -61,6 +61,7 @@ Himmel *Himmel::create()
 // TODO: remove
 osg::ref_ptr<osg::Uniform> useed = new osg::Uniform("seed", 0);
 
+#include <osgUtil/RenderBin>
 
 Himmel::Himmel(
     MilkyWayGeode *milkyWay
@@ -77,6 +78,8 @@ Himmel::Himmel(
 
 ,   u_sun(NULL)
 {
+    assert(m_astronomy);
+
     setCullingActive(false);
 
     addAntiCull(); // Required to be added prior to milkyway.
@@ -86,18 +89,32 @@ Himmel::Himmel(
 
     getOrCreateStateSet()->addUniform(useed);
 
-    if(m_milkyway)
-        addChild(m_milkyway);
+    int bin = 0;
 
-    if(m_moon)
-        addChild(m_moon);
+    if(m_milkyway)
+    {
+        addChild(m_milkyway);
+        m_milkyway->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+    }
 
     if(m_stars)
+    {
         addChild(m_stars);
+        m_stars->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+    }
+
+    if(m_moon)
+    {
+        addChild(m_moon);
+        m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+    }
+
 
     if(m_atmosphere)
+    {
         addChild(m_atmosphere);
-
+        m_atmosphere->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+    }
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
     registerShader();
@@ -176,6 +193,21 @@ void Himmel::update()
         if(m_stars)
             m_stars->updateSeed();
     }
+}
+
+
+const osg::Vec3 Himmel::getSunPosition() const
+{
+    osg::Vec3 sunv;
+    u_sun->get(sunv);
+
+    return sunv;
+}
+
+
+const osg::Vec3 Himmel::getSunPosition(const t_aTime &aTime) const
+{
+    return astro()->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude());
 }
 
 
