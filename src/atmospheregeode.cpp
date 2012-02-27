@@ -609,5 +609,6 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(v, s) + 1.5) * hb;\n" // * mu (optional..)
 
         "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0) + dither(4);\n" // Eq (16)
+        "    gl_FragDepth = 1.0;\n"
         "}\n";
 }
