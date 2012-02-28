@@ -488,7 +488,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "        vec3 x0 = x + t * v;\n"
         "        float r0 = length(x0);\n"
         "        vec3 n = x0 / r0;\n"
-        //"        vec2 coords = vec2(atan(n.y, n.x), acos(n.z)) * vec2(0.5, 1.0) / M_PI + vec2(0.5, 0.0);\n"
+        //"        vec2 coords = vec2(atan(n.y, n.x), acos(n.z)) * vec2(0.5, 1.0) / PI + vec2(0.5, 0.0);\n"
         //"        vec4 reflectance = texture2D(reflectanceSampler, coords) * vec4(0.2, 0.2, 0.2, 1.0);\n"
         "        vec4 reflectance = vec4(0.0, 0.0, 0.0, 1.0);\n"
         "        if (r0 > cmn[1] + 0.01) {\n"
@@ -503,7 +503,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "        vec3 groundSkyLight = irradiance(irradianceSampler, r0, muS);\n"
         "\n"
                 // light reflected at x0 (=(R[L0] + R[L*]) / T(x, x0))
-        "        vec3 groundColor = reflectance.rgb * (max(muS, 0.0) * sunLight + groundSkyLight) * ISun / M_PI;\n"
+        "        vec3 groundColor = reflectance.rgb * (max(muS, 0.0) * sunLight + groundSkyLight) * ISun / PI;\n"
         "\n"
         //"        // water specular color due to sunLight\n"
         //"        if (reflectance.w > 0.0) {\n"
