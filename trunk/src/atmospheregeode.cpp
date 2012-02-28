@@ -61,7 +61,6 @@ AtmosphereGeode::AtmosphereGeode()
 ,   m_inscatter(NULL)
 
 ,   u_sunScale(NULL)
-,   u_altitude(NULL)
 ,   u_lheurebleue(NULL)
 ,   u_exposure(NULL)
 {
@@ -155,9 +154,6 @@ void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
     u_sunScale = new osg::Uniform("sunScale", 1.f); // apparent angular radius (not diameter!)
     stateSet->addUniform(u_sunScale);
 
-    u_altitude = new osg::Uniform("altitude", defaultAltitude());
-    stateSet->addUniform(u_altitude);
-
     u_exposure = new osg::Uniform("exposure", defaultExposure());
     stateSet->addUniform(u_exposure);
 
@@ -216,25 +212,6 @@ const float AtmosphereGeode::getSunScale() const
 const float AtmosphereGeode::defaultSunScale()
 {
     return 4.f;
-}
-
-
-const float AtmosphereGeode::setAltitude(const float altitude)
-{
-    u_altitude->set(altitude);
-    return getAltitude();
-}
-
-const float AtmosphereGeode::getAltitude() const
-{
-    float altitude;
-    u_altitude->get(altitude);
-    return altitude;
-}
-
-const float AtmosphereGeode::defaultAltitude()
-{
-    return 0.2f;
 }
 
 
@@ -307,20 +284,6 @@ const float AtmosphereGeode::defaultLHeureBleueIntensity()
     return 0.5f;
 }
 
-
-void AtmosphereGeode::setPlanetGroundRadius(const float radius)
-{
-    m_precompute->getModelConfig().Rg = radius;
-    m_precompute->dirty();
-}
-
-void AtmosphereGeode::setPlanetTroposphereRadius(const float radius)
-{
-    m_precompute->getModelConfig().Rt = radius;
-    m_precompute->getModelConfig().RL = radius + 1.0;
-    m_precompute->dirty();
-}
-
 void AtmosphereGeode::setAverageGroundReflectance(const float reflectance)
 {
     m_precompute->getModelConfig().avgGroundReflectance = reflectance;
@@ -385,23 +348,25 @@ const std::string AtmosphereGeode::getVertexShaderSource()
         "}\n\n";
 }
 
+// FragmentShader
+
+#include "shaderfragment/common.hpp"
+
 #include "shaderfragment/pseudo_rand.hpp"
 #include "shaderfragment/dither.hpp"
 
-// FragmentShader
 
 const std::string AtmosphereGeode::getFragmentShaderSource()
 {
     return glsl_version_150
 
-    +
-        "uniform int seed;\n"
-        "\n"
+    +   glsl_cmn_uniform
+    +   
+        "uniform vec3 sun;\n"
 
     +   glsl_pseudo_rand
     +   glsl_dither
 
-    +   glsl_bruneton_const_RgRtRL
     +   glsl_bruneton_const_RSize
     +   glsl_bruneton_const_R
     +   glsl_bruneton_const_M
@@ -412,9 +377,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "\n"
         "const float ISun = 100.0;\n"
         "\n"
-        //"uniform vec3 c = vec3(Rg + 0.2, 0.0, 0.0);\n"
-        "uniform float altitude;\n"
-        "uniform vec3 sun;\n"
+        //"uniform vec3 c = vec3(cmn[1] + 0.2, 0.0, 0.0);\n"
         "uniform float sunScale;\n"
         "uniform float exposure;\n"
         "\n"
@@ -445,15 +408,15 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    vec3 result;\n"
         "    r = length(x);\n"
         "    mu = dot(x, v) / r;\n"
-        "    float d = -r * mu - sqrt(r * r * (mu * mu - 1.0) + Rt * Rt);\n"
+        "    float d = -r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[2] * cmn[2]);\n"
         "    if (d > 0.0) {\n" // if x in space and ray intersects atmosphere
                 // move x to nearest intersection of ray with top atmosphere boundary
         "        x += d * v;\n"
         "        t -= d;\n"
-        "        mu = (r * mu + d) / Rt;\n"
-        "        r = Rt;\n"
+        "        mu = (r * mu + d) / cmn[2];\n"
+        "        r = cmn[2];\n"
         "    }\n"
-        "    if (r <= Rt) {\n" // if ray intersects atmosphere
+        "    if (r <= cmn[2]) {\n" // if ray intersects atmosphere
         "        float nu = dot(v, s);\n"
         "        float muS = dot(x, s) / r;\n"
         "        float phaseR = phaseFunctionR(nu);\n"
@@ -471,13 +434,13 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         //"#else\n"
         "            attenuation = transmittance(r, mu, v, x0);\n"
         //"#endif\n"
-        "            if (r0 > Rg + 0.01) {\n"
+        "            if (r0 > cmn[1] + 0.01) {\n"
                         // computes S[L]-T(x,x0)S[L]|x0
         "                inscatter = max(inscatter - attenuation.rgbr * texture4D(inscatterSampler, r0, mu0, muS0, nu), 0.0);\n"
         //"#ifdef FIX\n"
         /*                // avoids imprecision problems near horizon by interpolating between two points above and below horizon
         "                const float EPS = 0.004;\n"
-        "                float muHoriz = -sqrt(1.0 - (Rg / r) * (Rg / r));\n"
+        "                float muHoriz = -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r));\n"
         "                if (abs(mu - muHoriz) < EPS) {\n"
         "                    float a = ((mu - muHoriz) + EPS) / (2.0 * EPS);\n"
         "\n"
@@ -528,7 +491,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         //"        vec2 coords = vec2(atan(n.y, n.x), acos(n.z)) * vec2(0.5, 1.0) / M_PI + vec2(0.5, 0.0);\n"
         //"        vec4 reflectance = texture2D(reflectanceSampler, coords) * vec4(0.2, 0.2, 0.2, 1.0);\n"
         "        vec4 reflectance = vec4(0.0, 0.0, 0.0, 1.0);\n"
-        "        if (r0 > Rg + 0.01) {\n"
+        "        if (r0 > cmn[1] + 0.01) {\n"
         "            reflectance = vec4(0.4, 0.4, 0.4, 0.0);\n"
         "        }\n"
         "\n"
@@ -564,7 +527,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    if (t > 0.0) {\n"
         "        return vec3(0.0);\n"
         "    } else {\n"
-        "        vec3 transmittance = r <= Rt ? transmittanceWithShadow(r, mu) : vec3(1.0);\n" // T(x, xo)
+        "        vec3 transmittance = r <= cmn[2] ? transmittanceWithShadow(r, mu) : vec3(1.0);\n" // T(x, xo)
         "        float isun = step(cos(sunScale), dot(v, s)) * ISun;\n" // Lsun
         "        return transmittance * isun;\n" // Eq (9)
         "    }\n"
@@ -572,33 +535,32 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "\n"
 
         "void main() {\n"
-        "    vec3 x = vec3(Rg + altitude, 0.0, 0.0);\n"
-        "    vec3 v = normalize(m_ray.zyx);\n"
-        "    vec3 s = normalize(sun.zyx);\n"
+        "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
+        "    vec3 ray = normalize(m_ray.xyz);\n"
         "\n"
         "    float r = length(x);\n"
-        "    float mu = dot(x, v) / r;\n"
-        "    float t = -r * mu - sqrt(r * r * (mu * mu - 1.0) + Rg * Rg);\n"
-        "\n"
-        "    vec3 g = x - vec3(0.0, 0.0, Rg + 10.0);\n"
-        "    float a = v.x * v.x + v.y * v.y - v.z * v.z;\n"
-        "    float b = 2.0 * (g.x * v.x + g.y * v.y - g.z * v.z);\n"
-        "    float c = g.x * g.x + g.y * g.y - g.z * g.z;\n"
-        "    float d = -(b + sqrt(b * b - 4.0 * a * c)) / (2.0 * a);\n"
-        "    bool cone = d > 0.0 && abs(x.z + d * v.z - Rg) <= 10.0;\n"
-        "\n"
-        "    if (t > 0.0) {\n"
-        "        if (cone && d < t) {\n"
-        "            t = d;\n"
-        "        }\n"
-        "    } else if (cone) {\n"
-        "        t = d;\n"
-        "    }\n"
-        "\n"
+        "    float mu = dot(x, ray) / r;\n"
+        "    float t = -r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);\n"
+        //"\n"
+        //"    vec3 g = x - vec3(0.0, 0.0, cmn[1] + 10.0);\n"
+        //"    float a = ray.x * ray.x + ray.y * ray.y - ray.z * ray.z;\n"
+        //"    float b = 2.0 * (g.x * ray.x + g.y * ray.y - g.z * ray.z);\n"
+        //"    float c = g.x * g.x + g.y * g.y - g.z * g.z;\n"
+        //"    float d = -(b + sqrt(b * b - 4.0 * a * c)) / (2.0 * a);\n"
+        //"    bool cone = d > 0.0 && abs(x.z + d * ray.z - cmn[1]) <= 10.0;\n"
+        //"\n"
+        //"    if (t > 0.0) {\n"
+        //"        if (cone && d < t) {\n"
+        //"            t = d;\n"
+        //"        }\n"
+        //"    } else if (cone) {\n"
+        //"        t = d;\n"
+        //"    }\n"
+        //"\n"
         "    vec3 attenuation;\n"
-        "    vec3 inscatterColor = inscatter(x, t, v, s, r, mu, attenuation);\n" // S[L]  - T(x, xs) S[l] | xs"
-        //"    vec3 groundColor = groundColor(x, t, v, s, r, mu, attenuation);\n"  // R[L0] + R[L*]
-        "    vec3 sunColor = sunColor(x, t, v, s, r, mu);\n" // L0
+        "    vec3 inscatterColor = inscatter(x, t, ray, sun, r, mu, attenuation);\n" // S[L]  - T(x, xs) S[l] | xs"
+        //"    vec3 groundColor = groundColor(x, t, ray, sun, r, mu, attenuation);\n"  // R[L0] + R[L*]
+        "    vec3 sunColor = sunColor(x, t, ray, sun, r, mu);\n" // L0
         "\n"
 
             // l'heure bleue (blaue stunde des ozons)
@@ -606,9 +568,10 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
             // gauss between -12° and +0° sun altitude (Civil & Nautical twilight) 
             // http://en.wikipedia.org/wiki/Twilight
         "    float hb = t > 0.0 ? 0.0 : exp(-pow(sun.z, 2.0) * 166) + 0.03;\n"     // the +0.03 is for a slight blueish tint at night
-        "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(v, s) + 1.5) * hb;\n" // * mu (optional..)
-
-        "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0) + dither(4);\n" // Eq (16)
+        "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(ray, sun) + 1.5) * hb;\n" // * mu (optional..)
+        "\n"
+        "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0)\n"
+        "        + dither(4, int(cmn[3]));\n" // Eq (16)
         //"    gl_FragDepth = 1.0;\n"
         "}\n";
 }

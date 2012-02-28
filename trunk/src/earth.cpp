@@ -305,6 +305,13 @@ const long double earth_atmosphereThickness()
 }
 
 
+const long double earth_atmosphereThicknessNonUniform()
+{
+    // Thickness of atmosphere.
+    return 85.0; // ~
+}
+
+
 const long double earth_apparentMagnitudeLimit()
 {
     // http://www.astronomynotes.com/starprop/s4.htm

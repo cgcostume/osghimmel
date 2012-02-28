@@ -57,12 +57,18 @@ public:
 
     virtual ~Himmel();
 
+    static osg::Uniform *cmnUniform();
+
 
     const float setLatitude(const float latitude);
     const float getLatitude() const;
 
     const float setLongitude(const float longitude);
     const float getLongitude() const;
+
+    const float setAltitude(const float altitude);
+    const float getAltitude() const;
+    static const float defaultAltitude();
 
 
     inline AtmosphereGeode *atmosphere() const 
@@ -98,6 +104,7 @@ public:
 protected:
 
     virtual void update();
+    void updateSeed();
 
     // Workaround avoiding culling by osgs' automated near far 
     // retrieval. This fixes culling of stars and moon when no 
@@ -116,6 +123,8 @@ protected:
 protected:
 
     osg::ref_ptr<osg::Uniform> u_sun;
+    // height above mean sea level in km, mean earth radius in km
+    osg::ref_ptr<osg::Uniform> u_common; 
 
     AbstractAstronomy *m_astronomy;
 

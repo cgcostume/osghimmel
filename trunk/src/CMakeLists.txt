@@ -116,7 +116,8 @@ set(LIB_SOURCES
 	shaderfragment/bruneton_inscatter.hpp
 	shaderfragment/bruneton_irradiance.hpp
 	shaderfragment/bruneton_transmittance.hpp	
-    shaderfragment/compose.hpp
+    shaderfragment/common.hpp
+	shaderfragment/compose.hpp
     shaderfragment/dither.hpp
     shaderfragment/hband.hpp
     shaderfragment/pseudo_rand.hpp

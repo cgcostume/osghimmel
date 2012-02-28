@@ -58,10 +58,6 @@ public:
     const float getSunScale() const;
     static const float defaultSunScale();
 
-    const float setAltitude(const float altitude);
-    const float getAltitude() const;
-    static const float defaultAltitude();
-
     const float setExposure(const float exposure);
     const float getExposure() const;
     static const float defaultExposure();
@@ -75,8 +71,6 @@ public:
     static const float defaultLHeureBleueIntensity();
 
 
-    void setPlanetGroundRadius(const float radius); 
-    void setPlanetTroposphereRadius(const float radius); 
     void setAverageGroundReflectance(const float reflectance); // [0;1]
     void setThicknessRayleigh(const float thickness); 
     void setScatteringRayleigh(const osg::Vec3 &coefficients); 
@@ -120,7 +114,6 @@ protected:
     osg::Shader *m_fShader;
 
     osg::ref_ptr<osg::Uniform> u_sunScale;
-    osg::ref_ptr<osg::Uniform> u_altitude; // above mean sea level in km
     osg::ref_ptr<osg::Uniform> u_exposure;
     osg::ref_ptr<osg::Uniform> u_lheurebleue;
 

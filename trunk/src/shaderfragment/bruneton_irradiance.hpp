@@ -76,7 +76,7 @@ namespace
 
     static const std::string glsl_bruneton_f_irradiance1 // requires: transmittanceSampler
     (
-        glsl_bruneton_const_RgRtRL
+        glsl_cmn_uniform
     +   glsl_bruneton_const_ISize
 
     +   glsl_bruneton_irradianceRMuS
@@ -100,7 +100,7 @@ namespace
     +   glsl_bruneton_const_Samples
     +   glsl_bruneton_const_R
     +   glsl_bruneton_const_M
-    +   glsl_bruneton_const_RgRtRL
+    +   glsl_cmn_uniform
     +   glsl_bruneton_const_RSize
     +   glsl_bruneton_const_ISize
 

@@ -29,6 +29,7 @@
 
 #include "himmel.h"
 
+#include "earth.h"
 #include "astronomy.h"
 #include "astronomyla.h"
 
@@ -58,11 +59,6 @@ Himmel *Himmel::create()
     ,   new Astronomy());
 }
 
-// TODO: remove
-osg::ref_ptr<osg::Uniform> useed = new osg::Uniform("seed", 0);
-
-#include <osgUtil/RenderBin>
-
 Himmel::Himmel(
     MilkyWayGeode *milkyWay
 ,   MoonGeode *moon
@@ -77,6 +73,7 @@ Himmel::Himmel(
 ,   m_astronomy(astronomy)
 
 ,   u_sun(NULL)
+,   u_common(NULL)
 {
     assert(m_astronomy);
 
@@ -87,7 +84,13 @@ Himmel::Himmel(
     u_sun = new osg::Uniform("sun", osg::Vec3(0.0, 0.0, 0.0));
     getOrCreateStateSet()->addUniform(u_sun);
 
-    getOrCreateStateSet()->addUniform(useed);
+    // 0: altitude in km
+    // 1: apparent angular radius (not diameter!)
+    // 2: radius up to "end of atm"
+    // 3: seed (for randomness of stuff)
+    u_common = cmnUniform();
+    getOrCreateStateSet()->addUniform(u_common);
+
 
     int bin = 0;
 
@@ -119,8 +122,13 @@ Himmel::Himmel(
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
     registerShader();
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 };
+
+
+osg::Uniform *Himmel::cmnUniform()
+{
+    return new osg::Uniform("cmn", osg::Vec4(defaultAltitude(), earth_meanRadius(), earth_meanRadius() + earth_atmosphereThicknessNonUniform(), 1));
+}
 
 
 Himmel::~Himmel()
@@ -168,7 +176,7 @@ void Himmel::update()
 {
     AbstractHimmel::update();
 
-    useed->set(rand());
+    updateSeed();
 
     if(isDirty())
     {
@@ -188,11 +196,16 @@ void Himmel::update()
 
         dirty(false);
     }
-    else
-    {
-        if(m_stars)
-            m_stars->updateSeed();
-    }
+}
+
+
+void Himmel::updateSeed()
+{
+    osg::Vec4 temp; 
+    u_common->get(temp);
+
+    temp._v[3] = rand();
+    u_common->set(temp);
 }
 
 
@@ -257,4 +270,29 @@ const float Himmel::getLongitude() const
 {
     assert(m_astronomy);
     return m_astronomy->getLongitude();
+}
+
+
+const float Himmel::setAltitude(const float altitude)
+{
+    osg::Vec4 temp; 
+    u_common->get(temp);
+    
+    temp._v[0] = altitude;
+    u_common->set(temp);
+
+    return getAltitude();
+}
+
+const float Himmel::getAltitude() const
+{
+    osg::Vec4 temp; 
+    u_common->get(temp);
+
+    return temp._v[0];
+}
+
+const float Himmel::defaultAltitude()
+{
+    return 0.2f;
 }

@@ -51,12 +51,9 @@ namespace
 
     static const QString GROUP_PROCEDURAL_ATMOSPHERE       (TR("Atmosphere"));
     static const QString PROPERTY_ATM_SUNSCALE             (TR("Sun Scale"));
-    static const QString PROPERTY_ATM_ALTITUDE             (TR("Altitude"));
     static const QString PROPERTY_ATM_EXPOSURE             (TR("Exposure"));
     static const QString PROPERTY_ATM_BLUEHOUR_COLOR       (TR("Blue Hour Color"));
     static const QString PROPERTY_ATM_BLUEHOUR_INTENSITY   (TR("Blue Hour Intensity"));
-    static const QString PROPERTY_ATM_RG                   (TR("Rg (Radius to Sea Level)"));
-    static const QString PROPERTY_ATM_RT                   (TR("Rt (Radius to End of Troposphere)"));
     static const QString PROPERTY_ATM_AVGGR                (TR("Avg Ground Reflectance"));
     static const QString PROPERTY_ATM_HR                   (TR("Rayleigh Height Scale"));
     static const QString PROPERTY_ATM_BETARR               (TR("Rayleigh Coefficient R"));
@@ -186,12 +183,9 @@ void Scene_ProceduralHimmel::registerProperties()
     QtProperty *proceduralGroup = createGroup(GROUP_PROCEDURAL);
 
     createProperty(*proceduralGroup, PROPERTY_ATM_SUNSCALE, AtmosphereGeode::defaultSunScale(), 0.0,   100.0, 0.25); 
-    createProperty(*proceduralGroup, PROPERTY_ATM_ALTITUDE, AtmosphereGeode::defaultAltitude(), 0.0, 10000.0, 0.25); 
     createProperty(*proceduralGroup, PROPERTY_ATM_EXPOSURE, AtmosphereGeode::defaultExposure(), 0.0, 2.0, 0.02); 
     createProperty(*proceduralGroup, PROPERTY_ATM_BLUEHOUR_COLOR, toQColor(AtmosphereGeode::defaultLHeureBleueColor())); 
     createProperty(*proceduralGroup, PROPERTY_ATM_BLUEHOUR_INTENSITY, AtmosphereGeode::defaultLHeureBleueIntensity(), 0.0, 2.0, 0.02); 
-    createProperty(*proceduralGroup, PROPERTY_ATM_RG, 6360.0, 0.0, 999999.0, 0.1); 
-    createProperty(*proceduralGroup, PROPERTY_ATM_RT, 6420.0, 0.0, 999999.0, 0.1);
     createProperty(*proceduralGroup, PROPERTY_ATM_AVGGR, 0.1, 0.0, 4.0, 0.1); 
     createProperty(*proceduralGroup, PROPERTY_ATM_HR, 8.0, 0.0, 999.0, 0.1); 
     createProperty(*proceduralGroup, PROPERTY_ATM_BETARR,  5.8, 0.0, 999.0, 0.1); 
@@ -240,18 +234,12 @@ void Scene_ProceduralHimmel::propertyChanged(
 
          if(PROPERTY_ATM_SUNSCALE == name)
         m_himmel->atmosphere()->setSunScale(doubleValue(PROPERTY_ATM_SUNSCALE));
-    else if(PROPERTY_ATM_ALTITUDE == name)
-        m_himmel->atmosphere()->setAltitude(doubleValue(PROPERTY_ATM_ALTITUDE)); 
     else if(PROPERTY_ATM_EXPOSURE == name)
         m_himmel->atmosphere()->setExposure(doubleValue(PROPERTY_ATM_EXPOSURE)); 
     else if(PROPERTY_ATM_BLUEHOUR_COLOR == name)
         m_himmel->atmosphere()->setLHeureBleueColor(toVec3(colorValue(PROPERTY_ATM_BLUEHOUR_COLOR)));
     else if(PROPERTY_ATM_BLUEHOUR_INTENSITY == name)
         m_himmel->atmosphere()->setLHeureBleueIntensity(doubleValue(PROPERTY_ATM_BLUEHOUR_INTENSITY)); 
-    else if(PROPERTY_ATM_RG == name)
-        m_himmel->atmosphere()->setPlanetGroundRadius(doubleValue(PROPERTY_ATM_RG)); 
-    else if(PROPERTY_ATM_RT == name)
-        m_himmel->atmosphere()->setPlanetTroposphereRadius(doubleValue(PROPERTY_ATM_RT)); 
     else if(PROPERTY_ATM_AVGGR == name)
         m_himmel->atmosphere()->setAverageGroundReflectance(doubleValue(PROPERTY_ATM_AVGGR)); 
     else if(PROPERTY_ATM_HR == name)
@@ -327,4 +315,10 @@ const double Scene_ProceduralHimmel::setLatitude(const double latitude)
 const double Scene_ProceduralHimmel::setLongitude(const double longitude)
 {
     return m_himmel->setLongitude(longitude);
+}
+
+
+const double Scene_ProceduralHimmel::setAltitude(const double altitude)
+{
+    return m_himmel->setAltitude(altitude);
 }

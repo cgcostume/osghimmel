@@ -367,10 +367,15 @@ const std::string MoonGeode::getVertexShaderSource()
 
 // FragmentShader
 
+#include "shaderfragment/common.hpp"
+
 const std::string MoonGeode::getFragmentShaderSource()
 {
-    return glsl_version_150 +
+    return glsl_version_150
     
+    +   glsl_cmn_uniform
+    +   glsl_horizon
+    +
         "uniform vec3 sun;\n"
         "\n"
         // moon.xyz is expected to be normalized and moon.a the moons
@@ -400,6 +405,12 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    float zz = radius * radius - x * x - y * y;\n"
         "    if(zz < 1.0 - radius)\n"
         "        discard;\n"
+        "\n"
+        "    vec3 eye = normalize(m_eye.xyz);\n"
+        "\n"
+        "    if(belowHorizon(eye))\n"
+        "        discard;\n"
+        "\n"
         "    float z = sqrt(zz);\n"
         "\n"
         // Moon Tanget Space
@@ -415,17 +426,15 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
         "\n"
         "    vec3 m = moon.xyz;\n"
-        "    vec3 s = sun;\n"
-        "    vec3 e = normalize(m_eye.xyz);\n"
         "\n"
         // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
 
-        "    float cos_p = clamp(dot(e, s), 0.0, 1.0);\n"
+        "    float cos_p = clamp(dot(eye, sun), 0.0, 1.0);\n"
         "    float p     = acos(cos_p);\n"
         "    float tan_p = tan(p);\n"
         "\n"
-        "    float dot_ne = dot(n, e);\n"
-        "    float dot_nl = dot(n, s);\n"
+        "    float dot_ne = dot(n, eye);\n"
+        "    float dot_nl = dot(n, sun);\n"
         "\n"
         "    float g = 0.6;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
         "    float t = 0.1;\n" // small amount of forward scattering
@@ -448,7 +457,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         // Approximate earthshine intensity.
         // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
         // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
-        "    float op2 = (PI - acos(dot(-m, s))) * 0.5; // opposite phase over 2\n"
+        "    float op2 = (PI - acos(dot(-m, sun))) * 0.5; // opposite phase over 2\n"
         "    float Eem = 0.19 * 0.5 * (1.0 - sin(op2) * tan(op2) * log(1.0 / tan(op2 * 0.5)));\n"
         "\n"
         // My approximation with non-perceivable difference.

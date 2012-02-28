@@ -62,6 +62,7 @@ public:
 
     virtual const double setLatitude(const double latitude);
     virtual const double setLongitude(const double longitude);
+    virtual const double setAltitude(const double altitude);
 
 
     // TODO - TEMP: will be changed soon

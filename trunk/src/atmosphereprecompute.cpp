@@ -38,6 +38,8 @@
 
 
 #include "atmosphereprecompute.h"
+#include "himmel.h"
+#include "earth.h"
 
 #include <osg/Image>
 #include <osg/Texture2D>
@@ -74,11 +76,6 @@ AtmospherePrecompute::AtmospherePrecompute()
     m_preTexCfg.inscatterIntegralSamples          =  50;
     m_preTexCfg.irradianceIntegralSamples         =  32;
     m_preTexCfg.inscatterSphericalIntegralSamples =  16;
-
-
-    m_modelCfg.Rg = 6360.f;
-    m_modelCfg.Rt = 6420.f;
-    m_modelCfg.RL = 6421.f;
 
     m_modelCfg.avgGroundReflectance = 0.1f;
 
@@ -165,9 +162,14 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     camera->setClearColor(osg::Vec4(0.f, 0.f, 0.f, 0.f));
     camera->setViewport(0, 0, 1, 1);
 
-    view->setSceneData(new osg::Group);
+    osg::Group *group(new osg::Group);
+    view->setSceneData(group);
 
     osg::Geode *quad = genQuad();
+
+    osg::ref_ptr<osg::Uniform> u_common = Himmel::cmnUniform();
+    group->getOrCreateStateSet()->addUniform(u_common);
+
 
     // Render
 
@@ -454,16 +456,19 @@ void AtmospherePrecompute::setupLayerUniforms(
 ,   const int depth
 ,   const int layer)
 {
-    const double Rg2 = getModelConfig().Rg * getModelConfig().Rg;
-    const double Rt2 = getModelConfig().Rt * getModelConfig().Rt;
+    const double Rg = earth_meanRadius();
+    const double Rt = earth_meanRadius() + earth_atmosphereThicknessNonUniform();
+
+    const double Rg2 = Rg * Rg;
+    const double Rt2 = Rt * Rt;
 
     double r = layer / (depth - 1.0);
     r *= r;
     r = sqrt(Rg2 + r * (Rt2 - Rg2)) + (layer == 0 ? 0.01 : (layer == getTextureConfig().resR - 1 ? -0.001 : 0.0));
 
-    double dmin  = getModelConfig().Rt - r;
+    double dmin  = Rt - r;
     double dmax  = sqrt(r * r - Rg2) + sqrt(Rt2 - Rg2);
-    double dminp = r - getModelConfig().Rg;
+    double dminp = r - Rg;
     double dmaxp = sqrt(r * r - Rg2);
 
     if(stateSet->getUniform("r"))
@@ -772,10 +777,6 @@ void AtmospherePrecompute::substituteMacros(std::string &source)
 
     const t_modelCfg &mc(getModelConfig());
 
-    replace(source, "%Rg%", mc.Rg);
-    replace(source, "%Rt%", mc.Rt);
-    replace(source, "%RL%", mc.RL);
-        
     replace(source, "%AVERAGE_GROUND_REFLECTANCE%", mc.avgGroundReflectance);
 
     replace(source, "%HR%", mc.HR);
