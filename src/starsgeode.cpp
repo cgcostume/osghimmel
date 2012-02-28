@@ -64,7 +64,6 @@ StarsGeode::StarsGeode(const std::string &brightStarsFilePath)
 ,   u_R(NULL)
 ,   u_quadWidth(NULL)
 ,   u_noise1(NULL)
-,   u_seed(NULL)
 
 ,   u_color(NULL)
 ,   u_glareIntensity(NULL)
@@ -89,11 +88,6 @@ StarsGeode::~StarsGeode()
 };
 
 
-void StarsGeode::updateSeed()
-{
-    u_seed->set(rand());
-}
-
 
 void StarsGeode::update(const Himmel &himmel)
 {
@@ -103,8 +97,6 @@ void StarsGeode::update(const Himmel &himmel)
     u_quadWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
 
     u_R->set(himmel.astro()->equToLocalHorizonMatrix());
-
-    updateSeed();
 }
 
 
@@ -138,9 +130,6 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 
     u_scattering = new osg::Uniform("scattering", defaultScattering());
     stateSet->addUniform(u_scattering);
-
-    u_seed = new osg::Uniform("seed", 1);
-    stateSet->addUniform(u_seed);
 }
 
 
@@ -389,14 +378,18 @@ const float StarsGeode::defaultColorRatio()
 // VertexShader
 
 #include "shaderfragment/version.hpp"
+#include "shaderfragment/common.hpp"
 
 const std::string StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
     sprintf(apparentMagLimit, "%.2f", earth_apparentMagnitudeLimit());
 
-    return glsl_version_150 +
+    return glsl_version_150
 
+    +   glsl_cmn_uniform
+    +   glsl_horizon
+    +
         "uniform vec3 sun;\n"
         "\n"
         "uniform mat4 R;\n" // rgb and alpha for mix
@@ -409,27 +402,36 @@ const std::string StarsGeode::getVertexShaderSource()
         "uniform float apparentMagnitude;\n"
         "\n"
         "uniform sampler1D noise1;\n"
-        "uniform int seed;\n"
         "\n"
+
         "out vec4 m_color;\n"
         "\n"
+
         "const float minB = pow(2.512, -" + std::string(apparentMagLimit) + ") * 0.1;\n"
         "\n"
         // ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
         // This is used only for the ratio, not for exact physical scale.
         "const vec3 lambda = normalize(vec3(0.58, 1.35, 3.31));\n"
         "\n"
+
         "void main(void)\n"
         "{\n"
+        "    vec4 v = gl_Vertex * R;\n"
+        "    gl_Position = v;\n"
+        "\n"
+        "    if(belowHorizon(v.xyz))\n" // "discard" stars below horizon
+        "    {\n"
+        "        m_color = vec4(0.0);\n"
+        "        return;\n"
+        "    }\n"
+        "\n"
         "    float vMag = gl_Color.w;\n"
         "\n"
         "    float estB = pow(2.512, apparentMagnitude - vMag);\n"
         "    float scaledB = minB * estB / quadWidth;\n"
         "\n"
-        "    float i = mod(seed ^ int(gl_Vertex.w), 251);\n"
+        "    float i = mod(int(cmn[3]) ^ int(gl_Vertex.w), 251);\n"
         "    float s = pow(texture(noise1, i / 256.0).r , 8) / (scaledB * 0.05);\n"
-        "\n"
-        "	 vec4 v = gl_Vertex * R;\n"
         "\n"
         // Approximation of relative air mass (path length relative to that at the zenith at sea level).
         // Also called optical path length: http://en.wikipedia.org/wiki/Air_mass_(astronomy).
@@ -445,8 +447,6 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    m_color = vec4(c, scaledB - w1) * b;\n"
-        "\n"
-        "    gl_Position = v;\n"
         "}\n\n";
 }
 

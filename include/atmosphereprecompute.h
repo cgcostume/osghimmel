@@ -87,10 +87,6 @@ public:
 
     typedef struct PhysicalModelConfig
     {
-        float Rg; // Earth Radius (Ground) in km
-        float Rt; // Earth Radius and Atmosphere (to "End" of const density Atmosphere) in km
-        float RL;
-
         float avgGroundReflectance;
 
         float HR; // Reighley const denisty Atmosphere height in km

@@ -1,5 +1,5 @@
-﻿
-// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
+
+// Copyright (c) 2011-2012, Daniel M�ller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -28,48 +28,37 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __EARTH_H__
-#define __EARTH_H__
+#ifndef __GLSL_COMMON_HPP__
+#define __GLSL_COMMON_HPP__
 
-#include "julianday.h"
+namespace 
+{
+    static const std::string glsl_cmn_uniform
+    (
+        "uniform vec4 cmn;\n\n"
+    );
 
-const long double earth_orbitEccentricity(const t_julianDay t);
 
-const long double earth_apparentAngularSunDiameter(const t_julianDay t);
-const long double earth_apparentAngularMoonDiameter(const t_julianDay t);
+    // Returns unit intersection distance with the ground. Use for 
+    // e.g. horizon related discarding of elements
+    static const std::string glsl_horizon // requires glsl_cmn_uniform
+    (
+        "float tAtm(vec3 ray)\n"
+        "{\n"
+	    "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
+	    "    vec3 v = normalize(ray);\n"
+        "\n"
+        "    float r = length(x);\n"
+        "    float mu = dot(x, v) / r;\n"
+        "\n"
+        "    return r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);\n"
+        "}\n"
+        "\n"
+        "bool belowHorizon(vec3 ray)\n"
+        "{\n"
+        "   return tAtm(ray) < 0.0;\n"
+        "}\n\n"
+    );
+}
 
-const long double earth_longitudeNutation(const t_julianDay t);
-const long double earth_obliquityNutation(const t_julianDay t);
-
-const long double earth_meanObliquity(const t_julianDay t);
-const long double earth_trueObliquity(const t_julianDay t);
-
-const long double earth_atmosphericRefraction(const long double altitude);
-
-const long double earth_viewDistanceWithinAtmosphere(
-    const long double y /* height component of the view direction on ground into the sky */
-,   const bool refractionCorrected = false);
-
-const long double earth_meanRadius();
-const long double earth_atmosphereThickness(); // if its density were uniform...
-const long double earth_atmosphereThicknessNonUniform();
-
-const long double earth_apparentMagnitudeLimit();
-
-// Low Accuracy
-
-const float earth_orbitEccentricity_la(const t_julianDay t);
-
-const float earth_apparentAngularSunDiameter_la(const t_julianDay t);
-const float earth_apparentAngularMoonDiameter_la(const t_julianDay t);
-
-const float earth_longitudeNutation_la(const t_julianDay t);
-const float earth_obliquityNutation_la(const t_julianDay t);
-
-const float earth_meanObliquity_la(const t_julianDay t);
-const float earth_trueObliquity_la(const t_julianDay t);
-
-const float earth_viewDistanceWithinAtmosphere_la(
-    const float y);
-
-#endif // __EARTH_H__
+#endif // __GLSL_COMMON_HPP__

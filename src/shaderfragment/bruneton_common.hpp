@@ -148,15 +148,6 @@ namespace
 
     // PHYSICAL MODEL PARAMETERS
 
-    static const std::string glsl_bruneton_const_RgRtRL
-    (
-        // in km
-        "const float Rg = %Rg%; \n"
-        "const float Rt = %Rt%; \n"
-        "const float RL = %RL%; \n\n"
-    );
-
-
     static const std::string glsl_bruneton_const_avgReflectance
     (
         "const float AVERAGE_GROUND_REFLECTANCE = %AVERAGE_GROUND_REFLECTANCE%; \n\n"
@@ -180,15 +171,15 @@ namespace
 
     // PARAMETERIZATION FUNCTIONS
 
-    static const std::string glsl_bruneton_texture4D // requires: RES_MU, RES_MU_S, RES_R, RES_NU, Rt, Rg
+    static const std::string glsl_bruneton_texture4D // requires: RES_MU, RES_MU_S, RES_R, RES_NU, cmn
     (
         "vec4 texture4D(sampler3D table, float r, float mu, float muS, float nu)\n"
         "{\n"
-        "    float H = sqrt(Rt * Rt - Rg * Rg);\n"
-        "    float rho = sqrt(r * r - Rg * Rg);\n"
+        "    float H = sqrt(cmn[2] * cmn[2] - cmn[1] * cmn[1]);\n"
+        "    float rho = sqrt(r * r - cmn[1] * cmn[1]);\n"
         //"#ifdef INSCATTER_NON_LINEAR\n"
         "    float rmu = r * mu;\n"
-        "    float delta = rmu * rmu - r * r + Rg * Rg;\n"
+        "    float delta = rmu * rmu - r * r + cmn[1] * cmn[1];\n"
         "    vec4 cst = rmu < 0.0 && delta > 0.0 ? vec4(1.0, 0.0, 0.0, 0.5 - 0.5 / float(RES_MU)) : vec4(-1.0, H * H, H, 0.5 + 0.5 / float(RES_MU));\n"
         "    float uR = 0.5 / float(RES_R) + rho / H * (1.0 - 1.0 / float(RES_R));\n"
         "    float uMu = cst.w + (rmu * cst.x + sqrt(delta + cst.y)) / (rho + cst.z) * (0.5 - 1.0 / float(RES_MU));\n"
@@ -210,7 +201,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_muMuSNu // requires: RES_MU, RES_MU_S, RES_NU, Rt, Rg
+    static const std::string glsl_bruneton_muMuSNu // requires: RES_MU, RES_MU_S, RES_NU, cmn
     (
         "void getMuMuSNu(float r, vec4 dhdH, out float mu, out float muS, out float nu) {\n"
         "    float x = gl_FragCoord.x - 0.5;\n"
@@ -219,12 +210,12 @@ namespace
         "    if (y < float(RES_MU) / 2.0) {\n"
         "        float d = 1.0 - y / (float(RES_MU) / 2.0 - 1.0);\n"
         "        d = min(max(dhdH.z, d * dhdH.w), dhdH.w * 0.999);\n"
-        "        mu = (Rg * Rg - r * r - d * d) / (2.0 * r * d);\n"
-        "        mu = min(mu, -sqrt(1.0 - (Rg / r) * (Rg / r)) - 0.001);\n"
+        "        mu = (cmn[1] * cmn[1] - r * r - d * d) / (2.0 * r * d);\n"
+        "        mu = min(mu, -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) - 0.001);\n"
         "    } else {\n"
         "        float d = (y - float(RES_MU) / 2.0) / (float(RES_MU) / 2.0 - 1.0);\n"
         "        d = min(max(dhdH.x, d * dhdH.y), dhdH.y * 0.999);\n"
-        "        mu = (Rt * Rt - r * r - d * d) / (2.0 * r * d);\n"
+        "        mu = (cmn[2] * cmn[2] - r * r - d * d) / (2.0 * r * d);\n"
         "    }\n"
         "    muS = mod(x, float(RES_MU_S)) / (float(RES_MU_S) - 1.0);\n"
         "    // paper formula\n"
@@ -242,15 +233,15 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_transmittanceUV // requires: Rt, Rg
+    static const std::string glsl_bruneton_transmittanceUV // requires: cmn
     (
         "vec2 getTransmittanceUV(float r, float mu) {\n"
         "    float uR, uMu;\n"
         //"#ifdef TRANSMITTANCE_NON_LINEAR\n"
-        "    uR = sqrt((r - Rg) / (Rt - Rg));\n"
+        "    uR = sqrt((r - cmn[1]) / (cmn[2] - cmn[1]));\n"
         "    uMu = atan((mu + 0.15) / (1.0 + 0.15) * tan(1.5)) / 1.5;\n"
         //"#else\n"
-        //"    uR = (r - Rg) / (Rt - Rg);\n"
+        //"    uR = (r - cmn[1]) / (cmn[2] - cmn[1]);\n"
         //"    uMu = (mu + 0.15) / (1.0 + 0.15);\n"
         //"#endif\n"
         "    return vec2(uMu, uR);\n"
@@ -258,36 +249,36 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_transmittanceRMu // requires: TRANSMITTANCE_H, TRANSMITTANCE_W, Rt, Rg
+    static const std::string glsl_bruneton_transmittanceRMu // requires: TRANSMITTANCE_H, TRANSMITTANCE_W, cmn
     (
         "void getTransmittanceRMu(out float r, out float muS) {\n"
         "    r = gl_FragCoord.y / float(TRANSMITTANCE_H);\n"
         "    muS = gl_FragCoord.x / float(TRANSMITTANCE_W);\n"
         //"#ifdef TRANSMITTANCE_NON_LINEAR\n"
-        "    r = Rg + (r * r) * (Rt - Rg);\n"
+        "    r = cmn[1] + (r * r) * (cmn[2] - cmn[1]);\n"
         "    muS = -0.15 + tan(1.5 * muS) / tan(1.5) * (1.0 + 0.15);\n"
         //"#else\n"
-        //"    r = Rg + r * (Rt - Rg);\n"
+        //"    r = cmn[1] + r * (cmn[2] - cmn[1]);\n"
         //"    muS = -0.15 + muS * (1.0 + 0.15);\n"
         //"#endif\n"
         "}\n\n"
     );
 
 
-    static const std::string glsl_bruneton_irradianceUV // requires: Rt, Rg
+    static const std::string glsl_bruneton_irradianceUV // requires: cmn
     (
         "vec2 getIrradianceUV(float r, float muS) {\n"
-        "    float uR = (r - Rg) / (Rt - Rg);\n"
+        "    float uR = (r - cmn[1]) / (cmn[2] - cmn[1]);\n"
         "    float uMuS = (muS + 0.2) / (1.0 + 0.2);\n"
         "    return vec2(uMuS, uR);\n"
         "}\n\n"
     );
 
 
-    static const std::string glsl_bruneton_irradianceRMuS // requires: SKY_H, SKY_W, Rt, Rg
+    static const std::string glsl_bruneton_irradianceRMuS // requires: SKY_H, SKY_W, cmn
     (
         "void getIrradianceRMuS(out float r, out float muS) {\n"
-        "    r = Rg + (gl_FragCoord.y - 0.5) / (float(SKY_H) - 1.0) * (Rt - Rg);\n"
+        "    r = cmn[1] + (gl_FragCoord.y - 0.5) / (float(SKY_H) - 1.0) * (cmn[2] - cmn[1]);\n"
         "    muS = -0.2 + (gl_FragCoord.x - 0.5) / (float(SKY_W) - 1.0) * (1.0 + 0.2);\n"
         "}\n\n"
     );
@@ -338,23 +329,24 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_transmittanceWithShadow // requires: Rg, transmittance()
+    static const std::string glsl_bruneton_transmittanceWithShadow // requires: cmn, transmittance()
     (
         // transmittance(=transparency) of atmosphere for infinite ray (r,mu)
         // (mu = cos(view zenith angle)), or zero if ray intersects ground
         "vec3 transmittanceWithShadow(float r, float mu) {\n"
-        "    return mu < -sqrt(1.0 - (Rg / r) * (Rg / r)) ? vec3(0.0) : transmittance(r, mu);\n"
+        "    return mu < -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) ? vec3(0.0) : transmittance(r, mu);\n"
         "}\n\n"
     );
 
 
-    static const std::string glsl_bruneton_limit // requires: RL, Rg
+    static const std::string glsl_bruneton_limit // requires: RL, cmn
     (
         // nearest intersection of ray r,mu with ground or top atmosphere boundary
         // mu=cos(ray zenith angle at ray origin)
         "float limit(float r, float mu) {\n"
+        "    float RL = cmn[2] + 1.0;\n"
         "    float dout = -r * mu + sqrt(r * r * (mu * mu - 1.0) + RL * RL);\n"
-        "    float delta2 = r * r * (mu * mu - 1.0) + Rg * Rg;\n"
+        "    float delta2 = r * r * (mu * mu - 1.0) + cmn[1] * cmn[1];\n"
         "    if (delta2 >= 0.0) {\n"
         "        float din = -r * mu - sqrt(delta2);\n"
         "        if (din >= 0.0) {\n"
@@ -378,7 +370,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_opticalDepth // requires: Rg
+    static const std::string glsl_bruneton_opticalDepth // requires: cmn
     (
         // optical depth for ray (r,mu) of length d, using analytic formula
         // (mu = cos(view zenith angle)), intersections with ground ignored
@@ -390,7 +382,7 @@ namespace
         "    vec2 a01sq = a01*a01;\n"
         "    float x = a01s.y > a01s.x ? exp(a01sq.x) : 0.0;\n"
         "    vec2 y = a01s / (2.3193*abs(a01) + sqrt(1.52*a01sq + 4.0)) * vec2(1.0, exp(-d/H*(d/(2.0*r)+mu)));\n"
-        "    return sqrt((6.2831*H)*r) * exp((Rg-r)/H) * (x + dot(y, vec2(1.0, -1.0)));\n"
+        "    return sqrt((6.2831*H)*r) * exp((cmn[1]-r)/H) * (x + dot(y, vec2(1.0, -1.0)));\n"
         "}\n\n"
     );
 
@@ -436,7 +428,7 @@ namespace
     static const std::string glsl_bruneton_mie // requires: betaR
     (
         // approximated single Mie scattering (cf. approximate Cm in paragraph 'Angular precision')
-        "vec3 getMie(vec4 rayMie) { // rayMie.rgb=C*, rayMie.w=Cm,r\n"
+        "vec3 getMie(vec4 rayMie) {\n" // rayMie.rgb = C*, rayMie.w = Cm, r
         "    return rayMie.rgb * rayMie.w / max(rayMie.r, 1e-4) * (betaR.r / betaR);\n"
         "}\n\n"
     );

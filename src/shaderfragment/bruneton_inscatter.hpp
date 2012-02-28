@@ -32,6 +32,7 @@
 #define __GLSL_BRUNETON_INSCATTER_HPP__
 
 #include "bruneton_common.hpp"
+#include "common.hpp"
 
 namespace 
 {
@@ -75,7 +76,7 @@ namespace
 
     static const std::string glsl_bruneton_f_inscatter1 // requires: r, dhdH
     (
-        glsl_bruneton_const_RgRtRL
+        glsl_cmn_uniform
     +   glsl_bruneton_const_R
     +   glsl_bruneton_const_M
     +   glsl_bruneton_const_Samples
@@ -95,11 +96,11 @@ namespace
         "    mie = vec3(0.0);\n"
         "    float ri = sqrt(r * r + t * t + 2.0 * r * mu * t);\n"
         "    float muSi = (nu * t + muS * r) / ri;\n"
-        "    ri = max(Rg, ri);\n"
-        "    if (muSi >= -sqrt(1.0 - Rg * Rg / (ri * ri))) {\n"
+        "    ri = max(cmn[1], ri);\n"
+        "    if (muSi >= -sqrt(1.0 - cmn[1] * cmn[1] / (ri * ri))) {\n"
         "        vec3 ti = transmittance(r, mu, t) * transmittance(ri, muSi);\n"
-        "        ray = exp(-(ri - Rg) / HR) * ti;\n"
-        "        mie = exp(-(ri - Rg) / HM) * ti;\n"
+        "        ray = exp(-(ri - cmn[1]) / HR) * ti;\n"
+        "        mie = exp(-(ri - cmn[1]) / HM) * ti;\n"
         "    }\n"
         "}\n"
         "\n"
@@ -145,7 +146,7 @@ namespace
     static const std::string glsl_bruneton_f_inscatterN // requires: r, dhdH, deltaJSampler, transmittanceSampler
     (
         glsl_bruneton_const_Samples
-    +   glsl_bruneton_const_RgRtRL
+    +   glsl_cmn_uniform
     +   glsl_bruneton_const_RSize
 
     +   glsl_bruneton_limit
@@ -195,7 +196,7 @@ namespace
     static const std::string glsl_bruneton_f_inscatterS // requires: r, dhdH, deltaESampler, deltaSRSampler, deltaSMSampler, transmittanceSampler, first
     (
         glsl_bruneton_const_Samples
-    +   glsl_bruneton_const_RgRtRL
+    +   glsl_cmn_uniform
     +   glsl_bruneton_const_avgReflectance
     +   glsl_bruneton_const_PI
     +   glsl_bruneton_const_R
@@ -224,13 +225,13 @@ namespace
         "const float dtheta = M_PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);\n"
         "\n"
         "void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {\n"
-        "    r = clamp(r, Rg, Rt);\n"
+        "    r = clamp(r, cmn[1], cmn[2]);\n"
         "    mu = clamp(mu, -1.0, 1.0);\n"
         "    muS = clamp(muS, -1.0, 1.0);\n"
         "    float var = sqrt(1.0 - mu * mu) * sqrt(1.0 - muS * muS);\n"
         "    nu = clamp(nu, muS * mu - var, muS * mu + var);\n"
         "\n"
-        "    float cthetamin = -sqrt(1.0 - (Rg / r) * (Rg / r));\n"
+        "    float cthetamin = -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r));\n"
         "\n"
         "    vec3 v = vec3(sqrt(1.0 - mu * mu), 0.0, mu);\n"
         "    float sx = v.x == 0.0 ? 0.0 : (nu - muS * mu) / v.x;\n"
@@ -249,8 +250,8 @@ namespace
         "        if (ctheta < cthetamin) {\n" // if ground visible in direction w
                     // compute transparency gtransp between x and ground
         "            greflectance = AVERAGE_GROUND_REFLECTANCE / M_PI;\n"
-        "            dground = -r * ctheta - sqrt(r * r * (ctheta * ctheta - 1.0) + Rg * Rg);\n"
-        "            gtransp = transmittance(Rg, -(r * ctheta + dground) / Rg, dground);\n"
+        "            dground = -r * ctheta - sqrt(r * r * (ctheta * ctheta - 1.0) + cmn[1] * cmn[1]);\n"
+        "            gtransp = transmittance(cmn[1], -(r * ctheta + dground) / cmn[1], dground);\n"
         "        }\n"
         "\n"
         "        for (int iphi = 0; iphi < 2 * INSCATTER_SPHERICAL_INTEGRAL_SAMPLES; ++iphi) {\n"
@@ -264,8 +265,8 @@ namespace
         "            float pm2 = phaseFunctionM(nu2);\n"
         "\n"
                     // compute irradiance received at ground in direction w (if ground visible) =deltaE
-        "            vec3 gnormal = (vec3(0.0, 0.0, r) + dground * w) / Rg;\n"
-        "            vec3 girradiance = irradiance(deltaESampler, Rg, dot(gnormal, s));\n"
+        "            vec3 gnormal = (vec3(0.0, 0.0, r) + dground * w) / cmn[1];\n"
+        "            vec3 girradiance = irradiance(deltaESampler, cmn[1], dot(gnormal, s));\n"
         "\n"
         "            vec3 raymie1; // light arriving at x from direction w\n"
         "\n"
@@ -288,7 +289,7 @@ namespace
                     // light coming from direction w and scattered in direction v
                     // = light arriving at x from direction w (raymie1) * SUM(scattering coefficient * phaseFunction)
                     // see Eq (7)
-        "            raymie += raymie1 * (betaR * exp(-(r - Rg) / HR) * pr2 + betaMSca * exp(-(r - Rg) / HM) * pm2) * dw;\n"
+        "            raymie += raymie1 * (betaR * exp(-(r - cmn[1]) / HR) * pr2 + betaMSca * exp(-(r - cmn[1]) / HM) * pm2) * dw;\n"
         "        }\n"
         "    }\n"
         "\n"
@@ -333,7 +334,7 @@ namespace
     static const std::string glsl_bruneton_f_copyInscatterN // requires: r, dhdH, layer, deltaSRSampler, inscatterSampler
     (
         glsl_bruneton_const_RSize
-    +   glsl_bruneton_const_RgRtRL
+    +   glsl_cmn_uniform
     +   glsl_bruneton_const_PI
     
     +   glsl_bruneton_muMuSNu

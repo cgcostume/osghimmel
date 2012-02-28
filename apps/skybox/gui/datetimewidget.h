@@ -84,7 +84,9 @@ protected slots:
     
     void on_longitudeDoubleSpinBox_valueChanged(double d);
     void on_longitudeLineEdit_editingFinished();
-   
+
+    void on_altitudeDoubleSpinBox_valueChanged(double d);
+
     void on_presetComboBox_currentIndexChanged(int index);
 
 

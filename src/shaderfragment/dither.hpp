@@ -46,9 +46,9 @@ namespace
 {
     static const std::string glsl_dither
     (
-        "vec4 dither(float multiplier)\n"
+        "vec4 dither(float multiplier, int seed)\n"
         "{\n"
-        "    float r = pseudo_rand(gl_FragCoord.xy);\n"
+        "    float r = pseudo_rand(gl_FragCoord.xy, seed);\n"
         "    uvec4 v = uint(r * 3571) * uvec4(67, 89, 23, 71);\n"
         "\n"
         // A ditheringMultiplier of 1 will add frame to frame coherent noise for each pixel of about +-1.

@@ -53,7 +53,7 @@ namespace
 {
     static const std::string glsl_pseudo_rand
     (
-        "float pseudo_rand(vec2 s)\n"
+        "float pseudo_rand(vec2 s, int seed)\n"
         "{\n"
         "    int i1 = int(s.x + s.y * 1733);\n"
         "    i1 = (i1 << 7) ^ i1 + seed;\n"  // seed

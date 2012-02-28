@@ -98,6 +98,12 @@ const double AbstractHimmelScene::setLongitude(const double longitude)
 }
 
 
+const double AbstractHimmelScene::setAltitude(const double altitude)
+{
+    return 0.0;
+}
+
+
 
 // TODO: change this - seems ugly. Works as workaround for now...
 

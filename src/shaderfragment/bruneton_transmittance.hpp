@@ -76,7 +76,7 @@ namespace
     static const std::string glsl_bruneton_f_transmittance
     (
         glsl_bruneton_const_Samples
-    +   glsl_bruneton_const_RgRtRL
+    +   glsl_cmn_uniform
     +   glsl_bruneton_const_R
     +   glsl_bruneton_const_M
     +   glsl_bruneton_const_TSize
@@ -89,15 +89,15 @@ namespace
         "    float result = 0.0;\n"
         "    float dx = limit(r, mu) / float(TRANSMITTANCE_INTEGRAL_SAMPLES);\n"
         "    float xi = 0.0;\n"
-        "    float yi = exp(-(r - Rg) / H);\n"
+        "    float yi = exp(-(r - cmn[1]) / H);\n"
         "    for (int i = 1; i <= TRANSMITTANCE_INTEGRAL_SAMPLES; ++i) {\n"
         "        float xj = float(i) * dx;\n"
-        "        float yj = exp(-(sqrt(r * r + xj * xj + 2.0 * xj * r * mu) - Rg) / H);\n"
+        "        float yj = exp(-(sqrt(r * r + xj * xj + 2.0 * xj * r * mu) - cmn[1]) / H);\n"
         "        result += (yi + yj) / 2.0 * dx;\n"
         "        xi = xj;\n"
         "        yi = yj;\n"
         "    }\n"
-        "    return mu < -sqrt(1.0 - (Rg / r) * (Rg / r)) ? 1e9 : result;\n"
+        "    return mu < -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) ? 1e9 : result;\n"
         "}\n"
         "\n"
         "void main() {\n"

@@ -275,6 +275,7 @@ void DateTimeWidget::on_applyPushButton_clicked(bool)
     {
         m_scene->setLatitude(m_ui->latitudeDoubleSpinBox->value());
         m_scene->setLongitude(m_ui->longitudeDoubleSpinBox->value());
+        m_scene->setAltitude(m_ui->altitudeDoubleSpinBox->value());
     }
 
     me_timeout();
@@ -423,8 +424,13 @@ void DateTimeWidget::on_latitudeLineEdit_editingFinished()
 
 void DateTimeWidget::on_longitudeLineEdit_editingFinished()
 {
-
     m_ui->longitudeDoubleSpinBox->setValue(longitudeFromText(m_ui->longitudeLineEdit->text()));
+}
+
+
+void DateTimeWidget::on_altitudeDoubleSpinBox_valueChanged(double d)
+{
+    autoApply();
 }
 
 
@@ -503,6 +509,9 @@ void DateTimeWidget::setScene(AbstractHimmelScene *scene)
     m_ui->longitudeDoubleSpinBox->setEnabled(hasLocationSupport);
     m_ui->longitudeLabel->setEnabled(hasLocationSupport);
     m_ui->longitudeLineEdit->setEnabled(hasLocationSupport);
+
+    m_ui->altitudeDoubleSpinBox->setEnabled(hasLocationSupport);
+    m_ui->altitudeLabel->setEnabled(hasLocationSupport);
 
     m_ui->presetComboBox->setEnabled(hasLocationSupport);
     m_ui->presetLabel->setEnabled(hasLocationSupport);

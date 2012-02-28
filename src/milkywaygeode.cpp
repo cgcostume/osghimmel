@@ -309,10 +309,15 @@ const std::string MilkyWayGeode::getVertexShaderSource()
 
 // FragmentShader
 
+#include "shaderfragment/common.hpp"
+
 const std::string MilkyWayGeode::getFragmentShaderSource()
 {
-    return glsl_version_150 +
+    return glsl_version_150
 
+    +   glsl_cmn_uniform
+    +   glsl_horizon
+    +
         "uniform vec3 sun;\n"
         "\n"
         "uniform vec4 color;\n"
@@ -331,6 +336,10 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "{\n"
         "    vec3 eye = normalize(m_eye.xyz);\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
+        "\n"
+        "    if(belowHorizon(eye))\n"
+        "        discard;\n"
+        "\n"
         "    vec4 fc = textureCube(milkywayCube, stu);\n"
         "\n"
         "    float w1 = pow(1.0 - eye.z, 5.37) * scattering;\n"
