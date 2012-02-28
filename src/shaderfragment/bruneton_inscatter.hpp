@@ -221,8 +221,8 @@ namespace
         "uniform sampler3D deltaSMSampler;\n"
         "uniform float first;\n"
         "\n"
-        "const float dphi = M_PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);\n"
-        "const float dtheta = M_PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);\n"
+        "const float dphi = PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);\n"
+        "const float dtheta = PI / float(INSCATTER_SPHERICAL_INTEGRAL_SAMPLES);\n"
         "\n"
         "void inscatter(float r, float mu, float muS, float nu, out vec3 raymie) {\n"
         "    r = clamp(r, cmn[1], cmn[2]);\n"
@@ -249,7 +249,7 @@ namespace
         "        vec3 gtransp = vec3(0.0);\n"
         "        if (ctheta < cthetamin) {\n" // if ground visible in direction w
                     // compute transparency gtransp between x and ground
-        "            greflectance = AVERAGE_GROUND_REFLECTANCE / M_PI;\n"
+        "            greflectance = AVERAGE_GROUND_REFLECTANCE / PI;\n"
         "            dground = -r * ctheta - sqrt(r * r * (ctheta * ctheta - 1.0) + cmn[1] * cmn[1]);\n"
         "            gtransp = transmittance(cmn[1], -(r * ctheta + dground) / cmn[1], dground);\n"
         "        }\n"

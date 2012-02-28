@@ -142,7 +142,7 @@ namespace
 
     static const std::string glsl_bruneton_const_PI
     (
-        "const float M_PI = 3.1415926535897932384626433832795; \n\n"
+        "const float PI = 3.1415926535897932384626433832795; \n\n"
     );
 
 
@@ -407,20 +407,20 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_phaseFunctionR // requires: M_PI
+    static const std::string glsl_bruneton_phaseFunctionR // requires: PI
     (
         // Rayleigh phase function
         "float phaseFunctionR(float mu) {\n"
-        "    return (3.0 / (16.0 * M_PI)) * (1.0 + mu * mu);\n"
+        "    return (3.0 / (16.0 * PI)) * (1.0 + mu * mu);\n"
         "}\n\n"
     );
 
 
-    static const std::string glsl_bruneton_phaseFunctionM // requires: M_PI, mieG
+    static const std::string glsl_bruneton_phaseFunctionM // requires: PI, mieG
     (
         // Mie phase function
         "float phaseFunctionM(float mu) {\n"
-        "    return 1.5 * 1.0 / (4.0 * M_PI) * (1.0 - mieG*mieG) * pow(1.0 + (mieG*mieG) - 2.0*mieG*mu, -3.0/2.0) * (1.0 + mu * mu) / (2.0 + mieG*mieG);\n"
+        "    return 1.5 * 1.0 / (4.0 * PI) * (1.0 - mieG*mieG) * pow(1.0 + (mieG*mieG) - 2.0*mieG*mu, -3.0/2.0) * (1.0 + mu * mu) / (2.0 + mieG*mieG);\n"
         "}\n\n"
     );
 
