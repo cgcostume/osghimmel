@@ -275,7 +275,11 @@ void DateTimeWidget::on_applyPushButton_clicked(bool)
     {
         m_scene->setLatitude(m_ui->latitudeDoubleSpinBox->value());
         m_scene->setLongitude(m_ui->longitudeDoubleSpinBox->value());
-        m_scene->setAltitude(m_ui->altitudeDoubleSpinBox->value());
+
+        const double a = m_scene->setAltitude(m_ui->altitudeDoubleSpinBox->value());
+        m_ui->altitudeDoubleSpinBox->blockSignals(true);
+        m_ui->altitudeDoubleSpinBox->setValue(a);
+        m_ui->altitudeDoubleSpinBox->blockSignals(false);
     }
 
     me_timeout();
