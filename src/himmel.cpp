@@ -29,6 +29,7 @@
 
 #include "himmel.h"
 
+#include "mathmacros.h"
 #include "earth.h"
 #include "astronomy.h"
 #include "astronomyla.h"
@@ -277,8 +278,9 @@ const float Himmel::setAltitude(const float altitude)
 {
     osg::Vec4 temp; 
     u_common->get(temp);
-    
-    temp._v[0] = altitude;
+
+    // Clamp altitude into non uniform atmosphere. (min alt is 1m)
+    temp._v[0] = _clamp(0.001f, earth_atmosphereThicknessNonUniform(), altitude);
     u_common->set(temp);
 
     return getAltitude();
