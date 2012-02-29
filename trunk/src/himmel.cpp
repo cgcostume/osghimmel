@@ -39,6 +39,7 @@
 #include "moongeode.h"
 #include "starsgeode.h"
 #include "milkywaygeode.h"
+#include "cloudlayerhighgeode.h"
 
 #include <assert.h>
 
@@ -57,6 +58,7 @@ Himmel *Himmel::create()
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
+    ,   new CloudLayerHighGeode()
     ,   new Astronomy());
 }
 
@@ -65,12 +67,14 @@ Himmel::Himmel(
 ,   MoonGeode *moon
 ,   StarsGeode *stars
 ,   AtmosphereGeode *atmosphere
+,   CloudLayerHighGeode *highLayer
 ,   AbstractAstronomy *astronomy)
 :   AbstractHimmel()
 ,   m_milkyway(milkyWay)
 ,   m_moon(moon)
 ,   m_stars(stars)
 ,   m_atmosphere(atmosphere)
+,   m_highLayer(highLayer)
 ,   m_astronomy(astronomy)
 
 ,   u_sun(NULL)
@@ -113,12 +117,19 @@ Himmel::Himmel(
         m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
     }
 
-
     if(m_atmosphere)
     {
         addChild(m_atmosphere);
         m_atmosphere->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
     }
+
+    if(m_highLayer)
+    {
+        addChild(m_highLayer);
+        m_highLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+    }
+
+
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
     registerShader();
@@ -169,6 +180,12 @@ void Himmel::registerShader() const
         shaderModifier()->registerShader(m_atmosphere->getName(), m_atmosphere->vertexShader());
         shaderModifier()->registerShader(m_atmosphere->getName(), m_atmosphere->fragmentShader());
     }
+
+    if(m_highLayer)
+    {
+        shaderModifier()->registerShader(m_highLayer->getName(), m_highLayer->vertexShader());
+        shaderModifier()->registerShader(m_highLayer->getName(), m_highLayer->fragmentShader());
+    }
 }
 
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
@@ -194,6 +211,8 @@ void Himmel::update()
             m_stars->update(*this);
         if(m_atmosphere)
             m_atmosphere->update(*this);
+        if(m_highLayer)
+            m_highLayer->update(*this);
 
         dirty(false);
     }

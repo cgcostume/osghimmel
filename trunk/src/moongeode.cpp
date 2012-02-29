@@ -464,7 +464,6 @@ const std::string MoonGeode::getFragmentShaderSource()
         //"    float op2 = dot(-m, s);
         //"    float Eem = 0.1 * op2 * op2;
 
-        //"    gl_FragDepth = 0.99999996;\n"
         "\n"
         "    vec3 diffuse = vec3(0);\n"
         "    diffuse += earthShine.w * earthShine.rgb * Eem;\n"

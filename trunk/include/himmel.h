@@ -39,6 +39,7 @@ class AtmosphereGeode;
 class MoonGeode;
 class StarsGeode;
 class MilkyWayGeode;
+class CloudLayerHighGeode;
 
 
 class Himmel : public AbstractHimmel
@@ -53,6 +54,7 @@ public:
     ,   MoonGeode *moon
     ,   StarsGeode *stars
     ,   AtmosphereGeode *atmosphere
+    ,   CloudLayerHighGeode *highLayer
     ,   AbstractAstronomy *astronomy);
 
     virtual ~Himmel();
@@ -128,10 +130,11 @@ protected:
 
     AbstractAstronomy *m_astronomy;
 
-    osg::ref_ptr<AtmosphereGeode> m_atmosphere;
-    osg::ref_ptr<MoonGeode>       m_moon;
-    osg::ref_ptr<StarsGeode>      m_stars;
-    osg::ref_ptr<MilkyWayGeode>   m_milkyway;
+    osg::ref_ptr<AtmosphereGeode>     m_atmosphere;
+    osg::ref_ptr<MoonGeode>           m_moon;
+    osg::ref_ptr<StarsGeode>          m_stars;
+    osg::ref_ptr<MilkyWayGeode>       m_milkyway;
+    osg::ref_ptr<CloudLayerHighGeode> m_highLayer;
 };
 
 #endif // __PROCEDURALHIMMEL_H__
