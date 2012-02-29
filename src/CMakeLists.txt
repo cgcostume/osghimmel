@@ -40,6 +40,7 @@ set(LIB_SOURCES
     atmospheregeode.cpp
 	atmosphereprecompute.cpp
     brightstars.cpp
+	cloudlayerhighgeode.cpp
     coords.cpp
     cubemappedhimmel.cpp
     earth.cpp
@@ -75,6 +76,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/atmospheregeode.h
 	${HEADER_PATH}/atmosphereprecompute.h
     ${HEADER_PATH}/brightstars.h
+	${HEADER_PATH}/cloudlayerhighgeode.h
     ${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/earth.h
@@ -116,10 +118,12 @@ set(LIB_SOURCES
 	shaderfragment/bruneton_inscatter.hpp
 	shaderfragment/bruneton_irradiance.hpp
 	shaderfragment/bruneton_transmittance.hpp	
+	shaderfragment/cloudlayer.hpp
     shaderfragment/common.hpp
 	shaderfragment/compose.hpp
     shaderfragment/dither.hpp
     shaderfragment/hband.hpp
+	shaderfragment/noise.hpp
     shaderfragment/pseudo_rand.hpp
     shaderfragment/quadretrieveray.hpp
     shaderfragment/quadtransform.hpp

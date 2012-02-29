@@ -572,6 +572,5 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "\n"
         "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0)\n"
         "        + dither(4, int(cmn[3]));\n" // Eq (16)
-        //"    gl_FragDepth = 1.0;\n"
         "}\n";
 }

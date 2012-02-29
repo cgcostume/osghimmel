@@ -224,7 +224,10 @@ void StarsGeode::setupTextures(osg::StateSet* stateSet)
 
     osg::ref_ptr<osg::Texture1D> noise = new osg::Texture1D(noiseImage);
 
-    stateSet->setTextureAttributeAndModes(0, noise, osg::StateAttribute::ON);
+    int unit;
+    u_noise1->get(unit);
+
+    stateSet->setTextureAttributeAndModes(unit, noise, osg::StateAttribute::ON);
 }
 
 
