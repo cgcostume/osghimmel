@@ -217,7 +217,7 @@ const float MoonGeode::getScale() const
 
 const float MoonGeode::defaultScale()
 {
-    return 4.f;
+    return 2.f;
 }
 
 
