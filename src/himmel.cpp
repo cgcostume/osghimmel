@@ -31,6 +31,7 @@
 
 #include "mathmacros.h"
 #include "earth.h"
+#include "timef.h"
 #include "astronomy.h"
 #include "astronomyla.h"
 
@@ -78,6 +79,7 @@ Himmel::Himmel(
 ,   m_astronomy(astronomy)
 
 ,   u_sun(NULL)
+,   u_time(NULL)
 ,   u_common(NULL)
 {
     assert(m_astronomy);
@@ -88,6 +90,9 @@ Himmel::Himmel(
 
     u_sun = new osg::Uniform("sun", osg::Vec3(0.0, 0.0, 0.0));
     getOrCreateStateSet()->addUniform(u_sun);
+
+    u_time = new osg::Uniform("time", 0.f);
+    getOrCreateStateSet()->addUniform(u_time);
 
     // 0: altitude in km
     // 1: apparent angular radius (not diameter!)
@@ -139,7 +144,7 @@ Himmel::Himmel(
 
 osg::Uniform *Himmel::cmnUniform()
 {
-    return new osg::Uniform("cmn", osg::Vec4(defaultAltitude(), earth_meanRadius(), earth_meanRadius() + earth_atmosphereThicknessNonUniform(), 1));
+    return new osg::Uniform("cmn", osg::Vec4(defaultAltitude(), earth_meanRadius(), earth_meanRadius() + earth_atmosphereThicknessNonUniform(), 0));
 }
 
 
@@ -202,6 +207,8 @@ void Himmel::update()
 
         osg::Vec3 sunv = astro()->getSunPosition();
         u_sun->set(sunv);
+
+        u_time->set(static_cast<float>(getTime()->getf()));
 
         if(m_milkyway)
             m_milkyway->update(*this);

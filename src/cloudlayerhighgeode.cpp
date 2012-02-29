@@ -265,7 +265,7 @@ const std::string CloudLayerHighGeode::getFragmentShaderSource()
     +   glsl_fade
     +   glsl_noise2
     +
-        "uniform float altitude = 2.0;\n"
+        "uniform float altitude = 8.0;\n" // TODO: make uniform.....!
         "\n"
         "in vec4 m_ray;\n"
         "\n"
@@ -277,10 +277,10 @@ const std::string CloudLayerHighGeode::getFragmentShaderSource()
         "        discard;\n"
         "\n"
         "    float t = getLayerIntersectionOrDiscard(d, altitude);\n"
-        "    vec2 st = t * d.xy * vec2(1.0, 1.0);\n"
+        "    vec2 st = t * d.xy * vec2(0.7, 1.0);\n"
         "\n"
         "    float n = 0;\n"
-        "    float f = 0.125;\n"
+        "    float f = 0.08;\n"
         "\n"
         "    n += noise2(st *  0.125 * f) * (1 /  1.0);\n"
         "    n += noise2(st *  0.250 * f) * (1 /  2.0);\n"
@@ -288,9 +288,11 @@ const std::string CloudLayerHighGeode::getFragmentShaderSource()
         "    n += noise2(st *  1.000 * f) * (1 /  8.0);\n"
         "    n += noise2(st *  2.000 * f) * (1 / 16.0);\n"
         "    //    n += noise2(st *  4.000 * f) * (1 / 32.0);\n"
-        "    //    n += noise2(st *  8.000 * f) * (1 / 64.0);\n"
-        "    //    n += noise2(st * 16.000 * f) * (1 /128.0);\n"
+        "        n += noise2(st *  8.000 * f) * (1 / 16.0);\n"
+        "        n += noise2(st * 16.000 * f) * (1 / 16.0);\n"
+        "        n += noise2(st * 32.000 * f) * (1 / 32.0);\n"
+        "        n += noise2(st * 64.000 * f) * (1 / 32.0);\n"
         "\n"
-        "    gl_FragColor = vec4(vec3(0.125), n);\n"
+        "    gl_FragColor = vec4(vec3(0.2), n);\n"
         "}\n\n";
 }

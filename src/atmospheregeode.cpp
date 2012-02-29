@@ -211,7 +211,7 @@ const float AtmosphereGeode::getSunScale() const
 
 const float AtmosphereGeode::defaultSunScale()
 {
-    return 4.f;
+    return 2.f;
 }
 
 
@@ -230,7 +230,7 @@ const float AtmosphereGeode::getExposure() const
 
 const float AtmosphereGeode::defaultExposure()
 {
-    return 0.4f;
+    return 0.22f;
 }
 
 
