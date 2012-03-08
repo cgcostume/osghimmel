@@ -37,9 +37,9 @@ namespace
 {
     // Use glsl mix if alpha is 1.0, since it is much faster due to 'collapsed' math.
 
-    static const std::string glsl_blendNormal(
+    const std::string glsl_blendNormal(
         IMP_COMPOSE(normal, s));
-    static const std::string glsl_blendNormalExt(
+    const std::string glsl_blendNormalExt(
         IMP_COMPOSE_SRC_ALPHA(normal, s));
 }
 

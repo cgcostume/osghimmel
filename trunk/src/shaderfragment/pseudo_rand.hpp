@@ -51,7 +51,7 @@
 
 namespace 
 {
-    static const std::string glsl_pseudo_rand
+    const std::string glsl_pseudo_rand
     (
         "float pseudo_rand(vec2 s, int seed)\n"
         "{\n"

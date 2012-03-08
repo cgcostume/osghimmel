@@ -35,12 +35,12 @@
 #include <osg/MatrixTransform>
 
 #include <assert.h>
-#include <limits.h>
+#include <limits>
 
 namespace 
 {
-    static const GLint BACK_TEXTURE_INDEX(0);
-    static const GLint SRC_TEXTURE_INDEX(1);
+    const GLint BACK_TEXTURE_INDEX(0);
+    const GLint SRC_TEXTURE_INDEX (1);
 }
 
 

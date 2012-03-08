@@ -42,20 +42,20 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_POLARMAPPED (TR("Polar Mapped"));
+    const QString GROUP_POLARMAPPED (TR("Polar Mapped"));
 
-    static const QString PROPERTY_RAZSPEED (TR("RAZ Speed"));
+    const QString PROPERTY_RAZSPEED (TR("RAZ Speed"));
 
-    static const QString PROPERTY_SUNSCALE (TR("Sun Scale"));
-    static const QString PROPERTY_SUNCOEFFS(TR("Sun Coeffs"));
+    const QString PROPERTY_SUNSCALE (TR("Sun Scale"));
+    const QString PROPERTY_SUNCOEFFS(TR("Sun Coeffs"));
 
-    static const QString GROUP_HBAND(TR("HorizonBand"));
+    const QString GROUP_HBAND(TR("HorizonBand"));
 
-    static const QString PROPERTY_HBAND_SCALE (TR("Scale"));
-    static const QString PROPERTY_HBAND_WIDTH (TR("Width"));
-    static const QString PROPERTY_HBAND_OFFSET(TR("Offset"));
-    static const QString PROPERTY_HBAND_COLOR (TR("Color"));
-    static const QString PROPERTY_BOTTOM_COLOR(TR("Bottom Color"));
+    const QString PROPERTY_HBAND_SCALE (TR("Scale"));
+    const QString PROPERTY_HBAND_WIDTH (TR("Width"));
+    const QString PROPERTY_HBAND_OFFSET(TR("Offset"));
+    const QString PROPERTY_HBAND_COLOR (TR("Color"));
+    const QString PROPERTY_BOTTOM_COLOR(TR("Bottom Color"));
 }
 
 Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)

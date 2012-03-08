@@ -187,7 +187,9 @@ const bool Test::assert_eq_t(
 ,   const std::string &actual_string
 ,   const T max_allowed_distance)
 {
+    #pragma warning( disable : 4146 )
     const bool success(max_allowed_distance ? ABS(expected - actual) <= max_allowed_distance : expected == actual);
+    #pragma warning( default : 4146 )
 
     if(success)
         REPORT_TRUE_EQ(file);
@@ -208,7 +210,9 @@ const bool Test::assert_eq_not_t(
 ,   const std::string &actual_string
 ,   const T max_allowed_distance)
 {
+    #pragma warning( disable : 4146 )
     const bool success(max_allowed_distance? ABS(expected - actual) <= max_allowed_distance : expected == actual);
+    #pragma warning( default : 4146 )
 
     if(!success)
         REPORT_TRUE_EQ_NOT(file);

@@ -73,7 +73,7 @@ namespace
 
     // computes transmittance table T using Eq (5)
 
-    static const std::string glsl_bruneton_f_transmittance
+    const std::string glsl_bruneton_f_transmittance
     (
         glsl_bruneton_const_Samples
     +   glsl_cmn_uniform

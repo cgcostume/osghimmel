@@ -33,12 +33,12 @@
 
 namespace 
 {
-    static const std::string glsl_version_150
+    const std::string glsl_version_150
     (
         "#version 150 compatibility\n\n"
     );
 
-    static const std::string glsl_geometry_ext
+    const std::string glsl_geometry_ext
     (
         "#extension GL_EXT_geometry_shader4 : enable\n"
     );    

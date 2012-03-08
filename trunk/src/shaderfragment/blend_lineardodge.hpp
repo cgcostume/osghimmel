@@ -35,9 +35,9 @@
 
 namespace
 {
-    static const std::string glsl_blendLinearDodge(
+    const std::string glsl_blendLinearDodge(
         IMP_COMPOSE(lineardodge, b + s));
-    static const std::string glsl_blendLinearDodgeExt(
+    const std::string glsl_blendLinearDodgeExt(
         IMP_COMPOSE_SRC_ALPHA(lineardodge, b + s));
 }
 

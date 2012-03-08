@@ -33,7 +33,7 @@
 
 namespace 
 {
-    static const std::string glsl_hband
+    const std::string glsl_hband
     (
         "uniform vec3 hbandParams;\n"   // { 0: Scale, 1: Width, 2: Offset }
         "\n"

@@ -35,9 +35,9 @@
 
 namespace 
 {
-    static const std::string glsl_blendMultiply(
+    const std::string glsl_blendMultiply(
         IMP_COMPOSE(multiply, b * s));
-    static const std::string glsl_blendMultiplyExt(
+    const std::string glsl_blendMultiplyExt(
         IMP_COMPOSE_SRC_ALPHA(multiply, b * s));
 }
 

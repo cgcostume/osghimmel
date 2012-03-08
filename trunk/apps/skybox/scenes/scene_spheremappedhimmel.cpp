@@ -39,9 +39,9 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_SPHEREMAPPED(TR("Sphere Mapped"));
+    const QString GROUP_SPHEREMAPPED(TR("Sphere Mapped"));
 
-    static const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
+    const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
 }
 
 Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)

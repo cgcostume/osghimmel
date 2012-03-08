@@ -40,9 +40,9 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_CUBEMAPPED (TR("Cube Mapped"));
+    const QString GROUP_CUBEMAPPED (TR("Cube Mapped"));
 
-    static const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
+    const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
 }
 
 Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)

@@ -35,9 +35,9 @@
 
 namespace 
 {
-    static const std::string glsl_blendScreen(
+    const std::string glsl_blendScreen(
         IMP_COMPOSE(screen, b + s - (b * s)));
-    static const std::string glsl_blendScreenExt(
+    const std::string glsl_blendScreenExt(
         IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s)));
 }
 

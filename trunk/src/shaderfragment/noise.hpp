@@ -74,7 +74,7 @@ namespace
     THE SOFTWARE.
     */
 
-    static const std::string glsl_fade
+    const std::string glsl_fade
     (
         "float fade(const float t)\n"
         "{\n"
@@ -82,7 +82,7 @@ namespace
         "}\n\n"
     );
 
-    static const std::string glsl_noise2 // requires: fade, perm
+    const std::string glsl_noise2 // requires: fade, perm
     (
         "const float o  = 1.0 / %SIZE%;\n"
         "\n"

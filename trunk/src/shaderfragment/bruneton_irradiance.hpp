@@ -74,7 +74,7 @@ namespace
     // computes ground irradiance due to direct sunlight E[L0] (line 2 in algorithm 4.1)
 
 
-    static const std::string glsl_bruneton_f_irradiance1 // requires: transmittanceSampler
+    const std::string glsl_bruneton_f_irradiance1 // requires: transmittanceSampler
     (
         glsl_cmn_uniform
     +   glsl_bruneton_const_ISize
@@ -94,7 +94,7 @@ namespace
     
     // computes ground irradiance due to skylight E[deltaS] (line 8 in algorithm 4.1)
 
-    static const std::string glsl_bruneton_f_irradianceN // requires: deltaSRSampler, deltaSMSampler, first
+    const std::string glsl_bruneton_f_irradianceN // requires: deltaSRSampler, deltaSMSampler, first
     (
         glsl_bruneton_const_PI
     +   glsl_bruneton_const_Samples
@@ -152,7 +152,7 @@ namespace
 
     // copies deltaE into E (lines 4 and 10 in algorithm 4.1)
 
-    static const std::string glsl_bruneton_f_copyIrradiance // requires: k, deltaESampler, irradianceSampler
+    const std::string glsl_bruneton_f_copyIrradiance // requires: k, deltaESampler, irradianceSampler
     (
         glsl_bruneton_const_ISize
 

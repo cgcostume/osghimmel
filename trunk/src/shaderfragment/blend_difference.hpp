@@ -35,9 +35,9 @@
 
 namespace
 {
-    static const std::string glsl_blendDifference(
+    const std::string glsl_blendDifference(
         IMP_COMPOSE(difference, fabs(b - s)));
-    static const std::string glsl_blendDifferenceExt(
+    const std::string glsl_blendDifferenceExt(
         IMP_COMPOSE_SRC_ALPHA(difference, fabs(b - s)));
 }
 

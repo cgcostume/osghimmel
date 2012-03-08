@@ -71,7 +71,7 @@ namespace
      * Author: Eric Bruneton
      */
 
-    static const std::string glsl_bruneton_v_default
+    const std::string glsl_bruneton_v_default
     (
         "void main() {\n"
         "    gl_Position = gl_Vertex;\n"
@@ -106,21 +106,21 @@ namespace
 
     // TEXTURE SIZE
     
-    static const std::string glsl_bruneton_const_TSize
+    const std::string glsl_bruneton_const_TSize
     (
         "const int TRANSMITTANCE_W = %TRANSMITTANCE_W%; \n"
         "const int TRANSMITTANCE_H = %TRANSMITTANCE_H%; \n\n"
     );
 
 
-    static const std::string glsl_bruneton_const_ISize
+    const std::string glsl_bruneton_const_ISize
     (
         "const int SKY_W = %SKY_W%; \n"
         "const int SKY_H = %SKY_H%; \n\n"
     );
 
     
-    static const std::string glsl_bruneton_const_RSize
+    const std::string glsl_bruneton_const_RSize
     (
         "const int RES_R    = %RES_R%; \n"
         "const int RES_MU   = %RES_MU%; \n"
@@ -131,7 +131,7 @@ namespace
 
     // NUMERICAL INTEGRATION PARAMETERS
 
-    static const std::string glsl_bruneton_const_Samples
+    const std::string glsl_bruneton_const_Samples
     (
         "const int TRANSMITTANCE_INTEGRAL_SAMPLES       = %TRANSMITTANCE_INTEGRAL_SAMPLES%; \n"
         "const int INSCATTER_INTEGRAL_SAMPLES           = %INSCATTER_INTEGRAL_SAMPLES%; \n"
@@ -140,7 +140,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_const_PI
+    const std::string glsl_bruneton_const_PI
     (
         "const float PI = 3.1415926535897932384626433832795; \n\n"
     );
@@ -148,19 +148,19 @@ namespace
 
     // PHYSICAL MODEL PARAMETERS
 
-    static const std::string glsl_bruneton_const_avgReflectance
+    const std::string glsl_bruneton_const_avgReflectance
     (
         "const float AVERAGE_GROUND_REFLECTANCE = %AVERAGE_GROUND_REFLECTANCE%; \n\n"
     );
 
     
-    static const std::string glsl_bruneton_const_R
+    const std::string glsl_bruneton_const_R
     (
         "const float HR   = %HR%; \n"
         "const vec3 betaR = %betaR%; \n\n"
     );
 
-    static const std::string glsl_bruneton_const_M
+    const std::string glsl_bruneton_const_M
     (
         "const float HM      = %HM%; \n"
         "const vec3 betaMSca = %betaMSca%; \n"
@@ -171,7 +171,7 @@ namespace
 
     // PARAMETERIZATION FUNCTIONS
 
-    static const std::string glsl_bruneton_texture4D // requires: RES_MU, RES_MU_S, RES_R, RES_NU, cmn
+    const std::string glsl_bruneton_texture4D // requires: RES_MU, RES_MU_S, RES_R, RES_NU, cmn
     (
         "vec4 texture4D(sampler3D table, float r, float mu, float muS, float nu)\n"
         "{\n"
@@ -201,7 +201,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_muMuSNu // requires: RES_MU, RES_MU_S, RES_NU, cmn
+    const std::string glsl_bruneton_muMuSNu // requires: RES_MU, RES_MU_S, RES_NU, cmn
     (
         "void getMuMuSNu(float r, vec4 dhdH, out float mu, out float muS, out float nu) {\n"
         "    float x = gl_FragCoord.x - 0.5;\n"
@@ -233,7 +233,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_transmittanceUV // requires: cmn
+    const std::string glsl_bruneton_transmittanceUV // requires: cmn
     (
         "vec2 getTransmittanceUV(float r, float mu) {\n"
         "    float uR, uMu;\n"
@@ -249,7 +249,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_transmittanceRMu // requires: TRANSMITTANCE_H, TRANSMITTANCE_W, cmn
+    const std::string glsl_bruneton_transmittanceRMu // requires: TRANSMITTANCE_H, TRANSMITTANCE_W, cmn
     (
         "void getTransmittanceRMu(out float r, out float muS) {\n"
         "    r = gl_FragCoord.y / float(TRANSMITTANCE_H);\n"
@@ -265,7 +265,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_irradianceUV // requires: cmn
+    const std::string glsl_bruneton_irradianceUV // requires: cmn
     (
         "vec2 getIrradianceUV(float r, float muS) {\n"
         "    float uR = (r - cmn[1]) / (cmn[2] - cmn[1]);\n"
@@ -275,7 +275,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_irradianceRMuS // requires: SKY_H, SKY_W, cmn
+    const std::string glsl_bruneton_irradianceRMuS // requires: SKY_H, SKY_W, cmn
     (
         "void getIrradianceRMuS(out float r, out float muS) {\n"
         "    r = cmn[1] + (gl_FragCoord.y - 0.5) / (float(SKY_H) - 1.0) * (cmn[2] - cmn[1]);\n"
@@ -286,7 +286,7 @@ namespace
 
     // UTILITY FUNCTIONS
 
-    static const std::string glsl_bruneton_transmittance // requires: transmittanceSampler, transmittanceUV
+    const std::string glsl_bruneton_transmittance // requires: transmittanceSampler, transmittanceUV
     (
         "uniform sampler2D transmittanceSampler;\n\n"   
 
@@ -329,7 +329,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_transmittanceWithShadow // requires: cmn, transmittance()
+    const std::string glsl_bruneton_transmittanceWithShadow // requires: cmn, transmittance()
     (
         // transmittance(=transparency) of atmosphere for infinite ray (r,mu)
         // (mu = cos(view zenith angle)), or zero if ray intersects ground
@@ -339,7 +339,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_limit // requires: RL, cmn
+    const std::string glsl_bruneton_limit // requires: RL, cmn
     (
         // nearest intersection of ray r,mu with ground or top atmosphere boundary
         // mu=cos(ray zenith angle at ray origin)
@@ -358,7 +358,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_hdr // requires: -
+    const std::string glsl_bruneton_hdr // requires: -
     (
         "vec3 HDR(vec3 L) {\n"
         "    L = L * exposure;\n"
@@ -370,7 +370,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_opticalDepth // requires: cmn
+    const std::string glsl_bruneton_opticalDepth // requires: cmn
     (
         // optical depth for ray (r,mu) of length d, using analytic formula
         // (mu = cos(view zenith angle)), intersections with ground ignored
@@ -387,7 +387,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_analyticTransmittance // requires: opticalDepth(), HR, betaR, HM, betaMEx
+    const std::string glsl_bruneton_analyticTransmittance // requires: opticalDepth(), HR, betaR, HM, betaMEx
     (
         // transmittance(=transparency) of atmosphere for ray (r,mu) of length d
         // (mu=cos(view zenith angle)), intersections with ground ignored
@@ -398,7 +398,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_irradiance // requires: irradianceUV()
+    const std::string glsl_bruneton_irradiance // requires: irradianceUV()
     (
         "vec3 irradiance(sampler2D sampler, float r, float muS) {\n"
         "    vec2 uv = getIrradianceUV(r, muS);\n"
@@ -407,7 +407,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_phaseFunctionR // requires: PI
+    const std::string glsl_bruneton_phaseFunctionR // requires: PI
     (
         // Rayleigh phase function
         "float phaseFunctionR(float mu) {\n"
@@ -416,7 +416,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_phaseFunctionM // requires: PI, mieG
+    const std::string glsl_bruneton_phaseFunctionM // requires: PI, mieG
     (
         // Mie phase function
         "float phaseFunctionM(float mu) {\n"
@@ -425,7 +425,7 @@ namespace
     );
 
 
-    static const std::string glsl_bruneton_mie // requires: betaR
+    const std::string glsl_bruneton_mie // requires: betaR
     (
         // approximated single Mie scattering (cf. approximate Cm in paragraph 'Angular precision')
         "vec3 getMie(vec4 rayMie) {\n" // rayMie.rgb = C*, rayMie.w = Cm, r
