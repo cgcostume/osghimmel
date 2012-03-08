@@ -48,119 +48,119 @@ void PerlinMapGenerator::generate(
 ,   const bool normalize
 ,   const int seed = 0)
 {
-    const unsigned int size = width * height;
+    //const unsigned int size = width * height;
 
-    if(size < 1) 
-        return;
+    //if(size < 1) 
+    //    return;
 
-    for(unsigned int i = 0; i < size * N; ++i)
-        dest[i] = static_cast<T>(0.f);
+    //for(unsigned int i = 0; i < size * N; ++i)
+    //    dest[i] = static_cast<T>(0.f);
 
-    srand(seed);
-
-
-    float *temp = new float[size * octaves];
-    float *temp2 = new float[size];
-
-    int frequency = 1 << startFrequency;
-
-    SetRandomSeed(seed);
+    //srand(seed);
 
 
-    // Generate noise data for each octave.
-    for(int f = 0; f < octaves; ++f, frequency *= 2)
-    {
-        SetNoiseFrequency(frequency);
+    //float *temp = new float[size * octaves];
+    //float *temp2 = new float[size];
 
-        for(int y = 0; y < height; ++y) 
-            for(int x = 0; x < width; ++x) 
-            {
-                float xf = static_cast<float>(x) / width * frequency;
-                float yf = static_cast<float>(y) / height * frequency;
+    //int frequency = 1 << startFrequency;
 
-                temp[(y * width  + x) + size * f] = static_cast<float>(noise(xf, yf));
-            }
-    }
-
-    // Generate image using noise data.
-
-    float *fo = new float[octaves];
-
-    for(int o = 0; o < octaves; ++o) 
-        fo[o] = 1.f / static_cast<float>(1 << o);
+    //SetRandomSeed(seed);
 
 
-    float p, f, po, pf, minp = scale, maxp = 0.;
+    //// Generate noise data for each octave.
+    //for(int f = 0; f < octaves; ++f, frequency *= 2)
+    //{
+    //    SetNoiseFrequency(frequency);
 
-    for(int i = 0; i < width * height; ++i) 
-    {
-        p = 0.f;
+    //    for(int y = 0; y < height; ++y) 
+    //        for(int x = 0; x < width; ++x) 
+    //        {
+    //            float xf = static_cast<float>(x) / width * frequency;
+    //            float yf = static_cast<float>(y) / height * frequency;
 
-        for(int o = 0; o < octaves; ++o) 
-        {
-            f = fo[o];
+    //            temp[(y * width  + x) + size * f] = static_cast<float>(noise(xf, yf));
+    //        }
+    //}
 
-            po = temp[i + size * o];
-            pf = f * po;
+    //// Generate image using noise data.
 
-            switch(type)
-            {
-            case NT_Standard:
-                p += o > 0 ? 0.f : po; 
-                break;
-            case NT_Cloud:
-                p += pf; 
-                break;
-            case NT_CloudAbs:
-                p += abs(static_cast<float>(pf)); 
-                break;
-            case NT_Wood:
-                p += (pf * 8.f) - int(pf * 8.f); 
-                break;
-            case NT_Paper:
-                p += po * po * (pf > 0 ? 1.f : -1.f); 
-                break;
-            };
-        }
+    //float *fo = new float[octaves];
 
-        p += 0.5;
+    //for(int o = 0; o < octaves; ++o) 
+    //    fo[o] = 1.f / static_cast<float>(1 << o);
 
-        if(p > maxp) 
-            maxp = p;
-        if(p < minp) 
-            minp = p;
 
-        temp2[i] = p;
-    }
+    //float p, f, po, pf, minp = scale, maxp = 0.;
 
-    if(normalize)
-    {
-        const float invF = scale / (maxp - minp);
-        for(int i = 0; i < width * height; ++i) 
-        {
-            p = temp2[i];
+    //for(int i = 0; i < width * height; ++i) 
+    //{
+    //    p = 0.f;
 
-            p -= minp;
-            p *= invF;
+    //    for(int o = 0; o < octaves; ++o) 
+    //    {
+    //        f = fo[o];
 
-            for(unsigned int n = 0; n < N; ++n)
-                dest[i * N + n] = static_cast<T>(p);
-        }
-    }
-    else
-    {
-        for(int i = 0; i < width * height; ++i) 
-        {
-            p = temp2[i];
-            p *= scale;
+    //        po = temp[i + size * o];
+    //        pf = f * po;
 
-            for(unsigned int n = 0; n < N; ++n)
-                dest[i * N + n] = static_cast<T>(p);
-        }
-    }
+    //        switch(type)
+    //        {
+    //        case NT_Standard:
+    //            p += o > 0 ? 0.f : po; 
+    //            break;
+    //        case NT_Cloud:
+    //            p += pf; 
+    //            break;
+    //        case NT_CloudAbs:
+    //            p += abs(static_cast<float>(pf)); 
+    //            break;
+    //        case NT_Wood:
+    //            p += (pf * 8.f) - int(pf * 8.f); 
+    //            break;
+    //        case NT_Paper:
+    //            p += po * po * (pf > 0 ? 1.f : -1.f); 
+    //            break;
+    //        };
+    //    }
 
-    delete[] temp;
-    delete[] temp2;
+    //    p += 0.5;
+
+    //    if(p > maxp) 
+    //        maxp = p;
+    //    if(p < minp) 
+    //        minp = p;
+
+    //    temp2[i] = p;
+    //}
+
+    //if(normalize)
+    //{
+    //    const float invF = scale / (maxp - minp);
+    //    for(int i = 0; i < width * height; ++i) 
+    //    {
+    //        p = temp2[i];
+
+    //        p -= minp;
+    //        p *= invF;
+
+    //        for(unsigned int n = 0; n < N; ++n)
+    //            dest[i * N + n] = static_cast<T>(p);
+    //    }
+    //}
+    //else
+    //{
+    //    for(int i = 0; i < width * height; ++i) 
+    //    {
+    //        p = temp2[i];
+    //        p *= scale;
+
+    //        for(unsigned int n = 0; n < N; ++n)
+    //            dest[i * N + n] = static_cast<T>(p);
+    //    }
+    //}
+
+    //delete[] temp;
+    //delete[] temp2;
 }
 
 

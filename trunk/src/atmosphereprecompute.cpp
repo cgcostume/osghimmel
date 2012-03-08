@@ -40,6 +40,7 @@
 #include "atmosphereprecompute.h"
 #include "himmel.h"
 #include "earth.h"
+#include "strutils.h"
 
 #include <osg/Image>
 #include <osg/Texture2D>
@@ -786,61 +787,4 @@ void AtmospherePrecompute::substituteMacros(std::string &source)
     replace(source, "%betaMSca%", mc.betaMSca);
     replace(source, "%betaMEx%", mc.betaMEx);
     replace(source, "%mieG%", mc.mieG);
-}
-
-
-void AtmospherePrecompute::replace(
-    std::string& string
-,   const std::string &search
-,   const int value)
-{
-    // length of value for char buffer:
-    
-    const int n = ceil(log10(static_cast<float>(value)));
-    char *buffer = new char[n + 1];
-    itoa(value, buffer, 10);
-    buffer[n] = '\0';
-
-    replace(string, search, buffer);
-
-    delete[] buffer;
-}
-
-
-void AtmospherePrecompute::replace(
-    std::string& string
-,   const std::string &search
-,   const float value)
-{
-    char buffer[64];
-
-    if(sprintf(buffer, "%f", value))
-        replace(string, search, buffer);
-}
-
-
-void AtmospherePrecompute::replace(
-    std::string& string
-,   const std::string &search
-,   const osg::Vec3f value)
-{
-    char buffer[202];
-
-    if(sprintf(buffer, "vec3(%f, %f, %f)", value._v[0], value._v[1], value._v[2]))
-        replace(string, search, buffer);
-}
-
-
-void AtmospherePrecompute::replace(
-    std::string& string
-,   const std::string &search
-,   const std::string &replace)
-{
-    std::string::size_type next;
-
-    for(next = string.find(search); next != std::string::npos; next = string.find(search, next))
-    {
-        string.replace(next, search.length(), replace);
-        next += replace.length();
-    }
 }

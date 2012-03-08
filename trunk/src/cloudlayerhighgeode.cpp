@@ -30,6 +30,7 @@
 
 #include "cloudlayerhighgeode.h"
 
+#include "noise.h"
 #include "himmelquad.h"
 
 #include <osg/Texture2D>
@@ -38,70 +39,6 @@
 #include <osg/BlendFunc>
 
 #include <assert.h>
-
-
-
-
-namespace
-{
-    // From // JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 KEN PERLIN. (http://mrl.nyu.edu/~perlin/noise/)
-    // and (Improving Noise - Perlin - 2002) - http://mrl.nyu.edu/~perlin/paper445.pdf
-
-    const static unsigned char perm[] = 
-    { 
-        151,160,137,91,90,15,
-        131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
-        190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
-        88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
-        77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,
-        102,143,54, 65,25,63,161, 1,216,80,73,209,76,132,187,208, 89,18,169,200,196,
-        135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,250,124,123,
-        5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,
-        223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167, 43,172,9,
-        129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,97,228,
-        251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107,
-        49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
-        138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
-    };
-
-    const static unsigned char grad[16][3] =
-    {
-            { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}
-        ,   { 1, 0, 1}, {-1, 0, 1}, { 1, 0,-1}, {-1, 0,-1}
-        ,   { 0, 1, 1}, { 0,-1, 1}, { 0, 1,-1}, { 0,-1,-1}
-        ,   { 1, 1, 0}, {-1, 1, 0}, { 0,-1, 0}, { 0,-1,-1}
-    };
-
-}
-
-
-void generate(
-    const int width
-,   const int height
-,   unsigned char *dest)
-{
-    const unsigned int size = width * height;
-
-    if(size < 1) 
-        return;
-
-    for(int i = 0; i < width; ++i)
-        for(int j = 0; j < height; ++j)
-        {
-            const unsigned char p = /*rand() * */ perm[(perm[i & 255] + j) & 255];  // hash
-
-            const int o = 4 * (i * width + j);
-
-            dest[o + 0] = grad[p & 15][0] * 64 + 64;
-            dest[o + 1] = grad[p & 15][1] * 64 + 64;
-            dest[o + 2] = grad[p & 15][2] * 64 + 64;
-            dest[o + 3] = p;
-        }
-}
-
-
-
-
 
 
 CloudLayerHighGeode::CloudLayerHighGeode()
@@ -114,6 +51,7 @@ CloudLayerHighGeode::CloudLayerHighGeode()
 ,   m_hquad(new HimmelQuad())
 
 ,   u_perm(NULL)
+//,   u_perlin(NULL)
 {
     setName("CloudLayerHigh");
 
@@ -184,34 +122,70 @@ void CloudLayerHighGeode::setupUniforms(osg::StateSet* stateSet)
 {
     u_perm = new osg::Uniform("perm", 0);
     stateSet->addUniform(u_perm);
+
+    //u_perlin = new osg::Uniform("perlin", 1);
+    //stateSet->addUniform(u_perlin);
 }
 
 
 void CloudLayerHighGeode::setupTextures(osg::StateSet* stateSet)
 {
-    int w = 256;
-    int h = 256;
+    unsigned int s(256);
+    Noise n(s);
 
-    unsigned char *data = new unsigned char[w * h * 4];
-
-    generate(w, h, data);
+    unsigned char *perm = new unsigned char[s * s * 4];
+    n.generatePermutationMap(perm);
 
     osg::ref_ptr<osg::Image> permImage = new osg::Image();
-    permImage->setImage(w, h, 1
+    permImage->setImage(s, s, 1
         , GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE
-        , data, osg::Image::USE_NEW_DELETE);
+        , perm, osg::Image::USE_NEW_DELETE);
 
-    osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(permImage);
+//    osgDB::writeImageFile(*permImage, "D:/_perm.png");
 
-    texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
-    texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
-    texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-    texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+    osg::ref_ptr<osg::Texture2D> t1 = new osg::Texture2D(permImage);
+
+    t1->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
+    t1->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
+    t1->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+    t1->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
 
     int unit;
     u_perm->get(unit);
 
-    stateSet->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON);
+    stateSet->setTextureAttributeAndModes(unit, t1, osg::StateAttribute::ON);
+
+/*
+    s = 256;
+    float si = 1.f / static_cast<float>(s);
+
+    unsigned char *perlin = new unsigned char[(s + 1) * (s + 1)];
+
+    for(int x = 0; x < s; ++x)
+        for(int y = 0; y < s; ++y)
+        {
+            unsigned int i = (y * s) + x;
+            perlin[i] = n.noise2(x * 0.05f, y * 0.05f) * 127.5 + 127.5;
+        }
+         
+    osg::ref_ptr<osg::Image> perlinImage = new osg::Image();
+    perlinImage->setImage(s, s, 1
+        , GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE
+        , perlin, osg::Image::USE_NEW_DELETE);
+
+    osgDB::writeImageFile(*perlinImage, "D:/_perlin.png");
+
+    osg::ref_ptr<osg::Texture2D> t2 = new osg::Texture2D(perlinImage);
+
+    t2->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
+    t2->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
+    t2->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_BORDER);
+    t2->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_BORDER);
+
+    u_perlin->get(unit);
+
+    stateSet->setTextureAttributeAndModes(unit, t2, osg::StateAttribute::ON);*/
+
 }
 
 
@@ -262,37 +236,35 @@ const std::string CloudLayerHighGeode::getFragmentShaderSource()
         "uniform sampler2D perm;\n"
 
     +   glsl_cloud_layer_intersection
-    +   glsl_fade
-    +   glsl_noise2
+
+    +   Noise::glsl_fade()
+    +   Noise::glsl_noise2(256u)
     +
         "uniform float altitude = 8.0;\n" // TODO: make uniform.....!
         "\n"
         "in vec4 m_ray;\n"
         "\n"
+        "uniform sampler2D perlin;\n"
+
+        "\n"
         "void main()\n"
         "{\n"
-        "    vec3 d = normalize(m_ray.xyz);\n"
-        "\n"
-        "    if(belowHorizon(d))\n"
-        "        discard;\n"
-        "\n"
-        "    float t = getLayerIntersectionOrDiscard(d, altitude);\n"
-        "    vec2 st = t * d.xy * vec2(0.7, 1.0);\n"
-        "\n"
+        //"    vec3 d = normalize(m_ray.xyz);\n"
+        //"\n"
+        //"    if(belowHorizon(d))\n"
+        //"        discard;\n"
+        //"\n"
+        //"    float t = getLayerIntersectionOrDiscard(d, altitude);\n"
+        //"    vec2 st = t * d.xy * vec2(0.7, 1.0);\n"
+        
         "    float n = 0;\n"
-        "    float f = 0.08;\n"
         "\n"
-        "    n += noise2(st *  0.125 * f) * (1 /  1.0);\n"
-        "    n += noise2(st *  0.250 * f) * (1 /  2.0);\n"
-        "    n += noise2(st *  0.500 * f) * (1 /  4.0);\n"
-        "    n += noise2(st *  1.000 * f) * (1 /  8.0);\n"
-        "    n += noise2(st *  2.000 * f) * (1 / 16.0);\n"
-        "    //    n += noise2(st *  4.000 * f) * (1 / 32.0);\n"
-        "        n += noise2(st *  8.000 * f) * (1 / 16.0);\n"
-        "        n += noise2(st * 16.000 * f) * (1 / 16.0);\n"
-        "        n += noise2(st * 32.000 * f) * (1 / 32.0);\n"
-        "        n += noise2(st * 64.000 * f) * (1 / 32.0);\n"
+        "    int octave = 1;\n"
+        "    int i = int(log(0.25 * 256.0 / float(octave)) / log(2.0));\n"
         "\n"
-        "    gl_FragColor = vec4(vec3(0.2), n);\n"
+        "    for(int j = 0; j < i; ++j)\n"
+        "        n += noise2(gl_FragCoord.xy * pow(2.0, float(octave + j)) / 256) / pow(2.0, float(j));\n"
+        "\n"
+        "    gl_FragColor = vec4(vec3(n) * 0.5 + 0.5, 1);\n"
         "}\n\n";
 }

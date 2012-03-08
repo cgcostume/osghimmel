@@ -216,29 +216,6 @@ protected:
     ,   t_uniforms &uniforms
     ,   const std::string &fragmentShaderSource);
 
-
-    // str utils
-
-    void replace(
-        std::string& string
-    ,   const std::string &search
-    ,   const int value);
-
-    void replace(
-        std::string& string
-    ,   const std::string &search
-    ,   const float value);
-
-    void replace(
-        std::string& string
-    ,   const std::string &search
-    ,   const osg::Vec3f value);
-
-    static void replace(
-        std::string& string
-    ,   const std::string &search
-    ,   const std::string &replace);
-
 protected:
 
     bool m_dirty;

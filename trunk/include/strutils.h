@@ -28,61 +28,34 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __CLOUDLAYERHIGHGEODE_H__
-#define __CLOUDLAYERHIGHGEODE_H__
-
-#include <osg/Group>
-
-namespace osg
-{
-    class Texture2D;
-}
-
-class Himmel;
-class HimmelQuad;
+#ifndef __STRUTILS_H__
+#define __STRUTILS_H__
 
 
-class CloudLayerHighGeode : public osg::Group
-{
-public:
+#include <osg/Vec3f>
 
-    CloudLayerHighGeode();
-    virtual ~CloudLayerHighGeode();
+#include <string>
 
-    void update(const Himmel &himmel);
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+void replace(
+    std::string& string
+,   const std::string &search
+,   const int value);
 
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
+void replace(
+    std::string& string
+,   const std::string &search
+,   const float value);
 
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
+void replace(
+    std::string& string
+,   const std::string &search
+,   const osg::Vec3f value);
 
-protected:
+void replace(
+    std::string& string
+,   const std::string &search
+,   const std::string &replace);
 
-    void precompute();
 
-    void setupUniforms(osg::StateSet* stateSet);
-    void setupNode    (osg::StateSet* stateSet);
-    void setupTextures(osg::StateSet* stateSet);
-    void setupShader  (osg::StateSet* stateSet);
-
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
-
-protected:
-
-    HimmelQuad *m_hquad;
-
-    //osg::Texture2D *m_transmittance;
-
-    osg::Program *m_program;
-    osg::Shader *m_vShader;
-    osg::Shader *m_fShader;
-
-    osg::ref_ptr<osg::Uniform> u_perm;
-    osg::ref_ptr<osg::Uniform> u_perlin;
-};
-
-#endif // __CLOUDLAYERHIGHGEODE_H__
+#endif // __STRUTILS_H__

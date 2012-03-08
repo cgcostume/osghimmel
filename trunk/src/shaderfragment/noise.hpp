@@ -36,12 +36,12 @@ namespace
     // From // JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 KEN PERLIN. (http://mrl.nyu.edu/~perlin/noise/)
     // and (Improving Noise - Perlin - 2002) - http://mrl.nyu.edu/~perlin/paper445.pdf
 
-    // Implementing on GPU: http://http.developer.nvidia.com/GPUGems/gpugems_ch05.html
+    // Noise on GPU: http://http.developer.nvidia.com/GPUGems/gpugems_ch05.html
     // (Chapter 5. Implementing Improved Perlin Noise - Ken Perlin - GPU Gems - 2004) 
     // and http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter26.html
-    // (Chapter 26. Implementing Improved Perlin Noise - Simon Green - GPU Gems 2 - 2005) 
+    // (Chapter 26. Implementing Improved Perlin Noise - Simon Green - GPU Gems 2 - 2005)
 
-    // Implementation taken and modified from: Stefan Gustavson
+    // Implementation taken and modified from: Stefan Gustavson:
     /*
     This code was irrevocably released into the public domain
     by its original author, Stefan Gustavson, in January 2011.
@@ -79,29 +79,27 @@ namespace
         "float fade(const float t)\n"
         "{\n"
         "    return t * t * t * (t * (t * 6 - 15) + 10);\n"
-        "}\n"
-        "\n\n"
+        "}\n\n"
     );
 
     static const std::string glsl_noise2 // requires: fade, perm
     (
-        "const float o1  = 1.0 / 256.0;\n"
-        "const float o05 = 0.5 / 256.0;\n"
+        "const float o  = 1.0 / %SIZE%;\n"
         "\n"
         "float noise2(const vec2 st)\n"
         "{\n"
-        "    vec2 i = o1 * floor(st) + o05;\n"
+        "    vec2 i = o * floor(st);\n"
         "    vec2 f = fract(st);\n"
         "\n"
-        "    vec2 AA = texture2D(perm, i).xy                  * 4.0 - 1.0;\n"
-        "    vec2 BA = texture2D(perm, i + vec2( o1, 0.0)).xy * 4.0 - 1.0;\n"
-        "    vec2 AB = texture2D(perm, i + vec2(0.0,  o1)).xy * 4.0 - 1.0;\n"
-        "    vec2 BB = texture2D(perm, i + vec2( o1,  o1)).xy * 4.0 - 1.0;\n"
+        "    vec2 AA = texture2D(perm, i).xy               * 256.0 - 1.0;\n"
+        "    vec2 BA = texture2D(perm, i + vec2( o, 0)).xy * 256.0 - 1.0;\n"
+        "    vec2 AB = texture2D(perm, i + vec2( 0, o)).xy * 256.0 - 1.0;\n"
+        "    vec2 BB = texture2D(perm, i + vec2( o, o)).xy * 256.0 - 1.0;\n"
         "\n"
-        "    float dAA = dot(AA, f                 );\n"
-        "    float dBA = dot(BA, f - vec2(1.0, 0.0));\n"
-        "    float dAB = dot(AB, f - vec2(0.0, 1.0));\n"
-        "    float dBB = dot(BB, f - vec2(1.0, 1.0));\n"
+        "    float dAA = dot(AA, f              );\n"
+        "    float dBA = dot(BA, f - vec2( 1, 0));\n"
+        "    float dAB = dot(AB, f - vec2( 0, 1));\n"
+        "    float dBB = dot(BB, f - vec2( 1, 1));\n"
         "\n"
         "    vec2 t = mix(vec2(dAA, dAB), vec2(dBA, dBB), fade(f.x));\n"
         "\n"

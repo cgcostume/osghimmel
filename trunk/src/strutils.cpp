@@ -27,62 +27,63 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __CLOUDLAYERHIGHGEODE_H__
-#define __CLOUDLAYERHIGHGEODE_H__
+#include "strutils.h"
 
-#include <osg/Group>
+#include <assert.h>
 
-namespace osg
+
+void replace(
+    std::string& string
+,   const std::string &search
+,   const int value)
 {
-    class Texture2D;
+    // length of value for char buffer:
+    
+    const int n = ceil(log10(static_cast<float>(value)));
+    char *buffer = new char[n + 1];
+    itoa(value, buffer, 10);
+    buffer[n] = '\0';
+
+    replace(string, search, buffer);
+
+    delete[] buffer;
 }
 
-class Himmel;
-class HimmelQuad;
 
-
-class CloudLayerHighGeode : public osg::Group
+void replace(
+    std::string& string
+,   const std::string &search
+,   const float value)
 {
-public:
+    char buffer[64];
 
-    CloudLayerHighGeode();
-    virtual ~CloudLayerHighGeode();
+    if(sprintf(buffer, "%f", value))
+        replace(string, search, buffer);
+}
 
-    void update(const Himmel &himmel);
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+void replace(
+    std::string& string
+,   const std::string &search
+,   const osg::Vec3f value)
+{
+    char buffer[202];
 
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
+    if(sprintf(buffer, "vec3(%f, %f, %f)", value._v[0], value._v[1], value._v[2]))
+        replace(string, search, buffer);
+}
 
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
-protected:
+void replace(
+    std::string& string
+,   const std::string &search
+,   const std::string &replace)
+{
+    std::string::size_type next;
 
-    void precompute();
-
-    void setupUniforms(osg::StateSet* stateSet);
-    void setupNode    (osg::StateSet* stateSet);
-    void setupTextures(osg::StateSet* stateSet);
-    void setupShader  (osg::StateSet* stateSet);
-
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
-
-protected:
-
-    HimmelQuad *m_hquad;
-
-    //osg::Texture2D *m_transmittance;
-
-    osg::Program *m_program;
-    osg::Shader *m_vShader;
-    osg::Shader *m_fShader;
-
-    osg::ref_ptr<osg::Uniform> u_perm;
-    osg::ref_ptr<osg::Uniform> u_perlin;
-};
-
-#endif // __CLOUDLAYERHIGHGEODE_H__
+    for(next = string.find(search); next != std::string::npos; next = string.find(search, next))
+    {
+        string.replace(next, search.length(), replace);
+        next += replace.length();
+    }
+}

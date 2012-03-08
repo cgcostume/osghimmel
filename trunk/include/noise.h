@@ -28,61 +28,71 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __CLOUDLAYERHIGHGEODE_H__
-#define __CLOUDLAYERHIGHGEODE_H__
+#ifndef __NOISE_H__
+#define __NOISE_H__
 
-#include <osg/Group>
+#include <string>
 
 namespace osg
 {
-    class Texture2D;
+    class Vec2f;
+    class Vec3f;
+    class Vec4f;
 }
 
-class Himmel;
-class HimmelQuad;
 
-
-class CloudLayerHighGeode : public osg::Group
+class Noise
 {
 public:
+    Noise(const unsigned int size = 256);
 
-    CloudLayerHighGeode();
-    virtual ~CloudLayerHighGeode();
+    void generatePermutationMap(unsigned char *dest) const;
 
-    void update(const Himmel &himmel);
+    static const float fade(const float t);
+    static const std::string glsl_fade();
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
+    const float noise2(
+        const float s
+    ,   const float t) const;
 
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-protected:
-
-    void precompute();
-
-    void setupUniforms(osg::StateSet* stateSet);
-    void setupNode    (osg::StateSet* stateSet);
-    void setupTextures(osg::StateSet* stateSet);
-    void setupShader  (osg::StateSet* stateSet);
-
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
+    static const std::string glsl_noise2(
+        const unsigned int size = 256);
 
 protected:
 
-    HimmelQuad *m_hquad;
+    const unsigned int hash(
+        const unsigned int x
+    ,   const unsigned int y) const;
 
-    //osg::Texture2D *m_transmittance;
+    const osg::Vec2f grad2(
+        const unsigned int x
+    ,   const unsigned int y) const;
 
-    osg::Program *m_program;
-    osg::Shader *m_vShader;
-    osg::Shader *m_fShader;
+    const osg::Vec3f grad3(
+        const unsigned int x
+    ,   const unsigned int y) const;
 
-    osg::ref_ptr<osg::Uniform> u_perm;
-    osg::ref_ptr<osg::Uniform> u_perlin;
+    const osg::Vec4f grad3h(
+        const unsigned int x
+    ,   const unsigned int y) const;
+    
+
+    static const float Noise::mix(
+        const float a
+    ,   const float b
+    ,   const float t);
+
+    static const osg::Vec2f mix(
+        const osg::Vec2f &a
+    ,   const osg::Vec2f &b
+    ,   const float t);
+
+private:
+
+    static const unsigned char m_perm[];
+    static const float m_grad[16][3];
+
+    const unsigned int m_size;
 };
 
-#endif // __CLOUDLAYERHIGHGEODE_H__
+#endif // __NOISE_H__
