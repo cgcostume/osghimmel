@@ -33,7 +33,7 @@ Qt
 = Build Instructions =
 
  # *CMake - Configure and Verify*: After configuring CMake the first time, you should verify the OSG_SOVERSION as well as the OSG_BINARY_DIR (since they are predefined or guessed). 
- # *Check Resources*: If Demos or Skybox option is enabled in CMake, a resources path should be specified (resources archive will be available here soon).
+ # *Check Resources*: If Demos or Skybox option is enabled in CMake, a resources path should be specified ([http://code.google.com/p/osghimmel/downloads downloads]). The content of this directory gets copied into the bin dir as post_build step.
  # *Build ALL*: After building ALL, binaries where placed into a bin directory, placed into the cmake_source_directory. 
  # *Build INSTALL* before running apps: Building the INSTALL target will copy all dependencies (Qt, OSG, etc) and resources (if any) into the bin directory.
  # *Setup Working Directory*: set the Working Directory for executable targets in your e.g. MSVC projects to $(OutDir). This should be required only once for each project and configuration, since it is saved in the projects user file.
