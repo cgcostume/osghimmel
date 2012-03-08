@@ -1,6 +1,6 @@
 #summary Summary of how to build osghimmel and where to find required resources.
 
-I (dm) am developing osghimmel with CMake 2.8.5, OSG 2.8.5 and Qt 4.8.0. Usually i prefer to build x64 binaries and since all mentioned libs and tools above are opensource, i build them my self. To bypass building third party libs yourself, this wikipage provides build instructions and lists available binary resources for each of them.
+I (dm) am developing osghimmel with CMake 2.8.7, OSG 3.0.1 and Qt 4.8.0. Usually i prefer to build x64 binaries and since all mentioned libs and tools above are opensource, i build them my self. To bypass building third party libs yourself, this wikipage provides build instructions and lists available binary resources for each of them.
 
 <wiki:toc max_depth="3" />
 
@@ -9,7 +9,7 @@ I (dm) am developing osghimmel with CMake 2.8.5, OSG 2.8.5 and Qt 4.8.0. Usually
 There are currently 3 options:
  * OPTION_MAKE_DEMOS: adds sub-directories of demo apps
  * OPTION_MAKE_SKYBOX: add skybox project (osghimmel's sandbox)
- * OPTION_MAKE_PACKAGE: adds PACKAGE project to solution, yielding an archive with all available executables, required dependencies and resources. This *requires OSG_BINARY_DIR and OSG_SOVERSION* (that is the number appended to the osg binary names - e.g. 74 in osg74.dll for 2.8.5).
+ * OPTION_MAKE_PACKAGE: adds PACKAGE project to solution, yielding an archive with all available executables, required dependencies and resources. This *requires OSG_BINARY_DIR and OSG_SOVERSION* (that is the number appended to the osg binary names - e.g. 80 in osg80.dll for 3.0.1).
 
 When successfully building the PACKAGE project, a zip archive should be available in the build directory.
 
@@ -20,10 +20,10 @@ QtPropertyBrowser
 
 CMake
  * Version *2.8 or higher* is recommended
- * Latest downloads can be found here [http://www.cmake.org/cmake/resources/software.html].
+ * Latest downloads can be found here [http://www.cmake.org/cmake/resources/software.html cmake].
 
 OpenSceneGraph
- * osghimmel requires [http://www.openscenegraph.org/projects/osg OpenSceneGraph] tagged *2.8.5 or higher*. 
+ * osghimmel requires [http://www.openscenegraph.org/projects/osg OpenSceneGraph] tagged *2.8.5 or higher* (i'm using > 3.0). 
  * Up-to-date sets of working binaries can be found at [http://openscenegraph.alphapixel.com/osg/downloads/free-openscenegraph-binary-downloads Alpha Pixel].
 
 Qt
