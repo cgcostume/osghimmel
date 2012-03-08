@@ -38,9 +38,9 @@ set(LIB_SOURCES
     astronomyla.cpp
     atime.cpp
     atmospheregeode.cpp
-	atmosphereprecompute.cpp
+    atmosphereprecompute.cpp
     brightstars.cpp
-	cloudlayerhighgeode.cpp
+    cloudlayerhighgeode.cpp
     coords.cpp
     cubemappedhimmel.cpp
     earth.cpp
@@ -63,6 +63,7 @@ set(LIB_SOURCES
     spheremappedhimmel.cpp
     stars.cpp
     starsgeode.cpp
+    strutils.cpp
     sun.cpp
     timef.cpp
     twounitschanger.cpp
@@ -74,9 +75,9 @@ set(LIB_SOURCES
     ${HEADER_PATH}/astronomyla.h
     ${HEADER_PATH}/atime.h
     ${HEADER_PATH}/atmospheregeode.h
-	${HEADER_PATH}/atmosphereprecompute.h
+    ${HEADER_PATH}/atmosphereprecompute.h
     ${HEADER_PATH}/brightstars.h
-	${HEADER_PATH}/cloudlayerhighgeode.h
+    ${HEADER_PATH}/cloudlayerhighgeode.h
     ${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/earth.h
@@ -102,6 +103,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/spheremappedhimmel.h
     ${HEADER_PATH}/stars.h
     ${HEADER_PATH}/starsgeode.h
+    ${HEADER_PATH}/strutils.h
     ${HEADER_PATH}/sun.h
     ${HEADER_PATH}/timef.h
     ${HEADER_PATH}/twounitschanger.h
@@ -114,16 +116,16 @@ set(LIB_SOURCES
     shaderfragment/blend_multiply.hpp
     shaderfragment/blend_normal.hpp
     shaderfragment/blend_screen.hpp
-	shaderfragment/bruneton_common.hpp
-	shaderfragment/bruneton_inscatter.hpp
-	shaderfragment/bruneton_irradiance.hpp
-	shaderfragment/bruneton_transmittance.hpp	
-	shaderfragment/cloudlayer.hpp
+    shaderfragment/bruneton_common.hpp
+    shaderfragment/bruneton_inscatter.hpp
+    shaderfragment/bruneton_irradiance.hpp
+    shaderfragment/bruneton_transmittance.hpp
+    shaderfragment/cloudlayer.hpp
     shaderfragment/common.hpp
-	shaderfragment/compose.hpp
+    shaderfragment/compose.hpp
     shaderfragment/dither.hpp
     shaderfragment/hband.hpp
-	shaderfragment/noise.hpp
+    shaderfragment/noise.hpp
     shaderfragment/pseudo_rand.hpp
     shaderfragment/quadretrieveray.hpp
     shaderfragment/quadtransform.hpp

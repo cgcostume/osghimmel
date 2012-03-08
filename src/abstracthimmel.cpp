@@ -98,12 +98,26 @@ bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVis
     return true;
 }
 
+#include <osg/Geode>
+#include <osg/ShapeDrawable>
+
 
 void AbstractHimmel::setupNode(osg::StateSet* stateSet)
 {
     // Only draw at back plane.
     osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+
+    osg::ref_ptr<osg::Geode> antiCull = new osg::Geode();
+    addChild(antiCull);
+
+    osg::Box *cube = new osg::Box(osg::Vec3(), 10000.f);
+
+    osg::ShapeDrawable *cubeDrawable = new osg::ShapeDrawable(cube);
+    cubeDrawable->setColor(osg::Vec4(0.f, 0.f, 0.f, 1.f));
+
+    antiCull->addDrawable(cubeDrawable);
 }
 
 
