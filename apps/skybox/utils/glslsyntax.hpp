@@ -37,7 +37,7 @@ namespace
 {
     // From the "The OpenGL Shading Language 1.50 Quick Reference Card"
 
-    static QString glsl_syntax_TransparentTypes = (
+    const QString glsl_syntax_TransparentTypes = (
         "\\b("
             "void|"
             "bool|"
@@ -47,7 +47,7 @@ namespace
             "mat[2-4](x[2-4])?"
         ")\\b");
 
-    static QString glsl_syntax_SamplerTypes = (
+    const QString glsl_syntax_SamplerTypes = (
         "\\b("
             "(i|u)?sampler[1-3]D|"
             "(i|u)?samplerCube|"
@@ -61,7 +61,7 @@ namespace
             "(i|u)?sampler2DMS(Array)?"
         ")\\b");
 
-    static QString glsl_syntax_PreprocessorDirectives = (
+    const QString glsl_syntax_PreprocessorDirectives = (
         "^(\\s)*#("
             "define|"
             "undef|"
@@ -78,14 +78,14 @@ namespace
             "line"
         ")\\b");
 
-    static QString glsl_syntax_PredefinedMacros = (
+    const QString glsl_syntax_PredefinedMacros = (
         "\\b("
             "__LINE__|"
             "__FILE__|"
             "__VERSION__"
         ")\\b");
 
-    static QString glsl_syntax_Qualifiers = (
+    const QString glsl_syntax_Qualifiers = (
         "\\b("
             "const|"
             "(centroid )?(in|out)|"
@@ -93,14 +93,14 @@ namespace
             "inout"
         ")\\b");
 
-    static QString glsl_syntax_InterpolationQualifier = (
+    const QString glsl_syntax_InterpolationQualifier = (
         "\\b("
             "smooth|"
             "flat|"
             "noperspective"
         ")\\b");
 
-    static QString glsl_syntax_CompatibilityUniforms = (
+    const QString glsl_syntax_CompatibilityUniforms = (
         "\\bgl_("
             "ModelViewMatrix|"
             "ModelViewProjectionMatrix|"
@@ -141,7 +141,7 @@ namespace
             "ObjectPlane(S|T|R|Q)"
         ")\\b");
 
-    static QString glsl_syntax_BuiltIn_v = (
+    const QString glsl_syntax_BuiltIn_v = (
         "\\bgl_("
             "VertexID|"
             "InstanceID|"
@@ -161,7 +161,7 @@ namespace
             "FogFragCoord"
         ")\\b");
 
-    static QString glsl_syntax_BuiltIn_g = (
+    const QString glsl_syntax_BuiltIn_g = (
         "\\bgl_("
             "PerVertex|"
             "Position|"
@@ -170,7 +170,7 @@ namespace
             "Primitive(IDIn)?"
         ")\\b");
 
-    static QString glsl_syntax_BuiltIn_f = (
+    const QString glsl_syntax_BuiltIn_f = (
         "\\bgl_("
             "Frag(Color|Coord|Depth)|"
             "FrontFacing|"
@@ -179,7 +179,7 @@ namespace
             "PrimitiveID"
         ")\\b");
 
-    static QString glsl_syntax_ConstantsBuiltIn = (
+    const QString glsl_syntax_ConstantsBuiltIn = (
         "\\bgl_Max("
             "ClipDistances|"
             "ClipPlanes|"
@@ -201,7 +201,7 @@ namespace
             "VertexUniformComponents"
         ")\\b");
 
-    static QString glsl_syntax_IterationAndJumps = (
+    const QString glsl_syntax_IterationAndJumps = (
         "(^(?!tbd_)(if|else)|"
         "\\b("
             "return|"
@@ -214,17 +214,17 @@ namespace
             "case"
         ")\\b)");
 
-    static QString glsl_syntax_IterationAndJumps_f = (
+    const QString glsl_syntax_IterationAndJumps_f = (
         "\\b("
             "discard"
         ")\\b");
 
-    static QString glsl_syntax_Functions = (
+    const QString glsl_syntax_Functions = (
         "\\b("
             "main"
         ")\\b");
 
-    static QString glsl_syntax_AngleAndTrigonometryFunctions = (
+    const QString glsl_syntax_AngleAndTrigonometryFunctions = (
         "\\b("
             "radians|"
             "degrees|"
@@ -233,7 +233,7 @@ namespace
             "(a)?tan(h)?"
         ")\\b");
 
-    static QString glsl_syntax_ExponentialFunctions = (
+    const QString glsl_syntax_ExponentialFunctions = (
         "\\b("
             "pow|"
             "exp(2)?|"
@@ -241,7 +241,7 @@ namespace
             "(inverse)?sqrt"
         ")\\b");
 
-    static QString glsl_syntax_CommonFunctions = (
+    const QString glsl_syntax_CommonFunctions = (
         "\\b("
             "abs|"
             "sign|"
@@ -261,7 +261,7 @@ namespace
             "is(nan|inf)"
         ")\\b");
 
-    static QString glsl_syntax_GeometricFunctions = (
+    const QString glsl_syntax_GeometricFunctions = (
         "\\b("
             "length|"
             "distance|"
@@ -274,7 +274,7 @@ namespace
             "refract"
         ")\\b");
 
-    static QString glsl_syntax_MatrixFunctions = (
+    const QString glsl_syntax_MatrixFunctions = (
         "\\b("
             "matrixCompMult|"
             "outerProduct|"
@@ -283,7 +283,7 @@ namespace
             "inverse"
         ")\\b");
 
-    static QString glsl_syntax_VectorRelationalFunctions = (
+    const QString glsl_syntax_VectorRelationalFunctions = (
         "\\b("
             "lessThan(Equal)?|"
             "greaterThan(Equal)?|"
@@ -295,27 +295,27 @@ namespace
         ")\\b");
 
 
-    static QString glsl_syntax_DerivativeFunctions_f = (
+    const QString glsl_syntax_DerivativeFunctions_f = (
         "\\b("
             "dFd(x|y)|"
             "fwidth"
         ")\\b");
 
 
-    static QString glsl_syntax_NoiseFunctions = (
+    const QString glsl_syntax_NoiseFunctions = (
         "\\b("
             "noise[1-4]"
         ")\\b");
 
 
-    static QString glsl_syntax_Functions_g = (
+    const QString glsl_syntax_Functions_g = (
         "\\b("
             "EmitVertex|"
             "EndPrimitive"
         ")\\b");
 
 
-    static QString glsl_syntax_TextureLookupFunctions = (
+    const QString glsl_syntax_TextureLookupFunctions = (
         "\\b("
             "textureSize|"
             "texture(Offset)?|"
@@ -331,7 +331,7 @@ namespace
 
     // Strings for completion.
 
-    static QStringList glsl_complete_common = (QStringList()
+    const QStringList glsl_complete_common = (QStringList()
         // TransparentTypes
         << "void"
         << "bool"
@@ -595,7 +595,7 @@ namespace
         << "textureProjGradOffset"
         );
 
-    static QStringList glsl_complete_v = (QStringList()
+    const QStringList glsl_complete_v = (QStringList()
         // BuiltIn
         << "gl_VertexID"
         << "gl_InstanceID"
@@ -624,7 +624,7 @@ namespace
         << "gl_FogFragCoord"
         );
 
-    static QStringList glsl_complete_g = (QStringList()
+    const QStringList glsl_complete_g = (QStringList()
         // BuiltIn
         << "gl_PerVertex"
         << "gl_Position"
@@ -637,7 +637,7 @@ namespace
         << "EndPrimitive"
         );
 
-    static QStringList glsl_complete_f = (QStringList()
+    const QStringList glsl_complete_f = (QStringList()
         // BuiltIn
         << "gl_FragColor"
         << "gl_FragCoord"

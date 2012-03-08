@@ -39,7 +39,7 @@ namespace
     // (http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection)
     // and (http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter1.htm)
 
-    static const std::string glsl_cloud_layer_intersection
+    const std::string glsl_cloud_layer_intersection
     (
         "float getLayerIntersectionOrDiscard(\n"
         "    const vec3  d\n"

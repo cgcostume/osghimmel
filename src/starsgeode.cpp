@@ -49,7 +49,7 @@
 
 namespace
 {
-    static const float TWO_TIMES_SQRT2(2.0 * sqrt(2.0));
+    const float TWO_TIMES_SQRT2(2.0 * sqrt(2.0));
 }
 
 

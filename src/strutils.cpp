@@ -41,7 +41,7 @@ void replace(
     
     const int n = ceil(log10(static_cast<float>(value)));
     char *buffer = new char[n + 1];
-    itoa(value, buffer, 10);
+    _itoa(value, buffer, 10);
     buffer[n] = '\0';
 
     replace(string, search, buffer);

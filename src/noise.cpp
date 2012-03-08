@@ -28,9 +28,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-// From // JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 KEN PERLIN. (http://mrl.nyu.edu/~perlin/noise/)
-// and (Improving Noise - Perlin - 2002) - http://mrl.nyu.edu/~perlin/paper445.pdf
-
 #include "noise.h"
 
 #include "mathmacros.h"
@@ -43,10 +40,13 @@
 
 namespace
 {
-    const unsigned int PERMSIZE     = 0x100;
-    const unsigned int MAXPERMINDEX = 0xff;
+    const unsigned int PERMSIZE    (0x100);
+    const unsigned int MAXPERMINDEX(0xff);
 }
 
+
+// From // JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 KEN PERLIN. (http://mrl.nyu.edu/~perlin/noise/)
+// and (Improving Noise - Perlin - 2002) - http://mrl.nyu.edu/~perlin/paper445.pdf
 
 const unsigned char Noise::m_perm[PERMSIZE] = 
 { 

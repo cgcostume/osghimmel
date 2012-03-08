@@ -44,7 +44,7 @@
 
 namespace 
 {
-    static const std::string glsl_dither
+    const std::string glsl_dither
     (
         "vec4 dither(float multiplier, int seed)\n"
         "{\n"

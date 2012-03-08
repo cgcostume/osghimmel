@@ -33,7 +33,7 @@
 
 namespace 
 {
-    static const std::string glsl_quadTransform
+    const std::string glsl_quadTransform
     (
         "void quadTransform()\n"
         "{\n"

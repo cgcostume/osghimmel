@@ -40,7 +40,7 @@
 
 namespace
 {
-    static const unsigned int NUM_BRIGHTSTARS = 9093;
+    const unsigned int NUM_BRIGHTSTARS(9093);
 }
 
 

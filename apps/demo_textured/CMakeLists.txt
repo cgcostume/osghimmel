@@ -1,5 +1,5 @@
 
-# Copyright (c) 2011, Daniel Müller <dm@g4t3.de>
+# Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 # Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 # All rights reserved.
 #
@@ -45,5 +45,5 @@ target_link_libraries(demo_textured
    
 install(TARGETS demo_textured
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	
+
 ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")

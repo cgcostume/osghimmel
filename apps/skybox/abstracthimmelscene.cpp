@@ -40,7 +40,7 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_ABSTRACTHIMMEL(TR("Abstract Himmel"));
+    const QString GROUP_ABSTRACTHIMMEL(TR("Abstract Himmel"));
 }
 
 

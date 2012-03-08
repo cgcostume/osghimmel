@@ -33,7 +33,7 @@
 
 namespace 
 {
-    static const std::string glsl_cmn_uniform
+    const std::string glsl_cmn_uniform
     (
         "uniform vec4 cmn;\n\n"
     );
@@ -41,7 +41,7 @@ namespace
 
     // Returns unit intersection distance with the ground. Use for 
     // e.g. horizon related discarding of elements
-    static const std::string glsl_horizon // requires glsl_cmn_uniform
+    const std::string glsl_horizon // requires glsl_cmn_uniform
     (
         "float tAtm(vec3 ray)\n"
         "{\n"

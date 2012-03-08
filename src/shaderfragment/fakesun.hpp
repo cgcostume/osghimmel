@@ -33,7 +33,7 @@
 
 namespace 
 {
-    static const std::string glsl_fakesun
+    const std::string glsl_fakesun
     (
         "in vec4 m_rayFixed;\n"
         "\n"

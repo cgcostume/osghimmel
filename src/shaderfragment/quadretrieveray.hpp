@@ -33,7 +33,7 @@
 
 namespace 
 {
-    static const std::string glsl_quadRetrieveRay
+    const std::string glsl_quadRetrieveRay
     (
         "vec4 quadRetrieveRay()\n"
         "{\n"

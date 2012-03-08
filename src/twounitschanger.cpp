@@ -28,8 +28,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "twounitschanger.h"
+
 #include "interpolate.h"
 #include "pragmanote.h"
+#include "mathmacros.h"
 
 #include <osg/Notify>
 
@@ -104,7 +106,7 @@ void TwoUnitsChanger::updateSmallestRange()
         if(i1 == ie)
             i1 = i0;
 
-        const float range = std::fabs(i1->first - i->first);
+        const float range = _abs(i1->first - i->first);
 
         if(range < m_smallestRange)
             m_smallestRange = range;

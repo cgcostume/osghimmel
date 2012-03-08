@@ -74,7 +74,7 @@ namespace
 
     // computes single scattering (line 3 in algorithm 4.1)
 
-    static const std::string glsl_bruneton_f_inscatter1 // requires: r, dhdH
+    const std::string glsl_bruneton_f_inscatter1 // requires: r, dhdH
     (
         glsl_cmn_uniform
     +   glsl_bruneton_const_R
@@ -143,7 +143,7 @@ namespace
     
     // computes higher order scattering (line 9 in algorithm 4.1)
   
-    static const std::string glsl_bruneton_f_inscatterN // requires: r, dhdH, deltaJSampler, transmittanceSampler
+    const std::string glsl_bruneton_f_inscatterN // requires: r, dhdH, deltaJSampler, transmittanceSampler
     (
         glsl_bruneton_const_Samples
     +   glsl_cmn_uniform
@@ -193,7 +193,7 @@ namespace
 
     // computes deltaJ (line 7 in algorithm 4.1)
     
-    static const std::string glsl_bruneton_f_inscatterS // requires: r, dhdH, deltaESampler, deltaSRSampler, deltaSMSampler, transmittanceSampler, first
+    const std::string glsl_bruneton_f_inscatterS // requires: r, dhdH, deltaESampler, deltaSRSampler, deltaSMSampler, transmittanceSampler, first
     (
         glsl_bruneton_const_Samples
     +   glsl_cmn_uniform
@@ -310,7 +310,7 @@ namespace
 
     // copies deltaS into S (line 5 in algorithm 4.1)
 
-    static const std::string glsl_bruneton_f_copyInscatter1 // requires: deltaSRSampler, deltaSMSampler, layer
+    const std::string glsl_bruneton_f_copyInscatter1 // requires: deltaSRSampler, deltaSMSampler, layer
     (
         glsl_bruneton_const_RSize
 
@@ -331,7 +331,7 @@ namespace
 
     // adds deltaS into S (line 11 in algorithm 4.1)
 
-    static const std::string glsl_bruneton_f_copyInscatterN // requires: r, dhdH, layer, deltaSRSampler, inscatterSampler
+    const std::string glsl_bruneton_f_copyInscatterN // requires: r, dhdH, layer, deltaSRSampler, inscatterSampler
     (
         glsl_bruneton_const_RSize
     +   glsl_cmn_uniform

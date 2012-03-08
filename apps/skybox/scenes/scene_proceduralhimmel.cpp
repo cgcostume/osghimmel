@@ -47,49 +47,49 @@ namespace
 {
     // Properties
 
-    static const QString GROUP_PROCEDURAL                  (TR("Procedrual"));
+    const QString GROUP_PROCEDURAL                  (TR("Procedrual"));
 
-    static const QString GROUP_PROCEDURAL_ATMOSPHERE       (TR("Atmosphere"));
-    static const QString PROPERTY_ATM_SUNSCALE             (TR("Sun Scale"));
-    static const QString PROPERTY_ATM_EXPOSURE             (TR("Exposure"));
-    static const QString PROPERTY_ATM_BLUEHOUR_COLOR       (TR("Blue Hour Color"));
-    static const QString PROPERTY_ATM_BLUEHOUR_INTENSITY   (TR("Blue Hour Intensity"));
-    static const QString PROPERTY_ATM_AVGGR                (TR("Avg Ground Reflectance"));
-    static const QString PROPERTY_ATM_HR                   (TR("Rayleigh Height Scale"));
-    static const QString PROPERTY_ATM_BETARR               (TR("Rayleigh Coefficient R"));
-    static const QString PROPERTY_ATM_BETARG               (TR("Rayleigh Coefficient G"));
-    static const QString PROPERTY_ATM_BETARB               (TR("Rayleigh Coefficient B"));
-    static const QString PROPERTY_ATM_HM                   (TR("Mie Height Scale"));
-    static const QString PROPERTY_ATM_BETAM                (TR("Mie Coefficient"));
-    static const QString PROPERTY_ATM_MIEG                 (TR("Mie G"));
+    const QString GROUP_PROCEDURAL_ATMOSPHERE       (TR("Atmosphere"));
+    const QString PROPERTY_ATM_SUNSCALE             (TR("Sun Scale"));
+    const QString PROPERTY_ATM_EXPOSURE             (TR("Exposure"));
+    const QString PROPERTY_ATM_BLUEHOUR_COLOR       (TR("Blue Hour Color"));
+    const QString PROPERTY_ATM_BLUEHOUR_INTENSITY   (TR("Blue Hour Intensity"));
+    const QString PROPERTY_ATM_AVGGR                (TR("Avg Ground Reflectance"));
+    const QString PROPERTY_ATM_HR                   (TR("Rayleigh Height Scale"));
+    const QString PROPERTY_ATM_BETARR               (TR("Rayleigh Coefficient R"));
+    const QString PROPERTY_ATM_BETARG               (TR("Rayleigh Coefficient G"));
+    const QString PROPERTY_ATM_BETARB               (TR("Rayleigh Coefficient B"));
+    const QString PROPERTY_ATM_HM                   (TR("Mie Height Scale"));
+    const QString PROPERTY_ATM_BETAM                (TR("Mie Coefficient"));
+    const QString PROPERTY_ATM_MIEG                 (TR("Mie G"));
 
-    static const QString GROUP_PROCEDURAL_MOON             (TR("Moon"));
-    static const QString PROPERTY_MOON_SCALE               (TR("Moon Scale"));
-    static const QString PROPERTY_MOON_SUNSHINE_COLOR      (TR("Sun Shine Color"));
-    static const QString PROPERTY_MOON_SUNSHINE_INTENSITY  (TR("Sun Shine Intensity"));
-    static const QString PROPERTY_MOON_EARTHSHINE_COLOR    (TR("Earth Shine Color"));
-    static const QString PROPERTY_MOON_EARTHSHINE_INTENSITY(TR("Earth Shine Intensity"));
-    static const QString PROPERTY_MOON_POSITION_OVERRIDE   (TR("Moon Position Override"));
-    static const QString PROPERTY_MOON_POSITION_X          (TR("Moon Position X"));
-    static const QString PROPERTY_MOON_POSITION_Y          (TR("Moon Position Y"));
-    static const QString PROPERTY_MOON_POSITION_Z          (TR("Moon Position Z"));
+    const QString GROUP_PROCEDURAL_MOON             (TR("Moon"));
+    const QString PROPERTY_MOON_SCALE               (TR("Moon Scale"));
+    const QString PROPERTY_MOON_SUNSHINE_COLOR      (TR("Sun Shine Color"));
+    const QString PROPERTY_MOON_SUNSHINE_INTENSITY  (TR("Sun Shine Intensity"));
+    const QString PROPERTY_MOON_EARTHSHINE_COLOR    (TR("Earth Shine Color"));
+    const QString PROPERTY_MOON_EARTHSHINE_INTENSITY(TR("Earth Shine Intensity"));
+    const QString PROPERTY_MOON_POSITION_OVERRIDE   (TR("Moon Position Override"));
+    const QString PROPERTY_MOON_POSITION_X          (TR("Moon Position X"));
+    const QString PROPERTY_MOON_POSITION_Y          (TR("Moon Position Y"));
+    const QString PROPERTY_MOON_POSITION_Z          (TR("Moon Position Z"));
 
-    static const QString GROUP_PROCEDURAL_STARS            (TR("Stars"));
+    const QString GROUP_PROCEDURAL_STARS            (TR("Stars"));
 
-    static const QString PROPERTY_STARS_COLOR              (TR("Color (Stars)"));
-    static const QString PROPERTY_STARS_COLOR_RATIO        (TR("Color Ratio (Stars)"));
-    static const QString PROPERTY_STARS_GLARE_INTENSITY    (TR("Glare Intensity"));
-    static const QString PROPERTY_STARS_GLARE_SCALE        (TR("Glare Scale"));
-    static const QString PROPERTY_STARS_APPARENT_MAG       (TR("Apprant Magnitude (Stars)"));
-    static const QString PROPERTY_STARS_SCATTERING         (TR("Scattering (Stars)"));
-    static const QString PROPERTY_STARS_SCINTILLATION      (TR("Scintillation"));
+    const QString PROPERTY_STARS_COLOR              (TR("Color (Stars)"));
+    const QString PROPERTY_STARS_COLOR_RATIO        (TR("Color Ratio (Stars)"));
+    const QString PROPERTY_STARS_GLARE_INTENSITY    (TR("Glare Intensity"));
+    const QString PROPERTY_STARS_GLARE_SCALE        (TR("Glare Scale"));
+    const QString PROPERTY_STARS_APPARENT_MAG       (TR("Apprant Magnitude (Stars)"));
+    const QString PROPERTY_STARS_SCATTERING         (TR("Scattering (Stars)"));
+    const QString PROPERTY_STARS_SCINTILLATION      (TR("Scintillation"));
 
-    static const QString GROUP_PROCEDURAL_MILKYWAY         (TR("MilkyWay"));
+    const QString GROUP_PROCEDURAL_MILKYWAY         (TR("MilkyWay"));
 
-    static const QString PROPERTY_MILKYWAY_COLOR           (TR("Color (MilkyWay)"));
-    static const QString PROPERTY_MILKYWAY_COLOR_RATIO     (TR("Color Ratio (MilkyWay)"));
-    static const QString PROPERTY_MILKYWAY_APPARENT_MAG    (TR("Apparent Magnitude (MilkyWay)"));
-    static const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (MilkyWay)"));
+    const QString PROPERTY_MILKYWAY_COLOR           (TR("Color (MilkyWay)"));
+    const QString PROPERTY_MILKYWAY_COLOR_RATIO     (TR("Color Ratio (MilkyWay)"));
+    const QString PROPERTY_MILKYWAY_APPARENT_MAG    (TR("Apparent Magnitude (MilkyWay)"));
+    const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (MilkyWay)"));
 }
 
 // TEMP
