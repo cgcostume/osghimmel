@@ -135,10 +135,10 @@ void Scene_PolarMappedHimmel::propertyChanged(
         m_himmel->hBand()->setWidth(doubleValue(PROPERTY_HBAND_WIDTH));
     else if(PROPERTY_HBAND_OFFSET == name)
         m_himmel->hBand()->setOffset(doubleValue(PROPERTY_HBAND_OFFSET));
-	else if(PROPERTY_HBAND_COLOR == name)
-		m_himmel->hBand()->setColor(toVec4(colorValue(PROPERTY_HBAND_COLOR)));
-	else if(PROPERTY_BOTTOM_COLOR == name)
-		m_himmel->hBand()->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
+    else if(PROPERTY_HBAND_COLOR == name)
+        m_himmel->hBand()->setColor(toVec4(colorValue(PROPERTY_HBAND_COLOR)));
+    else if(PROPERTY_BOTTOM_COLOR == name)
+        m_himmel->hBand()->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
 
     else if(PROPERTY_SUNSCALE == name)
         m_himmel->setSunScale(doubleValue(PROPERTY_SUNSCALE));

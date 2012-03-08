@@ -98,7 +98,6 @@ namespace
 #include <osgUtil/CullVisitor>
 
 #include <math.h>
-float f;
 
 class ns : public osg::NodeCallback
 {
@@ -108,7 +107,6 @@ class ns : public osg::NodeCallback
         :   m_ligth(light)
         ,   m_himmel(himmel)
         {
-            f = 0.f;
         }
        
         virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
@@ -120,14 +118,10 @@ class ns : public osg::NodeCallback
             float t1 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.1, 32)) + 0.05;
             float t2 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.2, 16));
 
-            p *= -10000;
+            p *= 10000;
             m_ligth->setPosition(osg::Vec4(p.x(), p.y(), p.z(), 1.0));
-
-
-            m_ligth->setDiffuse(osg::Vec4(1.0 * t2, 0.95 * t2, 0.9 * t2, 1.0) + osg::Vec4(1.0 * t1, 0.00 * t1, 0.0 * t1, 1.0));
-
-
-            f += 0.01f;
+            //m_ligth->setDiffuse(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+            m_ligth->setDiffuse(osg::Vec4(1.0 * t2, 0.95 * t2, 0.9 * t2, 1.0));
         }
 
 protected:

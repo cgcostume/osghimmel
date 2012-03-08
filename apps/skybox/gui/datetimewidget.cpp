@@ -226,7 +226,7 @@ void DateTimeWidget::pause()
 
     m_timer->stop();
 
-	m_timef.pause();
+    m_timef.pause();
 }
 
 

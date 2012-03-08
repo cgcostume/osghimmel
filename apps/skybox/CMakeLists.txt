@@ -68,7 +68,7 @@ SET(SKYBOX_SOURCES
     gui/propertywidget.cpp
     gui/qosgeventhandler.h
     gui/qosgeventhandler.cpp    
-	gui/qosgviewer.h
+    gui/qosgviewer.h
     gui/qosgviewer.cpp
     gui/qosgwidget.h
     gui/qosgwidget.cpp

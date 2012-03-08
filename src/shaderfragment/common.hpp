@@ -45,8 +45,8 @@ namespace
     (
         "float tAtm(vec3 ray)\n"
         "{\n"
-	    "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
-	    "    vec3 v = normalize(ray);\n"
+        "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
+        "    vec3 v = normalize(ray);\n"
         "\n"
         "    float r = length(x);\n"
         "    float mu = dot(x, v) / r;\n"
