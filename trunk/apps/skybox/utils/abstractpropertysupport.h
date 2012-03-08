@@ -199,14 +199,14 @@ protected:
     QtSizeFPropertyManager  *m_sizeFManager;
     QtBoolPropertyManager   *m_boolManager;
     QtEnumPropertyManager   *m_enumManager;
-	QtColorPropertyManager  *m_colorManager;
+    QtColorPropertyManager  *m_colorManager;
 
     QtEnumEditorFactory     *m_enumFactory;
     QtCheckBoxFactory       *m_boolFactory;
     QtSpinBoxFactory        *m_intFactory;
     QtDoubleSpinBoxFactory  *m_doubleFactory;
     QtDoubleSpinBoxFactory  *m_sizeFactory;
-	QtColorEditorFactory    *m_colorFactory;
+    QtColorEditorFactory    *m_colorFactory;
 
     QList<QtProperty*> m_rootGroups;
     QHash<QString, QtProperty*> m_properties;

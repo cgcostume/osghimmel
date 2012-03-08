@@ -102,7 +102,7 @@ protected:
 
     const QDateTime dateTime() const;
 
-	const float timeSliderF() const;
+    const float timeSliderF() const;
 
 
     static const double latitudeFromText(const QString &text);

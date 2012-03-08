@@ -30,19 +30,19 @@
 set(TESTS_SOURCES
     stable.h
     stable.cpp
-	tests.cpp
-	test.cpp
-	test.h
-	test_astronomy.cpp
-	test_astronomy.h
-	test_astronomy_la.cpp
-	test_astronomy_la.h
-	test_math.cpp
-	test_math.h
-	test_time.cpp
-	test_time.h
-	test_twounitschanger.cpp
-	test_twounitschanger.h)
+    tests.cpp
+    test.cpp
+    test.h
+    test_astronomy.cpp
+    test_astronomy.h
+    test_astronomy_la.cpp
+    test_astronomy_la.h
+    test_math.cpp
+    test_math.h
+    test_time.cpp
+    test_time.h
+    test_twounitschanger.cpp
+    test_twounitschanger.h)
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${TESTS_SOURCES})
 
@@ -55,7 +55,7 @@ set_default_target_properties(tests OFF)
 
 target_link_libraries(tests
     osghimmel
-	${OPENSCENEGRAPH_LIBRARIES})
+    ${OPENSCENEGRAPH_LIBRARIES})
 
 install(TARGETS tests
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
