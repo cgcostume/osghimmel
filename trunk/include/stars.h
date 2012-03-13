@@ -49,19 +49,19 @@ const osg::Vec3f star_sRgbColor(const osg::Vec3f xyzTrisimulus);
 
 const t_equd star_apparentPosition(
     const t_julianDay t
-,   const long double α2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
-,   const long double δ2000   /* declination (DE) in decimal degrees, equinox J2000 */
-,   const long double mpα2000 /* annual proper motion in RA J2000 */
-,   const long double mpδ2000 /* annual proper motion in DE J2000 */);
+,   const long double a2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
+,   const long double d2000   /* declination (DE) in decimal degrees, equinox J2000 */
+,   const long double mpa2000 /* annual proper motion in RA J2000 */
+,   const long double mpd2000 /* annual proper motion in DE J2000 */);
 
 const t_hord star_horizontalPosition(
     const t_aTime &aTime
 ,   const long double latitude
 ,   const long double longitude
-,   const long double α2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
-,   const long double δ2000   /* declination (DE) in decimal degrees, equinox J2000 */
-,   const long double mpα2000 /* annual proper motion in RA J2000 */
-,   const long double mpδ2000 /* annual proper motion in DE J2000 */);
+,   const long double a2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
+,   const long double d2000   /* declination (DE) in decimal degrees, equinox J2000 */
+,   const long double mpa2000 /* annual proper motion in RA J2000 */
+,   const long double mpd2000 /* annual proper motion in DE J2000 */);
 
 
 #endif // __STARS_H__

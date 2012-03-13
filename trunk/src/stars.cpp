@@ -115,10 +115,10 @@ const osg::Vec3f star_sRgbColor(const osg::Vec3f xyzTristimulus)
 
 const t_equd star_apparentPosition(
     const t_julianDay t
-,   const long double α2000
-,   const long double δ2000
-,   const long double mpα2000
-,   const long double mpδ2000)
+,   const long double a2000
+,   const long double d2000
+,   const long double mpa2000
+,   const long double mpd2000)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
@@ -127,15 +127,12 @@ const t_equd star_apparentPosition(
     const long double m  = (_decimal(0, 0, 3.07496)) + (_decimal(0, 0, 0.00186)) * T * 100.0;
     const long double n  = _arcsecs(_decimal(0, 0, 1.33621)) - _arcsecs(_decimal(0, 0, 0.00057)) * T * 100.0;
 
-    const long double Δα = m + n * sin(_rad(mpα2000)) * tan(_rad(mpδ2000));
-    const long double Δβ = n * cos(_rad(mpα2000));
+    const long double Da = m + n * sin(_rad(mpa2000)) * tan(_rad(mpd2000));
+    const long double Db = n * cos(_rad(mpa2000));
 
     t_equd equ;
 
-    //equ.right_ascension = 
-
-
-
+    // TODO
 
     return equ;
 }
@@ -145,15 +142,15 @@ const t_hord star_horizontalPosition(
     const t_aTime &aTime
 ,   const long double latitude
 ,   const long double longitude
-,   const long double α2000
-,   const long double δ2000
-,   const long double mpα2000
-,   const long double mpδ2000)
+,   const long double a2000
+,   const long double d2000
+,   const long double mpa2000
+,   const long double mpd2000)
 {
     t_julianDay t(jd(aTime));
     t_julianDay s(siderealTime(aTime));
 
-    t_equd equ = star_apparentPosition(t, α2000, δ2000, mpα2000, mpδ2000);
+    t_equd equ = star_apparentPosition(t, a2000, d2000, mpa2000, mpd2000);
 
     return equ.toHorizontal(s, latitude, longitude);
 }

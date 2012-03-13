@@ -104,12 +104,12 @@ const long double moon_meanOrbitLongitude(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double Ω = 125.04452 
+    const long double O = 125.04452 
         + T * (- 1934.136261
         + T * (+    0.0020708
         + T * (+ 1.0 / 450000.0)));
 
-    return _revd(Ω);
+    return _revd(O);
 }
 
 
@@ -143,140 +143,140 @@ const t_ecld moon_position(const t_julianDay t)
 
     // (AA.45.A)
 
-    long double Σl = 0.0;
+    long double Sl = 0.0;
 
-    Σl += 6288.774 * sin(                 + 1 * mM         );
-    Σl += 1274.027 * sin( 2 * mD          - 1 * mM         );
-    Σl +=  658.314 * sin( 2 * mD                           );
-    Σl +=  213.618 * sin(                 + 2 * mM         );
-    Σl -=  185.116 * sin(        + 1 * sM                  ) * E;
-    Σl -=  114.332 * sin(                          + 2 * mF);
-    Σl +=   58.793 * sin( 2 * mD          - 2 * mM         );
-    Σl +=   57.066 * sin( 2 * mD - 1 * sM - 1 * mM         ) * E;
-    Σl +=   53.322 * sin( 2 * mD          + 1 * mM         );
-    Σl +=   45.758 * sin( 2 * mD - 1 * sM                  ) * E;
-    Σl -=   40.923 * sin(        + 1 * sM - 1 * mM         ) * E;
-    Σl -=   34.720 * sin( 1 * mD                           );
-    Σl -=   30.383 * sin(        + 1 * sM + 1 * mM         ) * E;
-    Σl +=   15.327 * sin( 2 * mD                   - 2 * mF);
-    Σl -=   12.528 * sin(                 + 1 * mM + 2 * mF);
-    Σl +=   10.980 * sin(                 + 1 * mM - 2 * mF);
-    Σl +=   10.675 * sin( 4 * mD          - 1 * mM         );
-    Σl +=   10.034 * sin(                 + 3 * mM         );
-    Σl +=    8.548 * sin( 4 * mD          - 2 * mM         );
-    Σl -=    7.888 * sin( 2 * mD + 1 * sM - 1 * mM         ) * E;
-    Σl -=    6.766 * sin( 2 * mD + 1 * sM                  ) * E;
-    Σl -=    5.163 * sin( 1 * mD          - 1 * mM         );
-    Σl +=    4.987 * sin( 1 * mD + 1 * sM                  ) * E;
-    Σl +=    4.036 * sin( 2 * mD - 1 * sM + 1 * mM         ) * E;
-    Σl +=    3.994 * sin( 2 * mD          + 2 * mM         );
-    Σl +=    3.861 * sin( 4 * mD                           );
-    Σl +=    3.665 * sin( 2 * mD          - 3 * mM         );
-    Σl -=    2.689 * sin(        + 1 * sM - 2 * mM         ) * E;
-    Σl -=    2.602 * sin( 2 * mD          - 1 * mM + 2 * mF);
-    Σl +=    2.390 * sin( 2 * mD - 1 * sM - 2 * mM         ) * E;
-    Σl -=    2.348 * sin( 1 * mD          + 1 * mM         );
-    Σl +=    2.236 * sin( 2 * mD - 2 * sM                  ) * EE;
-    Σl -=    2.120 * sin(        + 1 * sM + 2 * mM         ) * E;
-    Σl -=    2.069 * sin(        + 2 * sM                  ) * EE;
-    Σl +=    2.048 * sin( 2 * mD - 2 * sM - 1 * mM         ) * EE;
-    Σl -=    1.773 * sin( 2 * mD          + 1 * mM - 2 * mF);
-    Σl -=    1.595 * sin( 2 * mD                   + 2 * mF);
-    Σl +=    1.215 * sin( 4 * mD - 1 * sM - 1 * mM         ) * E;
-    Σl -=    1.110 * sin(                 + 2 * mM + 2 * mF);
-    Σl -=    0.892 * sin( 3 * mD          - 1 * mM         );
-    Σl -=    0.810 * sin( 2 * mD + 1 * sM + 1 * mM         ) * E;
-    Σl +=    0.759 * sin( 4 * mD - 1 * sM - 2 * mM         ) * E;
-    Σl -=    0.713 * sin(        + 2 * sM - 1 * mM         ) * EE;
-    Σl -=    0.700 * sin( 2 * mD + 2 * sM - 1 * mM         ) * EE;
-    Σl +=    0.691 * sin( 2 * mD + 1 * sM - 2 * mM         );
-    Σl +=    0.596 * sin( 2 * mD - 1 * sM          - 2 * mF) * E;
-    Σl +=    0.549 * sin( 4 * mD          + 1 * mM         );
-    Σl +=    0.537 * sin(                 + 4 * mM         );
-    Σl +=    0.520 * sin( 4 * mD - 1 * sM                  ) * E;
-    Σl -=    0.487 * sin( 1 * mD          - 2 * mM         );
-    Σl -=    0.399 * sin( 2 * mD + 1 * sM          - 2 * mF) * E;
-    Σl -=    0.381 * sin(                 + 2 * mM - 2 * mF);
-    Σl +=    0.351 * sin( 1 * mD + 1 * sM + 1 * mM         ) * E;
-    Σl -=    0.340 * sin( 3 * mD          - 2 * mM         );
-    Σl +=    0.330 * sin( 4 * mD          - 3 * mM         );
-    Σl +=    0.327 * sin( 2 * mD - 1 * sM + 2 * mM         ) * E;
-    Σl -=    0.323 * sin(        + 2 * sM + 1 * mM         ) * EE;
-    Σl +=    0.299 * sin( 1 * mD + 1 * sM - 1 * mM         ) * E;
-    Σl +=    0.294 * sin( 2 * mD          + 3 * mM         );
+    Sl += 6288.774 * sin(                 + 1 * mM         );
+    Sl += 1274.027 * sin( 2 * mD          - 1 * mM         );
+    Sl +=  658.314 * sin( 2 * mD                           );
+    Sl +=  213.618 * sin(                 + 2 * mM         );
+    Sl -=  185.116 * sin(        + 1 * sM                  ) * E;
+    Sl -=  114.332 * sin(                          + 2 * mF);
+    Sl +=   58.793 * sin( 2 * mD          - 2 * mM         );
+    Sl +=   57.066 * sin( 2 * mD - 1 * sM - 1 * mM         ) * E;
+    Sl +=   53.322 * sin( 2 * mD          + 1 * mM         );
+    Sl +=   45.758 * sin( 2 * mD - 1 * sM                  ) * E;
+    Sl -=   40.923 * sin(        + 1 * sM - 1 * mM         ) * E;
+    Sl -=   34.720 * sin( 1 * mD                           );
+    Sl -=   30.383 * sin(        + 1 * sM + 1 * mM         ) * E;
+    Sl +=   15.327 * sin( 2 * mD                   - 2 * mF);
+    Sl -=   12.528 * sin(                 + 1 * mM + 2 * mF);
+    Sl +=   10.980 * sin(                 + 1 * mM - 2 * mF);
+    Sl +=   10.675 * sin( 4 * mD          - 1 * mM         );
+    Sl +=   10.034 * sin(                 + 3 * mM         );
+    Sl +=    8.548 * sin( 4 * mD          - 2 * mM         );
+    Sl -=    7.888 * sin( 2 * mD + 1 * sM - 1 * mM         ) * E;
+    Sl -=    6.766 * sin( 2 * mD + 1 * sM                  ) * E;
+    Sl -=    5.163 * sin( 1 * mD          - 1 * mM         );
+    Sl +=    4.987 * sin( 1 * mD + 1 * sM                  ) * E;
+    Sl +=    4.036 * sin( 2 * mD - 1 * sM + 1 * mM         ) * E;
+    Sl +=    3.994 * sin( 2 * mD          + 2 * mM         );
+    Sl +=    3.861 * sin( 4 * mD                           );
+    Sl +=    3.665 * sin( 2 * mD          - 3 * mM         );
+    Sl -=    2.689 * sin(        + 1 * sM - 2 * mM         ) * E;
+    Sl -=    2.602 * sin( 2 * mD          - 1 * mM + 2 * mF);
+    Sl +=    2.390 * sin( 2 * mD - 1 * sM - 2 * mM         ) * E;
+    Sl -=    2.348 * sin( 1 * mD          + 1 * mM         );
+    Sl +=    2.236 * sin( 2 * mD - 2 * sM                  ) * EE;
+    Sl -=    2.120 * sin(        + 1 * sM + 2 * mM         ) * E;
+    Sl -=    2.069 * sin(        + 2 * sM                  ) * EE;
+    Sl +=    2.048 * sin( 2 * mD - 2 * sM - 1 * mM         ) * EE;
+    Sl -=    1.773 * sin( 2 * mD          + 1 * mM - 2 * mF);
+    Sl -=    1.595 * sin( 2 * mD                   + 2 * mF);
+    Sl +=    1.215 * sin( 4 * mD - 1 * sM - 1 * mM         ) * E;
+    Sl -=    1.110 * sin(                 + 2 * mM + 2 * mF);
+    Sl -=    0.892 * sin( 3 * mD          - 1 * mM         );
+    Sl -=    0.810 * sin( 2 * mD + 1 * sM + 1 * mM         ) * E;
+    Sl +=    0.759 * sin( 4 * mD - 1 * sM - 2 * mM         ) * E;
+    Sl -=    0.713 * sin(        + 2 * sM - 1 * mM         ) * EE;
+    Sl -=    0.700 * sin( 2 * mD + 2 * sM - 1 * mM         ) * EE;
+    Sl +=    0.691 * sin( 2 * mD + 1 * sM - 2 * mM         );
+    Sl +=    0.596 * sin( 2 * mD - 1 * sM          - 2 * mF) * E;
+    Sl +=    0.549 * sin( 4 * mD          + 1 * mM         );
+    Sl +=    0.537 * sin(                 + 4 * mM         );
+    Sl +=    0.520 * sin( 4 * mD - 1 * sM                  ) * E;
+    Sl -=    0.487 * sin( 1 * mD          - 2 * mM         );
+    Sl -=    0.399 * sin( 2 * mD + 1 * sM          - 2 * mF) * E;
+    Sl -=    0.381 * sin(                 + 2 * mM - 2 * mF);
+    Sl +=    0.351 * sin( 1 * mD + 1 * sM + 1 * mM         ) * E;
+    Sl -=    0.340 * sin( 3 * mD          - 2 * mM         );
+    Sl +=    0.330 * sin( 4 * mD          - 3 * mM         );
+    Sl +=    0.327 * sin( 2 * mD - 1 * sM + 2 * mM         ) * E;
+    Sl -=    0.323 * sin(        + 2 * sM + 1 * mM         ) * EE;
+    Sl +=    0.299 * sin( 1 * mD + 1 * sM - 1 * mM         ) * E;
+    Sl +=    0.294 * sin( 2 * mD          + 3 * mM         );
 
     // (AA.45.B)
 
-    long double Σb = 0.0;
+    long double Sb = 0.0;
 
-    Σb += 5128.122 * sin(                          + 1 * mF);
-    Σb +=  280.602 * sin(                 + 1 * mM + 1 * mF);
-    Σb +=  277.693 * sin(                 + 1 * mM - 1 * mF);
-    Σb +=  173.237 * sin( 2 * mD                   - 1 * mF);
-    Σb +=   55.413 * sin( 2 * mD          - 1 * mM + 1 * mF);
-    Σb +=   46.271 * sin( 2 * mD          - 1 * mM - 1 * mF);
-    Σb +=   32.573 * sin( 2 * mD                   + 1 * mF);
-    Σb +=   17.198 * sin(                 + 2 * mM + 1 * mF);
-    Σb +=    9.266 * sin( 2 * mD          + 1 * mM - 1 * mF);
-    Σb +=    8.822 * sin(                 + 2 * mM - 1 * mF);
-    Σb +=    8.216 * sin( 2 * mD - 1 * sM          - 1 * mF) * E;
-    Σb +=    4.324 * sin( 2 * mD          - 2 * mM - 1 * mF);
-    Σb +=    4.200 * sin( 2 * mD          + 1 * mM + 1 * mF);
-    Σb -=    3.359 * sin( 2 * mD + 1 * sM          - 1 * mF) * E;
-    Σb +=    2.463 * sin( 2 * mD - 1 * sM - 1 * mM + 1 * mF) * E;
-    Σb +=    2.211 * sin( 2 * mD - 1 * sM          + 1 * mF) * E;
-    Σb +=    2.065 * sin( 2 * mD - 1 * sM - 1 * mM - 1 * mF) * E;
-    Σb -=    1.870 * sin(        + 1 * sM - 1 * mM - 1 * mF) * E;
-    Σb +=    1.828 * sin( 4 * mD          - 1 * mM - 1 * mF);
-    Σb -=    1.794 * sin(        + 1 * sM          + 1 * mF) * E;
-    Σb -=    1.749 * sin(                          + 3 * mF);
-    Σb -=    1.565 * sin(        + 1 * sM - 1 * mM + 1 * mF) * E;
-    Σb -=    1.491 * sin( 1 * mD                   + 1 * mF);
-    Σb -=    1.475 * sin(        + 1 * sM + 1 * mM + 1 * mF) * E;
-    Σb -=    1.410 * sin(        + 1 * sM + 1 * mM - 1 * mF) * E;
-    Σb -=    1.344 * sin(        + 1 * sM          - 1 * mF) * E;
-    Σb -=    1.335 * sin( 1 * mD                   - 1 * mF);
-    Σb +=    1.107 * sin(                 + 3 * mM + 1 * mF);
-    Σb +=    1.024 * sin( 4 * mD                   - 1 * mF);
-    Σb +=    0.833 * sin( 4 * mD          - 1 * mM + 1 * mF);
-    Σb +=    0.777 * sin(                 + 1 * mM - 3 * mF);
-    Σb +=    0.671 * sin( 4 * mD          - 2 * mM + 1 * mF);
-    Σb +=    0.607 * sin( 2 * mD                   - 3 * mF);
-    Σb +=    0.596 * sin( 2 * mD          + 2 * mM - 1 * mF);
-    Σb +=    0.491 * sin( 2 * mD - 1 * sM + 1 * mM - 1 * mF) * E;
-    Σb -=    0.451 * sin( 2 * mD          - 2 * mM + 1 * mF);
-    Σb +=    0.439 * sin(                 + 3 * mM - 1 * mF);
-    Σb +=    0.422 * sin( 2 * mD          + 2 * mM + 1 * mF);
-    Σb +=    0.421 * sin( 2 * mD          - 3 * mM - 1 * mF);
-    Σb -=    0.366 * sin( 2 * mD + 1 * sM - 1 * mM + 1 * mF) * E;
-    Σb -=    0.351 * sin( 2 * mD + 1 * sM          + 1 * mF) * E;
-    Σb +=    0.331 * sin( 4 * mD                   + 1 * mF);
-    Σb +=    0.315 * sin( 2 * mD - 1 * sM + 1 * mM + 1 * mF) * E;
-    Σb +=    0.302 * sin( 2 * mD - 2 * sM          - 1 * mF) * EE;
-    Σb -=    0.283 * sin(                 + 1 * mM + 3 * mF);
-    Σb -=    0.229 * sin( 2 * mD + 1 * sM + 1 * mM - 1 * mF) * E;
-    Σb +=    0.223 * sin( 1 * mD + 1 * sM          - 1 * mF) * E;
-    Σb +=    0.223 * sin( 1 * mD + 1 * sM          + 1 * mF) * E;
-    Σb -=    0.220 * sin(        + 1 * sM - 2 * mM - 1 * mF) * E;
-    Σb -=    0.220 * sin( 2 * mD + 1 * sM - 1 * mM - 1 * mF) * E;
-    Σb -=    0.185 * sin( 1 * mD          + 1 * mM + 1 * mF);
-    Σb +=    0.181 * sin( 2 * mD - 1 * sM - 2 * mM - 1 * mF) * E;
-    Σb -=    0.177 * sin(        + 1 * sM + 2 * mM + 1 * mF) * E;
-    Σb +=    0.176 * sin( 4 * mD          - 2 * mM - 1 * mF);
-    Σb +=    0.166 * sin( 4 * mD - 1 * sM - 1 * mM - 1 * mF) * E;
-    Σb -=    0.164 * sin( 1 * mD          + 1 * mM - 1 * mF);
-    Σb +=    0.132 * sin( 4 * mD          + 1 * mM - 1 * mF);
-    Σb -=    0.119 * sin( 1 * mD          - 1 * mM - 1 * mF);
-    Σb +=    0.115 * sin( 4 * mD - 1 * sM          - 1 * mF) * E;
-    Σb +=    0.107 * sin( 2 * mD - 2 * sM          + 1 * mF) * EE;
+    Sb += 5128.122 * sin(                          + 1 * mF);
+    Sb +=  280.602 * sin(                 + 1 * mM + 1 * mF);
+    Sb +=  277.693 * sin(                 + 1 * mM - 1 * mF);
+    Sb +=  173.237 * sin( 2 * mD                   - 1 * mF);
+    Sb +=   55.413 * sin( 2 * mD          - 1 * mM + 1 * mF);
+    Sb +=   46.271 * sin( 2 * mD          - 1 * mM - 1 * mF);
+    Sb +=   32.573 * sin( 2 * mD                   + 1 * mF);
+    Sb +=   17.198 * sin(                 + 2 * mM + 1 * mF);
+    Sb +=    9.266 * sin( 2 * mD          + 1 * mM - 1 * mF);
+    Sb +=    8.822 * sin(                 + 2 * mM - 1 * mF);
+    Sb +=    8.216 * sin( 2 * mD - 1 * sM          - 1 * mF) * E;
+    Sb +=    4.324 * sin( 2 * mD          - 2 * mM - 1 * mF);
+    Sb +=    4.200 * sin( 2 * mD          + 1 * mM + 1 * mF);
+    Sb -=    3.359 * sin( 2 * mD + 1 * sM          - 1 * mF) * E;
+    Sb +=    2.463 * sin( 2 * mD - 1 * sM - 1 * mM + 1 * mF) * E;
+    Sb +=    2.211 * sin( 2 * mD - 1 * sM          + 1 * mF) * E;
+    Sb +=    2.065 * sin( 2 * mD - 1 * sM - 1 * mM - 1 * mF) * E;
+    Sb -=    1.870 * sin(        + 1 * sM - 1 * mM - 1 * mF) * E;
+    Sb +=    1.828 * sin( 4 * mD          - 1 * mM - 1 * mF);
+    Sb -=    1.794 * sin(        + 1 * sM          + 1 * mF) * E;
+    Sb -=    1.749 * sin(                          + 3 * mF);
+    Sb -=    1.565 * sin(        + 1 * sM - 1 * mM + 1 * mF) * E;
+    Sb -=    1.491 * sin( 1 * mD                   + 1 * mF);
+    Sb -=    1.475 * sin(        + 1 * sM + 1 * mM + 1 * mF) * E;
+    Sb -=    1.410 * sin(        + 1 * sM + 1 * mM - 1 * mF) * E;
+    Sb -=    1.344 * sin(        + 1 * sM          - 1 * mF) * E;
+    Sb -=    1.335 * sin( 1 * mD                   - 1 * mF);
+    Sb +=    1.107 * sin(                 + 3 * mM + 1 * mF);
+    Sb +=    1.024 * sin( 4 * mD                   - 1 * mF);
+    Sb +=    0.833 * sin( 4 * mD          - 1 * mM + 1 * mF);
+    Sb +=    0.777 * sin(                 + 1 * mM - 3 * mF);
+    Sb +=    0.671 * sin( 4 * mD          - 2 * mM + 1 * mF);
+    Sb +=    0.607 * sin( 2 * mD                   - 3 * mF);
+    Sb +=    0.596 * sin( 2 * mD          + 2 * mM - 1 * mF);
+    Sb +=    0.491 * sin( 2 * mD - 1 * sM + 1 * mM - 1 * mF) * E;
+    Sb -=    0.451 * sin( 2 * mD          - 2 * mM + 1 * mF);
+    Sb +=    0.439 * sin(                 + 3 * mM - 1 * mF);
+    Sb +=    0.422 * sin( 2 * mD          + 2 * mM + 1 * mF);
+    Sb +=    0.421 * sin( 2 * mD          - 3 * mM - 1 * mF);
+    Sb -=    0.366 * sin( 2 * mD + 1 * sM - 1 * mM + 1 * mF) * E;
+    Sb -=    0.351 * sin( 2 * mD + 1 * sM          + 1 * mF) * E;
+    Sb +=    0.331 * sin( 4 * mD                   + 1 * mF);
+    Sb +=    0.315 * sin( 2 * mD - 1 * sM + 1 * mM + 1 * mF) * E;
+    Sb +=    0.302 * sin( 2 * mD - 2 * sM          - 1 * mF) * EE;
+    Sb -=    0.283 * sin(                 + 1 * mM + 3 * mF);
+    Sb -=    0.229 * sin( 2 * mD + 1 * sM + 1 * mM - 1 * mF) * E;
+    Sb +=    0.223 * sin( 1 * mD + 1 * sM          - 1 * mF) * E;
+    Sb +=    0.223 * sin( 1 * mD + 1 * sM          + 1 * mF) * E;
+    Sb -=    0.220 * sin(        + 1 * sM - 2 * mM - 1 * mF) * E;
+    Sb -=    0.220 * sin( 2 * mD + 1 * sM - 1 * mM - 1 * mF) * E;
+    Sb -=    0.185 * sin( 1 * mD          + 1 * mM + 1 * mF);
+    Sb +=    0.181 * sin( 2 * mD - 1 * sM - 2 * mM - 1 * mF) * E;
+    Sb -=    0.177 * sin(        + 1 * sM + 2 * mM + 1 * mF) * E;
+    Sb +=    0.176 * sin( 4 * mD          - 2 * mM - 1 * mF);
+    Sb +=    0.166 * sin( 4 * mD - 1 * sM - 1 * mM - 1 * mF) * E;
+    Sb -=    0.164 * sin( 1 * mD          + 1 * mM - 1 * mF);
+    Sb +=    0.132 * sin( 4 * mD          + 1 * mM - 1 * mF);
+    Sb -=    0.119 * sin( 1 * mD          - 1 * mM - 1 * mF);
+    Sb +=    0.115 * sin( 4 * mD - 1 * sM          - 1 * mF) * E;
+    Sb +=    0.107 * sin( 2 * mD - 2 * sM          + 1 * mF) * EE;
 
     // Add corrective Terms
 
-    Σl +=  3.958 * sin(A1)
+    Sl +=  3.958 * sin(A1)
          + 1.962 * sin(mL - mF)
          + 0.318 * sin(A2);
 
-    Σb += -2.235 * sin(mL) 
+    Sb += -2.235 * sin(mL) 
          + 0.382 * sin(A3)
          + 0.175 * sin(A1 - mF)
          + 0.175 * sin(A1 + mF)
@@ -285,8 +285,8 @@ const t_ecld moon_position(const t_julianDay t)
 
     t_ecld ecl;
 
-    ecl.longitude = moon_meanLongitude(t) + Σl * 0.001 + earth_longitudeNutation(t);
-    ecl.latitude = Σb * 0.001;
+    ecl.longitude = moon_meanLongitude(t) + Sl * 0.001 + earth_longitudeNutation(t);
+    ecl.latitude = Sb * 0.001;
 
     return ecl;
 }
@@ -341,58 +341,58 @@ const long double moon_distance(const t_julianDay t)
 
     // (AA.45.A)
 
-    long double Σr = 0.0;
+    long double Sr = 0.0;
 
-    Σr -= 20905.355 * cos(                 + 1 * mM         );
-    Σr -=  3699.111 * cos( 2 * mD          - 1 * mM         );
-    Σr -=  2955.968 * cos( 2 * mD                           );
-    Σr -=   569.925 * cos(                 + 2 * mM         );
-    Σr +=    48.888 * cos(        + 1 * sM                  ) * E;
-    Σr -=     3.149 * cos(                          + 2 * mF);
-    Σr +=   246.158 * cos( 2 * mD          - 2 * mM         );
-    Σr -=   152.138 * cos( 2 * mD - 1 * sM - 1 * mM         ) * E;
-    Σr -=   170.733 * cos( 2 * mD          + 1 * mM         );
-    Σr -=   204.586 * cos( 2 * mD - 1 * sM                  ) * E;
-    Σr -=   129.620 * cos(        + 1 * sM - 1 * mM         ) * E;
-    Σr +=   108.743 * cos( 1 * mD                           );
-    Σr +=   104.755 * cos(        + 1 * sM + 1 * mM         ) * E;
-    Σr +=    10.321 * cos( 2 * mD                   - 2 * mF);
-    Σr +=    79.661 * cos(                 + 1 * mM - 2 * mF);
-    Σr -=    34.782 * cos( 4 * mD          - 1 * mM         );
-    Σr -=    23.210 * cos(                 + 3 * mM         );
-    Σr -=    21.636 * cos( 4 * mD          - 2 * mM         );
-    Σr +=    24.208 * cos( 2 * mD + 1 * sM - 1 * mM         ) * E;
-    Σr +=    30.824 * cos( 2 * mD + 1 * sM                  ) * E;
-    Σr -=     8.379 * cos( 1 * mD          - 1 * mM         );
-    Σr -=    16.675 * cos( 1 * mD + 1 * sM                  ) * E;
-    Σr -=    12.831 * cos( 2 * mD - 1 * sM + 1 * mM         ) * E;
-    Σr -=    10.445 * cos( 2 * mD          + 2 * mM         );
-    Σr -=    11.650 * cos( 4 * mD                           );
-    Σr +=    14.403 * cos( 2 * mD          - 3 * mM         );
-    Σr -=     7.003 * cos(        + 1 * sM - 2 * mM         ) * E;
-    Σr +=    10.056 * cos( 2 * mD - 1 * sM - 2 * mM         ) * E;
-    Σr +=     6.322 * cos( 1 * mD          + 1 * mM         );
-    Σr -=     9.884 * cos( 2 * mD - 2 * sM                  ) * EE;
-    Σr +=     5.751 * cos(        + 1 * sM + 2 * mM         ) * E;
-    Σr -=     4.950 * cos( 2 * mD - 2 * sM - 1 * mM         ) * EE;
-    Σr +=     4.130 * cos( 2 * mD          + 1 * mM - 2 * mF);
-    Σr -=     3.958 * cos( 4 * mD - 1 * sM - 1 * mM         ) * E;
-    Σr +=     3.258 * cos( 3 * mD          - 1 * mM         );
-    Σr +=     2.616 * cos( 2 * mD + 1 * sM + 1 * mM         ) * E;
-    Σr -=     1.897 * cos( 4 * mD - 1 * sM - 2 * mM         ) * E;
-    Σr -=     2.117 * cos(        + 2 * sM - 1 * mM         ) * EE;
-    Σr +=     2.354 * cos( 2 * mD + 2 * sM - 1 * mM         ) * EE;
-    Σr -=     1.423 * cos( 4 * mD          + 1 * mM         );
-    Σr -=     1.117 * cos(                 + 4 * mM         );
-    Σr -=     1.571 * cos( 4 * mD - 1 * sM                  ) * E;
-    Σr -=     1.739 * cos( 1 * mD          - 2 * mM         );
-    Σr -=     4.421 * cos(                 + 2 * mM - 2 * mF);
-    Σr +=     1.165 * cos(        + 2 * sM + 1 * mM         ) * EE;
-    Σr +=     8.752 * cos( 2 * mD          - 1 * mM - 2 * mF);
+    Sr -= 20905.355 * cos(                 + 1 * mM         );
+    Sr -=  3699.111 * cos( 2 * mD          - 1 * mM         );
+    Sr -=  2955.968 * cos( 2 * mD                           );
+    Sr -=   569.925 * cos(                 + 2 * mM         );
+    Sr +=    48.888 * cos(        + 1 * sM                  ) * E;
+    Sr -=     3.149 * cos(                          + 2 * mF);
+    Sr +=   246.158 * cos( 2 * mD          - 2 * mM         );
+    Sr -=   152.138 * cos( 2 * mD - 1 * sM - 1 * mM         ) * E;
+    Sr -=   170.733 * cos( 2 * mD          + 1 * mM         );
+    Sr -=   204.586 * cos( 2 * mD - 1 * sM                  ) * E;
+    Sr -=   129.620 * cos(        + 1 * sM - 1 * mM         ) * E;
+    Sr +=   108.743 * cos( 1 * mD                           );
+    Sr +=   104.755 * cos(        + 1 * sM + 1 * mM         ) * E;
+    Sr +=    10.321 * cos( 2 * mD                   - 2 * mF);
+    Sr +=    79.661 * cos(                 + 1 * mM - 2 * mF);
+    Sr -=    34.782 * cos( 4 * mD          - 1 * mM         );
+    Sr -=    23.210 * cos(                 + 3 * mM         );
+    Sr -=    21.636 * cos( 4 * mD          - 2 * mM         );
+    Sr +=    24.208 * cos( 2 * mD + 1 * sM - 1 * mM         ) * E;
+    Sr +=    30.824 * cos( 2 * mD + 1 * sM                  ) * E;
+    Sr -=     8.379 * cos( 1 * mD          - 1 * mM         );
+    Sr -=    16.675 * cos( 1 * mD + 1 * sM                  ) * E;
+    Sr -=    12.831 * cos( 2 * mD - 1 * sM + 1 * mM         ) * E;
+    Sr -=    10.445 * cos( 2 * mD          + 2 * mM         );
+    Sr -=    11.650 * cos( 4 * mD                           );
+    Sr +=    14.403 * cos( 2 * mD          - 3 * mM         );
+    Sr -=     7.003 * cos(        + 1 * sM - 2 * mM         ) * E;
+    Sr +=    10.056 * cos( 2 * mD - 1 * sM - 2 * mM         ) * E;
+    Sr +=     6.322 * cos( 1 * mD          + 1 * mM         );
+    Sr -=     9.884 * cos( 2 * mD - 2 * sM                  ) * EE;
+    Sr +=     5.751 * cos(        + 1 * sM + 2 * mM         ) * E;
+    Sr -=     4.950 * cos( 2 * mD - 2 * sM - 1 * mM         ) * EE;
+    Sr +=     4.130 * cos( 2 * mD          + 1 * mM - 2 * mF);
+    Sr -=     3.958 * cos( 4 * mD - 1 * sM - 1 * mM         ) * E;
+    Sr +=     3.258 * cos( 3 * mD          - 1 * mM         );
+    Sr +=     2.616 * cos( 2 * mD + 1 * sM + 1 * mM         ) * E;
+    Sr -=     1.897 * cos( 4 * mD - 1 * sM - 2 * mM         ) * E;
+    Sr -=     2.117 * cos(        + 2 * sM - 1 * mM         ) * EE;
+    Sr +=     2.354 * cos( 2 * mD + 2 * sM - 1 * mM         ) * EE;
+    Sr -=     1.423 * cos( 4 * mD          + 1 * mM         );
+    Sr -=     1.117 * cos(                 + 4 * mM         );
+    Sr -=     1.571 * cos( 4 * mD - 1 * sM                  ) * E;
+    Sr -=     1.739 * cos( 1 * mD          - 2 * mM         );
+    Sr -=     4.421 * cos(                 + 2 * mM - 2 * mF);
+    Sr +=     1.165 * cos(        + 2 * sM + 1 * mM         ) * EE;
+    Sr +=     8.752 * cos( 2 * mD          - 1 * mM - 2 * mF);
 
-    const long double Δ = 385000.56 + Σr; // in kilometers
+    const long double D = 385000.56 + Sr; // in kilometers
 
-    return Δ;
+    return D;
 }
 
 
@@ -476,10 +476,10 @@ const float moon_meanOrbitLongitude_la(const t_julianDay t)
     const t_julianDay T(jCenturiesSinceSE(t));
 
     // (AA p152)
-    const float Ω = 125.04
+    const float O = 125.04
         + T * (- 1934.136);
 
-    return _revd(Ω);
+    return _revd(O);
 }
 
 
@@ -496,36 +496,36 @@ const t_eclf moon_position_la(const t_julianDay t)
 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 
-    float Σl = mL;
+    float Sl = mL;
 
-    Σl += 0.1098 * sin(                 + 1 * mM         );
-    Σl += 0.0222 * sin( 2 * mD          - 1 * mM         );
-    Σl += 0.0115 * sin( 2 * mD                           );
-    Σl += 0.0037 * sin(                 + 2 * mM         );
-    Σl -= 0.0032 * sin(        + 1 * sM                  );
-    Σl -= 0.0020 * sin(                          + 2 * mF);
-    Σl += 0.0010 * sin( 2 * mD          - 2 * mM         );
-    Σl += 0.0010 * sin( 2 * mD - 1 * sM - 1 * mM         );
-    Σl += 0.0009 * sin( 2 * mD          + 1 * mM         );
-    Σl += 0.0008 * sin( 2 * mD - 1 * sM                  );
-    Σl -= 0.0007 * sin(        + 1 * sM - 1 * mM         );
-    Σl -= 0.0006 * sin( 1 * mD                           );
-    Σl -= 0.0005 * sin(        + 1 * sM + 1 * mM         );
+    Sl += 0.1098 * sin(                 + 1 * mM         );
+    Sl += 0.0222 * sin( 2 * mD          - 1 * mM         );
+    Sl += 0.0115 * sin( 2 * mD                           );
+    Sl += 0.0037 * sin(                 + 2 * mM         );
+    Sl -= 0.0032 * sin(        + 1 * sM                  );
+    Sl -= 0.0020 * sin(                          + 2 * mF);
+    Sl += 0.0010 * sin( 2 * mD          - 2 * mM         );
+    Sl += 0.0010 * sin( 2 * mD - 1 * sM - 1 * mM         );
+    Sl += 0.0009 * sin( 2 * mD          + 1 * mM         );
+    Sl += 0.0008 * sin( 2 * mD - 1 * sM                  );
+    Sl -= 0.0007 * sin(        + 1 * sM - 1 * mM         );
+    Sl -= 0.0006 * sin( 1 * mD                           );
+    Sl -= 0.0005 * sin(        + 1 * sM + 1 * mM         );
 
-    float Σb = 0.0;
+    float Sb = 0.0;
 
-    Σb += 0.0895 * sin(                          + 1 * mF);
-    Σb += 0.0049 * sin(                 + 1 * mM + 1 * mF);
-    Σb += 0.0048 * sin(                 + 1 * mM - 1 * mF);
-    Σb += 0.0030 * sin( 2 * mD                   - 1 * mF);
-    Σb += 0.0010 * sin( 2 * mD          - 1 * mM + 1 * mF);
-    Σb += 0.0008 * sin( 2 * mD          - 1 * mM - 1 * mF);
-    Σb += 0.0006 * sin( 2 * mD                   + 1 * mF);
+    Sb += 0.0895 * sin(                          + 1 * mF);
+    Sb += 0.0049 * sin(                 + 1 * mM + 1 * mF);
+    Sb += 0.0048 * sin(                 + 1 * mM - 1 * mF);
+    Sb += 0.0030 * sin( 2 * mD                   - 1 * mF);
+    Sb += 0.0010 * sin( 2 * mD          - 1 * mM + 1 * mF);
+    Sb += 0.0008 * sin( 2 * mD          - 1 * mM - 1 * mF);
+    Sb += 0.0006 * sin( 2 * mD                   + 1 * mF);
 
     t_eclf ecl;
 
-    ecl.longitude = _deg(Σl);
-    ecl.latitude = _deg(Σb);
+    ecl.longitude = _deg(Sl);
+    ecl.latitude = _deg(Sb);
 
     return ecl;
 }
@@ -567,14 +567,14 @@ const float moon_distance_la(const t_julianDay t)
 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 
-    float Σr = 0.016593;
+    float Sr = 0.016593;
 
-    Σr += 0.000904 * cos(                 + 1 * mM);
-    Σr += 0.000166 * cos( 2 * mD          - 1 * mM);
-    Σr += 0.000137 * cos( 2 * mD                  );
-    Σr += 0.000049 * cos(                 + 2 * mM);
-    Σr += 0.000015 * cos( 2 * mD          + 1 * mM);
-    Σr += 0.000009 * cos( 2 * mD - 1 * sM         );
+    Sr += 0.000904 * cos(                 + 1 * mM);
+    Sr += 0.000166 * cos( 2 * mD          - 1 * mM);
+    Sr += 0.000137 * cos( 2 * mD                  );
+    Sr += 0.000049 * cos(                 + 2 * mM);
+    Sr += 0.000015 * cos( 2 * mD          + 1 * mM);
+    Sr += 0.000009 * cos( 2 * mD - 1 * sM         );
 
-    return earth_meanRadius() / Σr;
+    return earth_meanRadius() / Sr;
 }

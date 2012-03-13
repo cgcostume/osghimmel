@@ -97,7 +97,7 @@ struct s_EclipticalCoords
 
 
     // Ecliptical longitude. Measured from the vernal equinox along the ecliptic.
-    T longitude; // λ
+    T longitude; // l
 
     // Ecliptical latitude. Positive if north of the ecliptic.
     T latitude;  // β

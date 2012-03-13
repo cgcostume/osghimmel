@@ -51,7 +51,7 @@ typedef struct s_AstronomicalTime
     ,   const short utcOffset = 0);
 
 
-    s_AstronomicalTime::s_AstronomicalTime(
+    s_AstronomicalTime(
         const short year
     ,   const short month
     ,   const long double day
