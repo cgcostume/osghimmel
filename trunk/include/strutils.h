@@ -57,5 +57,13 @@ void replace(
 ,   const std::string &search
 ,   const std::string &replace);
 
+int __itoa(
+    int value
+,   char *dst
+,   const size_t size);
+
+#ifdef __GNUC__
+#define sprintf_s snprintf
+#endif // __GNUC__
 
 #endif // __STRUTILS_H__

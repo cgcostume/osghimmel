@@ -37,6 +37,7 @@
 #include "coords.h"
 #include "earth.h"
 #include "stars.h"
+#include "strutils.h"
 
 #include <osg/Geometry>
 #include <osg/Point>
@@ -384,7 +385,8 @@ const float StarsGeode::defaultColorRatio()
 const std::string StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
-    sprintf(apparentMagLimit, "%.2f", earth_apparentMagnitudeLimit());
+
+    sprintf_s(apparentMagLimit, 8, "%.2f", earth_apparentMagnitudeLimit());
 
     return glsl_version_150
 

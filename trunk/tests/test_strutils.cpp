@@ -27,83 +27,28 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "strutils.h"
 
-#include <stdio.h>
-#include <stdarg.h>
+#include "test_strutils.h"
+
+#include "test.h"
+
+#include "include/strutils.h"
 
 
-void replace(
-    std::string& string
-,   const std::string &search
-,   const int value)
+void test_strutils()
 {
-    // length of value for char buffer:
+    // Check if int cast truncates.
 
-    const int n = ceil(log10(static_cast<float>(value)));
-    char *buffer = new char[n + 1];
+    char buffer[4];
+    __itoa(983, buffer, 4);
 
-    __itoa(value, buffer, n + 1);
-
-    replace(string, search, buffer);
-
-    delete[] buffer;
-}
+    ASSERT_EQ(int, strcmp(buffer, "983"), 0);
 
 
-void replace(
-    std::string& string
-,   const std::string &search
-,   const float value)
-{
-    char buffer[64];
+    std::string test("Num := %NUM%;");
+    replace(test, "%NUM%", 9.83f);
 
-    if(sprintf_s(buffer, 64, "%f", value))
-        replace(string, search, buffer);
-}
+    ASSERT_EQ(int, (test == "Num := 9.830000;"), 1);
 
-
-void replace(
-    std::string& string
-,   const std::string &search
-,   const osg::Vec3f value)
-{
-    char buffer[202];
-
-    if(sprintf_s(buffer, 202, "vec3(%f, %f, %f)", value[0], value[1], value[2]))
-        replace(string, search, buffer);
-}
-
-
-void replace(
-    std::string& string
-,   const std::string &search
-,   const std::string &replace)
-{
-    std::string::size_type next;
-
-    for(next = string.find(search); next != std::string::npos; next = string.find(search, next))
-    {
-        string.replace(next, search.length(), replace);
-        next += replace.length();
-    }
-    
-}
-
-
-int __itoa(
-    int value
-,   char *dst
-,   const size_t size)
-{
-    int result(-1);
-
-#ifdef __GNUC__
-    result = snprintf(dst, size, "%d", value);
-#else // __GNUC__
-    result = _itoa_s(value, dst, size, 10);
-#endif // __GNUC__
-
-    dst[size - 1] = '\0';
-    return result;
+    TEST_REPORT();
 }

@@ -49,7 +49,13 @@ unsigned int brightstars_readFromFile(
 {
     // Retrieve file size.
 
-    FILE *f = std::fopen(fileName, "r");
+    FILE *f;
+#ifdef __GNUC__
+    f = std::fopen(fileName, "r");
+#else // __GNUC__
+    fopen_s(&f, fileName, "r");
+#endif // __GNUC__
+
     if(!f)
         return 0;
     
