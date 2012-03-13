@@ -33,6 +33,7 @@
 
 #include <QStringList>
 
+
 namespace
 {
     // From the "The OpenGL Shading Language 1.50 Quick Reference Card"

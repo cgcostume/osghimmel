@@ -31,6 +31,7 @@
 
 #include <QColor>
 
+
 const osg::Vec4 toVec4(const QColor &color)
 {
     return osg::Vec4(

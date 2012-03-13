@@ -32,6 +32,7 @@
 #define __GLSLEDITOR_H__
 
 
+#include <QMap>
 #include <QWidget>
 
 #include "utils/glsltypes.h"
@@ -43,7 +44,6 @@ class Ui_GlslEditor;
 class QTextDocument;
 
 class ShaderModifier;
-
 
 
 class GlslEditor

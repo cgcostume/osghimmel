@@ -29,12 +29,11 @@
 
 #include "shadermodifier.h"
 
-
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
 
-#include <assert.h>
-
 #include <osg/Notify>
+
+#include <assert.h>
 
 
 ShaderModifier::ShaderModifier()

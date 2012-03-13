@@ -41,6 +41,7 @@ namespace osg
     class Texture2D;
 }
 
+
 // uses method presented by Miller, Gene S. and Hoffman, Robert C. in "Illumination 
 // and Reflection Maps: Simulated Objects in Simulated and Real Environments" 1984
 

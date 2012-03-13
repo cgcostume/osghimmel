@@ -36,8 +36,8 @@
 #include "include/milkywaygeode.h"
 #include "include/abstractastronomy.h"
 
+#include "utils/tr.h"
 #include "utils/qt2osg.h"
-
 
 #include <osg/Light>
 #include <osg/LightSource>
@@ -265,9 +265,9 @@ void Scene_ProceduralHimmel::propertyChanged(
     else if(PROPERTY_MOON_POSITION_X == name || PROPERTY_MOON_POSITION_Y == name || PROPERTY_MOON_POSITION_Z == name)
     {
         osg::Vec3 vec;
-        vec._v[0] =  doubleValue(PROPERTY_MOON_POSITION_X);
-        vec._v[1] =  doubleValue(PROPERTY_MOON_POSITION_Y);
-        vec._v[2] =  doubleValue(PROPERTY_MOON_POSITION_Z);
+        vec[0] =  doubleValue(PROPERTY_MOON_POSITION_X);
+        vec[1] =  doubleValue(PROPERTY_MOON_POSITION_Y);
+        vec[2] =  doubleValue(PROPERTY_MOON_POSITION_Z);
         vec.normalize();
         m_himmel->astro()->setMoonPosition(vec);
     }

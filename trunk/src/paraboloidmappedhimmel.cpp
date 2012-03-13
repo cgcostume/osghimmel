@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "paraboloidmappedhimmel.h"
+
 #include "horizonband.h"
 
 #include <osg/Texture2D>
@@ -142,9 +143,9 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
         "    vec2 uv = vec2(stu.x / m + 0.5, stu.y / m + 0.5);\n"
         "\n"
         "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
-    +   (m_withFakeSun ? "fc += fakeSun(fc.a);\n" : "")
+    +   (m_withFakeSun ? "    fc += fakeSun(fc.a);\n" : "")
     +   "\n"
-    +   (m_withHBand ? "" : "if(stu.z < 0.0) discard;\n")
+    +   (m_withHBand ? "" : "    if(stu.z < 0.0) discard;\n")
     +
         "\n"
         "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"

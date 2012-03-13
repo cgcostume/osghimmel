@@ -45,8 +45,6 @@
 #include <osg/Image>
 #include <osg/Texture2D>
 #include <osg/Texture3D>
-
-// TODO: geht auch anderer viewer?
 #include <osgViewer/CompositeViewer>
 
 #include "shaderfragment/bruneton_common.hpp"

@@ -29,13 +29,13 @@
 
 
 #include "test_astronomy.h"
+#include "test.h"
 
 #include "include/mathmacros.h"
 #include "include/atime.h"
 #include "include/julianday.h"
 #include "include/sideraltime.h"
 #include "include/coords.h"
-
 #include "include/moon.h"
 #include "include/sun.h"
 #include "include/earth.h"

@@ -38,6 +38,7 @@ namespace osg
     class Timer;
 }
 
+
 // TimeF manages an osg::Timer and features an interface for floating time
 // in the closed interval [0;1] representing a full day and standard c 
 // time (time_t) simultaneously. The time updates have to be requested 

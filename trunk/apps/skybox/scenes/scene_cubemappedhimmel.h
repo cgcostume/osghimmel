@@ -33,8 +33,8 @@
 
 #include "abstracthimmelscene.h"
 
-
 class CubeMappedHimmel;
+
 
 class Scene_CubeMappedHimmel 
 :   public AbstractHimmelScene

@@ -29,8 +29,6 @@
 
 #include "strutils.h"
 
-#include <assert.h>
-
 
 void replace(
     std::string& string
@@ -41,6 +39,7 @@ void replace(
     
     const int n = ceil(log10(static_cast<float>(value)));
     char *buffer = new char[n + 1];
+
     _itoa(value, buffer, 10);
     buffer[n] = '\0';
 
@@ -69,7 +68,7 @@ void replace(
 {
     char buffer[202];
 
-    if(sprintf(buffer, "vec3(%f, %f, %f)", value._v[0], value._v[1], value._v[2]))
+    if(sprintf(buffer, "vec3(%f, %f, %f)", value[0], value[1], value[2]))
         replace(string, search, buffer);
 }
 

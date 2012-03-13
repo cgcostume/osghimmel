@@ -43,6 +43,7 @@ namespace osg
     class Texture2D;
 }
 
+
 // uses method presented by Heidrich, Wolfgang and Seidel, 
 // Hans-Peter in "View-independent environment maps" 1998
 

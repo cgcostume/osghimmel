@@ -43,8 +43,16 @@ class Ui_MainWindow;
 class QFileInfo;
 class QLabel;
 class QTimer;
-
 class QOsgEventHandler;
+
+class LogOutputWidget;
+class LogOutputLabel;
+class CollapsibleDockWidget;
+class DateTimeWidget;
+class GlslEditor;
+class PropertyWidget;
+class AbstractHimmelScene;
+class TimeF;
 
 namespace osgViewer 
 {
@@ -56,20 +64,6 @@ namespace osg
     class Group;
     class Camera;
 }
-
-
-class LogOutputWidget;
-class LogOutputLabel;
-
-class DateTimeWidget;
-class GlslEditor;
-class PropertyWidget;
-
-class AbstractHimmelScene;
-
-class TimeF;
-
-class CollapsibleDockWidget;
 
 
 class MainWindow : public QMainWindow

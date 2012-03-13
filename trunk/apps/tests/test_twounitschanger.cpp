@@ -30,6 +30,8 @@
 
 #include "test_twounitschanger.h"
 
+#include "test.h"
+
 #include "include/twounitschanger.h"
 
 

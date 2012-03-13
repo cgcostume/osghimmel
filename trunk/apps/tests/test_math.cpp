@@ -30,6 +30,8 @@
 
 #include "test_math.h"
 
+#include "test.h"
+
 #include "include/mathmacros.h"
 
 

@@ -29,12 +29,16 @@
 
 #include "abstracthimmelscene.h"
 
+#include "utils/tr.h"
+
 #include "include/abstracthimmel.h"
 #include "include/timef.h"
 
 #include <osg/Camera>
-
 #include <osgViewer/View>
+
+#include <assert.h>
+
 
 namespace
 {

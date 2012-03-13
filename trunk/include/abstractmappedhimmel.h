@@ -33,7 +33,6 @@
 
 #include "abstracthimmel.h"
 #include "twounitschanger.h"
-
 #include "pragmanote.h"
 
 class TimeF;

@@ -29,7 +29,6 @@
 
 #include "brightstars.h"
 
-
 #include <fstream>
 #include <iostream>
 #include <iterator>

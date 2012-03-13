@@ -33,8 +33,8 @@
 #include <math.h>
 #include <iostream>
 #include <sstream>
-
 #include <assert.h>
+
 
 namespace
 {

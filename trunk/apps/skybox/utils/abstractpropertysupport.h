@@ -34,6 +34,7 @@
 
 #include "utils/abstractfactory.hpp"
 
+#include <QSet>
 #include <QLabel>
 #include <QString>
 #include <QGraphicsItem>

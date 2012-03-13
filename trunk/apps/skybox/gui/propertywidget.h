@@ -31,7 +31,6 @@
 #ifndef __PROPERTYWIDGET_H__
 #define __PROPERTYWIDGET_H__
 
-
 #include <QWidget>
 
 class AbstractPropertySupport;

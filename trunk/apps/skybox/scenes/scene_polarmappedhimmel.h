@@ -33,8 +33,8 @@
 
 #include "abstracthimmelscene.h"
 
-
 class PolarMappedHimmel;
+
 
 class Scene_PolarMappedHimmel : public AbstractHimmelScene
 {

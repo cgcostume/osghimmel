@@ -31,18 +31,16 @@
 #ifndef __COLLAPSIBLEDOCKWIDGET_H__
 #define __COLLAPSIBLEDOCKWIDGET_H__
 
-
 #include "docktitlebarwidget.h"
 
 #include <QDockWidget>
 #include <QSet>
 
-
 class QMainWindow;
 class QSettings;
 
-
 class DockTitleBarWidget;
+
 
 class CollapsibleDockWidget
 :    public QDockWidget

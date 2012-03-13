@@ -29,6 +29,7 @@
 
 #include "qosgeventhandler.h"
 
+
 QOsgEventHandler::QOsgEventHandler(const float fov)
 :   m_fov(fov)
 ,   m_fovBackup(fov)

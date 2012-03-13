@@ -31,6 +31,8 @@
 #ifndef __LOGOUTPUTWIDGET_H__
 #define __LOGOUTPUTWIDGET_H__
 
+#include "utils/log.h"
+
 #include <QTextBrowser>
 #include <QTextCharFormat>
 

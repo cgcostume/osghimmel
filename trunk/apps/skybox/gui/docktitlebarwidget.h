@@ -31,7 +31,6 @@
 #ifndef __DOCKTITLEBARWIDGET_H__
 #define __DOCKTITLEBARWIDGET_H__
 
-
 #include <QWidget>
 
 #include <memory> //auto_ptr

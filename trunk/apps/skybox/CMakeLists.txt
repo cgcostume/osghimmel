@@ -27,18 +27,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
-SET(QT_USE_QTOPENGL TRUE)
-SET(QT_USE_UI TRUE)
-SET(QT_USE_CORE TRUE)
+message(STATUS "add executable: skybox")
 
-SET(SKYBOX_SOURCES
+set(QT_USE_QTOPENGL TRUE)
+set(QT_USE_UI TRUE)
+set(QT_USE_CORE TRUE)
+
+set(SKYBOX_SOURCES
     abstracthimmelscene.h
     abstracthimmelscene.cpp
     mainlogdispatcher.h
     mainlogdispatcher.cpp
     skyboxmain.cpp
-    stable.h
-    stable.cpp
     gui/collapsibledockwidget.h
     gui/collapsibledockwidget.cpp
     gui/datetimewidget.h
@@ -92,23 +92,23 @@ SET(SKYBOX_SOURCES
     utils/log.h
     utils/log.cpp
     utils/qt2osg.h
-    utils/qt2osg.cpp)
-
-source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
+    utils/qt2osg.cpp
+    utils/tr.h)
 
 qt4_auto_wrap(QT4_SOURCES ${SKYBOX_SOURCES})
-setup_stable(${SKYBOX_SOURCES} ${QT4_SOURCES})
+	
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${QT_INCLUDES})
     
-#if(MSVC)
-#    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
-#else(MSVC)
+if(MSVC)
+    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
+else(MSVC)
     # use console
     add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
-#endif()
+endif()
 
 set_default_target_properties(skybox ON)
 
@@ -138,6 +138,6 @@ install(FILES
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     CONFIGURATIONS Release)
 
-ADD_DEFINITIONS("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
+add_definitions("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
 
-ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")
+add_definitions("-D_CRT_SECURE_NO_WARNINGS")

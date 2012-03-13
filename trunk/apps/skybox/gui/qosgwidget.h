@@ -31,7 +31,6 @@
 #ifndef __QOSGWIDGET_H__
 #define __QOSGWIDGET_H__
 
-
 #include <QWidget>
 #include <QUrl>
 

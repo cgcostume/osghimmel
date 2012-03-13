@@ -31,6 +31,8 @@
 
 #include "include/spheremappedhimmel.h"
 
+#include "utils/tr.h"
+
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 

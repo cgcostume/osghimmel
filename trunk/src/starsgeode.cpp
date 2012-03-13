@@ -33,9 +33,7 @@
 #include "shadermodifier.h"
 #include "abstractastronomy.h"
 #include "randommapgenerator.h"
-
 #include "mathmacros.h"
-
 #include "coords.h"
 #include "earth.h"
 #include "stars.h"
@@ -331,9 +329,9 @@ const osg::Vec3 StarsGeode::setColor(const osg::Vec3 color)
     osg::Vec4 colorAndRatio;
     u_color->get(colorAndRatio);
     
-    colorAndRatio._v[0] = color._v[0];
-    colorAndRatio._v[1] = color._v[1];
-    colorAndRatio._v[2] = color._v[2];
+    colorAndRatio[0] = color[0];
+    colorAndRatio[1] = color[1];
+    colorAndRatio[2] = color[2];
 
     u_color->set(colorAndRatio);
     return getColor();
@@ -344,7 +342,7 @@ const osg::Vec3 StarsGeode::getColor() const
     osg::Vec4 colorAndRatio;
     u_color->get(colorAndRatio);
 
-    return osg::Vec3(colorAndRatio._v[0], colorAndRatio._v[1], colorAndRatio._v[2]);
+    return osg::Vec3(colorAndRatio[0], colorAndRatio[1], colorAndRatio[2]);
 }
 
 const osg::Vec3 StarsGeode::defaultColor()
@@ -358,7 +356,7 @@ const float StarsGeode::setColorRatio(const float ratio)
     osg::Vec4 colorAndRatio;
     u_color->get(colorAndRatio);
     
-    colorAndRatio._v[3] = ratio;
+    colorAndRatio[3] = ratio;
 
     u_color->set(colorAndRatio);
     return getColorRatio();
@@ -369,7 +367,7 @@ const float StarsGeode::getColorRatio() const
     osg::Vec4 colorAndRatio;
     u_color->get(colorAndRatio);
 
-    return colorAndRatio._v[3];
+    return colorAndRatio[3];
 }
 
 const float StarsGeode::defaultColorRatio()

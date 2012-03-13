@@ -54,8 +54,7 @@ public:
     ,   const e_NoiseType type = NT_Standard
     ,   const int startFrequency = 3
     ,   const int octaves = 5
-    ,   const bool normalize = true
-    ,   const int seed = 0);
+    ,   const bool normalize = true);
 
   static void generate1(
         const int width
@@ -64,8 +63,7 @@ public:
     ,   const e_NoiseType type = NT_Standard
     ,   const int startFrequency = 3
     ,   const int octaves = 5
-    ,   const bool normalize = true
-    ,   const int seed = 0);
+    ,   const bool normalize = true);
 
 protected:
 
@@ -78,8 +76,7 @@ protected:
     ,   const e_NoiseType type
     ,   const int startFrequency
     ,   const int octaves
-    ,   const bool normalize
-    ,   const int seed);
+    ,   const bool normalize);
 };
 
 #endif // __PERLIN_MAP_GENERATOR_H__

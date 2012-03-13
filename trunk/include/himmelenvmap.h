@@ -34,11 +34,11 @@
 #include <osg/Group>
 #include <osg/Camera>
 
-
 namespace osg
 {
     class TextureCubeMap;
 }
+
 
 class HimmelEnvMap : public osg::Group
 {

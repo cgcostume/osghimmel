@@ -33,13 +33,13 @@
 
 #include <osg/Group>
 
+class Himmel;
+class HimmelQuad;
+
 namespace osg
 {
     class Texture2D;
 }
-
-class Himmel;
-class HimmelQuad;
 
 
 class CloudLayerHighGeode : public osg::Group

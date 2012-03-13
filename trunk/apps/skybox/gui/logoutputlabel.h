@@ -31,6 +31,8 @@
 #ifndef __LOGOUTPUTLABEL_H__
 #define __LOGOUTPUTLABEL_H__
 
+#include "utils/log.h"
+
 #include <QLabel>
 
 class QObject;
