@@ -249,6 +249,9 @@ add_subdirectory("3rdp")
 add_subdirectory("src")
 add_subdirectory("apps")
 
+if(OPTION_MAKE_TESTS)
+    add_subdirectory("tests")
+endif()
 
 # cpack deploy
 

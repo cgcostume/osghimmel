@@ -35,7 +35,3 @@ endif()
 if(OPTION_MAKE_SKYBOX AND QT4_FOUND)
     add_subdirectory("skybox")
 endif()
-
-if(OPTION_MAKE_TESTS)
-    add_subdirectory("tests")
-endif()
