@@ -36,12 +36,12 @@
 #include <math.h>
 
 
-const long TimeF::timezone()
+const long TimeF::utcOffset()
 {
     long tz;
 
 #ifdef __GNUC__
-    tz = _timezone;
+    tz = timezone;
 #else // __GNUC__
     _get_timezone(&tz);
 #endif // __GNUC__
@@ -147,7 +147,7 @@ const long double TimeF::setf(
     lcl.tm_min  = seconds % 3600 / 60;
     lcl.tm_sec  = seconds % 60;
 
-    m_time[0] = mktime(&lcl) - timezone();
+    m_time[0] = mktime(&lcl) - utcOffset();
     m_time[2] = m_time[0];
 
     reset(forceUpdate);
@@ -167,7 +167,7 @@ const time_t TimeF::gett(const bool updateFirst)
     if(updateFirst)
         update();
 
-    return m_time[1] + timezone();
+    return m_time[1] + utcOffset();
 }
 
 
@@ -175,7 +175,7 @@ const time_t TimeF::sett(
     const time_t &time
 ,   const bool forceUpdate)
 {
-    time_t t = time - timezone();
+    time_t t = time - utcOffset();
 
     m_time[0] = t;
     m_time[2] = m_time[0];

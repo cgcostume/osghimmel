@@ -63,6 +63,7 @@ int __itoa(
 ,   const size_t size);
 
 #ifdef __GNUC__
+#include <stdio.h>
 #define sprintf_s snprintf
 #endif // __GNUC__
 

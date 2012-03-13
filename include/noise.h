@@ -77,7 +77,7 @@ protected:
     ,   const unsigned int y) const;
     
 
-    static const float Noise::mix(
+    static const float mix(
         const float a
     ,   const float b
     ,   const float t);
