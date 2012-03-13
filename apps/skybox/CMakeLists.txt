@@ -27,6 +27,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
+add_subdirectory("qtpropertybrowser")
+
+
 message(STATUS "add executable: skybox")
 
 set(QT_USE_QTOPENGL TRUE)
