@@ -80,77 +80,77 @@ const long double earth_longitudeNutation(const t_julianDay t)
     const long double mM = _rad(moon_meanAnomaly(t));
     const long double mD = _rad(moon_meanElongation(t));
     const long double mF = _rad(moon_meanLatitude(t));    
-    const long double Ω  = _rad(moon_meanOrbitLongitude(t));
+    const long double O  = _rad(moon_meanOrbitLongitude(t));
    
     // (AA.21.A)
 
-    long double Δψ = 0.0;
+    long double Dr = 0.0;
 
-    Δψ -= (17.1996 - 0.01742 * T) * sin(                                   + 1 * Ω);
-    Δψ -= ( 1.3187 - 0.00016 * T) * sin(-2 * mD                   + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.2274 - 0.00002 * T) * sin(                          + 2 * mF + 2 * Ω);
-    Δψ += ( 0.2062 + 0.00002 * T) * sin(                                   + 2 * Ω);
-    Δψ += ( 0.1426 - 0.00034 * T) * sin(        + 1 * sM                          );
-    Δψ += ( 0.0712 + 0.00001 * T) * sin(                 + 1 * mM                 );
-    Δψ += ( 0.0517 + 0.00012 * T) * sin(-2 * mD + 1 * sM          + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0386 - 0.00004 * T) * sin(                          + 2 * mF + 1 * Ω);
-    Δψ -= ( 0.0301              ) * sin(                 + 1 * mM + 2 * mF + 2 * Ω);
-    Δψ += ( 0.0217 - 0.00005 * T) * sin(-2 * mD - 1 * sM          + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0158              ) * sin(-2 * mD          + 1 * mM                 );
-    Δψ += ( 0.0129 + 0.00001 * T) * sin(-2 * mD                   + 2 * mF + 1 * Ω);
-    Δψ += ( 0.0123              ) * sin(                 - 1 * mM + 2 * mF + 2 * Ω);
-    Δψ += ( 0.0063              ) * sin( 2 * mD                                   );
-    Δψ += ( 0.0063 + 0.00001 * T) * sin(                 + 1 * mM          + 1 * Ω);
-    Δψ -= ( 0.0059              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0058 - 0.00001 * T) * sin(                 - 1 * mM          + 1 * Ω);
-    Δψ -= ( 0.0051              ) * sin(                 + 1 * mM + 2 * mF + 1 * Ω);
-    Δψ += ( 0.0048              ) * sin(-2 * mD          + 2 * mM                 );
-    Δψ += ( 0.0046              ) * sin(                 - 2 * mM + 2 * mF + 1 * Ω);
-    Δψ -= ( 0.0038              ) * sin( 2 * mD                   + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0031              ) * sin(                 + 2 * mM + 2 * mF + 2 * Ω);
-    Δψ += ( 0.0029              ) * sin(                 + 2 * mM                 );
-    Δψ += ( 0.0029              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
-    Δψ += ( 0.0026              ) * sin(                          + 2 * mF        );
-    Δψ -= ( 0.0022              ) * sin(-2 * mD                   + 2 * mF        );
-    Δψ += ( 0.0021              ) * sin(                 - 1 * mM + 2 * mF + 1 * Ω);
-    Δψ += ( 0.0017 - 0.00001 * T) * sin(        + 2 * sM                          );
-    Δψ += ( 0.0016              ) * sin( 2 * mD          - 1 * mM          + 1 * Ω);
-    Δψ -= ( 0.0016 + 0.00001 * T) * sin(-2 * mD + 2 * sM          + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0015              ) * sin(        + 1 * sM                   + 1 * Ω);
-    Δψ -= ( 0.0013              ) * sin(-2 * mD          + 1 * mM          + 1 * Ω);
-    Δψ -= ( 0.0012              ) * sin(        - 1 * sM                   + 1 * Ω);
-    Δψ += ( 0.0011              ) * sin(                 + 2 * mM - 2 * mF        );
-    Δψ -= ( 0.0010              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 1 * Ω);
-    Δψ -= ( 0.0008              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
-    Δψ += ( 0.0007              ) * sin(        + 1 * sM          + 2 * mF + 2 * Ω);
-    Δψ += ( 0.0007              ) * sin(-2 * mD + 1 * sM + 1 * mM                 );
-    Δψ -= ( 0.0007              ) * sin(        - 1 * sM          + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0007              ) * sin( 2 * mD                   + 2 * mF + 1 * Ω);
-    Δψ += ( 0.0006              ) * sin( 2 * mD          + 1 * mM                 );
-    Δψ += ( 0.0006              ) * sin(-2 * mD          + 2 * mM + 2 * mF + 2 * Ω);
-    Δψ += ( 0.0006              ) * sin(-2 * mD          + 1 * mM + 2 * mF + 1 * Ω);
-    Δψ -= ( 0.0006              ) * sin( 2 * mD          - 2 * mM          + 1 * Ω);
-    Δψ -= ( 0.0006              ) * sin( 2 * mD                            + 1 * Ω);
-    Δψ += ( 0.0005              ) * sin(        - 1 * sM + 1 * mM                 );
-    Δψ += ( 0.0005              ) * sin(-2 * mD - 1 * sM          + 2 * mF + 1 * Ω);
-    Δψ -= ( 0.0005              ) * sin(-2 * mD                            + 1 * Ω);
-    Δψ -= ( 0.0005              ) * sin(                 + 2 * mM + 2 * mF + 1 * Ω);
-    Δψ += ( 0.0004              ) * sin(-2 * mD          + 2 * mM          + 1 * Ω);
-    Δψ += ( 0.0004              ) * sin(-2 * mD + 1 * sM          + 2 * mF + 1 * Ω);
-    Δψ += ( 0.0004              ) * sin(                 + 1 * mM - 2 * mF        );
-    Δψ -= ( 0.0004              ) * sin(-1 * mD          + 1 * mM                 );
-    Δψ -= ( 0.0004              ) * sin(-2 * mD + 1 * sM                          );
-    Δψ -= ( 0.0004              ) * sin( 1 * mD                                   );
-    Δψ += ( 0.0003              ) * sin(                 + 1 * mM + 2 * mF        );
-    Δψ -= ( 0.0003              ) * sin(                 - 2 * mM + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0003              ) * sin(-1 * mD - 1 * sM + 1 * mM                 );
-    Δψ -= ( 0.0003              ) * sin(        + 1 * sM + 1 * mM                 );
-    Δψ -= ( 0.0003              ) * sin(        - 1 * sM + 1 * mM + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0003              ) * sin( 2 * mD - 1 * sM - 1 * mM + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0003              ) * sin(                 + 3 * mM + 2 * mF + 2 * Ω);
-    Δψ -= ( 0.0003              ) * sin( 2 * mD - 1 * sM          + 2 * mF + 2 * Ω);
+    Dr -= (17.1996 - 0.01742 * T) * sin(                                   + 1 * O);
+    Dr -= ( 1.3187 - 0.00016 * T) * sin(-2 * mD                   + 2 * mF + 2 * O);
+    Dr -= ( 0.2274 - 0.00002 * T) * sin(                          + 2 * mF + 2 * O);
+    Dr += ( 0.2062 + 0.00002 * T) * sin(                                   + 2 * O);
+    Dr += ( 0.1426 - 0.00034 * T) * sin(        + 1 * sM                          );
+    Dr += ( 0.0712 + 0.00001 * T) * sin(                 + 1 * mM                 );
+    Dr += ( 0.0517 + 0.00012 * T) * sin(-2 * mD + 1 * sM          + 2 * mF + 2 * O);
+    Dr -= ( 0.0386 - 0.00004 * T) * sin(                          + 2 * mF + 1 * O);
+    Dr -= ( 0.0301              ) * sin(                 + 1 * mM + 2 * mF + 2 * O);
+    Dr += ( 0.0217 - 0.00005 * T) * sin(-2 * mD - 1 * sM          + 2 * mF + 2 * O);
+    Dr -= ( 0.0158              ) * sin(-2 * mD          + 1 * mM                 );
+    Dr += ( 0.0129 + 0.00001 * T) * sin(-2 * mD                   + 2 * mF + 1 * O);
+    Dr += ( 0.0123              ) * sin(                 - 1 * mM + 2 * mF + 2 * O);
+    Dr += ( 0.0063              ) * sin( 2 * mD                                   );
+    Dr += ( 0.0063 + 0.00001 * T) * sin(                 + 1 * mM          + 1 * O);
+    Dr -= ( 0.0059              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 2 * O);
+    Dr -= ( 0.0058 - 0.00001 * T) * sin(                 - 1 * mM          + 1 * O);
+    Dr -= ( 0.0051              ) * sin(                 + 1 * mM + 2 * mF + 1 * O);
+    Dr += ( 0.0048              ) * sin(-2 * mD          + 2 * mM                 );
+    Dr += ( 0.0046              ) * sin(                 - 2 * mM + 2 * mF + 1 * O);
+    Dr -= ( 0.0038              ) * sin( 2 * mD                   + 2 * mF + 2 * O);
+    Dr -= ( 0.0031              ) * sin(                 + 2 * mM + 2 * mF + 2 * O);
+    Dr += ( 0.0029              ) * sin(                 + 2 * mM                 );
+    Dr += ( 0.0029              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * O);
+    Dr += ( 0.0026              ) * sin(                          + 2 * mF        );
+    Dr -= ( 0.0022              ) * sin(-2 * mD                   + 2 * mF        );
+    Dr += ( 0.0021              ) * sin(                 - 1 * mM + 2 * mF + 1 * O);
+    Dr += ( 0.0017 - 0.00001 * T) * sin(        + 2 * sM                          );
+    Dr += ( 0.0016              ) * sin( 2 * mD          - 1 * mM          + 1 * O);
+    Dr -= ( 0.0016 + 0.00001 * T) * sin(-2 * mD + 2 * sM          + 2 * mF + 2 * O);
+    Dr -= ( 0.0015              ) * sin(        + 1 * sM                   + 1 * O);
+    Dr -= ( 0.0013              ) * sin(-2 * mD          + 1 * mM          + 1 * O);
+    Dr -= ( 0.0012              ) * sin(        - 1 * sM                   + 1 * O);
+    Dr += ( 0.0011              ) * sin(                 + 2 * mM - 2 * mF        );
+    Dr -= ( 0.0010              ) * sin( 2 * mD          - 1 * mM + 2 * mF + 1 * O);
+    Dr -= ( 0.0008              ) * sin( 2 * mD          + 1 * mM + 2 * mF + 2 * O);
+    Dr += ( 0.0007              ) * sin(        + 1 * sM          + 2 * mF + 2 * O);
+    Dr += ( 0.0007              ) * sin(-2 * mD + 1 * sM + 1 * mM                 );
+    Dr -= ( 0.0007              ) * sin(        - 1 * sM          + 2 * mF + 2 * O);
+    Dr -= ( 0.0007              ) * sin( 2 * mD                   + 2 * mF + 1 * O);
+    Dr += ( 0.0006              ) * sin( 2 * mD          + 1 * mM                 );
+    Dr += ( 0.0006              ) * sin(-2 * mD          + 2 * mM + 2 * mF + 2 * O);
+    Dr += ( 0.0006              ) * sin(-2 * mD          + 1 * mM + 2 * mF + 1 * O);
+    Dr -= ( 0.0006              ) * sin( 2 * mD          - 2 * mM          + 1 * O);
+    Dr -= ( 0.0006              ) * sin( 2 * mD                            + 1 * O);
+    Dr += ( 0.0005              ) * sin(        - 1 * sM + 1 * mM                 );
+    Dr += ( 0.0005              ) * sin(-2 * mD - 1 * sM          + 2 * mF + 1 * O);
+    Dr -= ( 0.0005              ) * sin(-2 * mD                            + 1 * O);
+    Dr -= ( 0.0005              ) * sin(                 + 2 * mM + 2 * mF + 1 * O);
+    Dr += ( 0.0004              ) * sin(-2 * mD          + 2 * mM          + 1 * O);
+    Dr += ( 0.0004              ) * sin(-2 * mD + 1 * sM          + 2 * mF + 1 * O);
+    Dr += ( 0.0004              ) * sin(                 + 1 * mM - 2 * mF        );
+    Dr -= ( 0.0004              ) * sin(-1 * mD          + 1 * mM                 );
+    Dr -= ( 0.0004              ) * sin(-2 * mD + 1 * sM                          );
+    Dr -= ( 0.0004              ) * sin( 1 * mD                                   );
+    Dr += ( 0.0003              ) * sin(                 + 1 * mM + 2 * mF        );
+    Dr -= ( 0.0003              ) * sin(                 - 2 * mM + 2 * mF + 2 * O);
+    Dr -= ( 0.0003              ) * sin(-1 * mD - 1 * sM + 1 * mM                 );
+    Dr -= ( 0.0003              ) * sin(        + 1 * sM + 1 * mM                 );
+    Dr -= ( 0.0003              ) * sin(        - 1 * sM + 1 * mM + 2 * mF + 2 * O);
+    Dr -= ( 0.0003              ) * sin( 2 * mD - 1 * sM - 1 * mM + 2 * mF + 2 * O);
+    Dr -= ( 0.0003              ) * sin(                 + 3 * mM + 2 * mF + 2 * O);
+    Dr -= ( 0.0003              ) * sin( 2 * mD - 1 * sM          + 2 * mF + 2 * O);
 
-    return _decimal(0, 0, Δψ);
+    return _decimal(0, 0, Dr);
 }
 
 
@@ -165,58 +165,58 @@ const long double earth_obliquityNutation(const t_julianDay t)
     const long double mM = _rad(moon_meanAnomaly(t));
     const long double mD = _rad(moon_meanElongation(t));
     const long double mF = _rad(moon_meanLatitude(t));    
-    const long double Ω  = _rad(moon_meanOrbitLongitude(t));
+    const long double O  = _rad(moon_meanOrbitLongitude(t));
 
     // (AA.21.A)
 
-    long double Δε = 0.0;
+    long double De = 0.0;
 
-    Δε += ( 9.2025 + 0.00089 * T) * cos(                                   + 1 * Ω);
-    Δε += ( 0.5736 - 0.00031 * T) * cos(-2 * mD                   + 2 * mF + 2 * Ω);
-    Δε += ( 0.0977 - 0.00005 * T) * cos(                          + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0895 + 0.00005 * T) * cos(                                   + 2 * Ω);
-    Δε += ( 0.0054 - 0.00001 * T) * cos(        + 1 * sM                          );
-    Δε -= ( 0.0007              ) * cos(                 + 1 * mM                 );
-    Δε += ( 0.0224 - 0.00006 * T) * cos(-2 * mD + 1 * sM          + 2 * mF + 2 * Ω);
-    Δε += ( 0.0200              ) * cos(                          + 2 * mF + 1 * Ω);
-    Δε += ( 0.0129 - 0.00001 * T) * cos(                 + 1 * mM + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0095 + 0.00003 * T) * cos(-2 * mD - 1 * sM          + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0070              ) * cos(-2 * mD                   + 2 * mF + 1 * Ω);
-    Δε -= ( 0.0053              ) * cos(                 - 1 * mM + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0033              ) * cos(                 + 1 * mM          + 1 * Ω);
-    Δε += ( 0.0026              ) * cos( 2 * mD          - 1 * mM + 2 * mF + 2 * Ω);
-    Δε += ( 0.0032              ) * cos(                 - 1 * mM          + 1 * Ω);
-    Δε += ( 0.0027              ) * cos(                 + 1 * mM + 2 * mF + 1 * Ω);
-    Δε -= ( 0.0024              ) * cos(                 - 2 * mM + 2 * mF + 1 * Ω);
-    Δε += ( 0.0016              ) * cos( 2 * mD                   + 2 * mF + 2 * Ω);
-    Δε += ( 0.0013              ) * cos(                 + 2 * mM + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0012              ) * cos( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0010              ) * cos(                 - 1 * mM + 2 * mF + 1 * Ω);
-    Δε -= ( 0.0008              ) * cos( 2 * mD          - 1 * mM          + 1 * Ω);
-    Δε += ( 0.0007              ) * cos(-2 * mD + 2 * sM          + 2 * mF + 2 * Ω);
-    Δε += ( 0.0009              ) * cos(        + 1 * sM                   + 1 * Ω);
-    Δε += ( 0.0007              ) * cos(-2 * mD          + 1 * mM          + 1 * Ω);
-    Δε += ( 0.0006              ) * cos(        - 1 * sM                   + 1 * Ω);
-    Δε += ( 0.0005              ) * cos( 2 * mD          - 1 * mM + 2 * mF + 1 * Ω);
-    Δε += ( 0.0003              ) * cos( 2 * mD          + 1 * mM + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0003              ) * cos(        + 1 * sM          + 2 * mF + 2 * Ω);
-    Δε += ( 0.0003              ) * cos(        - 1 * sM          + 2 * mF + 2 * Ω);
-    Δε += ( 0.0003              ) * cos( 2 * mD                   + 2 * mF + 1 * Ω);
-    Δε -= ( 0.0003              ) * cos(-2 * mD          + 2 * mM + 2 * mF + 2 * Ω);
-    Δε -= ( 0.0003              ) * cos(-2 * mD          + 1 * mM + 2 * mF + 1 * Ω);
-    Δε += ( 0.0003              ) * cos( 2 * mD          - 2 * mM          + 1 * Ω);
-    Δε += ( 0.0003              ) * cos( 2 * mD                            + 1 * Ω);
-    Δε += ( 0.0003              ) * cos(-2 * mD - 1 * sM          + 2 * mF + 1 * Ω);
-    Δε += ( 0.0003              ) * cos(-2 * mD                            + 1 * Ω);
-    Δε += ( 0.0003              ) * cos(                 + 2 * mM + 2 * mF + 1 * Ω);
+    De += ( 9.2025 + 0.00089 * T) * cos(                                   + 1 * O);
+    De += ( 0.5736 - 0.00031 * T) * cos(-2 * mD                   + 2 * mF + 2 * O);
+    De += ( 0.0977 - 0.00005 * T) * cos(                          + 2 * mF + 2 * O);
+    De -= ( 0.0895 + 0.00005 * T) * cos(                                   + 2 * O);
+    De += ( 0.0054 - 0.00001 * T) * cos(        + 1 * sM                          );
+    De -= ( 0.0007              ) * cos(                 + 1 * mM                 );
+    De += ( 0.0224 - 0.00006 * T) * cos(-2 * mD + 1 * sM          + 2 * mF + 2 * O);
+    De += ( 0.0200              ) * cos(                          + 2 * mF + 1 * O);
+    De += ( 0.0129 - 0.00001 * T) * cos(                 + 1 * mM + 2 * mF + 2 * O);
+    De -= ( 0.0095 + 0.00003 * T) * cos(-2 * mD - 1 * sM          + 2 * mF + 2 * O);
+    De -= ( 0.0070              ) * cos(-2 * mD                   + 2 * mF + 1 * O);
+    De -= ( 0.0053              ) * cos(                 - 1 * mM + 2 * mF + 2 * O);
+    De -= ( 0.0033              ) * cos(                 + 1 * mM          + 1 * O);
+    De += ( 0.0026              ) * cos( 2 * mD          - 1 * mM + 2 * mF + 2 * O);
+    De += ( 0.0032              ) * cos(                 - 1 * mM          + 1 * O);
+    De += ( 0.0027              ) * cos(                 + 1 * mM + 2 * mF + 1 * O);
+    De -= ( 0.0024              ) * cos(                 - 2 * mM + 2 * mF + 1 * O);
+    De += ( 0.0016              ) * cos( 2 * mD                   + 2 * mF + 2 * O);
+    De += ( 0.0013              ) * cos(                 + 2 * mM + 2 * mF + 2 * O);
+    De -= ( 0.0012              ) * cos( 2 * mD          + 1 * mM + 2 * mF + 2 * O);
+    De -= ( 0.0010              ) * cos(                 - 1 * mM + 2 * mF + 1 * O);
+    De -= ( 0.0008              ) * cos( 2 * mD          - 1 * mM          + 1 * O);
+    De += ( 0.0007              ) * cos(-2 * mD + 2 * sM          + 2 * mF + 2 * O);
+    De += ( 0.0009              ) * cos(        + 1 * sM                   + 1 * O);
+    De += ( 0.0007              ) * cos(-2 * mD          + 1 * mM          + 1 * O);
+    De += ( 0.0006              ) * cos(        - 1 * sM                   + 1 * O);
+    De += ( 0.0005              ) * cos( 2 * mD          - 1 * mM + 2 * mF + 1 * O);
+    De += ( 0.0003              ) * cos( 2 * mD          + 1 * mM + 2 * mF + 2 * O);
+    De -= ( 0.0003              ) * cos(        + 1 * sM          + 2 * mF + 2 * O);
+    De += ( 0.0003              ) * cos(        - 1 * sM          + 2 * mF + 2 * O);
+    De += ( 0.0003              ) * cos( 2 * mD                   + 2 * mF + 1 * O);
+    De -= ( 0.0003              ) * cos(-2 * mD          + 2 * mM + 2 * mF + 2 * O);
+    De -= ( 0.0003              ) * cos(-2 * mD          + 1 * mM + 2 * mF + 1 * O);
+    De += ( 0.0003              ) * cos( 2 * mD          - 2 * mM          + 1 * O);
+    De += ( 0.0003              ) * cos( 2 * mD                            + 1 * O);
+    De += ( 0.0003              ) * cos(-2 * mD - 1 * sM          + 2 * mF + 1 * O);
+    De += ( 0.0003              ) * cos(-2 * mD                            + 1 * O);
+    De += ( 0.0003              ) * cos(                 + 2 * mM + 2 * mF + 1 * O);
 
-    return _decimal(0, 0, Δε);
+    return _decimal(0, 0, De);
 }
 
 
 const long double earth_trueObliquity(const t_julianDay t)
 {
-    return earth_meanObliquity(t) + earth_obliquityNutation(t); // ε
+    return earth_meanObliquity(t) + earth_obliquityNutation(t); // e
 }
 
 
@@ -229,7 +229,7 @@ const long double earth_meanObliquity(const t_julianDay t)
 
     assert(_abs(U) < 1.0);
 
-    const long double ε0 = 0.0
+    const long double e0 = 0.0
         + U * (- 4680.93
         + U * (-    1.55
         + U * (+ 1999.25
@@ -241,7 +241,7 @@ const long double earth_meanObliquity(const t_julianDay t)
         + U * (+    5.79
         + U * (+    2.45))))))))));
 
-    return _decimal(23, 26, 21.448) + _decimal(0, 0, ε0);
+    return _decimal(23, 26, 21.448) + _decimal(0, 0, e0);
 }
 
 
@@ -350,17 +350,17 @@ const float earth_longitudeNutation_la(const t_julianDay t)
 
     const float sM = _rad(sun_meanAnomaly_la(t));
     const float mM = _rad(moon_meanAnomaly_la(t));
-    const float Ω  = _rad(moon_meanOrbitLongitude_la(t));
+    const float O  = _rad(moon_meanOrbitLongitude_la(t));
 
     // (AA.21 p132)
 
-    const float ψ =
-        - _decimal(0, 0, 17.20) * sin(Ω)
+    const float r =
+        - _decimal(0, 0, 17.20) * sin(O)
         - _decimal(0, 0,  1.32) * sin(2.0 * sM)
         - _decimal(0, 0,  0.23) * sin(2.0 * mM)
-        + _decimal(0, 0,  0.21) * sin(2.0 * Ω );
+        + _decimal(0, 0,  0.21) * sin(2.0 * O );
 
-    return ψ;
+    return r;
 }
 
 
@@ -368,24 +368,24 @@ const float earth_obliquityNutation_la(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const float Ω  = _rad(moon_meanOrbitLongitude_la(t));
+    const float O  = _rad(moon_meanOrbitLongitude_la(t));
     const float Ls = _rad(sun_meanAnomaly_la(t));
     const float Lm = _rad(moon_meanAnomaly_la(t));
 
     // (AA.21 p132)
-    const float ε =
-        + _decimal(0, 0,  9.20) * cos(Ω)
+    const float e =
+        + _decimal(0, 0,  9.20) * cos(O)
         + _decimal(0, 0,  0.57) * cos(2.0 * Ls)
         + _decimal(0, 0,  0.10) * cos(2.0 * Lm)
-        - _decimal(0, 0,  0.09) * cos(2.0 * Ω );
+        - _decimal(0, 0,  0.09) * cos(2.0 * O );
 
-    return ε;
+    return e;
 }
 
 
 const float earth_trueObliquity_la(const t_julianDay t)
 {
-    return earth_meanObliquity_la(t) + earth_obliquityNutation_la(t); // ε
+    return earth_meanObliquity_la(t) + earth_obliquityNutation_la(t); // e
 }
 
 
@@ -394,15 +394,15 @@ const float earth_meanObliquity_la(const t_julianDay t)
     const t_julianDay T(jCenturiesSinceSE(t));
 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const float ε0 = _deg(0.409093 - 0.000227 * T);
+    const float e0 = _deg(0.409093 - 0.000227 * T);
 
     // Low Accuracy (AA.21.2)
-    //const float ε0 = _decimal(23, 26, 21.448) 
+    //const float e0 = _decimal(23, 26, 21.448) 
     //    + T * (- _decimal(0, 0, 46.8150)
     //    + T * (- _decimal(0, 0,  0.00059)
     //    + T * (+ _decimal(0, 0,  0.001813))));
 
-    return ε0;
+    return e0;
 }
 
 

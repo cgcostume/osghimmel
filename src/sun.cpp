@@ -117,14 +117,14 @@ const t_equd sun_apparentPosition(const t_julianDay t)
 
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double Ω = _rad(moon_meanOrbitLongitude(t));
-    const long double ε = _rad(earth_trueObliquity(t) + 0.00256 * cos(Ω));
-    const long double λ = _rad(sun_trueLongitude(t) - 0.00569 - 0.00478 * sin(Ω));
+    const long double O = _rad(moon_meanOrbitLongitude(t));
+    const long double e = _rad(earth_trueObliquity(t) + 0.00256 * cos(O));
+    const long double l = _rad(sun_trueLongitude(t) - 0.00569 - 0.00478 * sin(O));
 
-    const long double sinλ = sin(λ);
+    const long double sinl = sin(l);
 
-    equ.right_ascension = _revd(_deg(atan2(cos(ε) * sinλ, cos(λ))));
-    equ.declination = _deg(asin(sin(ε) * sinλ));
+    equ.right_ascension = _revd(_deg(atan2(cos(e) * sinl, cos(l))));
+    equ.declination = _deg(asin(sin(e) * sinl));
 
     return equ;
 }
