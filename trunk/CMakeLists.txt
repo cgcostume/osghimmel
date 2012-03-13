@@ -246,11 +246,11 @@ include_directories(
     ${OSG_INCLUDE_DIR})
 
 add_subdirectory("src")
-add_subdirectory("apps")
-
 if(OPTION_MAKE_TESTS)
     add_subdirectory("tests")
 endif()
+
+add_subdirectory("examples")
 
 # cpack deploy
 
