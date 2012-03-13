@@ -245,7 +245,6 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${OSG_INCLUDE_DIR})
 
-add_subdirectory("3rdp")
 add_subdirectory("src")
 add_subdirectory("apps")
 
