@@ -78,6 +78,10 @@ namespace
 }
 
 
+#ifdef __GNUC__
+typdef long long int __int64;
+#endif // __GNUC__
+
 class Test
 {
 public:

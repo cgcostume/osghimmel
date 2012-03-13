@@ -34,6 +34,8 @@
 
 #include "include/strutils.h"
 
+#include <string.h>
+
 
 void test_strutils()
 {
