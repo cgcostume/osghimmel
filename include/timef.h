@@ -56,6 +56,9 @@ class TimeF
 
 public:
     
+    static const long timezone();
+
+
     TimeF(
         const long double time = 0.0
     ,   const long double secondsPerCycle = 0.0);
@@ -104,7 +107,7 @@ public:
     // Time in seconds from initial time.
     inline const time_t gett() const
     {
-        return m_time[1] + _timezone;
+        return m_time[1] + timezone();
     }
 
     const time_t gett(const bool updateFirst);

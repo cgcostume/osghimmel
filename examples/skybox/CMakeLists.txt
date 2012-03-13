@@ -107,7 +107,8 @@ include_directories(
     ${QT_INCLUDES})
     
 if(MSVC)
-    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
+    #add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
+	add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
 else(MSVC)
     # use console
     add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})

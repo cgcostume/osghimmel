@@ -29,6 +29,7 @@
 
 
 #include "test_math.h"
+#include "test_strutils.h"
 #include "test_astronomy.h"
 #include "test_astronomy_la.h"
 #include "test_time.h"
@@ -37,6 +38,7 @@
 int main(int argc, char* argv[])
 {
     test_math();
+    test_strutils();
     test_astronomy();
     test_astronomy_la();
     test_time();

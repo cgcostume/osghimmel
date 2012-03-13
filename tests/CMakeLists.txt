@@ -39,6 +39,8 @@ set(TESTS_SOURCES
     test_astronomy_la.h
     test_math.cpp
     test_math.h
+    test_strutils.cpp
+    test_strutils.h
     test_time.cpp
     test_time.h
     test_twounitschanger.cpp
@@ -55,5 +57,3 @@ target_link_libraries(tests
 
 install(TARGETS tests
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
-add_definitions("-D_CRT_SECURE_NO_WARNINGS")
