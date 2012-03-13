@@ -29,11 +29,11 @@
 
 #include "datetimewidget.h"
 #include "apps/skybox/ui_datetimewidget.h"
+
 #include "abstracthimmelscene.h"
 
 #include "include/timef.h"
 #include "include/mathmacros.h"
-
 
 #include <QTimer>
 #include <QRegExp>

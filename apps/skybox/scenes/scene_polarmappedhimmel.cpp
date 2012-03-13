@@ -32,6 +32,7 @@
 #include "include/polarmappedhimmel.h"
 #include "include/horizonband.h"
 
+#include "utils/tr.h"
 #include "utils/qt2osg.h"
 
 #include <osg/Texture2D>

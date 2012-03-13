@@ -27,12 +27,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
+message(STATUS "add executable: demo_textured")
+
 set(DEMO_SOURCES
     texturedmain.cpp)
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
-    
-message(STATUS "add executable: demo_textured")
 
 add_executable(demo_textured ${DEMO_SOURCES})
 set_default_target_properties(demo_textured OFF)
@@ -46,4 +46,4 @@ target_link_libraries(demo_textured
 install(TARGETS demo_textured
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")
+add_definitions("-D_CRT_SECURE_NO_WARNINGS")

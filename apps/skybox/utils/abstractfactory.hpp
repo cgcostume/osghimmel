@@ -33,6 +33,7 @@
 
 #include <QStringList>
 
+
 template<class T>
 class AbstractFactory
 {

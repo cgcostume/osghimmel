@@ -31,8 +31,11 @@
 
 #include "gui/logoutputlabel.h"
 #include "gui/logoutputwidget.h"
+#include "utils/tr.h"
 
+#include <QApplication>
 #include <QStringList>
+
 
 MainLogDispatcher::MainLogDispatcher()
 :    LogDispatcher()
@@ -50,7 +53,7 @@ MainLogDispatcher::MainLogDispatcher()
 #endif
 
     const QString filePath("");
-    QStringList fileSegs = QString("%1.log").arg(QString(APPLICATION_NAME).toLower()).split(".");
+    QStringList fileSegs = QString("%1.log").arg(QApplication::applicationName().toLower()).split(".");
     QString fileName;
 
     int i = 0;

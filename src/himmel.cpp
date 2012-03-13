@@ -34,7 +34,6 @@
 #include "timef.h"
 #include "astronomy.h"
 #include "astronomyla.h"
-
 #include "himmelquad.h"
 #include "atmospheregeode.h"
 #include "moongeode.h"
@@ -42,10 +41,9 @@
 #include "milkywaygeode.h"
 #include "cloudlayerhighgeode.h"
 
-#include <assert.h>
-
-
 #include <osg/ShapeDrawable>
+
+#include <assert.h>
 
 
 Himmel *Himmel::create()
@@ -231,7 +229,7 @@ void Himmel::updateSeed()
     osg::Vec4 temp; 
     u_common->get(temp);
 
-    temp._v[3] = rand();
+    temp[3] = rand();
     u_common->set(temp);
 }
 
@@ -306,7 +304,7 @@ const float Himmel::setAltitude(const float altitude)
     u_common->get(temp);
 
     // Clamp altitude into non uniform atmosphere. (min alt is 1m)
-    temp._v[0] = _clamp(0.001f, earth_atmosphereThicknessNonUniform(), altitude);
+    temp[0] = _clamp(0.001f, earth_atmosphereThicknessNonUniform(), altitude);
     u_common->set(temp);
 
     return getAltitude();
@@ -317,7 +315,7 @@ const float Himmel::getAltitude() const
     osg::Vec4 temp; 
     u_common->get(temp);
 
-    return temp._v[0];
+    return temp[0];
 }
 
 const float Himmel::defaultAltitude()

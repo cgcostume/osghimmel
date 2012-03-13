@@ -32,7 +32,6 @@
 #include "mathmacros.h"
 
 #include <stdlib.h>
-#include <assert.h>
 
 
 template<typename T, int N>
@@ -48,11 +47,7 @@ void RandomMapGenerator::generate(
     if(size < 1) 
         return;
 
-    for(unsigned int i = 0; i < size; ++i)
-        dest[i] = static_cast<T>(0.f);
-
     srand(seed);
-
 
     for(int i = 0; i < width * height; ++i) 
         for(unsigned int n = 0; n < N; ++n)

@@ -33,7 +33,6 @@
 
 #include "utils/log.h"
 
-
 class LogOutputWidget;
 class LogOutputLabel;
 

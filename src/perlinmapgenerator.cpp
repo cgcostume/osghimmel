@@ -45,27 +45,17 @@ void PerlinMapGenerator::generate(
 ,   const e_NoiseType type
 ,   const int startFrequency
 ,   const int octaves
-,   const bool normalize
-,   const int seed = 0)
+,   const bool normalize)
 {
-    //const unsigned int size = width * height;
+    const unsigned int size = width * height;
 
-    //if(size < 1) 
-    //    return;
+    if(size < 1) 
+        return;
 
-    //for(unsigned int i = 0; i < size * N; ++i)
-    //    dest[i] = static_cast<T>(0.f);
+    float *temp = new float[size * octaves];
+    float *temp2 = new float[size];
 
-    //srand(seed);
-
-
-    //float *temp = new float[size * octaves];
-    //float *temp2 = new float[size];
-
-    //int frequency = 1 << startFrequency;
-
-    //SetRandomSeed(seed);
-
+    int frequency = 1 << startFrequency;
 
     //// Generate noise data for each octave.
     //for(int f = 0; f < octaves; ++f, frequency *= 2)
@@ -171,10 +161,9 @@ void PerlinMapGenerator::generate1f(
 ,   const e_NoiseType type
 ,   const int startFrequency
 ,   const int octaves
-,   const bool normalize
-,   const int seed)
+,   const bool normalize)
 {
-    generate<float, 1>(width, height, dest, 1.f, type, startFrequency, octaves, normalize, seed);
+    generate<float, 1>(width, height, dest, 1.f, type, startFrequency, octaves, normalize);
 }
 
 
@@ -185,8 +174,7 @@ void PerlinMapGenerator::generate1(
 ,   const e_NoiseType type
 ,   const int startFrequency
 ,   const int octaves
-,   const bool normalize
-,   const int seed)
+,   const bool normalize)
 {
-    generate<unsigned char, 1>(width, height, dest, 255.f, type, startFrequency, octaves, normalize, seed);
+    generate<unsigned char, 1>(width, height, dest, 255.f, type, startFrequency, octaves, normalize);
 }

@@ -31,10 +31,9 @@
 #ifndef __STARSGEODE_H__
 #define __STARSGEODE_H__
 
-#include <osg/Geode>
-#include <osg/Geometry> // TODO remove
-
 #include "brightstars.h"
+
+#include <osg/Geode>
 
 class Himmel;
 

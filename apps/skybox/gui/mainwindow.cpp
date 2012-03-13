@@ -31,8 +31,9 @@
 #include "apps/skybox/ui_mainwindow.h"
 
 #include "utils/log.h"
-#include "mainlogdispatcher.h"
+#include "utils/tr.h"
 
+#include "mainlogdispatcher.h"
 #include "collapsibledockwidget.h"
 #include "datetimewidget.h"
 #include "glsleditor.h"
@@ -40,7 +41,6 @@
 #include "logoutputwidget.h"
 #include "qosgeventhandler.h"
 #include "qosgviewer.h"
-
 #include "propertywidget.h"
 
 #include "scenes/scene_polarmappedhimmel.h"
@@ -55,7 +55,6 @@
 #include "include/timef.h"
 #include "include/shadermodifier.h"
 
-
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QSettings>
@@ -68,11 +67,8 @@
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/TerrainManipulator>
 #include <osgGA/StateSetManipulator>
-
 #include <osgUtil/Optimizer>
-
 #include <osgDB/ReadFile>
-
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
 
@@ -111,7 +107,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     m_ui->setupUi(this);
 
-    setWindowTitle(APPLICATION_NAME " " APPLICATION_VERSION);
+    setWindowTitle(QApplication::applicationName() + " " + QApplication::applicationVersion());
 
     initializeLog();
 

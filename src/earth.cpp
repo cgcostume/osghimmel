@@ -28,9 +28,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "earth.h"
+
 #include "sun.h"
 #include "moon.h"
-
 #include "mathmacros.h"
 
 #include <assert.h>

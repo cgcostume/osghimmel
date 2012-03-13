@@ -33,8 +33,10 @@
 
 #include "interpolate.h"
 
-#include <map>
 #include <osg/GL>
+
+#include <map>
+
 
 class TwoUnitsChanger
 {

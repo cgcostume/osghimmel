@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "abstractmappedhimmel.h"
+
 #include "timef.h"
 #include "himmelquad.h"
 

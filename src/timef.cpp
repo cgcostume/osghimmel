@@ -28,11 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "timef.h"
+
 #include "mathmacros.h"
 
-#include <math.h>
-
 #include <osg/Timer>
+
+#include <math.h>
 
 
 TimeF::TimeF(

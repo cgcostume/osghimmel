@@ -35,16 +35,15 @@
 
 #include <osg/Group>
 
-
 namespace osg
 {
     class Camera;
     class Viewport;
 }
 
-
 class AbstractHimmel;
 class TimeF;
+
 
 class AbstractHimmelScene 
 :   public osg::Group

@@ -202,7 +202,7 @@ const float MoonGeode::setScale(const float scale)
     osg::Vec4 temp;
     u_moon->get(temp);
 
-    temp._v[3] = temp._v[3] / m_scale * scale;
+    temp[3] = temp[3] / m_scale * scale;
     u_moon->set(temp);
 
     m_scale = scale;

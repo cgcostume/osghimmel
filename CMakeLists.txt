@@ -44,21 +44,21 @@ macro(QT4_AUTO_WRAP outfiles)
     foreach(fileName ${ARGV})
 
         if(fileName MATCHES "\\.h$")
-            FILE(STRINGS ${fileName} lines REGEX Q_OBJECT)
+            file(STRINGS ${fileName} lines REGEX Q_OBJECT)
             IF(lines)
-                LIST(APPEND moc_headers ${fileName})
-                MESSAGE(STATUS "moc: ${fileName}")
+                list(APPEND moc_headers ${fileName})
+                message(STATUS "moc: ${fileName}")
             endif()
         endif()
         
         if(fileName MATCHES "\\.ui$")
-            LIST(APPEND ui_files ${fileName})
-            MESSAGE(STATUS "uic: ${fileName}")
+            list(APPEND ui_files ${fileName})
+            message(STATUS "uic: ${fileName}")
         endif()
 
         if(fileName MATCHES "\\.qrc$")
-            LIST(APPEND qrc_files ${fileName})
-            MESSAGE(STATUS "qrc: ${fileName}")
+            list(APPEND qrc_files ${fileName})
+            message(STATUS "qrc: ${fileName}")
         endif()
 
     endforeach()
@@ -76,9 +76,9 @@ macro(QT4_AUTO_WRAP outfiles)
     source_group("_ Qt Generated" FILES 
         ${uicGenerated}
         ${mocGeneratedByHeader}
-        ${mocGeneratedByRessources})
+		${mocGeneratedByRessources})
 
-    source_group("_ CMake Rules" REGULAR_EXPRESSION "rule$")
+	source_group("_ CMake Rules" REGULAR_EXPRESSION "rule$")
 
 endmacro()
 
@@ -86,34 +86,17 @@ endmacro()
 macro(SOURCE_GROUP_BY_PATH parent_path)
 
     foreach(filename ${ARGV})
-    
+	
         get_filename_component(path "${filename}" REALPATH)
         file(RELATIVE_PATH path ${parent_path} ${path})
         get_filename_component(path "${path}" PATH)
         string(REPLACE "/" "\\" path "${path}")
 
-        if(${filename} MATCHES "h$|hpp$|cpp$|c$|cu$|ui$|qrc$|vsf$|fsf$")
-            SOURCE_GROUP("${path}" FILES ${filename})
+        if(${filename} MATCHES "h$|hpp$|cpp$|c$|ui$|qrc$")
+            source_group("${path}" FILES ${filename})
         endif()
 
     endforeach()
-
-endmacro()
-
-
-macro(SETUP_STABLE)
-
-    foreach(arg in ${ARGV})
-        LIST(APPEND sources ${arg})
-    endforeach()
-
-    set_source_files_properties(${sources}
-        PROPERTIES
-        COMPILE_FLAGS "/FIstable.h /Yustable.h")
-
-    set_source_files_properties(stable.cpp
-        PROPERTIES
-        COMPILE_FLAGS "/Ycstable.h")
 
 endmacro()
 
@@ -123,22 +106,22 @@ macro(SET_DEFAULT_TARGET_PROPERTIES target w4)
     if(MSVC)
 
         if(w4)
-            SET_TARGET_PROPERTIES(${target}
+            set_target_properties(${target}
                 PROPERTIES
-                COMPILE_FLAGS "/W4 /arch:SSE2 /fp:fast /Ot /GS-"
+                COMPILE_FLAGS "/W4 /fp:fast /Ot /GS-"
                 LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
                 DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
         else(w4)
-            SET_TARGET_PROPERTIES(${target}
+            set_target_properties(${target}
                 PROPERTIES
-                COMPILE_FLAGS "/arch:SSE2 /fp:fast /Ot /GS-"
+                COMPILE_FLAGS "/fp:fast /Ot /GS-"
                 LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
                 DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
         endif()
 
     else(MSVC)
 
-        SET_TARGET_PROPERTIES(${target}
+        set_target_properties(${target}
             PROPERTIES
             DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
@@ -186,7 +169,7 @@ if(OPTION_MAKE_DEMOS OR OPTION_MAKE_SKYBOX)
     set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources" CACHE PATH "Resources for osghimmel binaries.")
 
     if(NOT EXISTS "${RESOURCE_DIR}/")
-        MESSAGE(WARNING "Resource dir not found, please specify RESOURCE_DIR.")
+        message(WARNING "Resource dir not found, please specify RESOURCE_DIR.")
     endif()
 
     string(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
@@ -203,7 +186,7 @@ if(OPTION_MAKE_SKYBOX)
     include(${QT_USE_FILE})
 
     if(NOT QT4_FOUND)
-        MESSAGE(WARNING "Skybox project will be ignored.")
+        message(WARNING "Skybox project will be ignored.")
     endif(NOT QT4_FOUND)
 
 endif()

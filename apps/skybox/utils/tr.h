@@ -27,11 +27,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #pragma once
-#ifndef __STABLE_H__
-#define __STABLE_H__
+#ifndef __TR_H__
+#define __TR_H__
 
-#include "test.h"
+#define TR QObject::tr
 
-#endif // __STABLE_H__
+#endif // __TR_H__

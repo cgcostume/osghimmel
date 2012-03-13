@@ -31,7 +31,6 @@
 
 #include <qtpropertybrowser/QtProperty>
 #include <qtpropertybrowser/QtAbstractPropertyBrowser>
-
 #include <qtpropertybrowser/QtGroupPropertyManager>
 #include <qtpropertybrowser/QtDoublePropertyManager>
 #include <qtpropertybrowser/QtSizeFPropertyManager>
@@ -39,10 +38,11 @@
 #include <qtpropertybrowser/QtIntPropertyManager>
 #include <qtpropertybrowser/QtEnumPropertyManager>
 #include <qtpropertybrowser/QtColorPropertyManager>
-
 #include <qtpropertybrowser/QtEnumEditorFactory>
 #include <qtpropertybrowser/QtDoubleSpinBoxFactory>
 #include <qtpropertybrowser/QtColorEditorFactory>
+
+#include <assert.h>
 
 
 AbstractPropertySupport::AbstractPropertySupport()

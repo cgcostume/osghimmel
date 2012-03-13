@@ -28,10 +28,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "sun.h"
+
 #include "earth.h"
 #include "moon.h"
 #include "sideraltime.h"
-
 #include "mathmacros.h"
 
 #include <assert.h>

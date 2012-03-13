@@ -27,12 +27,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
+message(STATUS "add executable: demo_computed")
+
 set(DEMO_SOURCES
     computedmain.cpp)
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
-
-message(STATUS "add executable: demo_computed")
 
 add_executable(demo_computed ${DEMO_SOURCES})
 set_default_target_properties(demo_computed OFF)
@@ -46,4 +46,4 @@ target_link_libraries(demo_computed
 install(TARGETS demo_computed
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")
+add_definitions("-D_CRT_SECURE_NO_WARNINGS")

@@ -29,13 +29,13 @@
 
 #include "scene_paraboloidmappedhimmel.h"
 
+#include "utils/tr.h"
+#include "utils/qt2osg.h"
+
 #include "include/paraboloidmappedhimmel.h"
 #include "include/horizonband.h"
 
-#include "utils/qt2osg.h"
-
 #include <osg/Texture2D>
-
 #include <osgDB/ReadFile>
 
 

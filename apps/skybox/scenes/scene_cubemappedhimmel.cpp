@@ -29,10 +29,11 @@
 
 #include "scene_cubemappedhimmel.h"
 
+#include "utils/tr.h"
+
 #include "include/cubemappedhimmel.h"
 
 #include <osg/TextureCubeMap>
-
 #include <osgDB/ReadFile>
 
 

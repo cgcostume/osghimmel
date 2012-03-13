@@ -33,15 +33,15 @@
 
 #include <osg/Group>
 
+class AtmospherePrecompute;
+class Himmel;
+class HimmelQuad;
+
 namespace osg
 {
     class Texture2D;
     class Texture3D;
 }
-
-class AtmospherePrecompute;
-class Himmel;
-class HimmelQuad;
 
 
 class AtmosphereGeode : public osg::Group

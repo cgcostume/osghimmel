@@ -39,7 +39,6 @@
 #include <osg/Texture3D>
 #include <osg/Depth>
 #include <osg/BlendFunc>
-
 #include <osg/Geode>
 
 #include <assert.h>
@@ -159,7 +158,7 @@ void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
 
     const osg::Vec3f hb(defaultLHeureBleueColor());
 
-    u_lheurebleue = new osg::Uniform("lheurebleue", osg::Vec4(hb._v[0], hb._v[1], hb._v[2], defaultLHeureBleueIntensity()));
+    u_lheurebleue = new osg::Uniform("lheurebleue", osg::Vec4(hb[0], hb[1], hb[2], defaultLHeureBleueIntensity()));
     stateSet->addUniform(u_lheurebleue);
     
 }
@@ -239,9 +238,9 @@ const osg::Vec3 AtmosphereGeode::setLHeureBleueColor(const osg::Vec3 &color)
     osg::Vec4 temp;
     u_lheurebleue->get(temp);
 
-    temp._v[0] = color._v[0];
-    temp._v[1] = color._v[1];
-    temp._v[2] = color._v[2];
+    temp[0] = color[0];
+    temp[1] = color[1];
+    temp[2] = color[2];
 
     u_lheurebleue->set(temp);
 
@@ -252,7 +251,7 @@ const osg::Vec3 AtmosphereGeode::getLHeureBleueColor() const
 {
     osg::Vec4 temp;
     u_lheurebleue->get(temp);
-    return osg::Vec3(temp._v[0], temp._v[1], temp._v[2]);
+    return osg::Vec3(temp[0], temp[1], temp[2]);
 }
 
 const osg::Vec3 AtmosphereGeode::defaultLHeureBleueColor()
@@ -266,7 +265,7 @@ const float AtmosphereGeode::setLHeureBleueIntensity(const float intensity)
     osg::Vec4 temp;
     u_lheurebleue->get(temp);
 
-    temp._v[3] = intensity;
+    temp[3] = intensity;
     u_lheurebleue->set(temp);
 
     return getLHeureBleueIntensity();
@@ -276,7 +275,7 @@ const float AtmosphereGeode::getLHeureBleueIntensity() const
 {
     osg::Vec4 temp;
     u_lheurebleue->get(temp);
-    return temp._v[3];
+    return temp[3];
 }
 
 const float AtmosphereGeode::defaultLHeureBleueIntensity()

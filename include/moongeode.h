@@ -33,7 +33,6 @@
 
 #include <osg/Geode>
 
-
 class Himmel;
 class HimmelQuad;
 

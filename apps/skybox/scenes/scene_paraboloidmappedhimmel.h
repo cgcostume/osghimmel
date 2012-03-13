@@ -33,8 +33,8 @@
 
 #include "abstracthimmelscene.h"
 
-
 class ParaboloidMappedHimmel;
+
 
 class Scene_ParaboloidMappedHimmel : public AbstractHimmelScene
 {

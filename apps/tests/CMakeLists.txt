@@ -27,9 +27,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
+message(STATUS "add executable: tests")
+
 set(TESTS_SOURCES
-    stable.h
-    stable.cpp
     tests.cpp
     test.cpp
     test.h
@@ -46,10 +46,6 @@ set(TESTS_SOURCES
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${TESTS_SOURCES})
 
-setup_stable(${TESTS_SOURCES})
-
-message(STATUS "add executable: tests")
-
 add_executable(tests ${TESTS_SOURCES})
 set_default_target_properties(tests OFF)
 
@@ -60,4 +56,4 @@ target_link_libraries(tests
 install(TARGETS tests
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-ADD_DEFINITIONS("-D_CRT_SECURE_NO_WARNINGS")
+add_definitions("-D_CRT_SECURE_NO_WARNINGS")

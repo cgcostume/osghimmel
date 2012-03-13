@@ -28,10 +28,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "abstracthimmel.h"
+
 #include "timef.h"
 
 #include <osg/Depth>
-
 #include <osgUtil/CullVisitor>
 
 #include <assert.h>

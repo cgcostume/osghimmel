@@ -29,6 +29,7 @@
 
 #include "horizonband.h"
 
+
 HorizonBand::HorizonBand()
 :   u_params(NULL)
 ,   u_color(NULL)

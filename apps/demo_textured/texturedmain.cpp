@@ -41,38 +41,64 @@
 #include <osg/Texture2D>
 
 #include <osgDB/ReadFile>
+#include <osgViewer/ViewerEventHandlers>
+
+// utils
+
+// cubeMapFilePaths should contain a questionmark '?' that is replaced
+// by cubemap extensions '_px', '_nx', '_py', etc. 
+// e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
+
+void loadCubeMapFromFiles(
+    const std::string cubeMapFilePath
+,   osg::TextureCubeMap &tcm)
+{
+    std::string px = cubeMapFilePath; px.replace(px.find("?"), 1, "_px");
+    std::string nx = cubeMapFilePath; nx.replace(nx.find("?"), 1, "_nx");
+    std::string py = cubeMapFilePath; py.replace(py.find("?"), 1, "_py");
+    std::string ny = cubeMapFilePath; ny.replace(ny.find("?"), 1, "_ny");
+    std::string pz = cubeMapFilePath; pz.replace(pz.find("?"), 1, "_pz");
+    std::string nz = cubeMapFilePath; nz.replace(nz.find("?"), 1, "_nz");
+
+    tcm.setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile(px));
+    tcm.setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile(nx));
+    tcm.setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile(py));
+    tcm.setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile(ny));
+    tcm.setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile(pz));
+    tcm.setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile(nz));
+}
 
 
 // scenes
 
-TimeF *g_timef(new TimeF(0.0L, 60.0L));
+TimeF *g_timef(new TimeF(0.0L, 10.0L));
 
 
 osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
 {
     osg::ref_ptr<PolarMappedHimmel> himmel = new PolarMappedHimmel(PolarMappedHimmel::MM_Half, true);
 
-    himmel->hBand()->setBottomColor(osg::Vec4(0.30f, 0.30f, 0.30f, 1.00f));
-    himmel->hBand()->setColor(      osg::Vec4(0.20f, 0.20f, 0.20f, 1.00f));
-    himmel->hBand()->setScale(0.3f);
+    himmel->hBand()->setBottomColor(osg::Vec4(0.48f, 0.46f, 0.42f, 1.00f));
+    himmel->hBand()->setColor(      osg::Vec4(0.70f, 0.65f, 0.6f, 1.00f));
+    himmel->hBand()->setScale(0.1f);
 
     himmel->assignTime(g_timef);
-    himmel->setTransitionDuration(0.05f);
+    himmel->setTransitionDuration(0.1f);
 
-    himmel->setSecondsPerRAZ(2000.f);
-    himmel->setRazDirection(AbstractMappedHimmel::RD_NorthWestSouthEast);
+//    himmel->setSecondsPerRAZ(300.f);
+  //  himmel->setRazDirection(AbstractMappedHimmel::RD_NorthWestSouthEast);
 
-    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
-    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
-    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
-    himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
+    //himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
+//    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_2.jpg"));
+    //himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
+    //himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
 
     himmel->pushTextureUnit(0, 0.0f);
-    himmel->pushTextureUnit(1, 0.2f);
-    himmel->pushTextureUnit(2, 0.4f);
-    himmel->pushTextureUnit(3, 0.6f);
-    himmel->pushTextureUnit(4, 0.8f);
+    //himmel->pushTextureUnit(1, 0.33f);
+//    himmel->pushTextureUnit(2, 0.66f);
+    //himmel->pushTextureUnit(3, 0.6f);
+    //himmel->pushTextureUnit(4, 0.8f);
 
     return himmel;
 }
@@ -80,27 +106,21 @@ osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
 
 osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
 {
-    osg::ref_ptr<CubeMappedHimmel> himmel = new CubeMappedHimmel();
+    osg::ref_ptr<CubeMappedHimmel> himmel = new CubeMappedHimmel(false);
 
     himmel->assignTime(g_timef);
-    himmel->setTransitionDuration(0.05f);
+    himmel->setTransitionDuration(0.2f);
 
-    std::string name[] = { "4", "6", "9", "17", "19" };
-    osg::TextureCubeMap *tcm[5];
+    std::string name[] = { "19" };
+    osg::TextureCubeMap *tcm[1];
 
-    const int n = 5;
+    const int n = 1;
     for(int i = 0; i < n; ++i)
     {
         tcm[i] = himmel->getOrCreateTextureCubeMap(i);
+        loadCubeMapFromFiles("resources/cube_gen_" + name[i] + "?.jpg", *tcm[i]);
 
-        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_px.jpg"));
-        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_nx.jpg"));
-        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_py.jpg"));
-        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_ny.jpg"));
-        tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_pz.jpg"));
-        tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_nz.jpg"));
-
-      himmel->pushTextureUnit(i, (i * 1.f) / (n * 1.f));
+        himmel->pushTextureUnit(i);
     }
     return himmel;
 }
@@ -113,17 +133,17 @@ osg::ref_ptr<AbstractHimmel> createParaboloidMappedDemo()
     himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);
 
-    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_gen_0.jpg"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_gen_1.jpg"));
-    himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_gen_2.jpg"));
-    himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/paraboloid_pho_0.jpg"));
-    himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/paraboloid_gen_3.jpg"));
+    //himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/paraboloid_gen_1.jpg"));
+    //himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/paraboloid_gen_2.jpg"));
+    //himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/paraboloid_pho_0.jpg"));
+    //himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/paraboloid_pho_1.jpg"));
 
     himmel->pushTextureUnit(0, 0.0f);
-    himmel->pushTextureUnit(1, 0.2f);
-    himmel->pushTextureUnit(2, 0.4f);
-    himmel->pushTextureUnit(3, 0.6f);
-    himmel->pushTextureUnit(4, 0.8f);
+    //himmel->pushTextureUnit(1, 0.2f);
+    //himmel->pushTextureUnit(2, 0.4f);
+    //himmel->pushTextureUnit(3, 0.6f);
+    //himmel->pushTextureUnit(4, 0.8f);
 
     return himmel;
 }
@@ -136,11 +156,11 @@ osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
     himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);
 
-    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sphere_gen_0.jpg"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sphere_gen_2.jpg"));
+    himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/sphere_gen_1.jpg"));
+    //himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/sphere_gen_2.jpg"));
 
     himmel->pushTextureUnit(0, 0.00f);
-    himmel->pushTextureUnit(1, 0.50f);
+    //himmel->pushTextureUnit(1, 0.50f);
 
     return himmel;
 }
@@ -168,6 +188,7 @@ enum e_Demo
 ,   D_CubeMappedHimmel        = 1
 ,   D_ParaboloidMappedHimmel  = 2
 ,   D_SphereMappedHimmel      = 3
+,   D_None                    = 4
 };
 
 osg::ref_ptr<osg::Group> g_root;
@@ -315,7 +336,9 @@ osg::Group *createHimmelScene()
 
 osg::Node *createReflector()
 {
-    osg::Node *node = osgDB::readNodeFile("resources/knot.obj");
+    osg::Node *node = osgDB::readNodeFile("resources/knot2.3ds");
+    //osg::Node *node = osgDB::readNodeFile("D:/p/osghimmel/exchange/movie-döllner/New folder/terrain-tile.3ds");
+    
 
     if(!node)
     {
@@ -412,6 +435,243 @@ void initializeManipulators(osgViewer::View &view)
 }
 
 
+
+
+
+class RecordCameraPathHandlerFix : public osgGA::GUIEventHandler
+{
+public:
+
+        RecordCameraPathHandlerFix(const std::string &filename = "saved_animation.path", float fps = 25.0f);
+
+        void setKeyEventToggleRecord(int key) { _keyEventToggleRecord = key; }
+        int getKeyEventToggleRecord() const { return _keyEventToggleRecord; }
+
+        void setKeyEventTogglePlayback(int key) { _keyEventTogglePlayback = key; }
+        int getKeyEventTogglePlayback() const { return _keyEventTogglePlayback; }
+
+        void setAutoIncrementFilename( bool autoinc = true ) { _autoinc = autoinc?0:-1; }
+
+        virtual void getUsage(osg::ApplicationUsage &usage) const;
+
+        bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa);
+
+protected:
+
+        std::string                                     _filename;
+        int                                             _autoinc;
+        osgDB::ofstream                                 _fout;
+
+        int                                             _keyEventToggleRecord;
+        int                                             _keyEventTogglePlayback;
+
+
+        bool                                            _currentlyRecording;
+        bool                                            _currentlyPlaying;
+        double                                          _interval;
+        double                                          _delta;
+        osg::Timer_t                                    _animStartTime;
+        osg::Timer_t                                    _lastFrameTime;
+        osg::ref_ptr<osg::AnimationPath>                _animPath;
+        osg::ref_ptr<osgGA::AnimationPathManipulator>   _animPathManipulator;
+        osg::ref_ptr<osgGA::CameraManipulator>          _oldManipulator;
+};
+
+
+RecordCameraPathHandlerFix::RecordCameraPathHandlerFix(const std::string& filename, float fps):
+    _filename(filename),
+    _autoinc( -1 ),
+    _keyEventToggleRecord('z'),
+    _keyEventTogglePlayback('Z'),
+    _currentlyRecording(false),
+    _currentlyPlaying(false),
+    _delta(0.0f),
+    _animStartTime(0),
+    _lastFrameTime(osg::Timer::instance()->tick())
+{
+    _animPath = new osg::AnimationPath();
+
+    const char* str = getenv("OSG_RECORD_CAMERA_PATH_FPS");
+    if (str)
+    {
+        _interval = 1.0f / osg::asciiToDouble(str);
+    }
+    else
+    {
+        _interval = 1.0f / fps;
+    }
+}
+
+void RecordCameraPathHandlerFix::getUsage(osg::ApplicationUsage &usage) const
+{
+    usage.addKeyboardMouseBinding(reinterpret_cast<const char*>(&_keyEventToggleRecord), "Toggle camera path recording.");
+    usage.addKeyboardMouseBinding(reinterpret_cast<const char*>(&_keyEventTogglePlayback), "Toggle camera path playback.");
+}
+
+
+#include <iomanip>
+#include <sstream>
+
+#include <osgDB/FileNameUtils>
+
+bool RecordCameraPathHandlerFix::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
+{
+    osgViewer::View* view = dynamic_cast<osgViewer::View*>(&aa);
+
+    if (view == NULL)
+    {
+        return false;
+    }
+
+    if(ea.getEventType()==osgGA::GUIEventAdapter::FRAME)
+    {
+        // Calculate our current delta (difference) in time between the last frame and
+        // current frame, regardless of whether we actually store a ControlPoint...
+        osg::Timer_t time = osg::Timer::instance()->tick();
+        double delta = osg::Timer::instance()->delta_s(_lastFrameTime, time);
+        _lastFrameTime = time;
+
+        // If our internal _delta is finally large enough to warrant a ControlPoint
+        // insertion, do so now. Be sure and reset the internal _delta, so we can start
+        // calculating when the next insert should happen.
+        if (_currentlyRecording && _delta >= _interval)
+        {
+            const osg::Matrixd& m = view->getCamera()->getInverseViewMatrix();
+            double animationPathTime = osg::Timer::instance()->delta_s(_animStartTime, time);            
+            _animPath->insert(animationPathTime, osg::AnimationPath::ControlPoint(m.getTrans(), m.getRotate()));
+            _delta = 0.0f;
+
+            if (_fout)
+            {
+                _animPath->write(_animPath->getTimeControlPointMap().find(animationPathTime), _fout);
+                _fout.flush();
+            }
+
+        }
+        else _delta += delta;
+        
+        return true;
+    }
+
+    if (ea.getHandled()) return false;
+
+    switch(ea.getEventType())
+    {
+        case(osgGA::GUIEventAdapter::KEYUP):
+        {
+            // The user has requested to toggle recording.
+            if (ea.getKey() ==_keyEventToggleRecord)
+            {
+                // The user has requested to BEGIN recording.
+                if (!_currentlyRecording)
+                {
+                    _currentlyRecording = true;
+                    _animStartTime = osg::Timer::instance()->tick();
+                    _animPath->clear();
+                    
+                    if (!_filename.empty())
+                    {
+                        std::stringstream ss;
+                        ss << osgDB::getNameLessExtension(_filename);
+                        if ( _autoinc != -1 )
+                        {
+                            ss << "_"<<std::setfill( '0' ) << std::setw( 2 ) << _autoinc;
+                            _autoinc++;
+                        }
+                        ss << "."<<osgDB::getFileExtension(_filename);
+                        
+                        OSG_NOTICE << "Recording camera path to file " << ss.str() << std::endl;
+                        _fout.open( ss.str().c_str() );
+
+                        // make sure doubles are not trucated by default stream precision = 6
+                        _fout.precision( 15 );
+                    }
+                    else
+                    {
+                        OSG_NOTICE<<"Recording camera path."<<std::endl;
+                    }
+                }
+
+                // The user has requested to STOP recording, write the file!
+                else
+                {
+                    _currentlyRecording = false;
+                    _delta = 0.0f;
+
+                    if (_fout) _fout.close();
+                }
+
+                return true;
+            }
+
+            // The user has requested to toggle playback. You'll notice in the code below that
+            // we take over the current manipulator; it was originally recommended that we
+            // check for a KeySwitchManipulator, create one if not present, and then add this
+            // to either the newly created one or the existing one. However, the code do that was
+            // EXTREMELY dirty, so I opted for a simpler solution. At a later date, someone may
+            // want to implement the original recommendation (which is in a mailing list reply
+            // from June 1st by Robert in a thread called "osgviewer Camera Animation (preliminary)".
+            else if (ea.getKey() == _keyEventTogglePlayback)
+            {
+                if (_currentlyRecording)
+                {
+                    _currentlyRecording = false;
+                    _delta = 0.0f;
+
+                    // In the future this will need to be written continuously, rather
+                    // than all at once.
+                    osgDB::ofstream out(_filename.c_str());
+                    OSG_NOTICE<<"Writing camera file: "<<_filename<<std::endl;
+                    _animPath->write(out);
+                    out.close();
+                }
+
+                // The user has requested to BEGIN playback.
+                if (!_currentlyPlaying)
+                {                    
+                    _animPathManipulator = new osgGA::AnimationPathManipulator(_filename);
+                    _animPathManipulator->home(ea,aa);
+                    
+
+                    // If we successfully found our _filename file, set it and keep a copy
+                    // around of the original CameraManipulator to restore later.
+                    if (_animPathManipulator.valid() && _animPathManipulator->valid())
+                    {
+                        _oldManipulator = view->getCameraManipulator();
+                        view->setCameraManipulator(_animPathManipulator.get());
+                        _currentlyPlaying = true;
+                    }
+                }
+
+                // The user has requested to STOP playback.
+                else
+                {
+                    // Restore the old manipulator if necessary and stop playback.
+                    if(_oldManipulator.valid()) view->setCameraManipulator(_oldManipulator.get());
+                    _currentlyPlaying = false;
+                    _oldManipulator = 0;
+                }
+
+                return true;
+            }        
+
+            break;
+        }
+    default:
+        break;
+    }
+
+    return false;
+}
+
+
+
+
+
+
+#include <osg/Light>
+#include <osg/LightSource>
+
 int main(int argc, char* argv[])
 {
     osg::ArgumentParser arguments(&argc, argv);
@@ -458,7 +718,15 @@ int main(int argc, char* argv[])
 
     g_view = dynamic_cast<osgViewer::View*>(&viewer);
 
-    viewer.setUpViewInWindow(128, 128, 640, 480);
+    viewer.setUpViewInWindow(128, 128, 1280, 720);
+    
+    RecordCameraPathHandlerFix *rcph = new RecordCameraPathHandlerFix("D:/p/osghimmel/exchange/movie-döllner/New folder/animation.path");
+    rcph->setKeyEventTogglePlayback('w');
+    
+    viewer.addEventHandler(rcph);
+
+    
+
 
     initializeManipulators(viewer);
     
@@ -466,6 +734,7 @@ int main(int argc, char* argv[])
     osg::Camera *cam = g_view->getCamera();
     fovChanged();
 
+    cam->setClearColor(osg::Vec4(0.8, 0.84, 0.9, 1.0));
 
     g_root  = new osg::Group();
     g_view->setSceneData(g_root.get());
@@ -485,7 +754,29 @@ int main(int argc, char* argv[])
         g_root->addChild(himmel.get());
 
 
-    activateDemo(g_demo);
+        osg::Group *group = new osg::Group();
+
+
+  osg::Light *light(new osg::Light);
+    osg::LightSource *lsource(new osg::LightSource);
+
+    lsource->setLight(light);
+    g_root->addChild(lsource);
+    group->addChild(lsource);
+
+    lsource->setLocalStateSetModes(osg::StateAttribute::ON);
+
+    lsource->setStateSetModes(*group->getOrCreateStateSet(), osg::StateAttribute::ON);
+
+
+
+    
+//    osg::Node *node = osgDB::readNodeFile("D:/p/osghimmel/exchange/movie-döllner/New folder/terrain-tile.3ds");
+  //  group->addChild(node);
+
+    g_root->addChild(group);
+
+    activateDemo(D_PolarMappedHimmel);
 
     viewer.addEventHandler(new KeyboardEventHandler);
 

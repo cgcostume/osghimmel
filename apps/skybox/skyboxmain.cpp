@@ -28,9 +28,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "mainlogdispatcher.h"
+
 #include "gui/mainwindow.h"
+#include "utils/tr.h"
 
 #include <QtGui/QApplication>
+
+
+namespace
+{
+    const QString APPLICATION_NAME("SkyBox");
+    const QString APPLICATION_VERSION("0.0.0");
+}
+
 
 int main(int argc, char* argv[])
 {

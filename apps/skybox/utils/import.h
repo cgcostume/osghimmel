@@ -36,6 +36,7 @@ class QFileInfo;
 #include <osg/ref_ptr>
 #include <osg/Node>
 
+
 osg::ref_ptr<osg::Node> importAndOptimizeNodeFromFile(const QFileInfo &fileInfo);
 
 #endif // __IMPORT_H__

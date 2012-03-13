@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "polarmappedhimmel.h"
+
 #include "horizonband.h"
 
 #include <osg/Texture2D>

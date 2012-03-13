@@ -29,12 +29,13 @@
 
 #pragma once
 #ifndef __QT2OSG_H__
-#define __IMPORT_H__
-
-class QColor;
+#define __QT2OSG_H__
 
 #include <osg/Vec4>
 #include <osg/Vec3>
+
+class QColor;
+
 
 const osg::Vec4 toVec4(const QColor &color);
 const QColor toQColor(const osg::Vec4 &color);
@@ -42,4 +43,4 @@ const QColor toQColor(const osg::Vec4 &color);
 const osg::Vec3 toVec3(const QColor &color);
 const QColor toQColor(const osg::Vec3 &color);
 
-#endif // __IMPORT_H__
+#endif // __QT2OSG_H__

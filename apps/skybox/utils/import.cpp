@@ -29,10 +29,13 @@
 
 #include "import.h"
 
+#include "utils/log.h"
+
 #include <QFileInfo>
 
 #include <osgUtil/Optimizer>
 #include <osgDB/ReadFile>
+
 
 osg::ref_ptr<osg::Node> importAndOptimizeNodeFromFile(const QFileInfo &fileInfo)
 {
