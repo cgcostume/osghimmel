@@ -289,7 +289,7 @@ void AbstractMappedHimmel::pushTextureUnit(
 
 void AbstractMappedHimmel::setSecondsPerRAZ(const float secondsPerRAZ)
 {
-    m_razTimef->setSecondsPerCycle(abs(secondsPerRAZ));
+    m_razTimef->setSecondsPerCycle(_abs(secondsPerRAZ));
 }
 
 
