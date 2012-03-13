@@ -386,7 +386,7 @@ const std::string StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
 
-    sprintf_s(apparentMagLimit, 8, "%.2f", earth_apparentMagnitudeLimit());
+    sprintf_s(apparentMagLimit, 8, "%.2f", static_cast<float>(earth_apparentMagnitudeLimit()));
 
     return glsl_version_150
 

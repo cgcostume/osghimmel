@@ -270,4 +270,4 @@ void ShaderModifier::identifiersChanged()
 }
 
 
-#endif OSGHIMMEL_ENABLE_SHADERMODIFIER
+#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER

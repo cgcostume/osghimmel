@@ -43,6 +43,7 @@
 
 #include <osg/ShapeDrawable>
 
+#include <stdlib.h>
 #include <assert.h>
 
 

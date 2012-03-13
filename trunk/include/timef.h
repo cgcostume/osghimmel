@@ -56,7 +56,7 @@ class TimeF
 
 public:
     
-    static const long timezone();
+    static const long utcOffset();
 
 
     TimeF(
@@ -107,7 +107,7 @@ public:
     // Time in seconds from initial time.
     inline const time_t gett() const
     {
-        return m_time[1] + timezone();
+        return m_time[1] + utcOffset();
     }
 
     const time_t gett(const bool updateFirst);

@@ -112,8 +112,8 @@ protected:
     ,   const GLint targetIndex);
 
     // For convenience in subclasses.
-    inline void assignBackUnit(const GLint textureUnit);
-    inline void assignSrcUnit(const GLint textureUnit);
+    void assignBackUnit(const GLint textureUnit);
+    void assignSrcUnit(const GLint textureUnit);
 
     const float updateSrcAlpha() const; // Accesses TwoUnitsChanger.
 
