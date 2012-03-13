@@ -40,6 +40,15 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR})
 
 set(sources
+    qtbuttonpropertybrowser.h
+    qteditorfactory.h
+    qtgroupboxpropertybrowser.h
+    qtpropertybrowser.h
+    qtpropertybrowserutils_p.h
+    qtpropertymanager.h
+    qttreepropertybrowser.h
+    qtvariantproperty.h
+
     qtpropertybrowser.cpp
     qtpropertymanager.cpp
     qteditorfactory.cpp
@@ -79,9 +88,6 @@ set_source_files_properties(${headers_MOC}
 
 qt4_generate_moc(qtpropertybrowserutils_p.h  
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowserutils_p.cpp)
-
-qt4_add_resources(resources
-    qtpropertybrowser.qrc)
 
 add_library(qtpropertybrowser STATIC
     ${extension_MOC}

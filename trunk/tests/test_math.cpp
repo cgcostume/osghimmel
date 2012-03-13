@@ -44,7 +44,7 @@ void test_math()
     ASSERT_EQ(int,-1, static_cast<int>(-1.66));
 
     // Check decimal hours.
-    ASSERT_EQ(long double, 0.81, _day(19, 26, 24));
+    ASSERT_AB(long double, 0.81, _day(19, 26, 24), 0.000001);
 
 
     ASSERT_EQ(long double, 1.0, _mod( 1.0, 3.0));
@@ -59,7 +59,7 @@ void test_math()
 
     ASSERT_EQ(long double, 10.0, _mod(1234, 24.0));
 
-    ASSERT_EQ(long double, 13.225388, _hours(198.38082));
+    ASSERT_AB(long double, 13.225388, _hours(198.38082), 0.000001);
     ASSERT_AB(long double, _hour(13, 13, 31.4), _hours( 198.38082), 0.000001);
     ASSERT_AB(long double, _hour(13, 13, 31.4), _hours(-161.61918), 0.000001);
 

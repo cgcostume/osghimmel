@@ -94,7 +94,7 @@ void test_jd()
     // Test some dates.
 
     // Standard equinox (decimal day time).
-    ASSERT_EQ(long double, 2436116.31,jd(t_aTime(1957, 10,  4.81)));
+    ASSERT_AB(long double, 2436116.31,jd(t_aTime(1957, 10,  4.81)), 0.000001);
     ASSERT_EQ(long double, 1842713.0, jd(t_aTime( 333,  1, 27, 12, 0, 0)));
     
     // Test some dates.
@@ -103,14 +103,14 @@ void test_jd()
     ASSERT_EQ(long double, 2446966.0, jd(t_aTime( 1987,  6, 19.5)));
     ASSERT_EQ(long double, 2447187.5, jd(t_aTime( 1988,  1, 27.0)));
     ASSERT_EQ(long double, 2447332.0, jd(t_aTime( 1988,  6, 19.5)));
-    ASSERT_EQ(long double, 2443259.9, jd(t_aTime( 1977,  4, 26.4)));
+    ASSERT_AB(long double, 2443259.9, jd(t_aTime( 1977,  4, 26.4)), 0.000001);
     ASSERT_EQ(long double, 2415020.5, jd(t_aTime( 1900,  1,  1.0)));
     ASSERT_EQ(long double, 2305447.5, jd(t_aTime( 1600,  1,  1.0)));
     ASSERT_EQ(long double, 2305812.5, jd(t_aTime( 1600, 12, 31.0)));
-    ASSERT_EQ(long double, 2026871.8, jd(t_aTime(  837,  4, 10.3)));
+    ASSERT_AB(long double, 2026871.8, jd(t_aTime(  837,  4, 10.3)), 0.000001);
     ASSERT_EQ(long double, 1356001.0, jd(t_aTime(-1000,  7, 12.5)));
     ASSERT_EQ(long double, 1355866.5, jd(t_aTime(-1000,  2, 29.0)));
-    ASSERT_EQ(long double, 1355671.4, jd(t_aTime(-1001,  8, 17.9)));
+    ASSERT_AB(long double, 1355671.4, jd(t_aTime(-1001,  8, 17.9)), 0.000001);
     ASSERT_EQ(long double,       0.0, jd(t_aTime(-4712,  1,  1.5)));
 
 
@@ -180,7 +180,7 @@ void test_jd()
     ASSERT_EQ(__int64,    7, aTime2.minute);
     ASSERT_EQ(__int64,   12, aTime2.second);
 
-    ASSERT_EQ(long double, 28.63, aTime2.dayf());
+    ASSERT_AB(long double, 28.63, aTime2.dayf(), 0.000001);
 }
 
 
