@@ -38,11 +38,13 @@
 
 
 #include "atmosphereprecompute.h"
+
 #include "himmel.h"
 #include "earth.h"
 #include "strutils.h"
 
 #include <osg/Image>
+#include <osg/Geometry>
 #include <osg/Texture2D>
 #include <osg/Texture3D>
 #include <osgViewer/CompositeViewer>
