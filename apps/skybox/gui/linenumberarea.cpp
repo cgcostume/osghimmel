@@ -28,9 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "linenumberarea.h"
+
 #include "plaintextwithlinenumberareasupport.h"
 
 #include <QPainter>
+
+#include <math.h>
 
 
 LineNumberArea::LineNumberArea(PlainTextWithLineNumberAreaSupport &editor)
