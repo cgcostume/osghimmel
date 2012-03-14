@@ -44,6 +44,8 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <stdexcept>
+
 #ifndef WIN32
 #include <stdio.h>
 #else
@@ -135,7 +137,10 @@ FileLogOutput::FileLogOutput(const QString &filename)
         m_stream = new QTextStream(m_file);
     }
     else
-        throw std::exception(TR("Cannot open log file %1 in write mode.").arg(filename).toLocal8Bit());
+    {
+        throw std::runtime_error(TR("Cannot open log file %1 in write mode.")
+                .arg(filename).toLocal8Bit().constData());
+    }
 }
 
 

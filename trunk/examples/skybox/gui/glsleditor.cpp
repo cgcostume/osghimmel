@@ -28,7 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "glsleditor.h"
-#include "apps/skybox/ui_glsleditor.h"
+#include "examples/skybox/ui_glsleditor.h"
 
 #include "include/shadermodifier.h"
 #include "include/abstracthimmel.h"

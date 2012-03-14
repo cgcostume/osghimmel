@@ -39,6 +39,8 @@
 
 #include <osg/Shader>
 
+#include <memory> //auto_ptr
+
 class Ui_GlslEditor;
 
 class QTextDocument;

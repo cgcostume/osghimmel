@@ -28,7 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "datetimewidget.h"
-#include "apps/skybox/ui_datetimewidget.h"
+#include "examples/skybox/ui_datetimewidget.h"
 
 #include "abstracthimmelscene.h"
 
