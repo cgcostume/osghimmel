@@ -34,6 +34,8 @@
 
 #include <QWidget>
 
+#include <memory> //auto_ptr
+
 class Ui_DateTimeWidget;
 
 class QTimer;

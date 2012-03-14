@@ -64,43 +64,43 @@ public:
     LogEntry(const LogEntry &entry);
     ~LogEntry();
 
-    inline void LogEntry::setLine(const int line)
+    inline void setLine(const int line)
     {
         m_line = line;
     }
 
 
-    inline void LogEntry::setFile(const QString &filename)
+    inline void setFile(const QString &filename)
     {
         m_file = filename;
     }
 
 
-    inline LogEntry::e_LogEntryType LogEntry::type() const
+    inline e_LogEntryType type() const
     {
         return m_type;
     }
 
 
-    inline const QString LogEntry::message() const
+    inline const QString message() const
     {
         return m_message;
     }
 
 
-    inline const QDateTime LogEntry::timestamp() const
+    inline const QDateTime timestamp() const
     {
         return m_timestamp;
     }
 
 
-    inline const QString LogEntry::file() const
+    inline const QString file() const
     {
         return m_file;
     }
 
 
-    inline const int LogEntry::line() const
+    inline const int line() const
     {
         return m_line;
     }

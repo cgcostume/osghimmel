@@ -28,7 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "mainwindow.h"
-#include "apps/skybox/ui_mainwindow.h"
+#include "examples/skybox/ui_mainwindow.h"
 
 #include "utils/log.h"
 #include "utils/tr.h"
@@ -442,12 +442,13 @@ const bool MainWindow::insert3DObjectFromFile(const QFileInfo &fileInfo)
     assert(m_scene);
 
     QString source = fileInfo.absoluteFilePath();
-    const std::string c_source = source.toLatin1();
+    const std::string c_source = source.toStdString();
 
     osg::ref_ptr<osg::Node> loadedScene = osgDB::readNodeFile(c_source);
     if(!loadedScene)
     {
-        _LOG_WARNING("Load Drop Data failed", "Loading " + source + " has failed.");
+        _LOG_WARNING("Load Drop Data failed", 
+            QString("Loading %1 has failed.").arg(source).toLatin1().constData());
         return false;
     }
 

@@ -28,7 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "docktitlebarwidget.h"
-#include "apps/skybox/ui_docktitlebarwidget.h"
+#include "examples/skybox/ui_docktitlebarwidget.h"
 
 #include <QDockWidget>
 #include <assert.h>

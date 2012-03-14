@@ -40,6 +40,8 @@ class Ui_MainWindow;
 #include <QUrl>
 #include <QList>
 
+#include <memory> //auto_ptr
+
 class QFileInfo;
 class QLabel;
 class QTimer;
