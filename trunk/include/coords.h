@@ -82,7 +82,7 @@ struct s_EquatorialCoords
     T r;
 };
 
-typedef s_EquatorialCoords<long double> t_equd;
+typedef s_EquatorialCoords<t_longf> t_equd;
 typedef s_EquatorialCoords<float> t_equf;
 
 
@@ -103,7 +103,7 @@ struct s_EclipticalCoords
     T latitude;  // β
 };
 
-typedef s_EclipticalCoords<long double> t_ecld;
+typedef s_EclipticalCoords<t_longf> t_ecld;
 typedef s_EclipticalCoords<float> t_eclf;
 
 
@@ -129,7 +129,7 @@ struct s_HorizontalCoords
     T altitude; // A
 };
 
-typedef s_HorizontalCoords<long double> t_hord;
+typedef s_HorizontalCoords<t_longf> t_hord;
 typedef s_HorizontalCoords<float> t_horf;
 
 
@@ -143,8 +143,8 @@ typedef s_HorizontalCoords<float> t_horf;
 //
 //#pragma NOTE("const s_EquatorialCoords toEquatorial() const; not yet implemented")
 //
-//    long double longitude; // l
-//    long double latitude;  // b
+//    t_longf longitude; // l
+//    t_longf latitude;  // b
 //
 //} t_galCoords;
 

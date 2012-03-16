@@ -28,7 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
-#include "test_astronomy_la.h"
+#include "test_astronomy2.h"
 
 #include "test.h"
 
@@ -37,29 +37,29 @@
 #include "include/julianday.h"
 #include "include/sideraltime.h"
 #include "include/coords.h"
-#include "include/moon.h"
-#include "include/sun.h"
-#include "include/earth.h"
 #include "include/stars.h"
+#include "include/moon2.h"
+#include "include/sun2.h"
+#include "include/earth2.h"
 
 
-void test_coords_la();
-void test_sun_la();
-void test_moon_la();
-void test_stars_la();
+void test_coords2();
+void test_sun2();
+void test_moon2();
+void test_stars2();
 
-void test_astronomy_la()
+void test_astronomy2()
 {
     // Run Tests.
-    test_coords_la();
-    test_sun_la();
-    test_moon_la();
-//    test_stars_la();
+    test_coords2();
+    test_sun2();
+    test_moon2();
+//    test_stars2();
 
     TEST_REPORT();
 }
 
-void test_coords_la()
+void test_coords2()
 {
     t_julianDay t;
 
@@ -67,30 +67,30 @@ void test_coords_la()
 
     t = jd(t_aTime(1987,  4, 10, 0, 0, 0));
 
-    ASSERT_AB(long double, -0.127296372348, jCenturiesSinceSE(t),               0.00000001);
-    ASSERT_AB(long double, _decimal(23, 26, 27.407), earth_meanObliquity_la(t), 0.00005);
+    ASSERT_AB(long double, -0.127296372348, jCenturiesSinceSE(t),              0.00000001);
+    ASSERT_AB(long double, _decimal(23, 26, 27.407), Earth2::meanObliquity(t), 0.00005);
 
-    ASSERT_AB(long double, _decimal( 0,  0,  9.443), earth_obliquityNutation_la(t), 0.0005);
-    ASSERT_AB(long double, _decimal(23, 26, 36.850), earth_trueObliquity_la(t),     0.0005);
+    ASSERT_AB(long double, _decimal( 0,  0,  9.443), Earth2::obliquityNutation(t), 0.0005);
+    ASSERT_AB(long double, _decimal(23, 26, 36.850), Earth2::trueObliquity(t),     0.0005);
 
-    ASSERT_AB(long double, _decimal( 0,  0, -3.788), earth_longitudeNutation_la(t), 0.0005);
+    ASSERT_AB(long double, _decimal( 0,  0, -3.788), Earth2::longitudeNutation(t), 0.0005);
 
-    ASSERT_AB(long double, 229.27840, moon_meanAnomaly_la(t),  0.01);
+    ASSERT_AB(long double, 229.27840, Moon2::meanAnomaly(t),  0.01);
 
 
     t = jd(t_aTime(1992, 10, 13, 0, 0, 0));
 
-    ASSERT_AB(long double, -0.072183436, jCenturiesSinceSE(t), 0.00000001);
+    ASSERT_AB(long double, -0.072183436, jCenturiesSinceSE(t),  0.00000001);
 
-    ASSERT_AB(long double, 201.80719, sun_meanLongitude_la(t),   0.0001);
-    ASSERT_AB(long double, 278.99396, sun_meanAnomaly_la(t),     0.005);
-    ASSERT_AB(long double,  23.44023, earth_meanObliquity_la(t), 0.0001);
+    ASSERT_AB(long double, 201.80719, Sun2::meanLongitude(t),   0.0001);
+    ASSERT_AB(long double, 278.99396, Sun2::meanAnomaly(t),     0.005);
+    ASSERT_AB(long double,  23.44023, Earth2::meanObliquity(t), 0.0001);
 
-    ASSERT_AB(long double, 0.99766, _AUs(sun_distance_la(t)),     0.00001);
-    ASSERT_AB(long double, 0.016711651, earth_orbitEccentricity_la(t), 0.00001);
+    ASSERT_AB(long double, 0.99766, _AUs(Sun2::distance(t)),    0.00001);
+    ASSERT_AB(long double, 0.016711651, Earth2::orbitEccentricity(), 0.00001);
 
 
-    t_equf equ = sun_apparentPosition_la(t);
+    t_equf equ = Sun2::apparentPosition(t);
 
     ASSERT_AB(long double,  13.225388, _hours(equ.right_ascension), 0.00005);
     ASSERT_AB(long double, - 7.78507 , equ.declination,             0.001);
@@ -98,7 +98,7 @@ void test_coords_la()
 
 
 
-void test_sun_la()
+void test_sun2()
 {
     t_aTime aTime;
 
@@ -121,7 +121,7 @@ void test_sun_la()
         for(unsigned int i = 0; i < 9; ++i)
         {
             aTime.hour = hour[i];
-            t_horf hor = sun_horizontalPosition_la(aTime, lat, lon);
+            t_horf hor = Sun2::horizontalPosition(aTime, lat, lon);
 
             ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
             ASSERT_AB(int, alt[i], hor.altitude, 1);
@@ -137,7 +137,7 @@ void test_sun_la()
         for(unsigned int i = 0; i < 17; ++i)
         {
             aTime.hour = hour[i];
-            t_horf hor = sun_horizontalPosition_la(aTime, lat, lon);
+            t_horf hor = Sun2::horizontalPosition(aTime, lat, lon);
 
             ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
             ASSERT_AB(int, alt[i], hor.altitude, 1);
@@ -158,7 +158,7 @@ void test_sun_la()
         for(unsigned int i = 0; i < 12; ++i)
         {
             aTime.hour = hour[i];
-            t_horf hor = sun_horizontalPosition_la(aTime, lat, lon);
+            t_horf hor = Sun2::horizontalPosition(aTime, lat, lon);
 
             ASSERT_AB(int, azim[i] - 180, hor.azimuth, 1);
             ASSERT_AB(int, alt[i], hor.altitude, 1);
@@ -167,7 +167,7 @@ void test_sun_la()
 }
 
 
-void test_moon_la()
+void test_moon2()
 {
     // Berlin
     
@@ -183,22 +183,22 @@ void test_moon_la()
 
     const t_julianDay t(jd(aTime));
     
-    ASSERT_AB(long double,  97.643514, sun_meanAnomaly_la(t),     0.005);
+    ASSERT_AB(long double,  97.643514, Sun2::meanAnomaly(t),     0.005);
 
-    ASSERT_AB(long double, 134.290186, moon_meanLongitude_la(t),  0.01);
-    ASSERT_AB(long double,   5.150839, moon_meanAnomaly_la(t),    0.01);
-    ASSERT_AB(long double, 113.842309, moon_meanElongation_la(t), 0.01);
-    ASSERT_AB(long double, 219.889726, moon_meanLatitude_la(t),   0.01);
+    ASSERT_AB(long double, 134.290186, Moon2::meanLongitude(t),  0.01);
+    ASSERT_AB(long double,   5.150839, Moon2::meanAnomaly(t),    0.01);
+    ASSERT_AB(long double, 113.842309, Moon2::meanElongation(t), 0.01);
+    ASSERT_AB(long double, 219.889726, Moon2::meanLatitude(t),   0.01);
 
-    t_ecld ecl = moon_position(t);
+    t_eclf ecl = Moon2::position(t);
 
-    ASSERT_AB(long double, 133.167269, ecl.longitude, 0.0001);
-    ASSERT_AB(long double,  -3.229127, ecl.latitude,  0.0001);
+    ASSERT_AB(long double, 133.167269, ecl.longitude, 0.02);
+    ASSERT_AB(long double,  -3.229127, ecl.latitude,  0.02);
 
-    ASSERT_AB(long double, 368409.7, moon_distance_la(t), 1000.0);
+    ASSERT_AB(long double, 368409.7, Moon2::distance(t), 1000.0);
 
-    ASSERT_AB(long double, _decimal(0, 0, -3.788), earth_longitudeNutation_la(jd(t_aTime(1987, 4, 10))), 0.0005);
-    ASSERT_AB(long double, _decimal(0, 0, +9.443), earth_obliquityNutation_la(jd(t_aTime(1987, 4, 10))), 0.0005);
+    ASSERT_AB(long double, _decimal(0, 0, -3.788), Earth2::longitudeNutation(jd(t_aTime(1987, 4, 10))), 0.0005);
+    ASSERT_AB(long double, _decimal(0, 0, +9.443), Earth2::obliquityNutation(jd(t_aTime(1987, 4, 10))), 0.0005);
 
     // Lunar perigee and apogee, values from: http://en.wikipedia.org/wiki/File:Lunar_perigee_apogee.png
 
@@ -208,16 +208,5 @@ void test_moon_la()
     const t_julianDay t1(jd(aTime1));
     const t_julianDay t2(jd(aTime2));
 
-    ASSERT_AB(long double, earth_apparentAngularMoonDiameter_la(t1) / earth_apparentAngularMoonDiameter_la(t2), 1.13, 0.01);
+    ASSERT_AB(long double, Earth2::apparentAngularMoonDiameter(t1) / Earth2::apparentAngularMoonDiameter(t2), 1.13, 0.01);
 }
-
-
-//void test_stars_la()
-//{
-//    const t_julianDay t(jd(t_aTime(1978, 1, 1)));
-//
-//    const t_equd equ = star_apparentPosition(t
-//        , _decimal(10, 8, 22.3), _decimal(11, 58,  2)
-//        , _arcsecs(_decimal(0, 0, 0.248)), _decimal(0, 0, 0.006));
-//
-//}

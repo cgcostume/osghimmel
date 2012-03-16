@@ -33,7 +33,7 @@
 #include "earth.h"
 #include "timef.h"
 #include "astronomy.h"
-#include "astronomyla.h"
+#include "astronomy2.h"
 #include "himmelquad.h"
 #include "atmospheregeode.h"
 #include "moongeode.h"
@@ -143,7 +143,8 @@ Himmel::Himmel(
 
 osg::Uniform *Himmel::cmnUniform()
 {
-    return new osg::Uniform("cmn", osg::Vec4(defaultAltitude(), earth_meanRadius(), earth_meanRadius() + earth_atmosphereThicknessNonUniform(), 0));
+    return new osg::Uniform("cmn", osg::Vec4(defaultAltitude()
+        , Earth::meanRadius(), Earth::meanRadius() + Earth::atmosphereThicknessNonUniform(), 0));
 }
 
 
@@ -305,7 +306,7 @@ const float Himmel::setAltitude(const float altitude)
     u_common->get(temp);
 
     // Clamp altitude into non uniform atmosphere. (min alt is 1m)
-    temp[0] = _clamp(0.001f, earth_atmosphereThicknessNonUniform(), altitude);
+    temp[0] = _clamp(0.001f, Earth::atmosphereThicknessNonUniform(), altitude);
     u_common->set(temp);
 
     return getAltitude();

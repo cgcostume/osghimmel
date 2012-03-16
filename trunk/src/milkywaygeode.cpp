@@ -179,7 +179,7 @@ void MilkyWayGeode::updateScaledB()
     // Precompute brightness based on logarithmic scale. 
     // (Similar to starsgeode vertex shader.)
 
-    static const float minB = pow(2.512, static_cast<double>(-earth_apparentMagnitudeLimit()));
+    static const float minB = pow(2.512, static_cast<double>(-Earth::apparentMagnitudeLimit()));
 
     float estB = pow(2.512, m_apparentMagnitude + 0.0);
     float scaledB = minB * estB;

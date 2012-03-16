@@ -31,6 +31,8 @@
 #ifndef __ABSTRACTHIMMEL_H__
 #define __ABSTRACTHIMMEL_H__
 
+#include "typedefs.h"
+
 #include <osg/Transform>
 #include <osg/NodeCallback>
 
@@ -129,7 +131,7 @@ protected:
 
     // This is used for "is dirty decisions" in update.
     // m_timef can be updated from outsite, so we need check for changes manually.
-    long double m_lastElapsed;
+    t_longf m_lastElapsed;
 
     // TODO: maybe there is a better, cleaner solution to get this information from osg...
     osg::Camera *m_cameraHint;

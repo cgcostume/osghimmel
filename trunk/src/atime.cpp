@@ -69,16 +69,16 @@ s_AstronomicalTime::s_AstronomicalTime(
 s_AstronomicalTime::s_AstronomicalTime(
     const short year
 ,   const short month
-,   const long double day
+,   const t_longf day
 ,   const short utcOffset)
 :   year(year)
 ,   month(month)
 ,   day(static_cast<unsigned short>(day))
 ,   utcOffset(utcOffset)
 {
-    const long double h = _frac(day) * 24.0;
-    const long double m = _frac(h) * 60.0;
-    const long double s = _frac(m) * 60.001;
+    const t_longf h = _frac(day) * 24.0;
+    const t_longf m = _frac(h) * 60.0;
+    const t_longf s = _frac(m) * 60.001;
 
     this->hour   = _short(h);
     this->minute = _short(m);
@@ -143,7 +143,7 @@ const time_t s_AstronomicalTime::toTime_t() const
 }
 
 
-const long double s_AstronomicalTime::dayf() const
+const t_longf s_AstronomicalTime::dayf() const
 {
     return day + _day(hour, minute, second);
 }

@@ -77,14 +77,14 @@ protected:
     void setupCameras();
 
 public:
-    typedef std::vector<osg::ref_ptr<osg::Camera> > t_Cameras;
+    typedef std::vector<osg::ref_ptr<osg::Camera> > t_cameras;
 
 protected:
 
     osg::ref_ptr<osg::Group> m_group;
     osg::ref_ptr<osg::TextureCubeMap> m_cubeMap;
 
-    t_Cameras m_cameras;
+    t_cameras m_cameras;
 };
 
 #endif // __HIMMELENVMAP_H__

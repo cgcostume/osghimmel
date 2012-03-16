@@ -1,5 +1,5 @@
-
-// Copyright (c) 2011-2012, Daniel M�ller <dm@g4t3.de>
+﻿
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -28,34 +28,35 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __ASTRONOMYLA_H__
-#define __ASTRONOMYLA_H__
+#ifndef __SUN2_H__
+#define __SUN2_H__
 
-#include "abstractastronomy.h"
+#include "typedefs.h"
+#include "julianday.h"
+#include "coords.h"
 
 
-class LowAccuracyAstronomy : public AbstractAstronomy
+class Sun2 // Lower Accuracy
 {
 public:
 
-    LowAccuracyAstronomy();
+    static const float meanAnomaly(const t_julianDay t);
+    static const float meanLongitude(const t_julianDay t);
 
-    virtual const osg::Matrix equToLocalHorizonMatrix() const;
+    static const float center(const t_julianDay t);
 
-protected:
+    static const float c(const t_julianDay t);
+    static const float trueLongitude(const t_julianDay t);
 
-    virtual const osg::Vec3 moonPosition(
+    static const t_equf apparentPosition(const t_julianDay t);
+    static const t_horf horizontalPosition(
         const t_aTime &aTime
     ,   const float latitude
-    ,   const float longitude) const;
+    ,   const float longitude);
 
-    virtual const osg::Vec3 sunPosition(
-        const t_aTime &aTime
-    ,   const float latitude
-    ,   const float longitude) const;
+    static const float distance(const t_julianDay t);
 
-    virtual const float angularSunRadius(const t_julianDay t) const;
-    virtual const float angularMoonRadius(const t_julianDay t) const;
+    static const t_longf meanRadius();
 };
 
-#endif // __ASTRONOMYLA_H__
+#endif // __SUN2_H__

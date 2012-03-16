@@ -1,5 +1,5 @@
-
-// Copyright (c) 2011-2012, Daniel M�ller <dm@g4t3.de>
+﻿
+// Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
 //
@@ -27,70 +27,37 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "astronomy.h"
+#pragma once
+#ifndef __EARTH2_H__
+#define __EARTH2_H__
 
-#include "earth.h"
-#include "sun.h"
-#include "moon.h"
-#include "stars.h"
-#include "sideraltime.h"
+#include "typedefs.h"
+#include "julianday.h"
 
 
-Astronomy::Astronomy()
+class Earth2 // Lower Accuracy
 {
-}
+public:
 
+    static const float orbitEccentricity();
 
-const float Astronomy::angularSunRadius(const t_julianDay t) const
-{
-    return Earth::apparentAngularSunDiameter(t) * 0.5;
-}
+    static const float apparentAngularSunDiameter(const t_julianDay t);
+    static const float apparentAngularMoonDiameter(const t_julianDay t);
 
+    static const float longitudeNutation(const t_julianDay t);
+    static const float obliquityNutation(const t_julianDay t);
 
-const float Astronomy::angularMoonRadius(const t_julianDay t) const
-{
-    return Earth::apparentAngularMoonDiameter(t) * 0.5;
-}
+    static const float meanObliquity(const t_julianDay t);
+    static const float trueObliquity(const t_julianDay t);
 
+    static const float viewDistanceWithinAtmosphere(const float y);
 
-const osg::Vec3 Astronomy::moonPosition(
-    const t_aTime &aTime
-,   const float latitude
-,   const float longitude) const
-{
-    t_hord moon = Moon::horizontalPosition(aTime, latitude, longitude);
+    static const t_longf meanRadius();
+    
+    static const t_longf atmosphereThickness();
+    static const t_longf atmosphereThicknessNonUniform();
 
-    osg::Vec3 moonv  = moon.toEuclidean();
-    moonv.normalize();
+    static const t_longf apparentMagnitudeLimit();
+};
 
-    return moonv;
-}
-
-
-const osg::Vec3 Astronomy::sunPosition(
-    const t_aTime &aTime
-,   const float latitude
-,   const float longitude) const
-{
-    t_hord sun = Sun::horizontalPosition(aTime, latitude, longitude);
-
-    osg::Vec3 sunv  = sun.toEuclidean();
-    sunv.normalize();
-
-    return sunv;
-}
-
-
-const osg::Matrix Astronomy::equToLocalHorizonMatrix() const
-{
-    const t_aTime aTime(getATime());
-
-    const float s = siderealTime(aTime);
-
-    const float la = getLatitude();
-    const float lo = getLongitude();
-
-    return osg::Matrix::scale                  (-1, 1, 1)
-        * osg::Matrix::rotate( _rad(la) - _PI_2, 1, 0, 0)
-        * osg::Matrix::rotate(-_rad(s + lo)    , 0, 0, 1);
-}
+#endif // __EARTH2_H__

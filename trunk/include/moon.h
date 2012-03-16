@@ -31,47 +31,32 @@
 #ifndef __MOON_H__
 #define __MOON_H__
 
+#include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-const long double moon_meanLongitude(const t_julianDay t); 
-const long double moon_meanElongation(const t_julianDay t);
-const long double moon_meanAnomaly(const t_julianDay t);
-const long double moon_meanLatitude(const t_julianDay t);
+class Moon
+{
+public:
+    static const t_longf meanLongitude(const t_julianDay t); 
+    static const t_longf meanElongation(const t_julianDay t);
+    static const t_longf meanAnomaly(const t_julianDay t);
+    static const t_longf meanLatitude(const t_julianDay t);
 
-const long double moon_meanOrbitLongitude(const t_julianDay t);
+    static const t_longf meanOrbitLongitude(const t_julianDay t);
 
-const t_ecld moon_position(const t_julianDay t);
-const t_equd moon_apparentPosition(const t_julianDay t);
+    static const t_ecld position(const t_julianDay t);
+    static const t_equd apparentPosition(const t_julianDay t);
 
-const t_hord moon_horizontalPosition(
-    const t_aTime &aTime
-,   const long double latitude
-,   const long double longitude);
+    static const t_hord horizontalPosition(
+        const t_aTime &aTime
+    ,   const t_longf latitude
+    ,   const t_longf longitude);
 
-const long double moon_distance(const t_julianDay t);
+    static const t_longf distance(const t_julianDay t);
 
-const long double moon_meanRadius();
-
-
-// Low Accuracy
-
-const float moon_meanLongitude_la(const t_julianDay t); 
-const float moon_meanElongation_la(const t_julianDay t);
-const float moon_meanAnomaly_la(const t_julianDay t);
-const float moon_meanLatitude_la(const t_julianDay t);
-
-const float moon_meanOrbitLongitude_la(const t_julianDay t);
-
-const t_eclf moon_position_la(const t_julianDay t);
-const t_equf moon_apparentPosition_la(const t_julianDay t);
-
-const t_horf moon_horizontalPosition_la(
-    const t_aTime &aTime
-,   const float latitude
-,   const float longitude);
-
-const float moon_distance_la(const t_julianDay t);
+    static const t_longf meanRadius();
+};
 
 #endif // __MOON_H__

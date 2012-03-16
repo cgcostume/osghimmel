@@ -31,6 +31,7 @@
 #ifndef __ASTRONOMICAL_TIME_H__
 #define __ASTRONOMICAL_TIME_H__
 
+#include "typedefs.h"
 
 #include <time.h>
 
@@ -54,7 +55,7 @@ typedef struct s_AstronomicalTime
     s_AstronomicalTime(
         const short year
     ,   const short month
-    ,   const long double day
+    ,   const t_longf day
     ,   const short utcOffset = 0);
 
     static const s_AstronomicalTime fromTimeT(
@@ -65,7 +66,7 @@ typedef struct s_AstronomicalTime
 
     const time_t toTime_t() const;
 
-    const long double dayf() const;
+    const t_longf dayf() const;
 
     const bool operator==(const s_AstronomicalTime &other) const
     {

@@ -34,32 +34,45 @@
 #include <vector>
 
 // NOTE: Enabling this, slows down compilation a lot!
-//#define BRIGHTSTARS_WRITETOFILE
+//#define BRIGHTSTARS_INCLUDE_CATALOGUE
 
-// Structure based on the extended bright star catalogue.
-
-struct s_BrightStar
+class BrightStars
 {
-    float Vmag;   // visual magnitude (mag)
-    float RA;     // right ascension (decimal hours)
-    float DE;     // declination (decimal degrees)
-    float pmRA;   // proper annual motion in right ascension (decimal hours)
-    float pmDE;   // proper annual motion in declination (decimal degrees)
-    float sRGB_R; // approximated color, red value   ]0;1[
-    float sRGB_G; // approximated color, green value ]0;1[
-    float sRGB_B; // approximated color, blue value  ]0;1[
+public:
+    // Structure based on the extended bright star catalogue.
+
+    struct s_BrightStar
+    {
+        float Vmag;   // visual magnitude (mag)
+        float RA;     // right ascension (decimal hours)
+        float DE;     // declination (decimal degrees)
+        float pmRA;   // proper annual motion in right ascension (decimal hours)
+        float pmDE;   // proper annual motion in declination (decimal degrees)
+        float sRGB_R; // approximated color, red value   ]0;1[
+        float sRGB_G; // approximated color, green value ]0;1[
+        float sRGB_B; // approximated color, blue value  ]0;1[
+    };
+
+    typedef std::vector<s_BrightStar> t_stars;
+
+#ifdef BRIGHTSTARS_INCLUDE_CATALOGUE
+    BrightStars();
+#endif // BRIGHTSTARS_INCLUDE_CATALOGUE
+
+    BrightStars(const char *fileName);
+    ~BrightStars();
+
+    const t_stars &stars() const
+    {
+        return m_stars;
+    }
+
+    unsigned int fromFile(const char *fileName);
+    unsigned int toFile(const char *fileName) const;
+
+protected:
+
+    t_stars m_stars;
 };
 
-
-unsigned int brightstars_readFromFile(
-    const char *fileName
-,   std::vector<s_BrightStar> &brightStars);
-
-
-#ifdef BRIGHTSTARS_WRITETOFILE
-
-unsigned int brightstars_writeToFile(const char *fileName);
-
-#endif // BRIGHTSTARS_WRITETOFILE
-
-#endif // __STARS_H__
+#endif // __BRIGHTSTARS_H__

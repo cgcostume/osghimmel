@@ -39,12 +39,12 @@
 
 // Mean anomaly (AA.45.3).
 
-const long double sun_meanAnomaly(const t_julianDay t)
+const t_longf Sun::meanAnomaly(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
     // seems most accurate... :o
-    const long double M = 357.5291092
+    const t_longf M = 357.5291092
         + T * (+ 35999.0502909
         + T * (-     0.0001536
         + T * (+ 1.0 / 24490000.0)));
@@ -53,13 +53,13 @@ const long double sun_meanAnomaly(const t_julianDay t)
     // ...taken the (probably) most accurate above
 
     // (AA.21 ...)
-    //const long double M = 357.52772
+    //const t_longf M = 357.52772
     //    + T * (+  35999.050340
     //    + T * (-      0.0001603
     //    + T * (- 1.0 / 300000.0)));
 
     // (AA.24.3)
-    //const long double M = 357.52910
+    //const t_longf M = 357.52910
     //    + T * (+ 35999.05030
     //    + T * (-     0.0001559
     //    + T * (-     0.00000048)));
@@ -68,11 +68,11 @@ const long double sun_meanAnomaly(const t_julianDay t)
 }
 
 
-const long double sun_meanLongitude(const t_julianDay t)
+const t_longf Sun::meanLongitude(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double L0 = 280.46645
+    const t_longf L0 = 280.46645
         + T * (+ 36000.76983  
         + T * (+     0.0003032));
 
@@ -82,13 +82,13 @@ const long double sun_meanLongitude(const t_julianDay t)
 
 // (AA p152)
 
-const long double sun_center(const t_julianDay t)
+const t_longf Sun::center(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
     
-    const long double M = _rad(sun_meanAnomaly(t));
+    const t_longf M = _rad(meanAnomaly(t));
 
-    const long double C = 
+    const t_longf C = 
         + (1.914600 - T * (0.004817 - T * 0.000014)) * sin(M)
         + (0.019993 - T *  0.000101) * sin(2.0 * M)
         +  0.000290 * sin(3.0 * M);
@@ -97,31 +97,31 @@ const long double sun_center(const t_julianDay t)
 }
 
 
-const long double sun_trueAnomaly(const t_julianDay t)
+const t_longf Sun::trueAnomaly(const t_julianDay t)
 {
-    return sun_meanAnomaly(t) + sun_center(t); // v = M + C
+    return meanAnomaly(t) + center(t); // v = M + C
 }
 
 
 // True geometric longitude referred to the mean equinox of the date.
 
-const long double sun_trueLongitude(const t_julianDay t)
+const t_longf Sun::trueLongitude(const t_julianDay t)
 {
-    return sun_meanLongitude(t) + sun_center(t); // Θ
+    return meanLongitude(t) + center(t); // Θ
 }
 
 
-const t_equd sun_apparentPosition(const t_julianDay t)
+const t_equd Sun::apparentPosition(const t_julianDay t)
 {
     t_equd equ;
 
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double O = _rad(moon_meanOrbitLongitude(t));
-    const long double e = _rad(earth_trueObliquity(t) + 0.00256 * cos(O));
-    const long double l = _rad(sun_trueLongitude(t) - 0.00569 - 0.00478 * sin(O));
+    const t_longf O = _rad(Moon::meanOrbitLongitude(t));
+    const t_longf e = _rad(Earth::trueObliquity(t) + 0.00256 * cos(O));
+    const t_longf l = _rad(trueLongitude(t) - 0.00569 - 0.00478 * sin(O));
 
-    const long double sinl = sin(l);
+    const t_longf sinl = sin(l);
 
     equ.right_ascension = _revd(_deg(atan2(cos(e) * sinl, cos(l))));
     equ.declination = _deg(asin(sin(e) * sinl));
@@ -130,15 +130,15 @@ const t_equd sun_apparentPosition(const t_julianDay t)
 }
 
 
-const t_hord sun_horizontalPosition(
+const t_hord Sun::horizontalPosition(
     const t_aTime &aTime
-,   const long double latitude
-,   const long double longitude)
+,   const t_longf latitude
+,   const t_longf longitude)
 {
     t_julianDay t(jd(aTime));
     t_julianDay s(siderealTime(aTime));
 
-    t_equd equ = sun_apparentPosition(t);
+    t_equd equ = Sun::apparentPosition(t);
 
     return equ.toHorizontal(s, latitude, longitude);
 }
@@ -147,101 +147,21 @@ const t_hord sun_horizontalPosition(
 // NOTE: This gives the distance from the center of the sun to the
 // center of the earth.
 
-const long double sun_distance(const t_julianDay t)
+const t_longf Sun::distance(const t_julianDay t)
 {
     // (AA.24.5)
-    const long double e = earth_orbitEccentricity(t);
+    const t_longf e = Earth::orbitEccentricity(t);
 
-    const long double R = 1.000001018 * (1.0 - e * e) /
-        (1.0 + e * cos(_rad(sun_trueAnomaly(t))));  // in AU
+    const t_longf R = 1.000001018 * (1.0 - e * e) /
+        (1.0 + e * cos(_rad(trueAnomaly(t))));  // in AU
 
     return _kms(R);
 }
 
 
-const long double sun_meanRadius()
+const t_longf Sun::meanRadius()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
 
     return 0.696e+6; // in kilometers
-}
-
-
-// LOW ACCURACY
-
-const float sun_meanAnomaly_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // Low Accuracy 
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const float M = _deg(6.24 + 628.302 * T);
-
-    // Low Accuracy - suggestion (seems insuficient) from 
-    // http://wlym.com/~animations/ceres/calculatingposition/eccentric.html
-    //const float M = 357.528 + 0.9856003 * t;
-
-    return _revd(M);
-}
-
-
-const float sun_meanLongitude_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    const float L0 = 280.4665
-        + T * (+  36000.7698);
-
-    return _revd(L0);
-}
-
-
-const t_equf sun_apparentPosition_la(const t_julianDay t)
-{
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-
-    const t_julianDay T(jCenturiesSinceSE(t));
-    const float M = _rad(sun_meanAnomaly_la(t));
-
-    t_eclf ecl;
-
-    ecl.longitude = _deg(4.895048 + 628.331951 * T
-        + (0.033417 - 0.000084 * T) * sin(M) + 0.000351 * sin(2 * M));
-    ecl.latitude = 0;
-
-    t_equf equ;
-    equ = ecl.toEquatorial(earth_trueObliquity(t));
-
-    return equ;
-}
-
-
-const t_horf sun_horizontalPosition_la(
-    const t_aTime &aTime
-,   const float latitude
-,   const float longitude)
-{
-    t_julianDay t(jd(aTime));
-    t_julianDay s(siderealTime(aTime));
-
-    t_equf equ = sun_apparentPosition_la(t);
-
-    return equ.toHorizontal(s, latitude, longitude);
-}
-
-
-// NOTE: This gives the distance from the center of the sun to the
-// center of the earth.
-
-const float sun_distance_la(const t_julianDay t)
-{
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const t_julianDay T(jCenturiesSinceSE(t));
-    
-    const float M = 6.24 + 628.302 * T;
-
-    const float R = 1.000140 - (0.016708 - 0.000042 * T) * cos(M)
-      - 0.000141 * cos(2 * M); // in AU
-
-    return _kms(R);
 }

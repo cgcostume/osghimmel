@@ -32,45 +32,34 @@
 #define __EARTH_H__
 
 #include "julianday.h"
+#include "typedefs.h"
 
+class Earth
+{
+public:
 
-const long double earth_orbitEccentricity(const t_julianDay t);
+    static const t_longf orbitEccentricity(const t_julianDay t);
 
-const long double earth_apparentAngularSunDiameter(const t_julianDay t);
-const long double earth_apparentAngularMoonDiameter(const t_julianDay t);
+    static const t_longf apparentAngularSunDiameter(const t_julianDay t);
+    static const t_longf apparentAngularMoonDiameter(const t_julianDay t);
 
-const long double earth_longitudeNutation(const t_julianDay t);
-const long double earth_obliquityNutation(const t_julianDay t);
+    static const t_longf longitudeNutation(const t_julianDay t);
+    static const t_longf obliquityNutation(const t_julianDay t);
 
-const long double earth_meanObliquity(const t_julianDay t);
-const long double earth_trueObliquity(const t_julianDay t);
+    static const t_longf meanObliquity(const t_julianDay t);
+    static const t_longf trueObliquity(const t_julianDay t);
 
-const long double earth_atmosphericRefraction(const long double altitude);
+    static const t_longf atmosphericRefraction(const t_longf altitude);
 
-const long double earth_viewDistanceWithinAtmosphere(
-    const long double y /* height component of the view direction on ground into the sky */
-,   const bool refractionCorrected = false);
+    static const t_longf viewDistanceWithinAtmosphere(
+        const t_longf y /* height component of the view direction on ground into the sky */
+    ,   const bool refractionCorrected = false);
 
-const long double earth_meanRadius();
-const long double earth_atmosphereThickness(); // if its density were uniform...
-const long double earth_atmosphereThicknessNonUniform();
+    static const t_longf meanRadius();
+    static const t_longf atmosphereThickness(); // if its density were uniform...
+    static const t_longf atmosphereThicknessNonUniform();
 
-const long double earth_apparentMagnitudeLimit();
-
-// Low Accuracy
-
-const float earth_orbitEccentricity_la(const t_julianDay t);
-
-const float earth_apparentAngularSunDiameter_la(const t_julianDay t);
-const float earth_apparentAngularMoonDiameter_la(const t_julianDay t);
-
-const float earth_longitudeNutation_la(const t_julianDay t);
-const float earth_obliquityNutation_la(const t_julianDay t);
-
-const float earth_meanObliquity_la(const t_julianDay t);
-const float earth_trueObliquity_la(const t_julianDay t);
-
-const float earth_viewDistanceWithinAtmosphere_la(
-    const float y);
+    static const t_longf apparentMagnitudeLimit();
+};
 
 #endif // __EARTH_H__

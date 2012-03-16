@@ -31,6 +31,8 @@
 #ifndef __TIMEF_H__
 #define __TIMEF_H__
 
+#include "typedefs.h"
+
 #include <time.h>
 
 namespace osg
@@ -60,13 +62,13 @@ public:
 
 
     TimeF(
-        const long double time = 0.0
-    ,   const long double secondsPerCycle = 0.0);
+        const t_longf time = 0.0
+    ,   const t_longf secondsPerCycle = 0.0);
 
     TimeF(
         const time_t &time
     ,   const time_t &utcOffset // In seconds (UTC+01:00 is m_utcOffset = +3600).
-    ,   const long double secondsPerCycle = 0.0);
+    ,   const t_longf secondsPerCycle = 0.0);
 
     ~TimeF();
 
@@ -80,29 +82,29 @@ public:
     void reset(const bool forceUpdate = false); // Resets the time to initial value (secondsPerCycle remain unchanged).
     void stop (const bool forceUpdate = false); // Stops and resets the time.
 
-    inline const long double getSecondsPerCycle() const
+    inline const t_longf getSecondsPerCycle() const
     {
         return m_secondsPerCycle;
     }
 
-    const long double setSecondsPerCycle(const long double secondsPerCycle);
+    const t_longf setSecondsPerCycle(const t_longf secondsPerCycle);
 
 
     // Float time in the intervall [0;1]
-    inline const long double getf() const
+    inline const t_longf getf() const
     {
         return m_timef[1];
     }
 
-    const long double getf(const bool updateFirst);
+    const t_longf getf(const bool updateFirst);
 
     // Sets only time, date remains unchanged.
-    const long double setf(
-        long double time
+    const t_longf setf(
+        t_longf time
     ,   const bool forceUpdate = false);
 
     // Elapsed float time from initialized time.
-    const long double getNonModf(const bool updateFirst = false);
+    const t_longf getNonModf(const bool updateFirst = false);
 
     // Time in seconds from initial time.
     inline const time_t gett() const
@@ -123,8 +125,8 @@ public:
     const bool isRunning() const;
 
 protected:
-    static inline const long double secondsTof(const time_t &time);
-    static inline const time_t fToSeconds(const long double time);
+    static inline const t_longf secondsTof(const time_t &time);
+    static inline const time_t fToSeconds(const t_longf time);
 
     void initialize();
 
@@ -134,14 +136,14 @@ protected:
     time_t m_utcOffset;
 
     time_t m_time[3];       // [2] is for stop
-    long double m_timef[3]; // [2] is for stop
+    t_longf m_timef[3]; // [2] is for stop
 
-    long double m_offset;
+    t_longf m_offset;
 
     e_Mode m_mode;
-    long double m_lastModeChangeTime;
+    t_longf m_lastModeChangeTime;
 
-    long double m_secondsPerCycle;
+    t_longf m_secondsPerCycle;
 };
 
 #endif // __TIMEF_H__

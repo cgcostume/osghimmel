@@ -134,22 +134,22 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 
 void StarsGeode::createAndAddDrawable(const std::string &brightStarsFilePath)
 {
-    std::vector<s_BrightStar> bss;
-    brightstars_readFromFile(brightStarsFilePath.c_str(), bss);
+    BrightStars bs(brightStarsFilePath.c_str());
+    const BrightStars::t_stars &stars = bs.stars();
 
-    osg::ref_ptr<osg::Vec4Array> cAry = new osg::Vec4Array(bss.size());
-    osg::ref_ptr<osg::Vec4Array> vAry = new osg::Vec4Array(bss.size());
+    osg::ref_ptr<osg::Vec4Array> cAry = new osg::Vec4Array(stars.size());
+    osg::ref_ptr<osg::Vec4Array> vAry = new osg::Vec4Array(stars.size());
 
-    for(int i = 0; i < bss.size(); ++i)
+    for(int i = 0; i < stars.size(); ++i)
     {
         t_equf equ;
-        equ.right_ascension = _rightascd(bss[i].RA, 0, 0);
-        equ.declination = bss[i].DE;
+        equ.right_ascension = _rightascd(stars[i].RA, 0, 0);
+        equ.declination = stars[i].DE;
 
         osg::Vec3f vec = equ.toEuclidean();
         (*vAry)[i] = osg::Vec4(vec.x(), vec.y(), vec.z(), i);
 
-        (*cAry)[i] = osg::Vec4(bss[i].sRGB_R, bss[i].sRGB_G, bss[i].sRGB_B, bss[i].Vmag);
+        (*cAry)[i] = osg::Vec4(stars[i].sRGB_R, stars[i].sRGB_G, stars[i].sRGB_B, stars[i].Vmag);
     }
       
     osg::ref_ptr<osg::Geometry> g = new osg::Geometry;
@@ -386,7 +386,7 @@ const std::string StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
 
-    sprintf_s(apparentMagLimit, 8, "%.2f", static_cast<float>(earth_apparentMagnitudeLimit()));
+    sprintf_s(apparentMagLimit, 8, "%.2f", static_cast<float>(Earth::apparentMagnitudeLimit()));
 
     return glsl_version_150
 

@@ -27,11 +27,71 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "astronomy2.h"
 
-#pragma once
-#ifndef __TEST_ASTRONOMY_LA_H__
-#define __TEST_ASTRONOMY_LA_H__
+#include "earth2.h"
+#include "sun2.h"
+#include "moon2.h"
+#include "stars.h"
+#include "sideraltime.h"
 
-void test_astronomy_la();
 
-#endif // __TEST_ASTRONOMY_LA_H__
+Astronomy2::Astronomy2()
+{
+}
+
+
+const float Astronomy2::angularSunRadius(const t_julianDay t) const
+{
+    return Earth2::apparentAngularSunDiameter(t) * 0.5;
+}
+
+
+const float Astronomy2::angularMoonRadius(const t_julianDay t) const
+{
+    return Earth2::apparentAngularMoonDiameter(t) * 0.5;
+}
+
+
+const osg::Vec3 Astronomy2::moonPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    t_horf moon = Moon2::horizontalPosition(aTime, latitude, longitude);
+
+    osg::Vec3 moonv  = moon.toEuclidean();
+    moonv.normalize();
+
+    return moonv;
+}
+
+
+const osg::Vec3 Astronomy2::sunPosition(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    t_horf sun = Sun2::horizontalPosition(aTime, latitude, longitude);
+
+    osg::Vec3 sunv  = sun.toEuclidean();
+    sunv.normalize();
+
+    return sunv;
+}
+
+
+const osg::Matrix Astronomy2::equToLocalHorizonMatrix() const
+{
+
+    const t_aTime aTime(getATime());
+
+    const float s = siderealTime2(aTime);
+
+    const float la = getLatitude();
+    const float lo = getLongitude();
+
+    return osg::Matrix::scale                  (-1, 1, 1)
+        * osg::Matrix::rotate( _rad(la) - _PI_2, 1, 0, 0)
+        * osg::Matrix::rotate(-_rad(s + lo)    , 0, 0, 1);
+}

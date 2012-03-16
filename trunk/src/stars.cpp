@@ -33,7 +33,7 @@
 #include "sideraltime.h"
 
 
-const long double star_tempratureFromBV(const long double BtoV)
+const t_longf Stars::tempratureFromBV(const t_longf BtoV)
 {
     // NOTE: This is just an estimation!
 
@@ -47,7 +47,7 @@ const long double star_tempratureFromBV(const long double BtoV)
 
 // Planckian locus in CIE XYZ Approximation
 
-const osg::Vec2f star_planckianLocusInCieXYZ(const long double t)
+const osg::Vec2f Stars::planckianLocusInCieXYZ(const t_longf t)
 {
     // (http://en.wikipedia.org/wiki/Planckian_locus)
 
@@ -72,12 +72,12 @@ const osg::Vec2f star_planckianLocusInCieXYZ(const long double t)
 }
 
 
-const osg::Vec3f star_xyzTristimulus(const long double t)
+const osg::Vec3f Stars::xyzTristimulus(const t_longf t)
 {
-    return star_xyzTristimulus(star_planckianLocusInCieXYZ(t));
+    return xyzTristimulus(planckianLocusInCieXYZ(t));
 }
 
-const osg::Vec3f star_xyzTristimulus(const osg::Vec2f planckianLocus)
+const osg::Vec3f Stars::xyzTristimulus(const osg::Vec2f planckianLocus)
 {
     // (http://en.wikipedia.org/wiki/CIE_1931_color_space)
     // and (The Colors of the Stars - Olson - 1998)
@@ -91,17 +91,17 @@ const osg::Vec3f star_xyzTristimulus(const osg::Vec2f planckianLocus)
 }
 
 
-const osg::Vec3f star_sRgbColor(const long double t)
+const osg::Vec3f Stars::sRgbColor(const t_longf t)
 {
-    return star_sRgbColor(star_xyzTristimulus(t));
+    return sRgbColor(xyzTristimulus(t));
 }
 
-const osg::Vec3f star_sRgbColor(const osg::Vec2f planckianLocus)
+const osg::Vec3f Stars::sRgbColor(const osg::Vec2f planckianLocus)
 {
-    return star_sRgbColor(star_xyzTristimulus(planckianLocus));
+    return sRgbColor(xyzTristimulus(planckianLocus));
 }
 
-const osg::Vec3f star_sRgbColor(const osg::Vec3f xyzTristimulus)
+const osg::Vec3f Stars::sRgbColor(const osg::Vec3f xyzTristimulus)
 {
     // (The Colors of the Stars - Olson - 1998) - sRGB matrix - feel free to use other matrices here...
 
@@ -113,22 +113,22 @@ const osg::Vec3f star_sRgbColor(const osg::Vec3f xyzTristimulus)
 }
 
 
-const t_equd star_apparentPosition(
+const t_equd Stars::apparentPosition(
     const t_julianDay t
-,   const long double a2000
-,   const long double d2000
-,   const long double mpa2000
-,   const long double mpd2000)
+,   const t_longf a2000
+,   const t_longf d2000
+,   const t_longf mpa2000
+,   const t_longf mpd2000)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
     // (AA.20.1)
 
-    const long double m  = (_decimal(0, 0, 3.07496)) + (_decimal(0, 0, 0.00186)) * T * 100.0;
-    const long double n  = _arcsecs(_decimal(0, 0, 1.33621)) - _arcsecs(_decimal(0, 0, 0.00057)) * T * 100.0;
+    const t_longf m  = (_decimal(0, 0, 3.07496)) + (_decimal(0, 0, 0.00186)) * T * 100.0;
+    const t_longf n  = _arcsecs(_decimal(0, 0, 1.33621)) - _arcsecs(_decimal(0, 0, 0.00057)) * T * 100.0;
 
-    const long double Da = m + n * sin(_rad(mpa2000)) * tan(_rad(mpd2000));
-    const long double Db = n * cos(_rad(mpa2000));
+    const t_longf Da = m + n * sin(_rad(mpa2000)) * tan(_rad(mpd2000));
+    const t_longf Db = n * cos(_rad(mpa2000));
 
     t_equd equ;
 
@@ -138,19 +138,19 @@ const t_equd star_apparentPosition(
 }
 
 
-const t_hord star_horizontalPosition(
+const t_hord Stars::horizontalPosition(
     const t_aTime &aTime
-,   const long double latitude
-,   const long double longitude
-,   const long double a2000
-,   const long double d2000
-,   const long double mpa2000
-,   const long double mpd2000)
+,   const t_longf latitude
+,   const t_longf longitude
+,   const t_longf a2000
+,   const t_longf d2000
+,   const t_longf mpa2000
+,   const t_longf mpd2000)
 {
     t_julianDay t(jd(aTime));
     t_julianDay s(siderealTime(aTime));
 
-    t_equd equ = star_apparentPosition(t, a2000, d2000, mpa2000, mpd2000);
+    t_equd equ = apparentPosition(t, a2000, d2000, mpa2000, mpd2000);
 
     return equ.toHorizontal(s, latitude, longitude);
 }
