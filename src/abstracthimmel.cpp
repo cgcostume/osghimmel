@@ -147,7 +147,7 @@ void AbstractHimmel::update()
     if(!m_timef)
         return;
 
-    const long double elapsed(m_timef->getNonModf());
+    const t_longf elapsed(m_timef->getNonModf());
     if(elapsed != m_lastElapsed)
     {
         dirty();

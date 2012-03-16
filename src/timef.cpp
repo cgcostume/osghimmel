@@ -51,8 +51,8 @@ const long TimeF::utcOffset()
 
 
 TimeF::TimeF(
-    const long double time
-,   const long double secondsPerCycle)
+    const t_longf time
+,   const t_longf secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
 ,   m_mode(M_Pausing)
@@ -68,7 +68,7 @@ TimeF::TimeF(
 TimeF::TimeF(
     const time_t &time
 ,   const time_t &utcOffset
-,   const long double secondsPerCycle)
+,   const t_longf secondsPerCycle)
 :   m_timer(new osg::Timer())
 ,   m_secondsPerCycle(secondsPerCycle)
 ,   m_mode(M_Pausing)
@@ -102,17 +102,17 @@ TimeF::~TimeF()
 
 void TimeF::update()
 {
-    const long double elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
+    const t_longf elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
 
-    const long double elapsedTimef(m_secondsPerCycle > 0.f ? elapsed / m_secondsPerCycle : 0.f);
+    const t_longf elapsedTimef(m_secondsPerCycle > 0.f ? elapsed / m_secondsPerCycle : 0.f);
 
     m_timef[1] = _frac(m_timef[0] + elapsedTimef + m_offset);
 
-    m_time[1] = fToSeconds(elapsedTimef + m_offset) + static_cast<long double>(m_time[0]);
+    m_time[1] = fToSeconds(elapsedTimef + m_offset) + static_cast<t_longf>(m_time[0]);
 }
 
 
-const long double TimeF::getf(const bool updateFirst)
+const t_longf TimeF::getf(const bool updateFirst)
 {
     if(updateFirst)
         update();
@@ -120,8 +120,8 @@ const long double TimeF::getf(const bool updateFirst)
     return m_timef[1];
 }
 
-const long double TimeF::setf(
-    long double timef
+const t_longf TimeF::setf(
+    t_longf timef
 ,   const bool forceUpdate)
 {
     timef = _frac(timef);
@@ -156,7 +156,7 @@ const long double TimeF::setf(
 }
 
 
-const long double TimeF::getNonModf(const bool updateFirst)
+const t_longf TimeF::getNonModf(const bool updateFirst)
 {
     return secondsTof(gett(updateFirst));
 }
@@ -191,10 +191,10 @@ const time_t TimeF::sett(
 }
 
 
-const long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
+const t_longf TimeF::setSecondsPerCycle(const t_longf secondsPerCycle)
 {
     // intepret elapsed seconds within new cycle time
-    const long double elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
+    const t_longf elapsed(M_Running == m_mode ? m_timer->time_s() : m_lastModeChangeTime);
 
     if(m_secondsPerCycle > 0.f)
         m_offset += elapsed / m_secondsPerCycle;
@@ -208,13 +208,13 @@ const long double TimeF::setSecondsPerCycle(const long double secondsPerCycle)
 }
 
 
-inline const long double TimeF::secondsTof(const time_t &time)
+inline const t_longf TimeF::secondsTof(const time_t &time)
 {
-    return static_cast<long double>((time) / (60.0 * 60.0 * 24.0));
+    return static_cast<t_longf>((time) / (60.0 * 60.0 * 24.0));
 }
 
 
-inline const time_t TimeF::fToSeconds(const long double time)
+inline const time_t TimeF::fToSeconds(const t_longf time)
 {
     return static_cast<time_t>(time * 60.0 * 60.0 * 24.0 + 0.1);
 }
@@ -231,7 +231,7 @@ void TimeF::start(const bool forceUpdate)
     if(M_Pausing != m_mode)
         return;
 
-    const long double t(m_timer->time_s());
+    const t_longf t(m_timer->time_s());
 
     if(m_secondsPerCycle > 0.f)
         m_offset -= (t - m_lastModeChangeTime) / m_secondsPerCycle;

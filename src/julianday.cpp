@@ -56,7 +56,7 @@ const t_julianDay jd(t_aTime aTime)
 
     unsigned int s = aTime.second;
 
-    const long double h(_day(aTime.hour, aTime.minute, s));
+    const t_longf h(_day(aTime.hour, aTime.minute, s));
 
     signed int b = 0;
 
@@ -108,7 +108,7 @@ const t_aTime makeTime(
     julianDate += 0.5;
 
     const int z = _int(julianDate);
-    const long double f = _frac(julianDate);
+    const t_longf f = _frac(julianDate);
 
     long int a(z); // julian
     if(z >= 2299161) // gregorian
@@ -127,9 +127,9 @@ const t_aTime makeTime(
     const short month  = e < 14 ? e - 1 : e - 13;
     const short year   = month > 2 ? c - 4716 : c - 4715;
 
-    const long double h = f * 24.0;
-    const long double m = _frac(h) * 60.0;
-    const long double s = _frac(m) * 60.0001;
+    const t_longf h = f * 24.0;
+    const t_longf m = _frac(h) * 60.0;
+    const t_longf s = _frac(m) * 60.0001;
 
     const short hour   = _short(h);
     const short minute = _short(m);

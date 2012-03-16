@@ -41,17 +41,17 @@
 
 // P. Bretagnon, "Théorie du mouvement de l'ensamble des planètes. Solution VSOP82", 1982
 
-const long double earth_orbitEccentricity(const t_julianDay t)
+const t_longf Earth::orbitEccentricity(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double E = 0.01670862
+    const t_longf E = 0.01670862
         + T * (- 0.000042037
         + T * (- 0.0000001236
         + T * (+ 0.00000000004)));
 
     // (AA.24.4)
-    //const long double E = 0.016708617
+    //const t_longf E = 0.016708617
     //    + T * (- 0.000042037
     //    + T * (- 0.0000001236));
 
@@ -59,32 +59,32 @@ const long double earth_orbitEccentricity(const t_julianDay t)
 }
 
 
-const long double earth_apparentAngularSunDiameter(const t_julianDay t)
+const t_longf Earth::apparentAngularSunDiameter(const t_julianDay t)
 {
-    return _adiameter(sun_distance(t), sun_meanRadius());
+    return _adiameter(Sun::distance(t), Sun::meanRadius());
 }
 
 
-const long double earth_apparentAngularMoonDiameter(const t_julianDay t)
+const t_longf Earth::apparentAngularMoonDiameter(const t_julianDay t)
 {
-    return _adiameter(moon_distance(t), moon_meanRadius());
+    return _adiameter(Moon::distance(t), Moon::meanRadius());
 }
 
 
-const long double earth_longitudeNutation(const t_julianDay t)
+const t_longf Earth::longitudeNutation(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double sM = _rad(sun_meanAnomaly(t));
+    const t_longf sM = _rad(Sun::meanAnomaly(t));
 
-    const long double mM = _rad(moon_meanAnomaly(t));
-    const long double mD = _rad(moon_meanElongation(t));
-    const long double mF = _rad(moon_meanLatitude(t));    
-    const long double O  = _rad(moon_meanOrbitLongitude(t));
+    const t_longf mM = _rad(Moon::meanAnomaly(t));
+    const t_longf mD = _rad(Moon::meanElongation(t));
+    const t_longf mF = _rad(Moon::meanLatitude(t));    
+    const t_longf O  = _rad(Moon::meanOrbitLongitude(t));
    
     // (AA.21.A)
 
-    long double Dr = 0.0;
+    t_longf Dr = 0.0;
 
     Dr -= (17.1996 - 0.01742 * T) * sin(                                   + 1 * O);
     Dr -= ( 1.3187 - 0.00016 * T) * sin(-2 * mD                   + 2 * mF + 2 * O);
@@ -156,20 +156,20 @@ const long double earth_longitudeNutation(const t_julianDay t)
 
 // (AA.21)
 
-const long double earth_obliquityNutation(const t_julianDay t)
+const t_longf Earth::obliquityNutation(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double sM = _rad(sun_meanAnomaly(t));
+    const t_longf sM = _rad(Sun::meanAnomaly(t));
 
-    const long double mM = _rad(moon_meanAnomaly(t));
-    const long double mD = _rad(moon_meanElongation(t));
-    const long double mF = _rad(moon_meanLatitude(t));    
-    const long double O  = _rad(moon_meanOrbitLongitude(t));
+    const t_longf mM = _rad(Moon::meanAnomaly(t));
+    const t_longf mD = _rad(Moon::meanElongation(t));
+    const t_longf mF = _rad(Moon::meanLatitude(t));    
+    const t_longf O  = _rad(Moon::meanOrbitLongitude(t));
 
     // (AA.21.A)
 
-    long double De = 0.0;
+    t_longf De = 0.0;
 
     De += ( 9.2025 + 0.00089 * T) * cos(                                   + 1 * O);
     De += ( 0.5736 - 0.00031 * T) * cos(-2 * mD                   + 2 * mF + 2 * O);
@@ -214,22 +214,22 @@ const long double earth_obliquityNutation(const t_julianDay t)
 }
 
 
-const long double earth_trueObliquity(const t_julianDay t)
+const t_longf Earth::trueObliquity(const t_julianDay t)
 {
-    return earth_meanObliquity(t) + earth_obliquityNutation(t); // e
+    return meanObliquity(t) + obliquityNutation(t); // e
 }
 
 
 // Inclination of the Earth's axis of rotation. (AA.21.3)
 // By J. Laskar, "Astronomy and Astrophysics" 1986
 
-const long double earth_meanObliquity(const t_julianDay t)
+const t_longf Earth::meanObliquity(const t_julianDay t)
 {
     const t_julianDay U = jCenturiesSinceSE(t) * 0.01;
 
     assert(_abs(U) < 1.0);
 
-    const long double e0 = 0.0
+    const t_longf e0 = 0.0
         + U * (- 4680.93
         + U * (-    1.55
         + U * (+ 1999.25
@@ -247,29 +247,29 @@ const long double earth_meanObliquity(const t_julianDay t)
 
 // This is, if required, approximatelly refraction corrected...
 
-const long double earth_viewDistanceWithinAtmosphere(
-    const long double y
+const t_longf Earth::viewDistanceWithinAtmosphere(
+    const t_longf y
 ,   const bool refractionCorrected)
 {
-    const long double t = earth_atmosphereThickness();
-    const long double r = earth_meanRadius();
+    const t_longf t = atmosphereThickness();
+    const t_longf r = meanRadius();
 
     // This works, since dot product of [0, 1, 0] and 
     // eye with [x, y, z] gives y.
 
-    long double h = asin(y * (1.0 - 1.e-12)); // correction is required to 
-                       // gain t at y = 1.0 - fix for long double accuracy.
+    t_longf h = asin(y * (1.0 - 1.e-12)); // correction is required to 
+                       // gain t at y = 1.0 - fix for t_longf accuracy.
 
     if(refractionCorrected)
-        h += _rad(earth_atmosphericRefraction(_deg(asin(y))));
+        h += _rad(atmosphericRefraction(_deg(asin(y))));
 
-    const long double cosa = cos(h);
-    const long double rt = r + t;
+    const t_longf cosa = cos(h);
+    const t_longf rt = r + t;
 
     // Using law of sine for arbitrary triangle with two sides and one angle known.
     // Since the angle is (π/2 + a), cos is used instead of sine.
 
-    const long double distance = cos(h + asin(cosa * r / rt)) * rt / cosa;
+    const t_longf distance = cos(h + asin(cosa * r / rt)) * rt / cosa;
 
     return distance;
 }
@@ -278,16 +278,16 @@ const long double earth_viewDistanceWithinAtmosphere(
 // Effect of refraction for true altitudes (AA.15.4).
 // G.G. Bennet, "The Calculation of the Astronomical Refraction in marine Navigation", 1982
 
-const long double earth_atmosphericRefraction(const long double altitude)
+const t_longf Earth::atmosphericRefraction(const t_longf altitude)
 {
-    long double R = 1.02 / 
+    t_longf R = 1.02 / 
         tan(_rad(altitude + 10.3 / (altitude + 5.11))) + 0.0019279;
 
     return _decimal(0, R, 0); // (since R is in minutes)
 }
 
 
-const long double earth_meanRadius()
+const t_longf Earth::meanRadius()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
 
@@ -295,7 +295,7 @@ const long double earth_meanRadius()
 }
 
 
-const long double earth_atmosphereThickness()
+const t_longf Earth::atmosphereThickness()
 {
     // Thickness of atmosphere if the density were uniform.
     
@@ -305,115 +305,15 @@ const long double earth_atmosphereThickness()
 }
 
 
-const long double earth_atmosphereThicknessNonUniform()
+const t_longf Earth::atmosphereThicknessNonUniform()
 {
     // Thickness of atmosphere.
     return 85.0; // ~
 }
 
 
-const long double earth_apparentMagnitudeLimit()
+const t_longf Earth::apparentMagnitudeLimit()
 {
     // http://www.astronomynotes.com/starprop/s4.htm
     return 6.5;
-}
-
-
-// LOW ACCURACY
-
-const float earth_orbitEccentricity_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // Low Accuracy (http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html)
-    const float E = 0.01671022;
-
-    return _revd(E);
-}
-
-
-const float earth_apparentAngularSunDiameter_la(const t_julianDay t)
-{
-    return _adiameter(sun_distance_la(t), sun_meanRadius());
-}
-
-
-const float earth_apparentAngularMoonDiameter_la(const t_julianDay t)
-{
-    return _adiameter(moon_distance_la(t), moon_meanRadius());
-}
-
-
-const float earth_longitudeNutation_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    const float sM = _rad(sun_meanAnomaly_la(t));
-    const float mM = _rad(moon_meanAnomaly_la(t));
-    const float O  = _rad(moon_meanOrbitLongitude_la(t));
-
-    // (AA.21 p132)
-
-    const float r =
-        - _decimal(0, 0, 17.20) * sin(O)
-        - _decimal(0, 0,  1.32) * sin(2.0 * sM)
-        - _decimal(0, 0,  0.23) * sin(2.0 * mM)
-        + _decimal(0, 0,  0.21) * sin(2.0 * O );
-
-    return r;
-}
-
-
-const float earth_obliquityNutation_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    const float O  = _rad(moon_meanOrbitLongitude_la(t));
-    const float Ls = _rad(sun_meanAnomaly_la(t));
-    const float Lm = _rad(moon_meanAnomaly_la(t));
-
-    // (AA.21 p132)
-    const float e =
-        + _decimal(0, 0,  9.20) * cos(O)
-        + _decimal(0, 0,  0.57) * cos(2.0 * Ls)
-        + _decimal(0, 0,  0.10) * cos(2.0 * Lm)
-        - _decimal(0, 0,  0.09) * cos(2.0 * O );
-
-    return e;
-}
-
-
-const float earth_trueObliquity_la(const t_julianDay t)
-{
-    return earth_meanObliquity_la(t) + earth_obliquityNutation_la(t); // e
-}
-
-
-const float earth_meanObliquity_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const float e0 = _deg(0.409093 - 0.000227 * T);
-
-    // Low Accuracy (AA.21.2)
-    //const float e0 = _decimal(23, 26, 21.448) 
-    //    + T * (- _decimal(0, 0, 46.8150)
-    //    + T * (- _decimal(0, 0,  0.00059)
-    //    + T * (+ _decimal(0, 0,  0.001813))));
-
-    return e0;
-}
-
-
-// This is not refraction corrected.
-
-const float earth_viewDistanceWithinAtmosphere_la(
-    const float y)
-{
-    const float t = earth_atmosphereThickness();
-    const float r = earth_meanRadius();
-
-    // This works only for mean radius of earth.
-    return t * 1116.0 / ((y + 0.004) * 1.1116);
 }

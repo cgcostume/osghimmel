@@ -35,8 +35,8 @@ set(TESTS_SOURCES
     test.h
     test_astronomy.cpp
     test_astronomy.h
-    test_astronomy_la.cpp
-    test_astronomy_la.h
+    test_astronomy2.cpp
+    test_astronomy2.h
     test_math.cpp
     test_math.h
     test_strutils.cpp

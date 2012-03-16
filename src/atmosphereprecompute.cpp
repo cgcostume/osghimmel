@@ -457,8 +457,8 @@ void AtmospherePrecompute::setupLayerUniforms(
 ,   const int depth
 ,   const int layer)
 {
-    const double Rg = earth_meanRadius();
-    const double Rt = earth_meanRadius() + earth_atmosphereThicknessNonUniform();
+    const double Rg = Earth::meanRadius();
+    const double Rt = Earth::meanRadius() + Earth::atmosphereThicknessNonUniform();
 
     const double Rg2 = Rg * Rg;
     const double Rt2 = Rt * Rt;

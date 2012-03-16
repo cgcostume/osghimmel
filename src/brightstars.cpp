@@ -43,10 +43,21 @@ namespace
 }
 
 
-unsigned int brightstars_readFromFile(
-    const char *fileName
-,   std::vector<s_BrightStar> &brightStars)
+BrightStars::BrightStars(const char *fileName)
 {
+    fromFile(fileName);
+}
+
+
+BrightStars::~BrightStars()
+{
+}
+
+
+unsigned int BrightStars::fromFile(const char *fileName)
+{
+    m_stars.clear();
+
     // Retrieve file size.
 
     FILE *f;
@@ -75,15 +86,26 @@ unsigned int brightstars_readFromFile(
 
     instream.read((char*)&raw, sizeof(raw));
 
-    std::copy(raw, raw + numStars, std::back_inserter(brightStars));
+    std::copy(raw, raw + numStars, std::back_inserter(m_stars));
 
     return NUM_BRIGHTSTARS;
 }
 
 
-#ifdef BRIGHTSTARS_WRITETOFILE
+unsigned int BrightStars::toFile(const char *fileName) const
+{
+    std::ofstream outstream(fileName, std::ios::binary);
+
+    outstream.write((char*)&m_stars, sizeof(m_stars));
+    outstream.close();
+
+    return static_cast<unsigned int>(m_stars.size());
+}
+
+
+#ifdef BRIGHTSTARS_INCLUDE_CATALOGUE
  
-unsigned int brightstars_writeToFile(const char *fileName)
+BrightStars::BrightStars()
 {
     float raw[NUM_BRIGHTSTARS][8] = 
 
@@ -9184,26 +9206,19 @@ unsigned int brightstars_writeToFile(const char *fileName)
 
     };
 
-    s_BrightStar brightStars[NUM_BRIGHTSTARS];
+    m_stars.resize(NUM_BRIGHTSTARS);
 
     for(int i = 0; i < NUM_BRIGHTSTARS; ++i)
     {
-        brightStars[i].Vmag   = raw[i][0];
-        brightStars[i].RA     = raw[i][1];
-        brightStars[i].DE     = raw[i][2];
-        brightStars[i].pmRA   = raw[i][3];
-        brightStars[i].pmDE   = raw[i][4];
-        brightStars[i].sRGB_R = raw[i][5];
-        brightStars[i].sRGB_G = raw[i][6];
-        brightStars[i].sRGB_B = raw[i][7];
+        m_stars[i].Vmag   = raw[i][0];
+        m_stars[i].RA     = raw[i][1];
+        m_stars[i].DE     = raw[i][2];
+        m_stars[i].pmRA   = raw[i][3];
+        m_stars[i].pmDE   = raw[i][4];
+        m_stars[i].sRGB_R = raw[i][5];
+        m_stars[i].sRGB_G = raw[i][6];
+        m_stars[i].sRGB_B = raw[i][7];
     }
-
-    std::ofstream outstream(fileName, std::ios::binary);
-
-    outstream.write((char*)&brightStars, sizeof(brightStars));
-    outstream.close();
-
-    return NUM_BRIGHTSTARS;
 }
 
-#endif // BRIGHTSTARS_WRITETOFILE
+#endif // BRIGHTSTARS_INCLUDE_CATALOGUE

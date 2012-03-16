@@ -31,45 +31,32 @@
 #ifndef __SUN_H__
 #define __SUN_H__
 
+#include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-const long double sun_meanAnomaly(const t_julianDay t);
-const long double sun_meanLongitude(const t_julianDay t);
+class Sun
+{
+public:
 
-const long double sun_center(const t_julianDay t);
+    static const t_longf meanAnomaly(const t_julianDay t);
+    static const t_longf meanLongitude(const t_julianDay t);
 
-const long double sun_trueAnomaly(const t_julianDay t);
-const long double sun_trueLongitude(const t_julianDay t);
+    static const t_longf center(const t_julianDay t);
 
-const t_equd sun_apparentPosition(const t_julianDay t);
-const t_hord sun_horizontalPosition(
-    const t_aTime &aTime
-,   const long double latitude
-,   const long double longitude);
+    static const t_longf trueAnomaly(const t_julianDay t);
+    static const t_longf trueLongitude(const t_julianDay t);
 
-const long double sun_distance(const t_julianDay t);
+    static const t_equd apparentPosition(const t_julianDay t);
+    static const t_hord horizontalPosition(
+        const t_aTime &aTime
+    ,   const t_longf latitude
+    ,   const t_longf longitude);
 
-const long double sun_meanRadius();
+    static const t_longf distance(const t_julianDay t);
 
-
-// Low Accuracy
-
-const float sun_meanAnomaly_la(const t_julianDay t);
-const float sun_meanLongitude_la(const t_julianDay t);
-
-const float sun_center_la(const t_julianDay t);
-
-const float c(const t_julianDay t);
-const float sun_trueLongitude_la(const t_julianDay t);
-
-const t_equf sun_apparentPosition_la(const t_julianDay t);
-const t_horf sun_horizontalPosition_la(
-    const t_aTime &aTime
-,   const float latitude
-,   const float longitude);
-
-const float sun_distance_la(const t_julianDay t);
+    static const t_longf meanRadius();
+};
 
 #endif // __SUN_H__

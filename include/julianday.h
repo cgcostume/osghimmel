@@ -31,10 +31,12 @@
 #ifndef __JULIANDAY_H__
 #define __JULIANDAY_H__
 
+#include "typedefs.h"
 #include "atime.h"
 
 
-typedef long double t_julianDay;
+typedef t_longf t_julianDay;
+
 
 const t_julianDay jd(t_aTime aTime);
 

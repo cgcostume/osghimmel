@@ -31,37 +31,42 @@
 #ifndef __STARS_H__
 #define __STARS_H__
 
+#include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-const long double star_tempratureFromBV(const long double BtoV);
+class Stars
+{
+public:
 
-const osg::Vec2f star_planckianLocusInCieXYZ(const long double t /* temperature in K */);
+    static const t_longf tempratureFromBV(const t_longf BtoV);
 
-const osg::Vec3f star_xyzTristimulus(const long double t /* temperature in K */);
-const osg::Vec3f star_xyzTristimulus(const osg::Vec2f planckianLocus);
+    static const osg::Vec2f planckianLocusInCieXYZ(const t_longf t /* temperature in K */);
 
-const osg::Vec3f star_sRgbColor(const long double t /* temperature in K */);
-const osg::Vec3f star_sRgbColor(const osg::Vec2f planckianLocus);
-const osg::Vec3f star_sRgbColor(const osg::Vec3f xyzTrisimulus);
+    static const osg::Vec3f xyzTristimulus(const t_longf t /* temperature in K */);
+    static const osg::Vec3f xyzTristimulus(const osg::Vec2f planckianLocus);
+
+    static const osg::Vec3f sRgbColor(const t_longf t /* temperature in K */);
+    static const osg::Vec3f sRgbColor(const osg::Vec2f planckianLocus);
+    static const osg::Vec3f sRgbColor(const osg::Vec3f xyzTrisimulus);
 
 
-const t_equd star_apparentPosition(
-    const t_julianDay t
-,   const long double a2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
-,   const long double d2000   /* declination (DE) in decimal degrees, equinox J2000 */
-,   const long double mpa2000 /* annual proper motion in RA J2000 */
-,   const long double mpd2000 /* annual proper motion in DE J2000 */);
+    static const t_equd apparentPosition(
+        const t_julianDay t
+    ,   const t_longf a2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
+    ,   const t_longf d2000   /* declination (DE) in decimal degrees, equinox J2000 */
+    ,   const t_longf mpa2000 /* annual proper motion in RA J2000 */
+    ,   const t_longf mpd2000 /* annual proper motion in DE J2000 */);
 
-const t_hord star_horizontalPosition(
-    const t_aTime &aTime
-,   const long double latitude
-,   const long double longitude
-,   const long double a2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
-,   const long double d2000   /* declination (DE) in decimal degrees, equinox J2000 */
-,   const long double mpa2000 /* annual proper motion in RA J2000 */
-,   const long double mpd2000 /* annual proper motion in DE J2000 */);
-
+    static const t_hord horizontalPosition(
+        const t_aTime &aTime
+    ,   const t_longf latitude
+    ,   const t_longf longitude
+    ,   const t_longf a2000   /* right_ascension (RA) in decimal degrees, equinox J2000 */
+    ,   const t_longf d2000   /* declination (DE) in decimal degrees, equinox J2000 */
+    ,   const t_longf mpa2000 /* annual proper motion in RA J2000 */
+    ,   const t_longf mpd2000 /* annual proper motion in DE J2000 */);
+};
 
 #endif // __STARS_H__

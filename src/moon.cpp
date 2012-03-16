@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "moon.h"
+
 #include "sun.h"
 #include "earth.h"
 #include "sideraltime.h"
@@ -38,11 +39,11 @@
 
 // Mean longitude, referred to the mean equinox of the date (AA.45.1).
 
-const long double moon_meanLongitude(const t_julianDay t)
+const t_longf Moon::meanLongitude(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double L0 = 218.3164591 
+    const t_longf L0 = 218.3164591 
         + T * (+ 481267.88134236
         + T * (-      0.0013268
         + T * (+ 1.0 / 528841.0
@@ -54,11 +55,11 @@ const long double moon_meanLongitude(const t_julianDay t)
 
 // Mean elongation (AA.45.2).
 
-const long double moon_meanElongation(const t_julianDay t)
+const t_longf Moon::meanElongation(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double D = 297.8502042 
+    const t_longf D = 297.8502042 
         + T * (+ 445267.1115168
         + T * (-      0.0016300
         + T * (+ 1.0 / 545868.0
@@ -70,11 +71,11 @@ const long double moon_meanElongation(const t_julianDay t)
 
 // Mean anomaly (AA.45.4).
 
-const long double moon_meanAnomaly(const t_julianDay t)
+const t_longf Moon::meanAnomaly(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double M = 134.9634114 
+    const t_longf M = 134.9634114 
         + T * (+ 477198.8676313
         + T * (+      0.0089970
         + T * (+ 1.0 / 69699.0
@@ -86,11 +87,11 @@ const long double moon_meanAnomaly(const t_julianDay t)
 
 // Mean distance of the Moon from its ascending node (AA.45.5)
 
-const long double moon_meanLatitude(const t_julianDay t)
+const t_longf Moon::meanLatitude(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double F = 93.2720993 
+    const t_longf F = 93.2720993 
         + T * (+ 483202.0175273
         + T * (-      0.0034029
         + T * (- 1.0 / 3526000.0
@@ -100,11 +101,11 @@ const long double moon_meanLatitude(const t_julianDay t)
 }
 
 
-const long double moon_meanOrbitLongitude(const t_julianDay t)
+const t_longf Moon::meanOrbitLongitude(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double O = 125.04452 
+    const t_longf O = 125.04452 
         + T * (- 1934.136261
         + T * (+    0.0020708
         + T * (+ 1.0 / 450000.0)));
@@ -113,37 +114,37 @@ const long double moon_meanOrbitLongitude(const t_julianDay t)
 }
 
 
-const t_ecld moon_position(const t_julianDay t)
+const t_ecld Moon::position(const t_julianDay t)
 {
-    const long double sM = _rad(sun_meanAnomaly(t));
+    const t_longf sM = _rad(Sun::meanAnomaly(t));
 
-    const long double mL = _rad(moon_meanLongitude(t));
-    const long double mM = _rad(moon_meanAnomaly(t));
-    const long double mD = _rad(moon_meanElongation(t));
-    const long double mF = _rad(moon_meanLatitude(t));
+    const t_longf mL = _rad(meanLongitude(t));
+    const t_longf mM = _rad(meanAnomaly(t));
+    const t_longf mD = _rad(meanElongation(t));
+    const t_longf mF = _rad(meanLatitude(t));
 
     const t_julianDay T(jCenturiesSinceSE(t));
 
-    const long double A1 = _rad(_revd(119.75 +    131.849 * T));
-    const long double A2 = _rad(_revd( 53.09 + 479264.290 * T));
-    const long double A3 = _rad(_revd(313.45 + 481266.484 * T));
+    const t_longf A1 = _rad(_revd(119.75 +    131.849 * T));
+    const t_longf A2 = _rad(_revd( 53.09 + 479264.290 * T));
+    const t_longf A3 = _rad(_revd(313.45 + 481266.484 * T));
 
-    //const long double E = earth_orbitEccentricity(t);
+    //const t_longf E = earth_orbitEccentricity(t);
     // -> does not apply here - the eccentricity of the earths' orbit 
     // in 45.6 is about 60. times the earth_orbitEccentricity...?
 
     // Correction for eccentricity of the Earth's orbit around the sun.
 
     // (AA.45.6)
-    const long double E = 1.0  
+    const t_longf E = 1.0  
         + T * (- 0.002516 
         + T * (- 0.0000074));
 
-    const long double EE = E * E;
+    const t_longf EE = E * E;
 
     // (AA.45.A)
 
-    long double Sl = 0.0;
+    t_longf Sl = 0.0;
 
     Sl += 6288.774 * sin(                 + 1 * mM         );
     Sl += 1274.027 * sin( 2 * mD          - 1 * mM         );
@@ -207,7 +208,7 @@ const t_ecld moon_position(const t_julianDay t)
 
     // (AA.45.B)
 
-    long double Sb = 0.0;
+    t_longf Sb = 0.0;
 
     Sb += 5128.122 * sin(                          + 1 * mF);
     Sb +=  280.602 * sin(                 + 1 * mM + 1 * mF);
@@ -285,31 +286,31 @@ const t_ecld moon_position(const t_julianDay t)
 
     t_ecld ecl;
 
-    ecl.longitude = moon_meanLongitude(t) + Sl * 0.001 + earth_longitudeNutation(t);
+    ecl.longitude = meanLongitude(t) + Sl * 0.001 + Earth::longitudeNutation(t);
     ecl.latitude = Sb * 0.001;
 
     return ecl;
 }
 
 
-const t_equd moon_apparentPosition(const t_julianDay t)
+const t_equd Moon::apparentPosition(const t_julianDay t)
 {
-    t_ecld ecl = moon_position(t);
-    ecl.longitude += earth_longitudeNutation(t);
+    t_ecld ecl = position(t);
+    ecl.longitude += Earth::longitudeNutation(t);
 
-    return ecl.toEquatorial(earth_meanObliquity(t));
+    return ecl.toEquatorial(Earth::meanObliquity(t));
 }
 
 
-const t_hord moon_horizontalPosition(
+const t_hord Moon::horizontalPosition(
     const t_aTime &aTime
-,   const long double latitude
-,   const long double longitude)
+,   const t_longf latitude
+,   const t_longf longitude)
 {
     t_julianDay t(jd(aTime));
     t_julianDay s(siderealTime(aTime));
 
-    t_equd equ = moon_apparentPosition(t);
+    t_equd equ = apparentPosition(t);
 
     return equ.toHorizontal(s, latitude, longitude);
 }
@@ -318,14 +319,14 @@ const t_hord moon_horizontalPosition(
 // NOTE: This gives the distance from the center of the moon to the
 // center of the earth. 
 
-const long double moon_distance(const t_julianDay t)
+const t_longf Moon::distance(const t_julianDay t)
 {
-    const long double sM = _rad(sun_meanAnomaly(t));
+    const t_longf sM = _rad(Sun::meanAnomaly(t));
 
-    const long double mL = _rad(moon_meanLongitude(t));
-    const long double mM = _rad(moon_meanAnomaly(t));
-    const long double mD = _rad(moon_meanElongation(t));
-    const long double mF = _rad(moon_meanLatitude(t));
+    const t_longf mL = _rad(meanLongitude(t));
+    const t_longf mM = _rad(meanAnomaly(t));
+    const t_longf mD = _rad(meanElongation(t));
+    const t_longf mF = _rad(meanLatitude(t));
 
     const t_julianDay T(jCenturiesSinceSE(t));
 
@@ -333,15 +334,15 @@ const long double moon_distance(const t_julianDay t)
 
     // (AA.45.6)
 
-    const long double E = 1.0  
+    const t_longf E = 1.0  
         + T * (- 0.002516 
         + T * (- 0.0000074));
 
-    const long double EE = E * E;
+    const t_longf EE = E * E;
 
     // (AA.45.A)
 
-    long double Sr = 0.0;
+    t_longf Sr = 0.0;
 
     Sr -= 20905.355 * cos(                 + 1 * mM         );
     Sr -=  3699.111 * cos( 2 * mD          - 1 * mM         );
@@ -390,191 +391,15 @@ const long double moon_distance(const t_julianDay t)
     Sr +=     1.165 * cos(        + 2 * sM + 1 * mM         ) * EE;
     Sr +=     8.752 * cos( 2 * mD          - 1 * mM - 2 * mF);
 
-    const long double D = 385000.56 + Sr; // in kilometers
+    const t_longf D = 385000.56 + Sr; // in kilometers
 
     return D;
 }
 
 
-const long double moon_meanRadius()
+const t_longf Moon::meanRadius()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 
     return 1737.1; // in kilometers
-}
-
-
-// LOW ACCURACY
-
-
-const float moon_meanLongitude_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const float L0 = _deg(3.8104 + 8399.7091 * T);
-
-    // Low Accuracy (AA.21 p132)
-    //const float L0 = 218.3165
-    //    + T * (+  481267.8813);
-
-    // Low Accuracy (http://www.jgiesen.de/moonmotion/index.html)
-    //const float L0 = 218.31617f 
-    //    + T * (+ 481267.88088
-    //    + T * (-      0.00112778));
-
-    return _revd(L0);
-}
-
-
-const float moon_meanElongation_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const float D = _deg(5.1985 + 7771.3772 * T);
-
-    return _revd(D);
-}
-
-
-const float moon_meanAnomaly_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const float M = _deg(2.3554 + 8328.6911 * T);
-
-    // Low Accuracy (AA.21...)
-    //const float M = 134.96298 
-    //    + T * (+ 477198.867398
-    //    + T * (+      0.0086972
-    //    + T * (+ 1.0 / 56250.0)));
-
-    // Low Accuracy (http://www.jgiesen.de/moonmotion/index.html)
-    //const float M = 134.96292 
-    //    + T * (+ 477198.86753
-    //    + T * (+      0.00923611));
-
-    return _revd(M);
-}
-
-
-const float moon_meanLatitude_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-    const float F = _deg(1.6280 + 8433.4663 * T);
-
-    return _revd(F);
-}
-
-
-const float moon_meanOrbitLongitude_la(const t_julianDay t)
-{
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // (AA p152)
-    const float O = 125.04
-        + T * (- 1934.136);
-
-    return _revd(O);
-}
-
-
-const t_eclf moon_position_la(const t_julianDay t)
-{
-    const float sM = _rad(sun_meanAnomaly_la(t));
-
-    const float mL = _rad(moon_meanLongitude_la(t));
-    const float mM = _rad(moon_meanAnomaly_la(t));
-    const float mD = _rad(moon_meanElongation_la(t));
-    const float mF = _rad(moon_meanLatitude_la(t));
-
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-
-    float Sl = mL;
-
-    Sl += 0.1098 * sin(                 + 1 * mM         );
-    Sl += 0.0222 * sin( 2 * mD          - 1 * mM         );
-    Sl += 0.0115 * sin( 2 * mD                           );
-    Sl += 0.0037 * sin(                 + 2 * mM         );
-    Sl -= 0.0032 * sin(        + 1 * sM                  );
-    Sl -= 0.0020 * sin(                          + 2 * mF);
-    Sl += 0.0010 * sin( 2 * mD          - 2 * mM         );
-    Sl += 0.0010 * sin( 2 * mD - 1 * sM - 1 * mM         );
-    Sl += 0.0009 * sin( 2 * mD          + 1 * mM         );
-    Sl += 0.0008 * sin( 2 * mD - 1 * sM                  );
-    Sl -= 0.0007 * sin(        + 1 * sM - 1 * mM         );
-    Sl -= 0.0006 * sin( 1 * mD                           );
-    Sl -= 0.0005 * sin(        + 1 * sM + 1 * mM         );
-
-    float Sb = 0.0;
-
-    Sb += 0.0895 * sin(                          + 1 * mF);
-    Sb += 0.0049 * sin(                 + 1 * mM + 1 * mF);
-    Sb += 0.0048 * sin(                 + 1 * mM - 1 * mF);
-    Sb += 0.0030 * sin( 2 * mD                   - 1 * mF);
-    Sb += 0.0010 * sin( 2 * mD          - 1 * mM + 1 * mF);
-    Sb += 0.0008 * sin( 2 * mD          - 1 * mM - 1 * mF);
-    Sb += 0.0006 * sin( 2 * mD                   + 1 * mF);
-
-    t_eclf ecl;
-
-    ecl.longitude = _deg(Sl);
-    ecl.latitude = _deg(Sb);
-
-    return ecl;
-}
-
-
-const t_equf moon_apparentPosition_la(const t_julianDay t)
-{
-    t_eclf ecl = moon_position_la(t);
-
-    return ecl.toEquatorial(earth_trueObliquity_la(t));
-}
-
-
-const t_horf moon_horizontalPosition_la(
-    const t_aTime &aTime
-,   const float latitude
-,   const float longitude)
-{
-    t_julianDay t(jd(aTime));
-    t_julianDay s(siderealTime(aTime));
-
-    t_equf equ = moon_apparentPosition_la(t);
-
-    return equ.toHorizontal(s, latitude, longitude);
-}
-
-
-// NOTE: This gives the distance from the center of the moon to the
-// center of the earth. 
-
-const float moon_distance_la(const t_julianDay t)
-{
-    const float sM = _rad(sun_meanAnomaly_la(t));
-
-    const float mM = _rad(moon_meanAnomaly_la(t));
-    const float mD = _rad(moon_meanElongation_la(t));
-
-    const t_julianDay T(jCenturiesSinceSE(t));
-
-    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
-
-    float Sr = 0.016593;
-
-    Sr += 0.000904 * cos(                 + 1 * mM);
-    Sr += 0.000166 * cos( 2 * mD          - 1 * mM);
-    Sr += 0.000137 * cos( 2 * mD                  );
-    Sr += 0.000049 * cos(                 + 2 * mM);
-    Sr += 0.000015 * cos( 2 * mD          + 1 * mM);
-    Sr += 0.000009 * cos( 2 * mD - 1 * sM         );
-
-    return earth_meanRadius() / Sr;
 }

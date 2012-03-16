@@ -35,7 +35,7 @@
 class EnvMapCallback : public osg::NodeCallback
 {
 public:
-    EnvMapCallback(HimmelEnvMap::t_Cameras &cameras)
+    EnvMapCallback(HimmelEnvMap::t_cameras &cameras)
     :   m_cameras(cameras)
     {
     }
@@ -76,7 +76,7 @@ protected:
     }
 
 protected:
-    HimmelEnvMap::t_Cameras m_cameras;
+    HimmelEnvMap::t_cameras m_cameras;
 };
 
 
