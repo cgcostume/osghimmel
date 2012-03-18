@@ -28,19 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_NORMAL_HPP__
-#define __GLSL_BLEND_NORMAL_HPP__
+#ifndef __GLSL_BLEND_NORMAL_H__
+#define __GLSL_BLEND_NORMAL_H__
 
-#include "compose.hpp"
+#include <string>
 
-namespace 
-{
-    // Use glsl mix if alpha is 1.0, since it is much faster due to 'collapsed' math.
+extern const std::string glsl_blendNormal;
+extern const std::string glsl_blendNormalExt;
 
-    const std::string glsl_blendNormal(
-        IMP_COMPOSE(normal, s));
-    const std::string glsl_blendNormalExt(
-        IMP_COMPOSE_SRC_ALPHA(normal, s));
-}
-
-#endif // __GLSL_BLEND_NORMAL_HPP__
+#endif // __GLSL_BLEND_NORMAL_H__

@@ -201,7 +201,7 @@ const float Noise::noise2(
 
 
 
-#include "shaderfragment/noise.hpp"
+#include "shaderfragment/noise.h"
 
 
 const std::string Noise::glsl_fade()

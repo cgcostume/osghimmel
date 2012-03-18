@@ -28,17 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_LINEARDODGE_HPP__
-#define __GLSL_BLEND_LINEARDODGE_HPP__
+#ifndef __GLSL_BLEND_LINEARDODGE_H__
+#define __GLSL_BLEND_LINEARDODGE_H__
 
-#include "compose.hpp"
+#include <string>
 
-namespace
-{
-    const std::string glsl_blendLinearDodge(
-        IMP_COMPOSE(lineardodge, b + s));
-    const std::string glsl_blendLinearDodgeExt(
-        IMP_COMPOSE_SRC_ALPHA(lineardodge, b + s));
-}
+extern const std::string glsl_blendLinearDodge;
+extern const std::string glsl_blendLinearDodgeExt;
 
-#endif // __GLSL_BLEND_LINEARDODGE_HPP__
+#endif // __GLSL_BLEND_LINEARDODGE_H__

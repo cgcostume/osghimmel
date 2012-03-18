@@ -28,17 +28,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_DIFFERENCE_HPP__
-#define __GLSL_BLEND_DIFFERENCE_HPP__
+#ifndef __GLSL_FAKESUN_H__
+#define __GLSL_FAKESUN_H__
 
-#include "compose.hpp"
+#include <string>
 
-namespace
-{
-    const std::string glsl_blendDifference(
-        IMP_COMPOSE(difference, fabs(b - s)));
-    const std::string glsl_blendDifferenceExt(
-        IMP_COMPOSE_SRC_ALPHA(difference, fabs(b - s)));
-}
+extern const std::string glsl_fakesun; // vec4 fakeSun(vec3 eye, vec3 sun, vec4 coeffs, float scale, float alpha)
 
-#endif // __GLSL_BLEND_DIFFERENCE_HPP__
+#endif // __GLSL_FAKESUN_H__

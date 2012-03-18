@@ -33,7 +33,6 @@
 #include "earth.h"
 #include "timef.h"
 #include "astronomy.h"
-#include "astronomy2.h"
 #include "himmelquad.h"
 #include "atmospheregeode.h"
 #include "moongeode.h"
@@ -54,13 +53,14 @@ Himmel *Himmel::create()
     // e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
 
     return new Himmel(
-        new MilkyWayGeode("resources/milkyway?.png")
-    ,   new MoonGeode("resources/moon?.png")
+        NULL // new MilkyWayGeode("resources/milkyway?.png")
+    ,   NULL // new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
-    ,   new AtmosphereGeode()
-    ,   new CloudLayerHighGeode()
+    ,   NULL // new AtmosphereGeode()
+    ,   NULL // new CloudLayerHighGeode()
     ,   new Astronomy());
 }
+
 
 Himmel::Himmel(
     MilkyWayGeode *milkyWay

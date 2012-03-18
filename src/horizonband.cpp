@@ -52,7 +52,7 @@ void HorizonBand::initialize(osg::StateSet *stateSet)
         osg::Vec3(defaultScale(), defaultWidth(), defaultOffset()));
 
     u_color       = new osg::Uniform("hbandColor", defaultColor());
-    u_bottomColor = new osg::Uniform("hbandBottomColor", defaultBottomColor());
+    u_bottomColor = new osg::Uniform("hbandBackground", defaultBottomColor());
 
     stateSet->addUniform(u_params);
     stateSet->addUniform(u_color);

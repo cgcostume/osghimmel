@@ -27,75 +27,39 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "pseudo_rand.h"
 
-#pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
+#include "pragma_once.h"
 
-#include "abstractmappedhimmel.h"
+// The generated pseudo random number is good for frame-to-frame 
+// coherent dithering.
 
-#include <map>
+// Two static, pseudo random signals, one moving vertically and one
+// horizontally over time, are overlapped. If frame-to-frame coherence
+// is required, the seed should be based on time or frame count.
 
-class HorizonBand;
+// The algorithm was inspired and partially relies on techniques 
+// described in: http://zfx.info/viewtopic.php?f=11&t=8#p19
+// and http://www.geeks3d.com/20100831/shader-library-noise-and-pseudo-random-number-generator-in-glsl/
 
-namespace osg
-{
-    class Texture2D;
-}
+// The exact value of most of the used constant values where gathered 
+// by trial and error and benchmarked by subjective perception.
 
+const std::string glsl_pseudo_rand
+(
+    PRAGMA_ONCE(pseudo_rand,
 
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
-
-class PolarMappedHimmel : public AbstractMappedHimmel
-{
-public:
-
-    enum e_MappingMode 
-    {
-        MM_Full
-    ,   MM_Half
-    };
-
-public:
-
-    PolarMappedHimmel(
-        const e_MappingMode &mappingMode = MM_Half
-    ,   const bool hBand = false
-    ,   const bool fakeSun = false);
-
-    virtual ~PolarMappedHimmel();
-
-    // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
-
-    inline const e_MappingMode getMappingMode() const
-    {
-        return m_mappingMode;
-    }
-
-    // Use HorizonBand for horizon blending.
-    HorizonBand *hBand();
-
-protected:
-
-    // AbstractMappedHimmel interface
-
-    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
-
-
-    // AbstractHimmel interface
-
-    virtual const std::string getFragmentShaderSource();
-
-protected:
-
-    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
-    t_tex2DById m_tex2DsById;
-
-    e_MappingMode m_mappingMode;
-
-    HorizonBand *m_hBand;
-};
-
-#endif // __SPHEREMAPPEDHIMMEL_H__
+    "float pseudo_rand(\n"
+    "    const vec2 i\n"
+    ",   const int seed)\n"
+    "{\n"
+    "    int i1 = int(i.x + i.y * 1733);\n"
+    "    i1 = (i1 << 7) ^ i1 + seed;\n"  // seed
+    "\n"
+    "    int i2 = int(i.y + i.x * 1103);\n"
+    "    i2 = (i2 << 7) ^ i2 + seed;\n"  // seed
+    "\n"
+    "    i1 ^= i2;\n"
+    "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
+    "}")
+);

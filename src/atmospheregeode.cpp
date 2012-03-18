@@ -321,13 +321,13 @@ void AtmosphereGeode::setPhaseG(const float g)
 }
 
 
-#include "shaderfragment/version.hpp"
+#include "shaderfragment/version.h"
 
 // VertexShader
 
-#include "shaderfragment/quadretrieveray.hpp"
-#include "shaderfragment/quadtransform.hpp"
-#include "shaderfragment/bruneton_common.hpp"
+#include "shaderfragment/quadretrieveray.h"
+#include "shaderfragment/quadtransform.h"
+#include "shaderfragment/bruneton_common.h"
 
 const std::string AtmosphereGeode::getVertexShaderSource()
 {
@@ -349,10 +349,10 @@ const std::string AtmosphereGeode::getVertexShaderSource()
 
 // FragmentShader
 
-#include "shaderfragment/common.hpp"
+#include "shaderfragment/common.h"
 
-#include "shaderfragment/pseudo_rand.hpp"
-#include "shaderfragment/dither.hpp"
+#include "shaderfragment/pseudo_rand.h"
+#include "shaderfragment/dither.h"
 
 
 const std::string AtmosphereGeode::getFragmentShaderSource()

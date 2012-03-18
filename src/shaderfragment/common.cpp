@@ -27,75 +27,41 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "common.h"
 
-#pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
-
-#include "abstractmappedhimmel.h"
-
-#include <map>
-
-class HorizonBand;
-
-namespace osg
-{
-    class Texture2D;
-}
+#include "pragma_once.h"
 
 
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
-
-class PolarMappedHimmel : public AbstractMappedHimmel
-{
-public:
-
-    enum e_MappingMode 
-    {
-        MM_Full
-    ,   MM_Half
-    };
-
-public:
-
-    PolarMappedHimmel(
-        const e_MappingMode &mappingMode = MM_Half
-    ,   const bool hBand = false
-    ,   const bool fakeSun = false);
-
-    virtual ~PolarMappedHimmel();
-
-    // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
-
-    inline const e_MappingMode getMappingMode() const
-    {
-        return m_mappingMode;
-    }
-
-    // Use HorizonBand for horizon blending.
-    HorizonBand *hBand();
-
-protected:
-
-    // AbstractMappedHimmel interface
-
-    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
+const std::string glsl_cmn_uniform
+(
+    PRAGMA_ONCE(cmn,
+    
+    "uniform vec4 cmn;")
+);
 
 
-    // AbstractHimmel interface
+// Returns unit intersection distance with the ground. Use for 
+// e.g. horizon related discarding of elements
 
-    virtual const std::string getFragmentShaderSource();
+const std::string glsl_horizon 
+(
+    glsl_cmn_uniform +
 
-protected:
+    PRAGMA_ONCE(belowHorizon,
 
-    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
-    t_tex2DById m_tex2DsById;
-
-    e_MappingMode m_mappingMode;
-
-    HorizonBand *m_hBand;
-};
-
-#endif // __SPHEREMAPPEDHIMMEL_H__
+    "float tAtm(vec3 ray)\n"
+    "{\n"
+    "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
+    "    vec3 v = normalize(ray);\n"
+    "\n"
+    "    float r = length(x);\n"
+    "    float mu = dot(x, v) / r;\n"
+    "\n"
+    "    return r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);\n"
+    "}\n"
+    "\n"
+    "bool belowHorizon(vec3 ray)\n"
+    "{\n"
+    "   return tAtm(ray) < 0.0;\n"
+    "}")
+);

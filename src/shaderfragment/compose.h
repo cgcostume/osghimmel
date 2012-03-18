@@ -28,8 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_COMPOSE_HPP__
-#define __GLSL_COMPOSE_HPP__
+#ifndef __GLSL_COMPOSE_H__
+#define __GLSL_COMPOSE_H__
 
 // The general composition of two colors is specified in these two macros:
 // The first (default) uses the alpha value of src, the other allows over-
@@ -57,7 +57,7 @@ namespace
         "    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
         "\n"                                                              \
         "    return vec4(r, ra);\n"                                       \
-        "}\n\n"
+        "}"
 
 
     #define IMP_COMPOSE_SRC_ALPHA(MODE, COMPOSE)                          \
@@ -77,7 +77,7 @@ namespace
         "    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
         "\n"                                                              \
         "    return vec4(r, ra);\n"                                       \
-        "}\n\n"
+        "}"
 }
 
-#endif // __GLSL_COMPOSE_HPP__
+#endif // __GLSL_COMPOSE_H__

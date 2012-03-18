@@ -87,7 +87,6 @@ StarsGeode::~StarsGeode()
 };
 
 
-
 void StarsGeode::update(const Himmel &himmel)
 {
     const float fov = himmel.getCameraFovHint();
@@ -140,6 +139,8 @@ void StarsGeode::createAndAddDrawable(const std::string &brightStarsFilePath)
     osg::ref_ptr<osg::Vec4Array> cAry = new osg::Vec4Array(stars.size());
     osg::ref_ptr<osg::Vec4Array> vAry = new osg::Vec4Array(stars.size());
 
+    const int s = stars.size();
+
     for(int i = 0; i < stars.size(); ++i)
     {
         t_equf equ;
@@ -189,6 +190,8 @@ void StarsGeode::setupShader(osg::StateSet* stateSet)
 
     stateSet->setAttributeAndModes(m_program, osg::StateAttribute::ON);
 }
+
+
 
 
 #ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
@@ -379,8 +382,8 @@ const float StarsGeode::defaultColorRatio()
 
 // VertexShader
 
-#include "shaderfragment/version.hpp"
-#include "shaderfragment/common.hpp"
+#include "shaderfragment/version.h"
+#include "shaderfragment/common.h"
 
 const std::string StarsGeode::getVertexShaderSource()
 {
@@ -450,7 +453,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    m_color = vec4(c, scaledB - w1) * b;\n"
-        "}\n\n";
+        "}";
 }
 
 
@@ -505,7 +508,7 @@ const std::string StarsGeode::getGeometryShaderSource()
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(+u +v) * k, 1.0);\n"
         "    gl_TexCoord[0].xy = vec2( 1.0,  1.0);\n"
         "    EmitVertex();\n"
-        "}\n\n";
+        "}";
 }
 
 
@@ -541,5 +544,5 @@ const std::string StarsGeode::getFragmentShaderSource()
         "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
         "\n"
         "    gl_FragColor = m_c * (t + g);\n"
-        "}\n\n";
+        "}";
 }

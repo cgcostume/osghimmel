@@ -28,34 +28,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_DITHER_HPP__
-#define __GLSL_DITHER_HPP__
+#ifndef __GLSL_DITHER_H__
+#define __GLSL_DITHER_H__
 
-// requires: pseudo_rand
+#include <string>
 
-// The dithering mainly relies on a frame-to-frame coherent pseudo 
-// random number, described in pseudo_rand.fsf. The rand value used 
-// non-uniformly for all 4 color channels and modulated by some 
-// primes. The 0.0001 weight is good for default appliance (change 
-// it as required). Depends on strength of color banding and the 
-// displays color scheme and settings. 
-// The exact value of most of the used constant values where gathered 
-// by trial and error and benchmarked by subjective perception.
+extern const std::string glsl_dither;
 
-namespace 
-{
-    const std::string glsl_dither
-    (
-        "vec4 dither(float multiplier, int seed)\n"
-        "{\n"
-        "    float r = pseudo_rand(gl_FragCoord.xy, seed);\n"
-        "    uvec4 v = uint(r * 3571) * uvec4(67, 89, 23, 71);\n"
-        "\n"
-        // A ditheringMultiplier of 1 will add frame to frame coherent noise for each pixel of about +-1.
-        // The average brightness of the rendering will roughly remain unchanged.
-        "    return (vec4(v % uvec4(853)) - 241 - multiplier * 1.41) * 0.00001 * multiplier;\n"
-        "}\n\n"
-    );
-}
-
-#endif // __GLSL_DITHER_HPP__
+#endif // __GLSL_DITHER_H__

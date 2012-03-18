@@ -331,7 +331,7 @@ const float MoonGeode::defaultEarthShineIntensity()
 
 // VertexShader
 
-#include "shaderfragment/version.hpp"
+#include "shaderfragment/version.h"
 
 const std::string MoonGeode::getVertexShaderSource()
 {
@@ -367,7 +367,7 @@ const std::string MoonGeode::getVertexShaderSource()
 
 // FragmentShader
 
-#include "shaderfragment/common.hpp"
+#include "shaderfragment/common.h"
 
 const std::string MoonGeode::getFragmentShaderSource()
 {

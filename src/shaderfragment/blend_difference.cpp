@@ -27,44 +27,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __GLSL_PSEUDO_RAND_HPP__
-#define __GLSL_PSEUDO_RAND_HPP__
 
-// requires: uniform int osg_FrameNumber; 
-// TODO: osg_FrameNumber throws error... use rand seed...
+#include "blend_difference.h"
 
-// The generated pseudo random number is good for frame-to-frame 
-// coherent dithering.
+#include "compose.h"
+#include "pragma_once.h"
 
-// Two static, pseudo random signals, one moving vertically and one
-// horizontally over time, are overlapped. If frame-to-frame coherence
-// is not required, osg_FrameNumber can be changed to any random seed,
-// given via an uniform.
 
-// The algorithm was inspired and partially relies on techniques 
-// described in: http://zfx.info/viewtopic.php?f=11&t=8#p19
-// and http://www.geeks3d.com/20100831/shader-library-noise-and-pseudo-random-number-generator-in-glsl/
+const std::string glsl_blendDifference(
+    PRAGMA_ONCE(blendDifference, IMP_COMPOSE(difference, fabs(b - s))));
 
-// The exact value of most of the used constant values where gathered 
-// by trial and error and benchmarked by subjective perception.
-
-namespace 
-{
-    const std::string glsl_pseudo_rand
-    (
-        "float pseudo_rand(vec2 s, int seed)\n"
-        "{\n"
-        "    int i1 = int(s.x + s.y * 1733);\n"
-        "    i1 = (i1 << 7) ^ i1 + seed;\n"  // seed
-        "\n"
-        "    int i2 = int(s.y + s.x * 1103);\n"
-        "    i2 = (i2 << 7) ^ i2 + seed;\n"  // seed
-        "\n"
-        "    i1 ^= i2;\n"
-        "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
-        "}\n\n"
-    );
-}
-
-#endif // __GLSL_PSEUDO_RAND_HPP__
+const std::string glsl_blendDifferenceExt(
+    PRAGMA_ONCE(blendDifferenceExt, IMP_COMPOSE_SRC_ALPHA(difference, fabs(b - s))));

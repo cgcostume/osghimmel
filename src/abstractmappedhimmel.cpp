@@ -71,7 +71,7 @@ AbstractMappedHimmel::AbstractMappedHimmel(
 ,   m_razDirection(RD_NorthWestSouthEast)
 ,   m_razTimef(new TimeF())
 
-,   m_withFakeSun(fakeSun)
+,   m_fakeSun(fakeSun)
 {
     osg::StateSet* stateSet = getOrCreateStateSet();
 
@@ -126,15 +126,15 @@ void AbstractMappedHimmel::update()
 
     if(u_sun)
     {
-        //t_equd equ;
-        //equ.declination = _deg(sin(t * _PI2)) + 40;
-        //equ.right_ascension = 70;//_deg(cos(t * _PI2 - _PI));
+        t_equd equ;
+        equ.declination = _deg(sin(t * _PI2)) + 40;
+        equ.right_ascension = 70;//_deg(cos(t * _PI2 - _PI));
 
         //t_hord hor = equ.toHorizontal(0, 80.0, 0);
-        t_hord hor; 
-        hor.altitude = 20;
-        hor.azimuth = 45 + (t * 180);
-        u_sun->set(hor.toEuclidean());
+        //t_hord hor; 
+        //hor.altitude = 20;
+        //hor.azimuth = 45 + (t * 180);
+        u_sun->set(equ.toEuclidean());
     }
 
     // Update two texture status for arbitrary blending (e.g. normal).
@@ -202,7 +202,7 @@ void AbstractMappedHimmel::setupUniforms(osg::StateSet *stateSet)
     stateSet->addUniform(u_back);
     stateSet->addUniform(u_src);
 
-    if(m_withFakeSun)
+    if(m_fakeSun)
     {
         u_razInverse = new osg::Uniform("razInverse", osg::Matrix());
 
@@ -349,9 +349,10 @@ const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
 
 // VertexShader
 
-#include "shaderfragment/version.hpp"
-#include "shaderfragment/quadretrieveray.hpp"
-#include "shaderfragment/quadtransform.hpp"
+#include "shaderfragment/quadretrieveray.h"
+#include "shaderfragment/quadtransform.h"
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
 
 const std::string AbstractMappedHimmel::getVertexShaderSource()
 {
@@ -360,17 +361,19 @@ const std::string AbstractMappedHimmel::getVertexShaderSource()
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
     +
+        PRAGMA_ONCE(main,
+
         "uniform mat4 razInverse;\n"
         "\n"
         "out vec4 m_ray;\n"
-        "out vec4 m_rayFixed;\n"
+        "out vec4 m_razInvariant;\n"
         "\n"
         "void main(void)\n"
         "{\n"
         "    m_ray = quadRetrieveRay();\n"
-        "    m_rayFixed = m_ray * razInverse;\n"
+        "    m_razInvariant = m_ray * razInverse;\n"
         "\n"
         "    quadTransform();\n"
-        "}\n\n";
+        "}");
 }
 

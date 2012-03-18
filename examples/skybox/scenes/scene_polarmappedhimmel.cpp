@@ -56,7 +56,7 @@ namespace
     const QString PROPERTY_HBAND_WIDTH (TR("Width"));
     const QString PROPERTY_HBAND_OFFSET(TR("Offset"));
     const QString PROPERTY_HBAND_COLOR (TR("Color"));
-    const QString PROPERTY_BOTTOM_COLOR(TR("Bottom Color"));
+    const QString PROPERTY_HBAND_BACKGROUND(TR("Bottom Color"));
 }
 
 Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
@@ -113,7 +113,7 @@ void Scene_PolarMappedHimmel::registerProperties()
     createProperty(*hbandGroup, PROPERTY_HBAND_WIDTH, HorizonBand::defaultWidth(), 0.0, 1.0, 0.01);
     createProperty(*hbandGroup, PROPERTY_HBAND_OFFSET, HorizonBand::defaultOffset(), -1.0, 1.0, 0.01);
     createProperty(*hbandGroup, PROPERTY_HBAND_COLOR,  toQColor(HorizonBand::defaultColor()));
-    createProperty(*hbandGroup, PROPERTY_BOTTOM_COLOR, toQColor(HorizonBand::defaultBottomColor()));
+    createProperty(*hbandGroup, PROPERTY_HBAND_BACKGROUND, toQColor(HorizonBand::defaultBottomColor()));
 }
 
 
@@ -138,8 +138,8 @@ void Scene_PolarMappedHimmel::propertyChanged(
         m_himmel->hBand()->setOffset(doubleValue(PROPERTY_HBAND_OFFSET));
     else if(PROPERTY_HBAND_COLOR == name)
         m_himmel->hBand()->setColor(toVec4(colorValue(PROPERTY_HBAND_COLOR)));
-    else if(PROPERTY_BOTTOM_COLOR == name)
-        m_himmel->hBand()->setBottomColor(toVec4(colorValue(PROPERTY_BOTTOM_COLOR)));
+    else if(PROPERTY_HBAND_BACKGROUND == name)
+        m_himmel->hBand()->setBottomColor(toVec4(colorValue(PROPERTY_HBAND_BACKGROUND)));
 
     else if(PROPERTY_SUNSCALE == name)
         m_himmel->setSunScale(doubleValue(PROPERTY_SUNSCALE));
