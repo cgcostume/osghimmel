@@ -49,10 +49,10 @@
 #include <osg/Texture3D>
 #include <osgViewer/CompositeViewer>
 
-#include "shaderfragment/bruneton_common.hpp"
-#include "shaderfragment/bruneton_inscatter.hpp"
-#include "shaderfragment/bruneton_irradiance.hpp"
-#include "shaderfragment/bruneton_transmittance.hpp"
+#include "shaderfragment/bruneton_common.h"
+#include "shaderfragment/bruneton_inscatter.h"
+#include "shaderfragment/bruneton_irradiance.h"
+#include "shaderfragment/bruneton_transmittance.h"
 
 #include <assert.h>
 

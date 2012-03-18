@@ -27,44 +27,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __GLSL_CLOUDLAYER_HPP__
-#define __GLSL_CLOUDLAYER_HPP__
+#include "blend_lineardodge.h"
 
-namespace 
-{
-    // Intersection of view ray (d) with a sphere of radius = mean earth radius + altitude (altitude).
-    // Support is only for rays starting below the cloud layer (o must be inside the sphere...).
+#include "compose.h"
+#include "pragma_once.h"
 
-    // (http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection)
-    // and (http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter1.htm)
+const std::string glsl_blendLinearDodge(
+    PRAGMA_ONCE(blendLinearDodge, IMP_COMPOSE(lineardodge, b + s)));
 
-    const std::string glsl_cloud_layer_intersection
-    (
-        "float getLayerIntersectionOrDiscard(\n"
-        "    const vec3  d\n"
-        ",   const float altitude)\n"
-        "{\n"
-        "    vec3  o = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
-        "    float r = cmn[1] + altitude;\n"
-        "\n"
-            // for now, ignore if altitude is above cloud layer
-        "    if(o.z > r) \n"
-        "        discard;\n"
-        "\n"
-        "    float a = dot(d, d);\n"
-        "    float b = 2 * dot(d, o);\n"
-        "    float c = dot(o, o) - r * r;\n"
-        "\n"
-        "    float B = b * b - 4 * a * c;\n"
-        "    if(B < 0)\n"
-        "        discard;\n"
-        "\n"
-        "    B = sqrt(B);\n"
-        "\n"
-        "    return (-b + B) * 0.5 / a;\n"
-        "}\n\n"
-    );
-}
-
-#endif // __GLSL_CLOUDLAYER_HPP__
+const std::string glsl_blendLinearDodgeExt(
+    PRAGMA_ONCE(blendLinearDodgeExt, IMP_COMPOSE_SRC_ALPHA(lineardodge, b + s)));

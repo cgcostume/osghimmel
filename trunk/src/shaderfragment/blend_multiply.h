@@ -28,17 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_MULTIPLY_HPP__
-#define __GLSL_BLEND_MULTIPLY_HPP__
+#ifndef __GLSL_BLEND_MULTIPLY_H__
+#define __GLSL_BLEND_MULTIPLY_H__
 
-#include "compose.hpp"
+#include <string>
 
-namespace 
-{
-    const std::string glsl_blendMultiply(
-        IMP_COMPOSE(multiply, b * s));
-    const std::string glsl_blendMultiplyExt(
-        IMP_COMPOSE_SRC_ALPHA(multiply, b * s));
-}
+extern const std::string glsl_blendMultiply;
+extern const std::string glsl_blendMultiplyExt;
 
-#endif // __GLSL_BLEND_MULTIPLY_HPP__
+#endif // __GLSL_BLEND_MULTIPLY_H__

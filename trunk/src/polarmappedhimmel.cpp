@@ -37,16 +37,15 @@
 
 PolarMappedHimmel::PolarMappedHimmel(
     const e_MappingMode &mappingMode
-,   const bool horizonBand
+,   const bool hBand
 ,   const bool fakeSun)
 :   AbstractMappedHimmel(fakeSun)
 ,   m_mappingMode(mappingMode)
 ,   m_hBand(NULL)
-,   m_withHBand(horizonBand)
 {
     setName("PolarMappedHimmel");
 
-    if(m_withHBand)
+    if(hBand)
     {
         m_hBand = new HorizonBand();
         m_hBand->initialize(getOrCreateStateSet());
@@ -115,88 +114,99 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 // FragmentShader
 
-#include "shaderfragment/version.hpp"
-#include "shaderfragment/blend_normal.hpp"
-#include "shaderfragment/hband.hpp"
-#include "shaderfragment/fakesun.hpp"
+#include "shaderfragment/version.h"
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/flags.h"
+#include "shaderfragment/blend_normal.h"
+#include "shaderfragment/hband.h"
+#include "shaderfragment/fakesun.h"
 
 const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
-    switch(getMappingMode())
-    {
-    case MM_Half:
-
     return glsl_version_150
 
     +   glsl_blendNormalExt
 
-    +   (m_withFakeSun ? glsl_fakesun : "")
-    +   (m_withHBand ? glsl_hband : "")
+    +   glsl_fakesun
+    +   glsl_hband
     +
+        PRAGMA_ONCE(main, 
+
+        ENABLE_IF(half, getMappingMode() == MM_Half)
+
+        ENABLE_IF(hBand, m_hBand)
+        ENABLE_IF(fakeSun, m_fakeSun)
+
+        "\n"
         "in vec4 m_ray;\n"
+
+        IF_ENABLED(fakeSun, "in vec4 m_razInvariant;")
+
+        "\n"
 
         // From AbstractMappedHimmel
 
         "uniform float srcAlpha;\n"
-
+        "\n"
         "uniform sampler2D back;\n"
         "uniform sampler2D src;\n"
+        "\n"
 
         // Color Retrieval
 
         "const float c_2OverPi  = 0.6366197723675813430755350534901;\n"
         "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
+        "\n"
+
+        // TODO: encapsulate
+        IF_ENABLED(hBand,
+
+        "uniform vec3 hbandParams;\n"
+        "uniform vec4 hbandBackground;\n"
+        "uniform vec4 hbandColor;")
+
+        // TODO: encapsulate
+        IF_ENABLED(fakeSun,
+
+        "uniform mat4 razInverse;\n"
+        "uniform vec3 sun;\n"
+        "uniform vec4 sunCoeffs;\n"
+        "uniform float sunScale;")
 
         "void main(void)\n"
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
+        "\n"
 
-        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);\n"
+        IF_ELSE_ENABLED(half,
+        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, asin(+stu.z) * c_2OverPi);"
+        ,
+        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);")
 
         "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
-    +   (m_withFakeSun ? "fc += fakeSun(fc.a);\n" : "")
-    +
-        "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
-        "}\n\n";
-
-
-    case MM_Full:
-
-    return glsl_version_150
-
-//  +   glsl_f_blendNormalExt // using mix
-
-    +   (m_withFakeSun ? glsl_fakesun : "")
-    +
-        "in vec4 m_ray;\n"
         "\n"
-        // From AbstractMappedHimmel
 
-        "uniform float srcAlpha;\n"
-        "\n"
-        "uniform sampler2D back;\n"
-        "uniform sampler2D src;\n"
-        "\n"
-        // Color Retrieval
+        IF_ENABLED(fakeSun,
 
-        "const float c_1OverPi  = 0.3183098861837906715377675267450;\n"
-        "const float c_1Over2Pi = 0.1591549430918953357688837633725;\n"
-        "\n"
-        "void main(void)\n"
-        "{\n"
-        "    vec3 stu = normalize(m_ray.xyz);\n"
-        "\n"
-        "    vec2 uv = vec2(atan(stu.x, stu.y) * c_1Over2Pi, acos(-stu.z) * c_1OverPi);\n"
-        "\n"
-        "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
-        "\n"
-        "    gl_FragColor = " + (m_withFakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
-        "}\n\n";
+        "    fc += fakeSun(\n"
+        "        normalize(m_razInvariant.xyz)\n"
+        "    ,   sun\n"
+        "    ,   sunCoeffs\n"
+        "    ,   sunScale\n"
+        "    ,   fc.a);")
 
+        IF_ELSE_ENABLED(hBand,
 
-    default:
-        assert(false);
-    }
+        "    gl_FragColor = hband(\n"
+        "        stu.z\n"
+        "    ,   hbandParams[0]\n"
+        "    ,   hbandParams[1]\n"
+        "    ,   hbandParams[2]\n"
+        "    ,   hbandColor\n"
+        "    ,   hbandBackground\n"
+        "    ,   fc);"
+        ,
+        "    gl_FragColor = fc;")
 
-    return "";
+        "}");
 }

@@ -27,29 +27,43 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __GLSL_HBAND_HPP__
-#define __GLSL_HBAND_HPP__
+#include "cloudlayer.h"
 
-namespace 
-{
-    const std::string glsl_hband
-    (
-        "uniform vec3 hbandParams;\n"   // { 0: Scale, 1: Width, 2: Offset }
-        "\n"
-        "uniform vec4 hbandBottomColor;\n"
-        "uniform vec4 hbandColor;\n"
-        "\n"
-        "vec4 hband(float z, vec4 fc)\n"
-        "{\n"
-        "    if(z < hbandParams[2])\n"
-        "        fc = hbandBottomColor;\n"
-        "\n"
-        "    float b = abs((z - hbandParams[2]) / hbandParams[0]) - hbandParams[1];\n"
-        "\n"
-        "    return blend_normal(hbandColor, fc, smoothstep(0.0, 1.0, b));\n"
-        "}\n\n"
-    );
-}
+#include "pragma_once.h"
 
-#endif // __GLSL_HBAND_HPP__
+
+// Intersection of view ray (d) with a sphere of radius = mean earth 
+// radius + altitude (altitude). Support is only for rays starting 
+// below the cloud layer (o must be inside the sphere...).
+
+// (http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection) and
+// (http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter1.htm)
+
+const std::string glsl_cloud_layer_intersection
+(
+    PRAGMA_ONCE(layerIntersectionOrDiscard,
+
+    "float layerIntersectionOrDiscard(\n"
+    "    const vec3 d\n"
+    ",   const float altitude)\n"
+    "{\n"
+    "    vec3  o = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
+    "    float r = cmn[1] + altitude;\n"
+    "\n"
+        // for now, ignore if altitude is above cloud layer
+    "    if(o.z > r) \n"
+    "        discard;\n"
+    "\n"
+    "    float a = dot(d, d);\n"
+    "    float b = 2 * dot(d, o);\n"
+    "    float c = dot(o, o) - r * r;\n"
+    "\n"
+    "    float B = b * b - 4 * a * c;\n"
+    "    if(B < 0)\n"
+    "        discard;\n"
+    "\n"
+    "    B = sqrt(B);\n"
+    "\n"
+    "    return (-b + B) * 0.5 / a;\n"
+    "}")
+);

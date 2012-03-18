@@ -27,75 +27,31 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "fakesun.h"
 
-#pragma once
-#ifndef __POLARMAPPEDHIMMEL_H__
-#define __POLARMAPPEDHIMMEL_H__
-
-#include "abstractmappedhimmel.h"
-
-#include <map>
-
-class HorizonBand;
-
-namespace osg
-{
-    class Texture2D;
-}
+#include "pragma_once.h"
 
 
-// uses method presented by Blinn, James F. and Newell, Martin E.
-// in "Texture and reflection in computer generated images" 1976
+const std::string glsl_fakesun
+(
+    PRAGMA_ONCE(fakeSun,
 
-class PolarMappedHimmel : public AbstractMappedHimmel
-{
-public:
-
-    enum e_MappingMode 
-    {
-        MM_Full
-    ,   MM_Half
-    };
-
-public:
-
-    PolarMappedHimmel(
-        const e_MappingMode &mappingMode = MM_Half
-    ,   const bool hBand = false
-    ,   const bool fakeSun = false);
-
-    virtual ~PolarMappedHimmel();
-
-    // Use this helper to work with pre-configured textures.
-    osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
-
-    inline const e_MappingMode getMappingMode() const
-    {
-        return m_mappingMode;
-    }
-
-    // Use HorizonBand for horizon blending.
-    HorizonBand *hBand();
-
-protected:
-
-    // AbstractMappedHimmel interface
-
-    virtual osg::StateAttribute *getTextureAttribute(const GLint textureUnit) const;
-
-
-    // AbstractHimmel interface
-
-    virtual const std::string getFragmentShaderSource();
-
-protected:
-
-    typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
-    t_tex2DById m_tex2DsById;
-
-    e_MappingMode m_mappingMode;
-
-    HorizonBand *m_hBand;
-};
-
-#endif // __SPHEREMAPPEDHIMMEL_H__
+    "vec4 fakeSun(\n"
+    "    const vec3 eye\n"
+    ",   const vec3 sun\n"
+    ",   const vec4 coeffs\n"
+    ",   const float scale\n"
+    ",   const float alpha)\n"
+    "{\n"
+    "    vec3 fix = normalize(eye.xyz);\n"
+    "\n"
+    "    float s = scale * 2.0 / length(normalize(sun) - eye);\n"
+    "\n"
+    "    s *= alpha * 0.1 + 0.2;\n"            // Reduce suns' size on low alpha.
+    "    s *= clamp(eye.z + 0.1, 0.0, 0.1);\n" // Disappear in lower hemisphere.
+    "\n"
+    "    s  = clamp(clamp(s, 0.0, 2.0) - (1.0 - alpha) * 2.0, 0.0, 2.0);\n"
+    "\n"
+    "    return vec4(coeffs.rgb * s, coeffs.a);\n"
+    "}")
+);

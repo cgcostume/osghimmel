@@ -27,38 +27,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-#ifndef __GLSL_COMMON_HPP__
-#define __GLSL_COMMON_HPP__
+#include "blend_screen.h"
 
-namespace 
-{
-    const std::string glsl_cmn_uniform
-    (
-        "uniform vec4 cmn;\n\n"
-    );
+#include "compose.h"
+#include "pragma_once.h"
 
+const std::string glsl_blendScreen(
+    PRAGMA_ONCE(blendScreen, IMP_COMPOSE(screen, b + s - (b * s))));
 
-    // Returns unit intersection distance with the ground. Use for 
-    // e.g. horizon related discarding of elements
-    const std::string glsl_horizon // requires glsl_cmn_uniform
-    (
-        "float tAtm(vec3 ray)\n"
-        "{\n"
-        "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
-        "    vec3 v = normalize(ray);\n"
-        "\n"
-        "    float r = length(x);\n"
-        "    float mu = dot(x, v) / r;\n"
-        "\n"
-        "    return r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);\n"
-        "}\n"
-        "\n"
-        "bool belowHorizon(vec3 ray)\n"
-        "{\n"
-        "   return tAtm(ray) < 0.0;\n"
-        "}\n\n"
-    );
-}
-
-#endif // __GLSL_COMMON_HPP__
+const std::string glsl_blendScreenExt(
+    PRAGMA_ONCE(blendScreenExt, IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s))));

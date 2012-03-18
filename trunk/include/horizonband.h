@@ -76,9 +76,9 @@ protected:
 
 protected:
 
-    osg::ref_ptr<osg::Uniform> u_params;  // Vec3 { 0: Scale, 1: Width, 2: Offset }
+    osg::ref_ptr<osg::Uniform> u_params; // Vec3 { 0: Scale, 1: Width, 2: Offset }
 
-    osg::ref_ptr<osg::Uniform> u_color;  // Vec4
+    osg::ref_ptr<osg::Uniform> u_color; // Vec4
     osg::ref_ptr<osg::Uniform> u_bottomColor; // Vec4
 };
 

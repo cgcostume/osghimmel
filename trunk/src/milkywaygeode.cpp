@@ -282,9 +282,9 @@ const float MilkyWayGeode::defaultScattering()
 
 // VertexShader
 
-#include "shaderfragment/version.hpp"
-#include "shaderfragment/quadretrieveray.hpp"
-#include "shaderfragment/quadtransform.hpp"
+#include "shaderfragment/version.h"
+#include "shaderfragment/quadretrieveray.h"
+#include "shaderfragment/quadtransform.h"
 
 const std::string MilkyWayGeode::getVertexShaderSource()
 {
@@ -309,7 +309,7 @@ const std::string MilkyWayGeode::getVertexShaderSource()
 
 // FragmentShader
 
-#include "shaderfragment/common.hpp"
+#include "shaderfragment/common.h"
 
 const std::string MilkyWayGeode::getFragmentShaderSource()
 {

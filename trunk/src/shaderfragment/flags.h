@@ -1,4 +1,3 @@
-
 // Copyright (c) 2011-2012, Daniel Müller <dm@g4t3.de>
 // Computer Graphics Systems Group at the Hasso-Plattner-Institute, Germany
 // All rights reserved.
@@ -28,20 +27,30 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_VERSION_HPP__
-#define __GLSL_VERSION_HPP__
+#ifndef __FLAGS_H__
+#define __FLAGS_H__
 
-namespace 
+namespace
 {
-    const std::string glsl_version_150
-    (
-        "#version 150 compatibility\n\n"
-    );
+    #define ENABLE_IF(flag, condition)  \
+        "" + ((condition) ? "#define __enable_" #flag "__\n" : "") + ""
 
-    const std::string glsl_geometry_ext
-    (
-        "#extension GL_EXT_geometry_shader4 : enable\n"
-    );    
+    #define IF_ENABLED(flag, source)         \
+        "\n#ifdef __enable_" #flag "__\n\n"  \
+        source                               \
+        "\n\n#endif // __enable_" #flag "__\n\n"
+
+    #define IF_ELSE_ENABLED(flag, if_source, else_source)  \
+        "\n#ifdef __enable_" #flag "__\n\n"                \
+        if_source                                          \
+        "\n\n#else // __enable_" #flag "__\n\n"            \
+        else_source                                        \
+        "\n\n#endif // __enable_" #flag "__\n\n" 
+
+    #define IF_NOT_ENABLED(flag, source)      \
+        "\n#ifndef __enable_" #flag "__\n\n"  \
+        if_source                             \
+        "\n\n#endif // __enable_" #flag "__\n\n"
 }
 
-#endif // __GLSL_VERSION_HPP__
+#endif // __FLAGS_H__

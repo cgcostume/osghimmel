@@ -44,7 +44,7 @@ set(LIB_SOURCES
     coords.cpp
     cubemappedhimmel.cpp
     earth.cpp
-	earth2.cpp
+    earth2.cpp
     milkywaygeode.cpp
     gaussianmapgenerator.cpp
     himmelenvmap.cpp
@@ -52,7 +52,7 @@ set(LIB_SOURCES
     horizonband.cpp
     julianday.cpp
     moon.cpp
-	moon2.cpp
+    moon2.cpp
     moongeode.cpp
     noise.cpp
     paraboloidmappedhimmel.cpp
@@ -67,7 +67,7 @@ set(LIB_SOURCES
     starsgeode.cpp
     strutils.cpp
     sun.cpp
-	sun2.cpp
+    sun2.cpp
     timef.cpp
     twounitschanger.cpp
 
@@ -84,7 +84,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
     ${HEADER_PATH}/earth.h
-	${HEADER_PATH}/earth2.h
+    ${HEADER_PATH}/earth2.h
     ${HEADER_PATH}/milkywaygeode.h
     ${HEADER_PATH}/gaussianmapgenerator.h
     ${HEADER_PATH}/himmelenvmap.h
@@ -94,7 +94,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/julianday.h
     ${HEADER_PATH}/mathmacros.h
     ${HEADER_PATH}/moon.h
-	${HEADER_PATH}/moon2.h
+    ${HEADER_PATH}/moon2.h
     ${HEADER_PATH}/moongeode.h
     ${HEADER_PATH}/noise.h
     ${HEADER_PATH}/paraboloidmappedhimmel.h
@@ -110,33 +110,54 @@ set(LIB_SOURCES
     ${HEADER_PATH}/starsgeode.h
     ${HEADER_PATH}/strutils.h
     ${HEADER_PATH}/sun.h
-	${HEADER_PATH}/sun2.h
+    ${HEADER_PATH}/sun2.h
     ${HEADER_PATH}/timef.h
     ${HEADER_PATH}/twounitschanger.h
 
 
 #   shader fragments
 
-    shaderfragment/blend_difference.hpp
-    shaderfragment/blend_lineardodge.hpp
-    shaderfragment/blend_multiply.hpp
-    shaderfragment/blend_normal.hpp
-    shaderfragment/blend_screen.hpp
-    shaderfragment/bruneton_common.hpp
-    shaderfragment/bruneton_inscatter.hpp
-    shaderfragment/bruneton_irradiance.hpp
-    shaderfragment/bruneton_transmittance.hpp
-    shaderfragment/cloudlayer.hpp
-    shaderfragment/common.hpp
-    shaderfragment/compose.hpp
-    shaderfragment/dither.hpp
-    shaderfragment/hband.hpp
-    shaderfragment/noise.hpp
-    shaderfragment/pseudo_rand.hpp
-    shaderfragment/quadretrieveray.hpp
-    shaderfragment/quadtransform.hpp
-    shaderfragment/fakesun.hpp
-    shaderfragment/version.hpp)
+    shaderfragment/blend_difference.h
+    shaderfragment/blend_difference.cpp
+    shaderfragment/blend_lineardodge.h
+    shaderfragment/blend_lineardodge.cpp
+    shaderfragment/blend_multiply.h
+    shaderfragment/blend_multiply.cpp
+    shaderfragment/blend_normal.h
+    shaderfragment/blend_normal.cpp
+    shaderfragment/blend_screen.h
+    shaderfragment/blend_screen.cpp
+    shaderfragment/bruneton_common.h
+    shaderfragment/bruneton_common.cpp
+    shaderfragment/bruneton_inscatter.h
+    shaderfragment/bruneton_inscatter.cpp
+    shaderfragment/bruneton_irradiance.h
+    shaderfragment/bruneton_irradiance.cpp
+    shaderfragment/bruneton_transmittance.h
+    shaderfragment/bruneton_transmittance.cpp
+    shaderfragment/cloudlayer.h
+    shaderfragment/cloudlayer.cpp
+    shaderfragment/common.h
+    shaderfragment/common.cpp
+    shaderfragment/compose.h
+    shaderfragment/dither.h
+    shaderfragment/dither.cpp
+    shaderfragment/fakesun.h
+    shaderfragment/fakesun.cpp
+    shaderfragment/flags.h
+    shaderfragment/hband.h
+    shaderfragment/hband.cpp
+    shaderfragment/noise.h
+    shaderfragment/noise.cpp
+    shaderfragment/pragma_once.h
+    shaderfragment/pseudo_rand.h
+    shaderfragment/pseudo_rand.cpp
+    shaderfragment/quadretrieveray.h
+    shaderfragment/quadretrieveray.cpp
+    shaderfragment/quadtransform.h
+    shaderfragment/quadtransform.cpp
+    shaderfragment/version.h
+    shaderfragment/version.cpp)
 
 source_group_by_path(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})    
 

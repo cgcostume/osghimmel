@@ -110,10 +110,10 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 
 // FragmentShader
 
-#include "shaderfragment/version.hpp"
-#include "shaderfragment/blend_normal.hpp"
-#include "shaderfragment/hband.hpp"
-#include "shaderfragment/fakesun.hpp"
+#include "shaderfragment/version.h"
+#include "shaderfragment/blend_normal.h"
+#include "shaderfragment/hband.h"
+#include "shaderfragment/fakesun.h"
 
 const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 {
@@ -121,7 +121,7 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 
     +   glsl_blendNormalExt
     
-    +   (m_withFakeSun ? glsl_fakesun : "")
+    +   (m_fakeSun ? glsl_fakesun : "")
     +   (m_withHBand ? glsl_hband : "")
     +
         "in vec4 m_ray;\n"
@@ -143,7 +143,7 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
         "    vec2 uv = vec2(stu.x / m + 0.5, stu.y / m + 0.5);\n"
         "\n"
         "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
-    +   (m_withFakeSun ? "    fc += fakeSun(fc.a);\n" : "")
+    +   (m_fakeSun ? "    fc += fakeSun(fc.a);\n" : "")
     +   "\n"
     +   (m_withHBand ? "" : "    if(stu.z < 0.0) discard;\n")
     +

@@ -95,9 +95,9 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 // FragmentShader
 
-#include "shaderfragment/version.hpp"
-#include "shaderfragment/blend_normal.hpp"
-#include "shaderfragment/fakesun.hpp"
+#include "shaderfragment/version.h"
+#include "shaderfragment/blend_normal.h"
+#include "shaderfragment/fakesun.h"
 
 const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
@@ -105,7 +105,7 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
 
 //  +   glsl_f_blendNormalExt // using mix
 
-    +   (m_withFakeSun ? glsl_fakesun : "")
+    +   (m_fakeSun ? glsl_fakesun : "")
     +
         "in vec4 m_ray;\n"
         "\n"
@@ -133,6 +133,6 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "    vec4 fc = mix(\n"
         "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
         "\n"
-        "    gl_FragColor = " + (m_withFakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
+        "    gl_FragColor = " + (m_fakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
         "}\n\n";
 }

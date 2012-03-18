@@ -183,7 +183,7 @@ protected:
 
     TimeF *m_razTimef;    
 
-    const bool m_withFakeSun;
+    const bool m_fakeSun;
 };
 
 #endif // __ABSTRACTMAPPEDHIMMEL_H__

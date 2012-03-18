@@ -28,17 +28,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_BLEND_SCREEN_HPP__
-#define __GLSL_BLEND_SCREEN_HPP__
+#ifndef __GLSL_QUADRETRIEVERAY_H__
+#define __GLSL_QUADRETRIEVERAY_H__
 
-#include "compose.hpp"
+#include <string>
 
-namespace 
-{
-    const std::string glsl_blendScreen(
-        IMP_COMPOSE(screen, b + s - (b * s)));
-    const std::string glsl_blendScreenExt(
-        IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s)));
-}
+extern const std::string glsl_quadRetrieveRay; // vec4 quadRetrieveRay()
 
-#endif // __GLSL_BLEND_SCREEN_HPP__
+#endif // __GLSL_QUADRETRIEVERAY_H__

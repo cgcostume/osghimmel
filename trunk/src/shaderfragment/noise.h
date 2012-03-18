@@ -28,18 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __GLSL_QUADRETRIEVERAY_HPP__
-#define __GLSL_QUADRETRIEVERAY_HPP__
+#ifndef __GLSL_NOISE_H__
+#define __GLSL_NOISE_H__
 
-namespace 
-{
-    const std::string glsl_quadRetrieveRay
-    (
-        "vec4 quadRetrieveRay()\n"
-        "{\n"
-        "    return gl_ProjectionMatrixInverse * gl_Vertex * gl_ModelViewMatrix;\n"
-        "}\n\n"
-    );
-}
+#include <string>
 
-#endif // __GLSL_QUADRETRIEVERAY_HPP__
+extern const std::string glsl_fade;   // float fade(float t)
+extern const std::string glsl_noise2; // float noise2(sampler2D perm, vec2 st, float fade)
+
+#endif // __GLSL_NOISE_H__

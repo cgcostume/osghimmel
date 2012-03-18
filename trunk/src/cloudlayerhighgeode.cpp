@@ -191,13 +191,13 @@ void CloudLayerHighGeode::setupTextures(osg::StateSet* stateSet)
 
 
 
-#include "shaderfragment/version.hpp"
+#include "shaderfragment/version.h"
 
 // VertexShader
 
-#include "shaderfragment/quadretrieveray.hpp"
-#include "shaderfragment/quadtransform.hpp"
-#include "shaderfragment/bruneton_common.hpp"
+#include "shaderfragment/quadretrieveray.h"
+#include "shaderfragment/quadtransform.h"
+#include "shaderfragment/bruneton_common.h"
 
 const std::string CloudLayerHighGeode::getVertexShaderSource()
 {
@@ -217,14 +217,14 @@ const std::string CloudLayerHighGeode::getVertexShaderSource()
         "}\n\n";
 }
 
-#include "shaderfragment/pseudo_rand.hpp"
-#include "shaderfragment/dither.hpp"
+#include "shaderfragment/pseudo_rand.h"
+#include "shaderfragment/dither.h"
 
 // FragmentShader
 
-#include "shaderfragment/cloudlayer.hpp"
-#include "shaderfragment/common.hpp"
-#include "shaderfragment/noise.hpp"
+#include "shaderfragment/cloudlayer.h"
+#include "shaderfragment/common.h"
+#include "shaderfragment/noise.h"
 
 const std::string CloudLayerHighGeode::getFragmentShaderSource()
 {
