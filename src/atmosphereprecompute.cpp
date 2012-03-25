@@ -183,14 +183,14 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         
     targets2D[0]  = m_transmittanceTexture;
 
-    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_transmittance);
+    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_transmittance.c_str());
 
     // computes irradiance texture deltaE (line 2 in algorithm 4.1)
 
     targets2D[0]  = m_deltaETexture;
     samplers2D[0] = m_transmittanceTexture;
 
-    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradiance1);
+    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradiance1.c_str());
 
     // computes single scattering texture deltaS (line 3 in algorithm 4.1)
 
@@ -198,7 +198,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     targets3D[1]  = m_deltaSMTexture;
     samplers2D[0] = m_transmittanceTexture;
 
-    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatter1);
+    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatter1.c_str());
 
     // copies deltaE into irradiance texture E (line 4 in algorithm 4.1)
 
@@ -208,7 +208,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     samplers2D[0] = m_deltaETexture;
     uniforms.push_back(new osg::Uniform("k", 0.f));
 
-    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance);
+    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance.c_str());
 
     // copies deltaS into inscatter texture S (line 5 in algorithm 4.1)
 
@@ -216,7 +216,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     samplers3D[0] = m_deltaSRTexture;
     samplers3D[1] = m_deltaSMTexture;
 
-    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatter1);
+    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatter1.c_str());
      
     // loop for each scattering order (line 6 in algorithm 4.1)
 
@@ -233,7 +233,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[3] = m_deltaSMTexture;
         uniforms.push_back(new osg::Uniform("first", first));
 
-        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterS);
+        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterS.c_str());
 
         // computes deltaE (line 8 in algorithm 4.1)
 
@@ -243,7 +243,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[2] = m_deltaSMTexture;
         uniforms.push_back(new osg::Uniform("first", first));
 
-        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradianceN);
+        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradianceN.c_str());
 
         // computes deltaS (line 9 in algorithm 4.1)
 
@@ -252,7 +252,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[1] = m_deltaJTexture;
         uniforms.push_back(new osg::Uniform("first", first));
 
-        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterN);
+        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterN.c_str());
 
 
         // NOTE: http://www.opengl.org/wiki/GLSL_:_common_mistakes#Sampling_and_Rendering_to_the_Same_Texture
@@ -264,7 +264,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers2D[1] = m_irradianceTexture;
         uniforms.push_back(new osg::Uniform("k", 1.f));
 
-        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance);
+        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance.c_str());
 
         // adds deltaS into inscatter texture S (line 11 in algorithm 4.1)
       
@@ -272,7 +272,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[0] = m_deltaSRTexture;
         samplers3D[1] = m_inscatterTexture;
 
-        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatterN);
+        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatterN.c_str());
     }
 
     // Unref
@@ -485,18 +485,18 @@ void AtmospherePrecompute::setupLayerUniforms(
 
 
 osg::Program *AtmospherePrecompute::setupProgram(
-    std::string fragmentShaderSource)
+    const char* fragmentShaderSource)
 {
-    assert(!fragmentShaderSource.empty());
+    assert(strlen(fragmentShaderSource) > 0);
 
     osg::Program *program(new osg::Program);
 
     program->addShader(new osg::Shader(osg::Shader::VERTEX,   glsl_bruneton_v_default));
 
-    if(!fragmentShaderSource.empty())
+    if(strlen(fragmentShaderSource) > 0)
     {
-        substituteMacros(fragmentShaderSource);
-        program->addShader(new osg::Shader(osg::Shader::FRAGMENT, fragmentShaderSource));
+        const char *source = substituteMacros(fragmentShaderSource);
+        program->addShader(new osg::Shader(osg::Shader::FRAGMENT, source));
     }
 
     return program;
@@ -628,7 +628,7 @@ void AtmospherePrecompute::render2D(
 ,   t_tex2DsByUnit &samplers2D
 ,   t_tex3DsByUnit &samplers3D
 ,   t_uniforms &uniforms
-,   const std::string &fragmentShaderSource)
+,   const char *fragmentShaderSource)
 {
     assert(targets2D.size() > 0);
 
@@ -689,7 +689,7 @@ void AtmospherePrecompute::render3D(
 ,   t_tex2DsByUnit &samplers2D
 ,   t_tex3DsByUnit &samplers3D
 ,   t_uniforms &uniforms
-,   const std::string &fragmentShaderSource)
+,   const char *fragmentShaderSource)
 {
     assert(targets3D.size() > 0);
 
@@ -752,39 +752,43 @@ void AtmospherePrecompute::render3D(
 }
 
 
-void AtmospherePrecompute::substituteMacros(std::string &source)
+const char *AtmospherePrecompute::substituteMacros(const char *source)
 {
     // Replace Precomputed Texture Config "MACROS"
 
     const t_preTexCfg &tc(getTextureConfig());
 
-    replace(source, "%TRANSMITTANCE_W%", tc.transmittanceWidth);
-    replace(source, "%TRANSMITTANCE_H%", tc.transmittanceHeight);
+    std::string temp(source);
 
-    replace(source, "%SKY_W%", tc.skyWidth);
-    replace(source, "%SKY_H%", tc.skyHeight);
+    replace(temp, "%TRANSMITTANCE_W%", tc.transmittanceWidth);
+    replace(temp, "%TRANSMITTANCE_H%", tc.transmittanceHeight);
 
-    replace(source, "%RES_R%", tc.resR);
-    replace(source, "%RES_MU%", tc.resMu);
-    replace(source, "%RES_MU_S%", tc.resMuS);
-    replace(source, "%RES_NU%", tc.resNu);
+    replace(temp, "%SKY_W%", tc.skyWidth);
+    replace(temp, "%SKY_H%", tc.skyHeight);
 
-    replace(source, "%TRANSMITTANCE_INTEGRAL_SAMPLES%", tc.transmittanceIntegralSamples);
-    replace(source, "%INSCATTER_INTEGRAL_SAMPLES%", tc.inscatterIntegralSamples);
-    replace(source, "%IRRADIANCE_INTEGRAL_SAMPLES%", tc.irradianceIntegralSamples);
-    replace(source, "%INSCATTER_SPHERICAL_INTEGRAL_SAMPLES%", tc.inscatterSphericalIntegralSamples);
+    replace(temp, "%RES_R%", tc.resR);
+    replace(temp, "%RES_MU%", tc.resMu);
+    replace(temp, "%RES_MU_S%", tc.resMuS);
+    replace(temp, "%RES_NU%", tc.resNu);
+
+    replace(temp, "%TRANSMITTANCE_INTEGRAL_SAMPLES%", tc.transmittanceIntegralSamples);
+    replace(temp, "%INSCATTER_INTEGRAL_SAMPLES%", tc.inscatterIntegralSamples);
+    replace(temp, "%IRRADIANCE_INTEGRAL_SAMPLES%", tc.irradianceIntegralSamples);
+    replace(temp, "%INSCATTER_SPHERICAL_INTEGRAL_SAMPLES%", tc.inscatterSphericalIntegralSamples);
 
     // Replace Physical Model Config "MACROS"
 
     const t_modelCfg &mc(getModelConfig());
 
-    replace(source, "%AVERAGE_GROUND_REFLECTANCE%", mc.avgGroundReflectance);
+    replace(temp, "%AVERAGE_GROUND_REFLECTANCE%", mc.avgGroundReflectance);
 
-    replace(source, "%HR%", mc.HR);
-    replace(source, "%betaR%", mc.betaR);
+    replace(temp, "%HR%", mc.HR);
+    replace(temp, "%betaR%", mc.betaR);
         
-    replace(source, "%HM%", mc.HM);
-    replace(source, "%betaMSca%", mc.betaMSca);
-    replace(source, "%betaMEx%", mc.betaMEx);
-    replace(source, "%mieG%", mc.mieG);
+    replace(temp, "%HM%", mc.HM);
+    replace(temp, "%betaMSca%", mc.betaMSca);
+    replace(temp, "%betaMEx%", mc.betaMEx);
+    replace(temp, "%mieG%", mc.mieG);
+
+    return temp.c_str();
 }

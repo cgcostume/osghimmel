@@ -31,18 +31,28 @@
 #ifndef __PROCEDURALHIMMEL_H__
 #define __PROCEDURALHIMMEL_H__
 
+#include "declspec.h"
 #include "abstracthimmel.h"
 #include "atime.h"
 
+#ifdef OSGHIMMEL_EXPORTS
+#include "abstractastronomy.h"
+#include "atmospheregeode.h"
+#include "moongeode.h"
+#include "starsgeode.h"
+#include "milkywaygeode.h"
+#include "cloudlayerhighgeode.h"
+#else // #ifdef OSGHIMMEL_EXPORTS
 class AbstractAstronomy;
 class AtmosphereGeode;
 class MoonGeode;
 class StarsGeode;
 class MilkyWayGeode;
 class CloudLayerHighGeode;
+#endif // #ifdef OSGHIMMEL_EXPORTS
 
 
-class Himmel : public AbstractHimmel
+class OSGH_API Himmel : public AbstractHimmel
 {
 public:
     static Himmel *create();

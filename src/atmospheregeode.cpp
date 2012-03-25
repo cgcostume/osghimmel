@@ -121,9 +121,9 @@ void AtmosphereGeode::setupShader(osg::StateSet* stateSet)
 }
 
 
-void AtmosphereGeode::updateShader(osg::StateSet* stateSet)
+void AtmosphereGeode::updateShader(osg::StateSet*)
 {
-    std::string fSource(getFragmentShaderSource());
+    char* fSource(const_cast<char*>(getFragmentShaderSource()));
     m_precompute->substituteMacros(fSource);
 
     m_fShader->setShaderSource(fSource);
@@ -321,6 +321,9 @@ void AtmosphereGeode::setPhaseG(const float g)
 }
 
 
+
+
+#include "shaderfragment/pragma_once.h"
 #include "shaderfragment/version.h"
 
 // VertexShader
@@ -329,13 +332,15 @@ void AtmosphereGeode::setPhaseG(const float g)
 #include "shaderfragment/quadtransform.h"
 #include "shaderfragment/bruneton_common.h"
 
-const std::string AtmosphereGeode::getVertexShaderSource()
+const char* AtmosphereGeode::getVertexShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
-    +
+
+    +   PRAGMA_ONCE(main,
+
         "out vec4 m_ray;\n"
         "\n"
         "void main(void)\n"
@@ -344,20 +349,19 @@ const std::string AtmosphereGeode::getVertexShaderSource()
         "\n"
         "    m_ray = quadRetrieveRay();\n"
         "    quadTransform();\n"
-        "}\n\n";
+        "}")).c_str();
 }
 
 // FragmentShader
 
 #include "shaderfragment/common.h"
-
 #include "shaderfragment/pseudo_rand.h"
 #include "shaderfragment/dither.h"
 
 
-const std::string AtmosphereGeode::getFragmentShaderSource()
+const char* AtmosphereGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_cmn_uniform
     +   
@@ -571,5 +575,5 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "\n"
         "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0)\n"
         "        + dither(4, int(cmn[3]));\n" // Eq (16)
-        "}\n";
+        "}").c_str();
 }

@@ -100,12 +100,12 @@ const s_AstronomicalTime s_AstronomicalTime::fromTimeT(
 #endif // __GNUC__
 
     return s_AstronomicalTime(
-        lcl.tm_year + 1900
-    ,   lcl.tm_mon + 1
-    ,   lcl.tm_mday
-    ,   lcl.tm_hour
-    ,   lcl.tm_min
-    ,   lcl.tm_sec
+        static_cast<short>(lcl.tm_year + 1900)
+    ,   static_cast<short>(lcl.tm_mon + 1)
+    ,   static_cast<short>(lcl.tm_mday)
+    ,   static_cast<short>(lcl.tm_hour)
+    ,   static_cast<short>(lcl.tm_min)
+    ,   static_cast<short>(lcl.tm_sec)
     ,   static_cast<short>(utcOffset));
 }
 

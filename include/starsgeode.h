@@ -31,6 +31,7 @@
 #ifndef __STARSGEODE_H__
 #define __STARSGEODE_H__
 
+#include "declspec.h"
 #include "brightstars.h"
 
 #include <osg/Geode>
@@ -38,11 +39,11 @@
 class Himmel;
 
 
-class StarsGeode : public osg::Geode
+class OSGH_API StarsGeode : public osg::Geode
 {
 public:
 
-    StarsGeode(const std::string &brightStarsFilePath);
+    StarsGeode(const char *brightStarsFilePath);
     virtual ~StarsGeode();
 
     void update(const Himmel &himmel);
@@ -88,19 +89,19 @@ protected:
 
     void setupUniforms(osg::StateSet* stateSet);
 
-    void setupNode    (
+    void setupNode(
         osg::StateSet* stateSet
-    ,   const std::string &brightStarsFilePath);
+    ,   const char *brightStarsFilePath);
 
     void setupTextures(osg::StateSet* stateSet);
     void setupShader  (osg::StateSet* stateSet);
 
     void createAndAddDrawable(
-        const std::string &brightStarsFilePath);
+        const char *brightStarsFilePath);
 
-    const std::string getVertexShaderSource();
-    const std::string getGeometryShaderSource();
-    const std::string getFragmentShaderSource();
+    const char *getVertexShaderSource();
+    const char *getGeometryShaderSource();
+    const char *getFragmentShaderSource();
 
 protected:
 

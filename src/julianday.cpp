@@ -123,9 +123,9 @@ const t_aTime makeTime(
     const int e = _int((b - d) / 30.600001);
 
 
-    const short day    = b - d - _int(30.600001 * e);
-    const short month  = e < 14 ? e - 1 : e - 13;
-    const short year   = month > 2 ? c - 4716 : c - 4715;
+    const short day    = static_cast<short>(b - d - _int(30.600001 * e));
+    const short month  = static_cast<short>(e < 14 ? e - 1 : e - 13);
+    const short year   = static_cast<short>(month > 2 ? c - 4716 : c - 4715);
 
     const t_longf h = f * 24.0;
     const t_longf m = _frac(h) * 60.0;

@@ -31,12 +31,13 @@
 #ifndef __STARS_H__
 #define __STARS_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-class Stars
+class OSGH_API Stars
 {
 public:
 

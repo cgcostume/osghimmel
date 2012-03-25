@@ -125,7 +125,7 @@ MainWindow::MainWindow(QWidget *parent)
         , this, SLOT(hintViewSize(unsigned int, unsigned int)));
 
 
-    on_proceduralHimmelAction_triggered(true);
+//    on_proceduralHimmelAction_triggered(true);
 }
 
 

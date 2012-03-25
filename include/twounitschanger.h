@@ -31,6 +31,7 @@
 #ifndef __TWOUNITSCHANGER_H__
 #define __TWOUNITSCHANGER_H__
 
+#include "declspec.h"
 #include "interpolate.h"
 
 #include <osg/GL>
@@ -38,7 +39,7 @@
 #include <map>
 
 
-class TwoUnitsChanger
+class OSGH_API TwoUnitsChanger
 {
 public:
     TwoUnitsChanger();

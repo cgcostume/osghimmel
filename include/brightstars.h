@@ -31,12 +31,12 @@
 #ifndef __BRIGHTSTARS_H__
 #define __BRIGHTSTARS_H__
 
-#include <vector>
+#include "declspec.h"
 
 // NOTE: Enabling this, slows down compilation a lot!
 //#define BRIGHTSTARS_INCLUDE_CATALOGUE
 
-class BrightStars
+class OSGH_API BrightStars
 {
 public:
     // Structure based on the extended bright star catalogue.
@@ -53,8 +53,6 @@ public:
         float sRGB_B; // approximated color, blue value  ]0;1[
     };
 
-    typedef std::vector<s_BrightStar> t_stars;
-
 #ifdef BRIGHTSTARS_INCLUDE_CATALOGUE
     BrightStars();
 #endif // BRIGHTSTARS_INCLUDE_CATALOGUE
@@ -62,17 +60,16 @@ public:
     BrightStars(const char *fileName);
     ~BrightStars();
 
-    const t_stars &stars() const
-    {
-        return m_stars;
-    }
+    const s_BrightStar *stars() const;
+    const unsigned int numStars() const;
 
     unsigned int fromFile(const char *fileName);
     unsigned int toFile(const char *fileName) const;
 
 protected:
 
-    t_stars m_stars;
+    s_BrightStar *m_stars;
+    unsigned int m_numStars;
 };
 
 #endif // __BRIGHTSTARS_H__

@@ -31,6 +31,7 @@
 #ifndef __ABSTRACTHIMMEL_H__
 #define __ABSTRACTHIMMEL_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 
 #include <osg/Transform>
@@ -44,7 +45,7 @@
 class TimeF;
 
 
-class AbstractHimmel : public osg::Transform
+class OSGH_API AbstractHimmel : public osg::Transform
 {
 private:
 

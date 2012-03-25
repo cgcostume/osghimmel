@@ -39,8 +39,6 @@ set(TESTS_SOURCES
     test_astronomy2.h
     test_math.cpp
     test_math.h
-    test_strutils.cpp
-    test_strutils.h
     test_time.cpp
     test_time.h
     test_twounitschanger.cpp
@@ -49,10 +47,9 @@ set(TESTS_SOURCES
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${TESTS_SOURCES})
 
 add_executable(tests ${TESTS_SOURCES})
-set_default_target_properties(tests OFF)
 
 target_link_libraries(tests
-    osghimmel
+    osgHimmel
     ${OPENSCENEGRAPH_LIBRARIES})
 
 install(TARGETS tests

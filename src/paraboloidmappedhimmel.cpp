@@ -103,6 +103,9 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 }
 
 
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
+
 // VertexShader
 
 // -> specified in AbstractMappedHimmel
@@ -110,20 +113,21 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 
 // FragmentShader
 
-#include "shaderfragment/version.h"
 #include "shaderfragment/blend_normal.h"
 #include "shaderfragment/hband.h"
 #include "shaderfragment/fakesun.h"
 
-const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
+const char* ParaboloidMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_blendNormalExt
     
     +   (m_fakeSun ? glsl_fakesun : "")
     +   (m_withHBand ? glsl_hband : "")
-    +
+
+    +   PRAGMA_ONCE(main,
+
         "in vec4 m_ray;\n"
         "\n"
         // From AbstractMappedHimmel
@@ -149,5 +153,5 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
     +
         "\n"
         "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
-        "}\n\n";
+        "}")).c_str();
 }

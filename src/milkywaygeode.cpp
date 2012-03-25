@@ -40,7 +40,7 @@
 #include <osgDB/ReadFile>
 
 
-MilkyWayGeode::MilkyWayGeode(const std::string &cubeMapFilePath)
+MilkyWayGeode::MilkyWayGeode(const char* cubeMapFilePath)
 :   osg::Geode()
 
 ,   m_program(new osg::Program)
@@ -80,7 +80,7 @@ void MilkyWayGeode::update(const Himmel &himmel)
 }
 
 
-void MilkyWayGeode::setupNode(osg::StateSet* stateSet)
+void MilkyWayGeode::setupNode(osg::StateSet*)
 {
 }
 
@@ -139,7 +139,7 @@ osg::Shader *MilkyWayGeode::fragmentShader()
 
 void MilkyWayGeode::setupTextures(
     osg::StateSet* stateSet
-,   const std::string &cubeMapFilePath)
+,   const char* cubeMapFilePath)
 {   
     osg::ref_ptr<osg::TextureCubeMap> tcm(new osg::TextureCubeMap);
 
@@ -280,19 +280,23 @@ const float MilkyWayGeode::defaultScattering()
 }
 
 
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
+
 // VertexShader
 
-#include "shaderfragment/version.h"
 #include "shaderfragment/quadretrieveray.h"
 #include "shaderfragment/quadtransform.h"
 
-const std::string MilkyWayGeode::getVertexShaderSource()
+const char* MilkyWayGeode::getVertexShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
-    +
+    
+    +   PRAGMA_ONCE(main,
+
         "out vec4 m_eye;\n"
         "out vec4 m_ray;\n"
         "\n"
@@ -303,7 +307,7 @@ const std::string MilkyWayGeode::getVertexShaderSource()
         "    m_eye = quadRetrieveRay();\n"
         "    m_ray = R * m_eye;\n"
         "    quadTransform();\n"
-        "}\n\n";
+        "}")).c_str();
 }
 
 
@@ -311,13 +315,15 @@ const std::string MilkyWayGeode::getVertexShaderSource()
 
 #include "shaderfragment/common.h"
 
-const std::string MilkyWayGeode::getFragmentShaderSource()
+const char* MilkyWayGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_cmn_uniform
     +   glsl_horizon
-    +
+
+    +   PRAGMA_ONCE(main,
+
         "uniform vec3 sun;\n"
         "\n"
         "uniform vec4 color;\n"
@@ -351,5 +357,5 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    gl_FragColor = vec4(c * b, 1.0);\n"
-        "}\n\n";
+        "}")).c_str();
 }

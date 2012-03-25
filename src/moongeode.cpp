@@ -48,7 +48,7 @@
 // separate calculation is required. Correct Moon rotation is currently
 // faked (face towards earth is incorrect due to missing librations etc).
 
-MoonGeode::MoonGeode(const std::string &cubeMapFilePath)
+MoonGeode::MoonGeode(const char* cubeMapFilePath)
 :   osg::Geode()
 
 ,   m_program(new osg::Program)
@@ -117,7 +117,7 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
 
 #include <osg/BlendFunc>
 
-void MoonGeode::setupNode(osg::StateSet* stateSet)
+void MoonGeode::setupNode(osg::StateSet*)
 {
 //    // This prevents objects rendered afterwards to appear inside the moon.
 
@@ -161,7 +161,7 @@ osg::Shader *MoonGeode::fragmentShader()
 
 void MoonGeode::setupTextures(
     osg::StateSet* stateSet
-,   const std::string &cubeMapFilePath)
+,   const char* cubeMapFilePath)
 {
     osg::ref_ptr<osg::TextureCubeMap> tcm(new osg::TextureCubeMap);
 
@@ -328,14 +328,16 @@ const float MoonGeode::defaultEarthShineIntensity()
 
 
 
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
 
 // VertexShader
 
-#include "shaderfragment/version.h"
-
-const std::string MoonGeode::getVertexShaderSource()
+const char* MoonGeode::getVertexShaderSource()
 {
-    return glsl_version_150 +
+    return (glsl_version_150 +
+
+    +   PRAGMA_ONCE(main,
 
         // moon.xyz is expected to be normalized and moon.a the moons
         // angular diameter in rad.
@@ -361,7 +363,7 @@ const std::string MoonGeode::getVertexShaderSource()
         "\n"
         "    gl_TexCoord[0] = gl_Vertex;\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(m_eye, 1.0);\n"
-        "}\n\n";
+        "}")).c_str();
 }
 
 
@@ -369,13 +371,15 @@ const std::string MoonGeode::getVertexShaderSource()
 
 #include "shaderfragment/common.h"
 
-const std::string MoonGeode::getFragmentShaderSource()
+const char* MoonGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
     
     +   glsl_cmn_uniform
     +   glsl_horizon
-    +
+
+    +   PRAGMA_ONCE(main,
+
         "uniform vec3 sun;\n"
         "\n"
         // moon.xyz is expected to be normalized and moon.a the moons
@@ -474,8 +478,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
         "\n"
         "    gl_FragColor = vec4(diffuse * b, 1.0);\n"
-        "}\n\n";
-
+        "}")).c_str();
 
         // Debug.
 

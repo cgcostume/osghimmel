@@ -31,6 +31,7 @@
 #ifndef __JULIANDAY_H__
 #define __JULIANDAY_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 #include "atime.h"
 
@@ -38,30 +39,29 @@
 typedef t_longf t_julianDay;
 
 
-const t_julianDay jd(t_aTime aTime);
+OSGH_API const t_julianDay jd(t_aTime aTime);
 
-const t_julianDay jdUT(const t_aTime &aTime);
-const t_julianDay jd0UT(t_aTime aTime);
+OSGH_API const t_julianDay jdUT(const t_aTime &aTime);
+OSGH_API const t_julianDay jd0UT(t_aTime aTime);
 
-const t_julianDay mjd(t_aTime aTime);
+OSGH_API const t_julianDay mjd(t_aTime aTime);
 
 
-const t_aTime makeTime(
+OSGH_API const t_aTime makeTime(
     t_julianDay julianDate
 ,   const short GMTOffset = 0);
 
-const t_aTime makeUT(const t_aTime &aTime);
+OSGH_API const t_aTime makeUT(const t_aTime &aTime);
 
 
-const t_julianDay standardEquinox();
+OSGH_API const t_julianDay standardEquinox();
+    
+OSGH_API const t_julianDay j2050();
+OSGH_API const t_julianDay j2000();
+OSGH_API const t_julianDay b1900();
+OSGH_API const t_julianDay b1950();
 
-const t_julianDay j2000();
-const t_julianDay b1900();
-const t_julianDay b1950();
-
-
-const t_julianDay jdSinceSE(const t_julianDay jd); // JDE
-const t_julianDay jCenturiesSinceSE(const t_julianDay jd); // T
-
+OSGH_API const t_julianDay jdSinceSE(const t_julianDay jd); // JDE
+OSGH_API const t_julianDay jCenturiesSinceSE(const t_julianDay jd); // T
 
 #endif // __JULIANDAY_H__

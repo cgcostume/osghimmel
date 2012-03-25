@@ -44,6 +44,8 @@ namespace
 
 
 BrightStars::BrightStars(const char *fileName)
+:   m_stars(NULL)
+,   m_numStars(0)
 {
     fromFile(fileName);
 }
@@ -51,12 +53,26 @@ BrightStars::BrightStars(const char *fileName)
 
 BrightStars::~BrightStars()
 {
+    delete[] m_stars;
+}
+
+
+const BrightStars::s_BrightStar *BrightStars::stars() const
+{
+    return m_stars;
+}
+
+
+const unsigned int BrightStars::numStars() const
+{
+    return m_numStars;
 }
 
 
 unsigned int BrightStars::fromFile(const char *fileName)
 {
-    m_stars.clear();
+    if(m_stars)
+        delete[] m_stars;
 
     // Retrieve file size.
 
@@ -76,19 +92,16 @@ unsigned int BrightStars::fromFile(const char *fileName)
     std::fclose(f);
 
 
-    const unsigned int numStars = fileSize / sizeof(s_BrightStar);
-    assert(NUM_BRIGHTSTARS == numStars);
+    m_numStars = fileSize / sizeof(s_BrightStar);
+    //assert(NUM_BRIGHTSTARS == numStars);
 
-
-    s_BrightStar raw[NUM_BRIGHTSTARS];
+    m_stars = new s_BrightStar[m_numStars];
 
     std::ifstream instream(fileName, std::ios::binary);
 
-    instream.read((char*)&raw, sizeof(raw));
+    instream.read((char*)&m_stars, sizeof(m_stars));
 
-    std::copy(raw, raw + numStars, std::back_inserter(m_stars));
-
-    return NUM_BRIGHTSTARS;
+    return m_numStars;
 }
 
 
@@ -96,16 +109,17 @@ unsigned int BrightStars::toFile(const char *fileName) const
 {
     std::ofstream outstream(fileName, std::ios::binary);
 
-    outstream.write((char*)&m_stars, sizeof(m_stars));
+    outstream.write((char*)&m_stars, sizeof(m_stars) * m_numStars);
     outstream.close();
 
-    return static_cast<unsigned int>(m_stars.size());
+    return m_numStars;
 }
 
 
 #ifdef BRIGHTSTARS_INCLUDE_CATALOGUE
  
 BrightStars::BrightStars()
+:   m_numStars(NUM_BRIGHTSTARS)
 {
     float raw[NUM_BRIGHTSTARS][8] = 
 
@@ -9206,7 +9220,7 @@ BrightStars::BrightStars()
 
     };
 
-    m_stars.resize(NUM_BRIGHTSTARS);
+    m_stars = new s_BrightStar[NUM_BRIGHTSTARS];
 
     for(int i = 0; i < NUM_BRIGHTSTARS; ++i)
     {

@@ -60,8 +60,6 @@ const float Earth2::apparentAngularMoonDiameter(const t_julianDay t)
 
 const float Earth2::longitudeNutation(const t_julianDay t)
 {
-    const t_julianDay T(jCenturiesSinceSE(t));
-
     const float sM = _rad(Sun2::meanAnomaly(t));
     const float mM = _rad(Moon2::meanAnomaly(t));
     const float O  = _rad(Moon2::meanOrbitLongitude(t));
@@ -80,8 +78,6 @@ const float Earth2::longitudeNutation(const t_julianDay t)
 
 const float Earth2::obliquityNutation(const t_julianDay t)
 {
-    const t_julianDay T(jCenturiesSinceSE(t));
-
     const float O  = _rad(Moon2::meanOrbitLongitude(t));
     const float Ls = _rad(Sun2::meanAnomaly(t));
     const float Lm = _rad(Moon2::meanAnomaly(t));
@@ -126,7 +122,7 @@ const float Earth2::viewDistanceWithinAtmosphere(
     const float y)
 {
     const float t = atmosphereThickness();
-    const float r = meanRadius();
+    //const float r = meanRadius();
 
     // This works only for mean radius of earth.
     return t * 1116.0 / ((y + 0.004) * 1.1116);

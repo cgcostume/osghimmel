@@ -27,10 +27,68 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
-add_subdirectory("qtpropertybrowser")
+# macros
 
+macro(QT4_AUTO_WRAP outfiles)
+
+    set(moc_headers "")
+    set(ui_files "")
+    set(qrc_files "")
+
+    foreach(fileName ${ARGV})
+
+        if(fileName MATCHES "\\.h$")
+            file(STRINGS ${fileName} lines REGEX Q_OBJECT)
+            IF(lines)
+                list(APPEND moc_headers ${fileName})
+                message(STATUS "moc: ${fileName}")
+            endif()
+        endif()
+        
+        if(fileName MATCHES "\\.ui$")
+            list(APPEND ui_files ${fileName})
+            message(STATUS "uic: ${fileName}")
+        endif()
+
+        if(fileName MATCHES "\\.qrc$")
+            list(APPEND qrc_files ${fileName})
+            message(STATUS "qrc: ${fileName}")
+        endif()
+
+    endforeach()
+
+    qt4_wrap_cpp(mocGeneratedByHeader ${moc_headers})
+    qt4_wrap_ui(uicGenerated ${ui_files})
+
+    qt4_add_resources(mocGeneratedByRessources ${qrc_files})
+
+    list(APPEND ${outfiles}
+        ${uicGenerated}
+        ${mocGeneratedByHeader} 
+        ${mocGeneratedByRessources})
+
+    source_group("_ Qt Generated" FILES 
+        ${uicGenerated}
+        ${mocGeneratedByHeader}
+		${mocGeneratedByRessources})
+
+	source_group("_ CMake Rules" REGULAR_EXPRESSION "rule$")
+
+endmacro()
+
+# config
 
 message(STATUS "add executable: skybox")
+
+set(QT_MIN_VERSION "4.7.0")
+find_package(Qt4 COMPONENTS QtCore QtOpenGL QtGui REQUIRED)
+include(${QT_USE_FILE})
+
+if(NOT QT4_FOUND)
+	message(FATAL_ERROR "Skybox project cannot be build.")
+endif(NOT QT4_FOUND)
+
+add_subdirectory("qtpropertybrowser")
 
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_UI TRUE)
@@ -99,7 +157,6 @@ set(SKYBOX_SOURCES
     utils/tr.h)
 
 qt4_auto_wrap(QT4_SOURCES ${SKYBOX_SOURCES})
-	
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
 
 include_directories(
@@ -107,17 +164,13 @@ include_directories(
     ${QT_INCLUDES})
     
 if(MSVC)
-    #add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
-	add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
+    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
 else(MSVC)
-    # use console
     add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
 endif()
 
-set_default_target_properties(skybox ON)
-
 target_link_libraries(skybox
-    osghimmel
+    osgHimmel
     qtpropertybrowser
     ${QT_QTMAIN_LIBRARY}
     ${QT_QTCORE_LIBRARY}

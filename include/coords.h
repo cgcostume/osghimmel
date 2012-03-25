@@ -150,7 +150,6 @@ typedef s_HorizontalCoords<float> t_horf;
 
 
 
-
 #include "mathmacros.h"
 
 #include <assert.h>

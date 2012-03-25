@@ -31,12 +31,13 @@
 #ifndef __SUN2_H__
 #define __SUN2_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-class Sun2 // Lower Accuracy
+class OSGH_API Sun2 // Lower Accuracy
 {
 public:
 

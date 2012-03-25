@@ -88,6 +88,9 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 }
 
 
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
+
 // VertexShader
 
 // -> specified in AbstractMappedHimmel
@@ -95,18 +98,19 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 
 // FragmentShader
 
-#include "shaderfragment/version.h"
 #include "shaderfragment/blend_normal.h"
 #include "shaderfragment/fakesun.h"
 
-const std::string CubeMappedHimmel::getFragmentShaderSource()
+const char* CubeMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 
     +   (m_fakeSun ? glsl_fakesun : "")
-    +
+    
+    +   PRAGMA_ONCE(main,
+
         "in vec4 m_ray;\n"
         "\n"
         // From AbstractMappedHimmel
@@ -126,5 +130,5 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
         "        textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
         "\n"
         "    gl_FragColor = " + (m_fakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
-        "}\n\n";
+        "}")).c_str();
 }

@@ -73,7 +73,7 @@ CloudLayerHighGeode::~CloudLayerHighGeode()
 };
 
 
-void CloudLayerHighGeode::update(const Himmel &himmel)
+void CloudLayerHighGeode::update(const Himmel &)
 {
 }
 
@@ -191,6 +191,7 @@ void CloudLayerHighGeode::setupTextures(osg::StateSet* stateSet)
 
 
 
+#include "shaderfragment/pragma_once.h"
 #include "shaderfragment/version.h"
 
 // VertexShader
@@ -199,13 +200,15 @@ void CloudLayerHighGeode::setupTextures(osg::StateSet* stateSet)
 #include "shaderfragment/quadtransform.h"
 #include "shaderfragment/bruneton_common.h"
 
-const std::string CloudLayerHighGeode::getVertexShaderSource()
+const char* CloudLayerHighGeode::getVertexShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
-    +
+    
+    +   PRAGMA_ONCE(main,
+    
         "out vec4 m_ray;\n"
         "\n"
         "void main(void)\n"
@@ -214,7 +217,7 @@ const std::string CloudLayerHighGeode::getVertexShaderSource()
         "\n"
         "    m_ray = quadRetrieveRay();\n"
         "    quadTransform();\n"
-        "}\n\n";
+        "}")).c_str();
 }
 
 #include "shaderfragment/pseudo_rand.h"
@@ -226,20 +229,21 @@ const std::string CloudLayerHighGeode::getVertexShaderSource()
 #include "shaderfragment/common.h"
 #include "shaderfragment/noise.h"
 
-const std::string CloudLayerHighGeode::getFragmentShaderSource()
+const char* CloudLayerHighGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_cmn_uniform
     +   glsl_horizon
-    +   
-        "uniform sampler2D perm;\n"
 
     +   glsl_cloud_layer_intersection
 
     +   Noise::glsl_fade()
     +   Noise::glsl_noise2(256u)
-    +
+
+    +   PRAGMA_ONCE(main,
+
+        "uniform sampler2D perm;\n"
         "uniform float altitude = 8.0;\n" // TODO: make uniform.....!
         "\n"
         "in vec4 m_ray;\n"
@@ -266,5 +270,5 @@ const std::string CloudLayerHighGeode::getFragmentShaderSource()
         "        n += noise2(gl_FragCoord.xy * pow(2.0, float(octave + j)) / 256) / pow(2.0, float(j));\n"
         "\n"
         "    gl_FragColor = vec4(vec3(n) * 0.5 + 0.5, 1);\n"
-        "}\n\n";
+        "}")).c_str();
 }

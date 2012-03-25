@@ -31,10 +31,12 @@
 #ifndef __EARTH_H__
 #define __EARTH_H__
 
+#include "declspec.h"
 #include "julianday.h"
 #include "typedefs.h"
 
-class Earth
+
+class OSGH_API Earth
 {
 public:
 

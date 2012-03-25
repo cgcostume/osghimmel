@@ -31,6 +31,8 @@
 #ifndef __MILKYWAYGEODE_H__
 #define __MILKYWAYGEODE_H__
 
+#include "declspec.h"
+
 #include <osg/Geode>
 
 class Himmel;
@@ -41,7 +43,7 @@ class ShaderModifier;
 #endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
-class MilkyWayGeode : public osg::Geode
+class OSGH_API MilkyWayGeode : public osg::Geode
 {
 public:
 
@@ -49,7 +51,7 @@ public:
     // by cubemap extensions '_px', '_nx', '_py', etc. 
     // e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
 
-    MilkyWayGeode(const std::string &cubeMapFilePath);
+    MilkyWayGeode(const char* cubeMapFilePath);
     virtual ~MilkyWayGeode();
 
     void update(const Himmel &himmel);
@@ -85,13 +87,13 @@ protected:
     void setupUniforms(osg::StateSet* stateSet);
     void setupTextures(
         osg::StateSet* stateSet
-    ,   const std::string &cubeMapFilePath);
+    ,   const char* cubeMapFilePath);
 
     void setupShader  (osg::StateSet* stateSet);
 
-    const std::string getVertexShaderSource();
-    const std::string getGeometryShaderSource();
-    const std::string getFragmentShaderSource();
+    const char* getVertexShaderSource();
+    const char* getGeometryShaderSource();
+    const char* getFragmentShaderSource();
 
     void updateScaledB();
 

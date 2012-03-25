@@ -27,30 +27,28 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
+#pragma once
+#ifndef __DECLSPEC_H__
+#define __DECLSPEC_H__
 
-#include "test_strutils.h"
+// export of stl containers and more sucks: 
+// http://www.unknownroad.com/rtfm/VisualStudio/warningC4251.html
+// don't do it: http://support.microsoft.com/kb/q168958/
 
-#include "test.h"
+#ifdef _MSC_VER
+	#define __API_EXPORT_DECLARATION __declspec(dllexport)
+	#define __API_IMPORT_DECLARATION __declspec(dllimport)
+#elif __GNUC__
+	#define __API_EXPORT_DECLARATION
+	#define __API_IMPORT_DECLARATION
+#else
+    #error Missing API import/export declaration
+#endif
 
-#include "include/strutils.h"
+#ifdef OSGHIMMEL_EXPORTS
+	#define OSGH_API __API_EXPORT_DECLARATION
+#else  // OSGHIMMEL_EXPORTS
+	#define OSGH_API __API_IMPORT_DECLARATION
+#endif // OSGHIMMEL_EXPORTS
 
-#include <string.h>
-
-
-void test_strutils()
-{
-    // Check if int cast truncates.
-
-    char buffer[4];
-    __itoa(983, buffer, 4);
-
-    ASSERT_EQ(int, strcmp(buffer, "983"), 0);
-
-
-    std::string test("Num := %NUM%;");
-    replace(test, "%NUM%", 9.83f);
-
-    ASSERT_EQ(int, (test == "Num := 9.830000;"), 1);
-
-    TEST_REPORT();
-}
+#endif // __DECLSPEC_H__

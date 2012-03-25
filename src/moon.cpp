@@ -323,7 +323,6 @@ const t_longf Moon::distance(const t_julianDay t)
 {
     const t_longf sM = _rad(Sun::meanAnomaly(t));
 
-    const t_longf mL = _rad(meanLongitude(t));
     const t_longf mM = _rad(meanAnomaly(t));
     const t_longf mD = _rad(meanElongation(t));
     const t_longf mF = _rad(meanLatitude(t));

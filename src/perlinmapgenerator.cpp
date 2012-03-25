@@ -38,24 +38,24 @@
 
 template<typename T, int N>
 void PerlinMapGenerator::generate(
-    const int width
-,   const int height
-,   T *dest
-,   const float scale
-,   const e_NoiseType type
-,   const int startFrequency
-,   const int octaves
-,   const bool normalize)
+    const int /*width*/
+,   const int /*height*/
+,   T * /*dest*/
+,   const float /*scale*/
+,   const e_NoiseType /*type*/
+,   const int /*startFrequency*/
+,   const int /*octaves*/
+,   const bool /*normalize*/)
 {
-    const unsigned int size = width * height;
+    //const unsigned int size = width * height;
 
-    if(size < 1) 
-        return;
+    //if(size < 1) 
+    //    return;
 
-    float *temp = new float[size * octaves];
-    float *temp2 = new float[size];
+    //float *temp = new float[size * octaves];
+    //float *temp2 = new float[size];
 
-    int frequency = 1 << startFrequency;
+    //int frequency = 1 << startFrequency;
 
     //// Generate noise data for each octave.
     //for(int f = 0; f < octaves; ++f, frequency *= 2)

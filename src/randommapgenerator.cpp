@@ -51,7 +51,7 @@ void RandomMapGenerator::generate(
 
     for(int i = 0; i < width * height; ++i) 
         for(unsigned int n = 0; n < N; ++n)
-            dest[i * N + n] = static_cast<T>(_randf(0.f, 255.f));
+            dest[i * N + n] = static_cast<T>(_randf(0.f, scale));
 }
 
 

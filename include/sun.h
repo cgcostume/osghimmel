@@ -31,12 +31,13 @@
 #ifndef __SUN_H__
 #define __SUN_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-class Sun
+class OSGH_API Sun
 {
 public:
 

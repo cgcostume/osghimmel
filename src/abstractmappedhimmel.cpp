@@ -347,21 +347,22 @@ const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
 
 
 
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
+
 // VertexShader
 
 #include "shaderfragment/quadretrieveray.h"
 #include "shaderfragment/quadtransform.h"
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
 
-const std::string AbstractMappedHimmel::getVertexShaderSource()
+const char* AbstractMappedHimmel::getVertexShaderSource()
 {
-    return glsl_version_150
-
+    return (glsl_version_150
+    
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
-    +
-        PRAGMA_ONCE(main,
+
+    +   PRAGMA_ONCE(main,
 
         "uniform mat4 razInverse;\n"
         "\n"
@@ -374,6 +375,6 @@ const std::string AbstractMappedHimmel::getVertexShaderSource()
         "    m_razInvariant = m_ray * razInverse;\n"
         "\n"
         "    quadTransform();\n"
-        "}");
+        "}")).c_str();
 }
 

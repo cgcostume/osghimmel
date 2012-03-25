@@ -31,6 +31,8 @@
 #ifndef __HIMMELENVMAP_H__
 #define __HIMMELENVMAP_H__
 
+#include "declspec.h"
+
 #include <osg/Group>
 #include <osg/Camera>
 
@@ -40,7 +42,7 @@ namespace osg
 }
 
 
-class HimmelEnvMap : public osg::Group
+class OSGH_API HimmelEnvMap : public osg::Group
 {
 public:
 

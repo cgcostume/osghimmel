@@ -27,11 +27,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include <osg/StateSet>
-
 #pragma once
 #ifndef __HORIZONBAND_H__
 #define __HORIZONBAND_H__
+
+#include "declspec.h"
+
+#include <osg/StateSet>
 
 // Some texture projections (polar mapping with MM_Half and paraboloid mapping)
 // discard the lower hemisphere, resulting in a hard edge to gl clear color. 
@@ -42,7 +44,7 @@
 // smoothstep blending is used for the gradient, but inv_squared interpolation 
 // yields good results too.
 
-class HorizonBand
+class OSGH_API HorizonBand
 {
 public:
 

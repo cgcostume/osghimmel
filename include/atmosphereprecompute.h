@@ -130,7 +130,7 @@ public:
     const bool compute(const bool ifDirtyOnly = true);
     void dirty();
 
-    void substituteMacros(std::string &source);
+    const char* substituteMacros(const char* source);
 
 protected:
 
@@ -172,7 +172,7 @@ protected:
     ,   const int layer);
 
     osg::Program *setupProgram(
-        std::string fragmentShaderSource);
+        const char* fragmentShaderSource);
 
     osg::Camera *setupCamera(
         const int viewportWidth
@@ -205,7 +205,7 @@ protected:
     ,   t_tex2DsByUnit &samplers2D
     ,   t_tex3DsByUnit &samplers3D
     ,   t_uniforms &uniforms
-    ,   const std::string &fragmentShaderSource);
+    ,   const char* fragmentShaderSource);
 
     void render3D(
         osgViewer::CompositeViewer *viewer
@@ -214,7 +214,7 @@ protected:
     ,   t_tex2DsByUnit &samplers2D
     ,   t_tex3DsByUnit &samplers3D
     ,   t_uniforms &uniforms
-    ,   const std::string &fragmentShaderSource);
+    ,   const char* fragmentShaderSource);
 
 protected:
 

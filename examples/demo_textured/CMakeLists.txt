@@ -35,10 +35,9 @@ set(DEMO_SOURCES
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${DEMO_SOURCES})
 
 add_executable(demo_textured ${DEMO_SOURCES})
-set_default_target_properties(demo_textured OFF)
 
 target_link_libraries(demo_textured
-    osghimmel
+    osgHimmel
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
