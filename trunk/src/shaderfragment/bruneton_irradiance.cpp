@@ -31,7 +31,10 @@
 
 #include "bruneton_common.h"
 #include "common.h"
-#include "pragma_once.h"
+
+
+namespace osgHimmel
+{
 
 // based on Brunetons free code (http://www-evasion.imag.fr/Members/Eric.Bruneton/PrecomputedAtmosphericScattering2.zip)
 
@@ -167,3 +170,5 @@ const std::string glsl_bruneton_f_copyIrradiance // requires: k, deltaESampler, 
     "    gl_FragColor += k * texture2D(deltaESampler, uv);\n" // k = 0 for line 4, k = 1 for line 10
     "}")
 );
+
+} // namespace osgHimmel

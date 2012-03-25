@@ -31,8 +31,16 @@
 
 #include "horizonband.h"
 
+#include "shaderfragment/common.h"
+#include "shaderfragment/blend_normal.h"
+#include "shaderfragment/hband.h"
+#include "shaderfragment/fakesun.h"
+
 #include <osg/Texture2D>
 
+
+namespace osgHimmel
+{
 
 ParaboloidMappedHimmel::ParaboloidMappedHimmel(
     const bool horizonBand
@@ -103,19 +111,7 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 }
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
 
-// VertexShader
-
-// -> specified in AbstractMappedHimmel
-
-
-// FragmentShader
-
-#include "shaderfragment/blend_normal.h"
-#include "shaderfragment/hband.h"
-#include "shaderfragment/fakesun.h"
 
 const char* ParaboloidMappedHimmel::getFragmentShaderSource()
 {
@@ -155,3 +151,5 @@ const char* ParaboloidMappedHimmel::getFragmentShaderSource()
         "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
         "}")).c_str();
 }
+
+} // namespace osgHimmel

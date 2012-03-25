@@ -33,9 +33,14 @@
 
 #include <osg/Depth>
 #include <osgUtil/CullVisitor>
+#include <osg/Geode>
+#include <osg/ShapeDrawable>
 
 #include <assert.h>
 
+
+namespace osgHimmel
+{
 
 void AbstractHimmel::HimmelNodeCallback::operator()(
     osg::Node *node
@@ -97,9 +102,6 @@ bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVis
     }
     return true;
 }
-
-#include <osg/Geode>
-#include <osg/ShapeDrawable>
 
 
 void AbstractHimmel::setupNode(osg::StateSet* stateSet)
@@ -248,3 +250,5 @@ const unsigned int AbstractHimmel::getViewSizeHeightHint() const
 {
     return m_heightHint;
 }
+
+} // namespace osgHimmel

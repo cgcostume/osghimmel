@@ -31,10 +31,18 @@
 
 #include "horizonband.h"
 
+#include "shaderfragment/blend_normal.h"
+#include "shaderfragment/fakesun.h"
+#include "shaderfragment/common.h"
+#include "shaderfragment/hband.h"
+
 #include <osg/Texture2D>
 
 #include <assert.h>
 
+
+namespace osgHimmel
+{
 
 PolarMappedHimmel::PolarMappedHimmel(
     const e_MappingMode &mappingMode
@@ -108,19 +116,7 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 }
 
 
-// VertexShader
 
-// -> specified in AbstractMappedHimmel
-
-
-// FragmentShader
-
-#include "shaderfragment/blend_normal.h"
-#include "shaderfragment/fakesun.h"
-#include "shaderfragment/flags.h"
-#include "shaderfragment/hband.h"
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
 
 const char* PolarMappedHimmel::getFragmentShaderSource()
 {
@@ -211,3 +207,5 @@ const char* PolarMappedHimmel::getFragmentShaderSource()
 
         "}")).c_str();
 }
+
+} // namespace osgHimmel

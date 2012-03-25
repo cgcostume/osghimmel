@@ -31,7 +31,10 @@
 
 #include "bruneton_common.h"
 #include "common.h"
-#include "pragma_once.h"
+
+
+namespace osgHimmel
+{
 
 // based on Brunetons free code (http://www-evasion.imag.fr/Members/Eric.Bruneton/PrecomputedAtmosphericScattering2.zip)
 
@@ -106,3 +109,5 @@ const std::string glsl_bruneton_f_transmittance
     "    gl_FragColor = vec4(exp(-depth), 0.0);\n" // Eq (5)
     "}")
 );
+
+} // namespace osgHimmel

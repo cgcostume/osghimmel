@@ -35,6 +35,11 @@
 #include "abstractastronomy.h"
 #include "atmosphereprecompute.h"
 
+#include "shaderfragment/common.h"
+#include "shaderfragment/bruneton_common.h"
+#include "shaderfragment/pseudo_rand.h"
+#include "shaderfragment/dither.h"
+
 #include <osg/Texture2D>
 #include <osg/Texture3D>
 #include <osg/Depth>
@@ -43,6 +48,9 @@
 
 #include <assert.h>
 
+
+namespace osgHimmel
+{
 
 AtmosphereGeode::AtmosphereGeode()
 :   osg::Group()
@@ -323,15 +331,6 @@ void AtmosphereGeode::setPhaseG(const float g)
 
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
-
-// VertexShader
-
-#include "shaderfragment/quadretrieveray.h"
-#include "shaderfragment/quadtransform.h"
-#include "shaderfragment/bruneton_common.h"
-
 const char* AtmosphereGeode::getVertexShaderSource()
 {
     return (glsl_version_150
@@ -351,12 +350,6 @@ const char* AtmosphereGeode::getVertexShaderSource()
         "    quadTransform();\n"
         "}")).c_str();
 }
-
-// FragmentShader
-
-#include "shaderfragment/common.h"
-#include "shaderfragment/pseudo_rand.h"
-#include "shaderfragment/dither.h"
 
 
 const char* AtmosphereGeode::getFragmentShaderSource()
@@ -577,3 +570,5 @@ const char* AtmosphereGeode::getFragmentShaderSource()
         "        + dither(4, int(cmn[3]));\n" // Eq (16)
         "}").c_str();
 }
+
+} // namespace osgHimmel

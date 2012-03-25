@@ -29,7 +29,46 @@
 
 #include "common.h"
 
-#include "pragma_once.h"
+
+namespace osgHimmel
+{
+
+const std::string glsl_version_150
+(
+    PRAGMA_ONCE(version,
+
+    "#version 150 compatibility")
+);
+
+
+const std::string glsl_geometry_ext
+(
+    PRAGMA_ONCE(GL_EXT_geometry_shader4,
+
+    "#extension GL_EXT_geometry_shader4 : enable")
+);
+
+
+const std::string glsl_quadTransform
+(
+    PRAGMA_ONCE(quadTransform,
+
+    "void quadTransform()\n"
+    "{\n"
+    "    gl_Position = gl_Vertex;\n"
+    "}")
+);
+
+
+const std::string glsl_quadRetrieveRay
+(
+    PRAGMA_ONCE(quadRetrieveRay,
+
+    "vec4 quadRetrieveRay()\n"
+    "{\n"
+    "    return gl_ProjectionMatrixInverse * gl_Vertex * gl_ModelViewMatrix;\n"
+    "}")
+);
 
 
 const std::string glsl_cmn_uniform
@@ -65,3 +104,5 @@ const std::string glsl_horizon
     "   return tAtm(ray) < 0.0;\n"
     "}")
 );
+
+} // namespace osgHimmel

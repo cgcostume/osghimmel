@@ -56,6 +56,10 @@
 
 #include <assert.h>
 
+
+namespace osgHimmel
+{
+
 AtmospherePrecompute::AtmospherePrecompute()
 :   m_transmittanceImage(new osg::Image)
 ,   m_irradianceImage(new osg::Image)
@@ -792,3 +796,5 @@ const char *AtmospherePrecompute::substituteMacros(const char *source)
 
     return temp.c_str();
 }
+
+} // namespace osgHimmel

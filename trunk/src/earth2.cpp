@@ -37,6 +37,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 const float Earth2::orbitEccentricity()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
@@ -151,3 +154,5 @@ const t_longf Earth2::apparentMagnitudeLimit()
 {
     return Earth::apparentMagnitudeLimit();
 }
+
+} // namespace osgHimmel

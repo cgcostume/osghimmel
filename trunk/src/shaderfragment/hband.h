@@ -33,6 +33,11 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_hband; // vec4 hband(float z, float scale, float width, float offset, vec4 color, vec4 background, vec4 fc)
+
+} // namespace osgHimmel
 
 #endif // __GLSL_HBAND_H__

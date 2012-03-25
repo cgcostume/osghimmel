@@ -30,10 +30,15 @@
 #include "blend_screen.h"
 
 #include "compose.h"
-#include "pragma_once.h"
+#include "common.h"
+
+namespace osgHimmel
+{
 
 const std::string glsl_blendScreen(
     PRAGMA_ONCE(blendScreen, IMP_COMPOSE(screen, b + s - (b * s))));
 
 const std::string glsl_blendScreenExt(
     PRAGMA_ONCE(blendScreenExt, IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s))));
+
+} // namespace osgHimmel

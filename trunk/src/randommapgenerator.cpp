@@ -34,6 +34,9 @@
 #include <stdlib.h>
 
 
+namespace osgHimmel
+{
+
 template<typename T, int N>
 void RandomMapGenerator::generate(
     const int width
@@ -113,3 +116,5 @@ void RandomMapGenerator::generate4(
 {
     generate<unsigned char, 4>(width, height, dest, 255.f, seed);
 }
+
+} // namespace osgHimmel

@@ -29,8 +29,11 @@
 
 #include "cloudlayer.h"
 
-#include "pragma_once.h"
+#include "common.h"
 
+
+namespace osgHimmel
+{
 
 // Intersection of view ray (d) with a sphere of radius = mean earth 
 // radius + altitude (altitude). Support is only for rays starting 
@@ -67,3 +70,5 @@ const std::string glsl_cloud_layer_intersection
     "    return (-b + B) * 0.5 / a;\n"
     "}")
 );
+
+} // namespace osgHimmel

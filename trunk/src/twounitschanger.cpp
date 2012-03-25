@@ -36,6 +36,9 @@
 #include <osg/Notify>
 
 
+namespace osgHimmel
+{
+
 TwoUnitsChanger::TwoUnitsChanger()
 :   m_transitionDuration(1.f)
 ,   m_smallestRange(1.f)
@@ -231,3 +234,5 @@ const float TwoUnitsChanger::getSrcAlpha(const float time) const
     update(time);
     return m_srcAlpha;
 }
+
+} // namespace osgHimmel

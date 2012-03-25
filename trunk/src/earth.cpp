@@ -35,6 +35,10 @@
 
 #include <assert.h>
 
+
+namespace osgHimmel
+{
+
 // The linear eccentricity of the earth orbit is about 2.5 * 10^6 km.
 // Compared to the avg. distance of 149.6 * 10^6 km this is not much.
 // http://www.greier-greiner.at/hc/ekliptik.htm
@@ -317,3 +321,5 @@ const t_longf Earth::apparentMagnitudeLimit()
     // http://www.astronomynotes.com/starprop/s4.htm
     return 6.5;
 }
+
+} // namespace osgHimmel

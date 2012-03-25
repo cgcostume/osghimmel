@@ -31,11 +31,16 @@
 #include "blend_difference.h"
 
 #include "compose.h"
-#include "pragma_once.h"
+#include "common.h"
 
+
+namespace osgHimmel
+{
 
 const std::string glsl_blendDifference(
     PRAGMA_ONCE(blendDifference, IMP_COMPOSE(difference, fabs(b - s))));
 
 const std::string glsl_blendDifferenceExt(
     PRAGMA_ONCE(blendDifferenceExt, IMP_COMPOSE_SRC_ALPHA(difference, fabs(b - s))));
+
+} // namespace osgHimmel

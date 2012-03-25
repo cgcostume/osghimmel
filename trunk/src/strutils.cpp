@@ -33,6 +33,9 @@
 #include <stdarg.h>
 
 
+namespace osgHimmel
+{
+
 void replace(
     std::string& string
 ,   const std::string &search
@@ -107,3 +110,5 @@ int __itoa(
     dst[size - 1] = '\0';
     return result;
 }
+
+} // namespace osgHimmel

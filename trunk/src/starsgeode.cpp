@@ -39,6 +39,8 @@
 #include "stars.h"
 #include "strutils.h"
 
+#include "shaderfragment/common.h"
+
 #include <osg/Geometry>
 #include <osg/Point>
 #include <osg/BlendFunc>
@@ -51,6 +53,9 @@ namespace
     const float TWO_TIMES_SQRT2(2.0 * sqrt(2.0));
 }
 
+
+namespace osgHimmel
+{
 
 StarsGeode::StarsGeode(const char* brightStarsFilePath)
 :   osg::Geode()
@@ -380,13 +385,6 @@ const float StarsGeode::defaultColorRatio()
 
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
-
-// VertexShader
-
-#include "shaderfragment/common.h"
-
 const char* StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
@@ -461,8 +459,6 @@ const char* StarsGeode::getVertexShaderSource()
 }
 
 
-// GeometryShader
-
 const char *StarsGeode::getGeometryShaderSource()
 {
     return (glsl_version_150 +
@@ -518,8 +514,6 @@ const char *StarsGeode::getGeometryShaderSource()
 }
 
 
-// FragmentShader
-
 const char* StarsGeode::getFragmentShaderSource()
 {
     return (glsl_version_150 
@@ -554,3 +548,5 @@ const char* StarsGeode::getFragmentShaderSource()
         "    gl_FragColor = m_c * (t + g);\n"
         "}")).c_str();
 }
+
+} // namespace osgHimmel

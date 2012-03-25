@@ -30,10 +30,15 @@
 #include "blend_lineardodge.h"
 
 #include "compose.h"
-#include "pragma_once.h"
+#include "common.h"
+
+namespace osgHimmel
+{
 
 const std::string glsl_blendLinearDodge(
     PRAGMA_ONCE(blendLinearDodge, IMP_COMPOSE(lineardodge, b + s)));
 
 const std::string glsl_blendLinearDodgeExt(
     PRAGMA_ONCE(blendLinearDodgeExt, IMP_COMPOSE_SRC_ALPHA(lineardodge, b + s)));
+
+} // namespace osgHimmel

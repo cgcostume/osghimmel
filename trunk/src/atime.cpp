@@ -35,6 +35,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 s_AstronomicalTime::s_AstronomicalTime()
 :   year(0)
 ,   month(0)
@@ -147,3 +150,5 @@ const t_longf s_AstronomicalTime::dayf() const
 {
     return day + _day(hour, minute, second);
 }
+
+} // namespace osgHimmel

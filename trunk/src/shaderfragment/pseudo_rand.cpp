@@ -29,7 +29,11 @@
 
 #include "pseudo_rand.h"
 
-#include "pragma_once.h"
+#include "common.h"
+
+
+namespace osgHimmel
+{
 
 // The generated pseudo random number is good for frame-to-frame 
 // coherent dithering.
@@ -63,3 +67,5 @@ const std::string glsl_pseudo_rand
     "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
     "}")
 );
+
+} // namespace osgHimmel

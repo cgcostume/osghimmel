@@ -31,6 +31,11 @@
 
 #include "timef.h"
 #include "himmelquad.h"
+#include "coords.h"
+#include "mathmacros.h"
+
+#include "shaderfragment/common.h"
+
 
 #include <osg/Geode>
 #include <osg/MatrixTransform>
@@ -38,12 +43,15 @@
 #include <assert.h>
 #include <limits>
 
+
 namespace 
 {
     const GLint BACK_TEXTURE_INDEX(0);
     const GLint SRC_TEXTURE_INDEX (1);
 }
 
+namespace osgHimmel
+{
 
 AbstractMappedHimmel::AbstractMappedHimmel(
     const bool fakeSun)
@@ -99,11 +107,6 @@ AbstractMappedHimmel::~AbstractMappedHimmel()
     delete m_hquad;
 };
 
-
-#pragma NOTE("Move includes...")
-
-#include "coords.h"
-#include "mathmacros.h"
 
 void AbstractMappedHimmel::update()
 {
@@ -347,14 +350,6 @@ const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
 
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
-
-// VertexShader
-
-#include "shaderfragment/quadretrieveray.h"
-#include "shaderfragment/quadtransform.h"
-
 const char* AbstractMappedHimmel::getVertexShaderSource()
 {
     return (glsl_version_150
@@ -378,3 +373,4 @@ const char* AbstractMappedHimmel::getVertexShaderSource()
         "}")).c_str();
 }
 
+} // namespace osgHimmel

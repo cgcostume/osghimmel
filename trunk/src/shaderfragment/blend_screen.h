@@ -33,7 +33,12 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_blendScreen;
 extern const std::string glsl_blendScreenExt;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_BLEND_SCREEN_H__

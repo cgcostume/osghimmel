@@ -33,7 +33,12 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_blendMultiply;
 extern const std::string glsl_blendMultiplyExt;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_BLEND_MULTIPLY_H__

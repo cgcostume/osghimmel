@@ -33,6 +33,9 @@
 #include "mathmacros.h"
 
 
+namespace osgHimmel
+{
+
 const t_longf siderealTime(const t_aTime &aTime)
 {
     const t_aTime gmt(makeUT(aTime));
@@ -61,3 +64,5 @@ const t_longf siderealTime2(const t_aTime &aTime)
 
     return _revd(_deg(t));
 }
+
+} // namespace osgHimmel

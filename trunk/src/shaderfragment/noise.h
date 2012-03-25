@@ -33,7 +33,12 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_fade;   // float fade(float t)
 extern const std::string glsl_noise2; // float noise2(sampler2D perm, vec2 st, float fade)
+
+} // namespace osgHimmel
 
 #endif // __GLSL_NOISE_H__

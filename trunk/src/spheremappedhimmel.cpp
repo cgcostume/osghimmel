@@ -29,8 +29,15 @@
 
 #include "spheremappedhimmel.h"
 
+#include "shaderfragment/common.h"
+#include "shaderfragment/blend_normal.h"
+#include "shaderfragment/fakesun.h"
+
 #include <osg/Texture2D>
 
+
+namespace osgHimmel
+{
 
 SphereMappedHimmel::SphereMappedHimmel(
     const e_MappingMode &mappingMode
@@ -90,19 +97,6 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
-
-// VertexShader
-
-// -> specified in AbstractMappedHimmel
-
-
-// FragmentShader
-
-#include "shaderfragment/blend_normal.h"
-#include "shaderfragment/fakesun.h"
-
 const char* SphereMappedHimmel::getFragmentShaderSource()
 {
     return (glsl_version_150
@@ -142,3 +136,5 @@ const char* SphereMappedHimmel::getFragmentShaderSource()
         "    gl_FragColor = " + (m_fakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
         "}")).c_str();
 }
+
+} // namespace osgHimmel

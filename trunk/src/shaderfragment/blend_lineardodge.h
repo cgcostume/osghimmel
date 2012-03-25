@@ -33,7 +33,12 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_blendLinearDodge;
 extern const std::string glsl_blendLinearDodgeExt;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_BLEND_LINEARDODGE_H__

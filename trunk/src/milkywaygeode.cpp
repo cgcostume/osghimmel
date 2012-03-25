@@ -34,11 +34,16 @@
 #include "abstractastronomy.h"
 #include "earth.h"
 
+#include "shaderfragment/common.h"
+
 #include <osg/Geometry>
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
+
+namespace osgHimmel
+{
 
 MilkyWayGeode::MilkyWayGeode(const char* cubeMapFilePath)
 :   osg::Geode()
@@ -280,13 +285,7 @@ const float MilkyWayGeode::defaultScattering()
 }
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
 
-// VertexShader
-
-#include "shaderfragment/quadretrieveray.h"
-#include "shaderfragment/quadtransform.h"
 
 const char* MilkyWayGeode::getVertexShaderSource()
 {
@@ -310,10 +309,6 @@ const char* MilkyWayGeode::getVertexShaderSource()
         "}")).c_str();
 }
 
-
-// FragmentShader
-
-#include "shaderfragment/common.h"
 
 const char* MilkyWayGeode::getFragmentShaderSource()
 {
@@ -359,3 +354,5 @@ const char* MilkyWayGeode::getFragmentShaderSource()
         "    gl_FragColor = vec4(c * b, 1.0);\n"
         "}")).c_str();
 }
+
+} // namespace osgHimmel

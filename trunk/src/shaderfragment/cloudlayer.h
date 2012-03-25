@@ -33,6 +33,11 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_cloud_layer_intersection; // layerIntersectionOrDiscard(vec3 d, float altitude)
+
+} // namespace osgHimmel
 
 #endif // __GLSL_CLOUDLAYER_H__
