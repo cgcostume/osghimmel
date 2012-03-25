@@ -30,12 +30,17 @@
 #include "blend_normal.h"
 
 #include "compose.h"
-#include "pragma_once.h"
+#include "common.h"
 
 // Use glsl mix if alpha is 1.0, since it is much faster due to 'collapsed' math.
+
+namespace osgHimmel
+{
 
 const std::string glsl_blendNormal(
     PRAGMA_ONCE(blendNormal, IMP_COMPOSE(normal, s)));
 
 const std::string glsl_blendNormalExt(
     PRAGMA_ONCE(blendNormalExt, IMP_COMPOSE_SRC_ALPHA(normal, s)));
+
+} // namespace osgHimmel

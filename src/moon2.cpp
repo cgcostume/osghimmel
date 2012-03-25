@@ -38,6 +38,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 // LOW ACCURACY
 
 const float Moon2::meanLongitude(const t_julianDay t)
@@ -213,3 +216,5 @@ const t_longf Moon2::meanRadius()
 {
     return Moon::meanRadius();
 }
+
+} // namespace osgHimmel

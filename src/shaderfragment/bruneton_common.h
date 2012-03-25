@@ -33,6 +33,9 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_bruneton_v_default;
 
 //extern const std::string glsl_bruneton_g_default;
@@ -75,5 +78,7 @@ extern const std::string glsl_bruneton_irradiance;          // requires: irradia
 extern const std::string glsl_bruneton_phaseFunctionR;      // requires: PI
 extern const std::string glsl_bruneton_phaseFunctionM;      // requires: PI, mieG
 extern const std::string glsl_bruneton_mie;                 // requires: betaR
+
+} // namespace osgHimmel
  
 #endif // __GLSL_BRUNETON_COMMON_H__

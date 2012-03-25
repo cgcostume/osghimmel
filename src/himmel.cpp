@@ -46,6 +46,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 Himmel *Himmel::create()
 {
     // cubeMapFilePaths should contain a questionmark '?' that is replaced
@@ -324,3 +327,5 @@ const float Himmel::defaultAltitude()
 {
     return 0.2f;
 }
+
+} // namespace osgHimmel

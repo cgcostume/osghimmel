@@ -33,6 +33,13 @@
 #include "noise.h"
 #include "himmelquad.h"
 
+#include "shaderfragment/common.h"
+#include "shaderfragment/bruneton_common.h"
+#include "shaderfragment/pseudo_rand.h"
+#include "shaderfragment/dither.h"
+#include "shaderfragment/cloudlayer.h"
+#include "shaderfragment/noise.h"
+
 #include <osg/Texture2D>
 #include <osg/Geode>
 #include <osg/Depth>
@@ -40,6 +47,9 @@
 
 #include <assert.h>
 
+
+namespace osgHimmel
+{
 
 CloudLayerHighGeode::CloudLayerHighGeode()
 :   osg::Group()
@@ -191,15 +201,6 @@ void CloudLayerHighGeode::setupTextures(osg::StateSet* stateSet)
 
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
-
-// VertexShader
-
-#include "shaderfragment/quadretrieveray.h"
-#include "shaderfragment/quadtransform.h"
-#include "shaderfragment/bruneton_common.h"
-
 const char* CloudLayerHighGeode::getVertexShaderSource()
 {
     return (glsl_version_150
@@ -220,14 +221,6 @@ const char* CloudLayerHighGeode::getVertexShaderSource()
         "}")).c_str();
 }
 
-#include "shaderfragment/pseudo_rand.h"
-#include "shaderfragment/dither.h"
-
-// FragmentShader
-
-#include "shaderfragment/cloudlayer.h"
-#include "shaderfragment/common.h"
-#include "shaderfragment/noise.h"
 
 const char* CloudLayerHighGeode::getFragmentShaderSource()
 {
@@ -238,8 +231,8 @@ const char* CloudLayerHighGeode::getFragmentShaderSource()
 
     +   glsl_cloud_layer_intersection
 
-    +   Noise::glsl_fade()
-    +   Noise::glsl_noise2(256u)
+    +   Noise::fadeGlslSource()
+    +   Noise::noise2GlslSource(256u)
 
     +   PRAGMA_ONCE(main,
 
@@ -272,3 +265,5 @@ const char* CloudLayerHighGeode::getFragmentShaderSource()
         "    gl_FragColor = vec4(vec3(n) * 0.5 + 0.5, 1);\n"
         "}")).c_str();
 }
+
+} // namespace osgHimmel

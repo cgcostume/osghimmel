@@ -35,6 +35,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 template<typename T, int N>
 void GaussianMapGenerator::generate(
     const int width
@@ -143,3 +146,5 @@ void GaussianMapGenerator::generate4(
 {
     generate<unsigned char, 4>(width, height, dest, 255.f, amount, probability, seed);
 }
+
+} // namespace osgHimmel

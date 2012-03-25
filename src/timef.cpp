@@ -36,6 +36,9 @@
 #include <math.h>
 
 
+namespace osgHimmel
+{
+
 const long TimeF::utcOffset()
 {
     long tz;
@@ -291,3 +294,5 @@ const time_t TimeF::setUtcOffset(const time_t &utcOffset)
 
     return getUtcOffset();
 }
+
+} // namespace osgHimmel

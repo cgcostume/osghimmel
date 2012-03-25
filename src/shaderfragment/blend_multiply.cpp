@@ -30,11 +30,16 @@
 #include "blend_multiply.h"
 
 #include "compose.h"
-#include "pragma_once.h"
+#include "common.h"
 
+
+namespace osgHimmel
+{
 
 const std::string glsl_blendMultiply(
     PRAGMA_ONCE(blendMultiply, IMP_COMPOSE(multiply, b * s)));
 
 const std::string glsl_blendMultiplyExt(
     PRAGMA_ONCE(blendMultyplyExt, IMP_COMPOSE_SRC_ALPHA(multiply, b * s)));
+
+} // namespace osgHimmel

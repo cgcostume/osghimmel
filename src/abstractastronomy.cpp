@@ -32,6 +32,9 @@
 #include "mathmacros.h"
 
 
+namespace osgHimmel
+{
+
 AbstractAstronomy::AbstractAstronomy()
 :
     m_latitude(0.f)
@@ -181,3 +184,5 @@ const float AbstractAstronomy::getAngularMoonRadius(const t_aTime &aTime) const
 {
     return angularMoonRadius(jd(aTime));
 }
+
+} // namespace osgHimmel

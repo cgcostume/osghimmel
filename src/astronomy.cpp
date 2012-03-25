@@ -36,6 +36,9 @@
 #include "sideraltime.h"
 
 
+namespace osgHimmel
+{
+
 Astronomy::Astronomy()
 {
 }
@@ -94,3 +97,5 @@ const osg::Matrix Astronomy::equToLocalHorizonMatrix() const
         * osg::Matrix::rotate( _rad(la) - _PI_2, 1, 0, 0)
         * osg::Matrix::rotate(-_rad(s + lo)    , 0, 0, 1);
 }
+
+} // namespace osgHimmel

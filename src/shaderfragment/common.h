@@ -33,7 +33,56 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
+#ifndef PRAGMA_ONCE
+#define PRAGMA_ONCE(name, source)  \
+    "\n#ifndef __" #name "__\n" \
+    "#define __" #name "__\n\n" \
+    source \
+    "\n\n#endif // __" #name "__\n\n"
+#endif // PRAGMA_ONCE
+
+
+#ifndef ENABLE_IF
+#define ENABLE_IF(flag, condition)  \
+    "" + ((condition) ? "#define __enable_" #flag "__\n" : "") + ""
+#endif // ENABLE_IF
+
+#ifndef IF_ENABLED
+#define IF_ENABLED(flag, source)         \
+    "\n#ifdef __enable_" #flag "__\n\n"  \
+    source                               \
+    "\n\n#endif // __enable_" #flag "__\n\n"
+#endif // IF_ENABLED
+
+#ifndef IF_ELSE_ENABLED
+#define IF_ELSE_ENABLED(flag, if_source, else_source)  \
+    "\n#ifdef __enable_" #flag "__\n\n"                \
+    if_source                                          \
+    "\n\n#else // __enable_" #flag "__\n\n"            \
+    else_source                                        \
+    "\n\n#endif // __enable_" #flag "__\n\n" 
+#endif // IF_ELSE_ENABLED
+
+#ifndef IF_NOT_ENABLED
+#define IF_NOT_ENABLED(flag, source)      \
+    "\n#ifndef __enable_" #flag "__\n\n"  \
+    if_source                             \
+    "\n\n#endif // __enable_" #flag "__\n\n"
+#endif // IF_NOT_ENABLED
+    
+
+extern const std::string glsl_version_150;
+extern const std::string glsl_geometry_ext;
+
+extern const std::string glsl_quadRetrieveRay; // vec4 quadRetrieveRay()
+extern const std::string glsl_quadTransform; // void quadTransform()
+
 extern const std::string glsl_cmn_uniform;
 extern const std::string glsl_horizon; // bool belowHorizon(vec3 ray)
+
+} // namespace osgHimmel
 
 #endif // __GLSL_COMMON_H__

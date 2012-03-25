@@ -29,8 +29,11 @@
 
 #include "fakesun.h"
 
-#include "pragma_once.h"
+#include "common.h"
 
+
+namespace osgHimmel
+{
 
 const std::string glsl_fakesun
 (
@@ -55,3 +58,5 @@ const std::string glsl_fakesun
     "    return vec4(coeffs.rgb * s, coeffs.a);\n"
     "}")
 );
+
+} // namespace osgHimmel

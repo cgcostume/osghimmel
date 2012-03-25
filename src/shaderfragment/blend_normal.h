@@ -33,7 +33,12 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_blendNormal;
 extern const std::string glsl_blendNormalExt;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_BLEND_NORMAL_H__

@@ -31,6 +31,9 @@
 #ifndef __GLSL_COMPOSE_H__
 #define __GLSL_COMPOSE_H__
 
+namespace osgHimmel
+{
+
 // The general composition of two colors is specified in these two macros:
 // The first (default) uses the alpha value of src, the other allows over-
 // writing it. The Blending function is specified via COMPOSE parameter.
@@ -38,46 +41,50 @@
 // e.g. IMP_COMPOSE(multiply, b * s) creates the blend_multiply function
 // that uses back * src as intermediate composition.
 
-namespace 
-{
-    #define IMP_COMPOSE(MODE, COMPOSE)                                    \
-                                                                          \
-        "vec4 blend_" #MODE "(vec4 back, vec4 src)\n"                     \
-        "{\n"                                                             \
-        "    vec3 b = back.rgb;\n"                                        \
-        "    vec3 s = src.rgb;\n"                                         \
-        "\n"                                                              \
-        "    vec3 bs = " #COMPOSE ";\n"                                   \
-        "\n"                                                              \
-        "    float ba = back.a;\n"                                        \
-        "    float sa = src.a;\n"                                         \
-        "\n"                                                              \
-        "    float ra = ba + sa - (ba * sa);\n"                           \
-        "\n"                                                              \
-        "    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
-        "\n"                                                              \
-        "    return vec4(r, ra);\n"                                       \
-        "}"
+
+#ifndef IMP_COMPOSE
+#define IMP_COMPOSE(MODE, COMPOSE)                                    \
+                                                                      \
+    "vec4 blend_" #MODE "(vec4 back, vec4 src)\n"                     \
+    "{\n"                                                             \
+    "    vec3 b = back.rgb;\n"                                        \
+    "    vec3 s = src.rgb;\n"                                         \
+    "\n"                                                              \
+    "    vec3 bs = " #COMPOSE ";\n"                                   \
+    "\n"                                                              \
+    "    float ba = back.a;\n"                                        \
+    "    float sa = src.a;\n"                                         \
+    "\n"                                                              \
+    "    float ra = ba + sa - (ba * sa);\n"                           \
+    "\n"                                                              \
+    "    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
+    "\n"                                                              \
+    "    return vec4(r, ra);\n"                                       \
+    "}"
+#endif // IMP_COMPOSE
 
 
-    #define IMP_COMPOSE_SRC_ALPHA(MODE, COMPOSE)                          \
-                                                                          \
-        "vec4 blend_" #MODE "(vec4 back, vec4 src, float srca)\n"         \
-        "{\n"                                                             \
-        "    vec3 b = back.rgb;\n"                                        \
-        "    vec3 s = src.rgb;\n"                                         \
-        "\n"                                                              \
-        "    vec3 bs = " #COMPOSE ";\n"                                   \
-        "\n"                                                              \
-        "    float ba = back.a;\n"                                        \
-        "    float sa = clamp(srca, 0.0, 1.0);\n"                         \
-        "\n"                                                              \
-        "    float ra = ba + sa - (ba * sa);\n"                           \
-        "\n"                                                              \
-        "    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
-        "\n"                                                              \
-        "    return vec4(r, ra);\n"                                       \
-        "}"
-}
+#ifndef IMP_COMPOSE_SRC_ALPHA
+#define IMP_COMPOSE_SRC_ALPHA(MODE, COMPOSE)                          \
+                                                                      \
+    "vec4 blend_" #MODE "(vec4 back, vec4 src, float srca)\n"         \
+    "{\n"                                                             \
+    "    vec3 b = back.rgb;\n"                                        \
+    "    vec3 s = src.rgb;\n"                                         \
+    "\n"                                                              \
+    "    vec3 bs = " #COMPOSE ";\n"                                   \
+    "\n"                                                              \
+    "    float ba = back.a;\n"                                        \
+    "    float sa = clamp(srca, 0.0, 1.0);\n"                         \
+    "\n"                                                              \
+    "    float ra = ba + sa - (ba * sa);\n"                           \
+    "\n"                                                              \
+    "    vec3 r = (1.0 - sa / ra) * b + (sa / ra) * ((1.0 - ba) * s + ba * bs);\n" \
+    "\n"                                                              \
+    "    return vec4(r, ra);\n"                                       \
+    "}"
+#endif // IMP_COMPOSE_SRC_ALPHA
+
+} // namespace osgHimmel
 
 #endif // __GLSL_COMPOSE_H__

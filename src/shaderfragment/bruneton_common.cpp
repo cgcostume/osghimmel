@@ -29,8 +29,11 @@
 
 #include "bruneton_common.h"
 
-#include "pragma_once.h"
+#include "common.h"
 
+
+namespace osgHimmel
+{
 
 // based on Brunetons free code (http://www-evasion.imag.fr/Members/Eric.Bruneton/PrecomputedAtmosphericScattering2.zip)
 
@@ -479,3 +482,5 @@ const std::string glsl_bruneton_mie // requires: betaR
     "    return rayMie.rgb * rayMie.w / max(rayMie.r, 1e-4) * (betaR.r / betaR);\n"
     "}")
 );
+
+} // namespace osgHimmel

@@ -33,6 +33,11 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_fakesun; // vec4 fakeSun(vec3 eye, vec3 sun, vec4 coeffs, float scale, float alpha)
+
+} // namespace osgHimmel
 
 #endif // __GLSL_FAKESUN_H__

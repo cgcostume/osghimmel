@@ -34,12 +34,18 @@
 #include "himmelquad.h"
 #include "abstractastronomy.h"
 
+#include "shaderfragment/common.h"
+
 #include <osg/Geometry>
+#include <osg/BlendFunc>
 #include <osg/Depth>
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
+
+namespace osgHimmel
+{
 
 // Transforms a quad to the moons position into the canopy. Then 
 // generates a circle with sphere normals (and normals from cube map)
@@ -115,7 +121,6 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
     stateSet->addUniform(u_earthShine);
 }
 
-#include <osg/BlendFunc>
 
 void MoonGeode::setupNode(osg::StateSet*)
 {
@@ -328,10 +333,6 @@ const float MoonGeode::defaultEarthShineIntensity()
 
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
-
-// VertexShader
 
 const char* MoonGeode::getVertexShaderSource()
 {
@@ -366,10 +367,6 @@ const char* MoonGeode::getVertexShaderSource()
         "}")).c_str();
 }
 
-
-// FragmentShader
-
-#include "shaderfragment/common.h"
 
 const char* MoonGeode::getFragmentShaderSource()
 {
@@ -488,3 +485,5 @@ const char* MoonGeode::getFragmentShaderSource()
         //    gl_FragColor = vec4(vec3(cd), 1.0);
         //    gl_FragColor = vec4(d * vec3(1.06, 1.06, 0.98), 1.0);
 }
+
+} // namespace osgHimmel

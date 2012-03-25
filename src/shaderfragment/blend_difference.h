@@ -33,7 +33,12 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_blendDifference;
 extern const std::string glsl_blendDifferenceExt;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_BLEND_DIFFERENCE_H__

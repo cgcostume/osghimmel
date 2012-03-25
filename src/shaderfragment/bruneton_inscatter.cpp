@@ -32,8 +32,9 @@
 #include "bruneton_common.h"
 #include "common.h"
 
-#include "pragma_once.h"
 
+namespace osgHimmel
+{
 
 // based on Brunetons free code (http://www-evasion.imag.fr/Members/Eric.Bruneton/PrecomputedAtmosphericScattering2.zip)
 
@@ -365,3 +366,5 @@ const std::string glsl_bruneton_f_copyInscatterN // requires: r, dhdH, layer, de
     "    gl_FragColor += vec4(texture3D(deltaSRSampler, uvw).rgb / phaseFunctionR(nu), 0.0);\n"
     "}")
 );
+
+} // namespace osgHimmel

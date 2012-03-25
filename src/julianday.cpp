@@ -34,6 +34,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 const t_julianDay jd(t_aTime aTime)
 {
     assert(aTime.month > 0);
@@ -198,3 +201,5 @@ const t_julianDay jCenturiesSinceSE(const t_julianDay jd)   // T
     // "Astronomical Algorithms"
     return jdSinceSE(jd) / 36525.0; 
 }
+
+} // namespace osgHimmel

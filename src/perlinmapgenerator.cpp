@@ -36,6 +36,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 template<typename T, int N>
 void PerlinMapGenerator::generate(
     const int /*width*/
@@ -178,3 +181,5 @@ void PerlinMapGenerator::generate1(
 {
     generate<unsigned char, 1>(width, height, dest, 255.f, type, startFrequency, octaves, normalize);
 }
+
+} // namespace osgHimmel

@@ -33,6 +33,11 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_dither;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_DITHER_H__

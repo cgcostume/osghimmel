@@ -37,6 +37,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 // Mean anomaly (AA.45.3).
 
 const t_longf Sun::meanAnomaly(const t_julianDay t)
@@ -163,3 +166,5 @@ const t_longf Sun::meanRadius()
 
     return 0.696e+6; // in kilometers
 }
+
+} // namespace osgHimmel

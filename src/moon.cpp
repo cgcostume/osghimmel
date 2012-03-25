@@ -37,6 +37,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 // Mean longitude, referred to the mean equinox of the date (AA.45.1).
 
 const t_longf Moon::meanLongitude(const t_julianDay t)
@@ -402,3 +405,5 @@ const t_longf Moon::meanRadius()
 
     return 1737.1; // in kilometers
 }
+
+} // namespace osgHimmel

@@ -33,6 +33,11 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_pseudo_rand; // float pseudo_rand(vec2 i, int seed)
+
+} // namespace osgHimmel
 
 #endif // __GLSL_PSEUDO_RAND_H__

@@ -33,6 +33,9 @@
 #include "sideraltime.h"
 
 
+namespace osgHimmel
+{
+
 const t_longf Stars::tempratureFromBV(const t_longf BtoV)
 {
     // NOTE: This is just an estimation!
@@ -152,3 +155,5 @@ const t_hord Stars::horizontalPosition(
 
     return equ.toHorizontal(s, latitude, longitude);
 }
+
+} // namespace osgHimmel

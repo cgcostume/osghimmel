@@ -43,6 +43,9 @@ namespace
 }
 
 
+namespace osgHimmel
+{
+
 BrightStars::BrightStars(const char *fileName)
 :   m_stars(NULL)
 ,   m_numStars(0)
@@ -9236,3 +9239,5 @@ BrightStars::BrightStars()
 }
 
 #endif // BRIGHTSTARS_INCLUDE_CATALOGUE
+
+} // namespace osgHimmel

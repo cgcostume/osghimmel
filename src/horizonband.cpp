@@ -30,6 +30,9 @@
 #include "horizonband.h"
 
 
+namespace osgHimmel
+{
+
 HorizonBand::HorizonBand()
 :   u_params(NULL)
 ,   u_color(NULL)
@@ -165,3 +168,5 @@ const osg::Vec4 HorizonBand::defaultBottomColor()
 {
     return osg::Vec4(0.08f, 0.08f, 0.08f, 1.f);
 }
+
+} // namespace osgHimmel

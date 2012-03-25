@@ -30,6 +30,9 @@
 #include "himmelquad.h"
 
 
+namespace osgHimmel
+{
+
 HimmelQuad::HimmelQuad()
 :   osg::Geometry()
 {
@@ -50,3 +53,5 @@ HimmelQuad::HimmelQuad()
 HimmelQuad::~HimmelQuad()
 {
 };
+
+} // namespace osgHimmel

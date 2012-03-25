@@ -33,8 +33,13 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_bruneton_f_irradiance1;
 extern const std::string glsl_bruneton_f_irradianceN;
 extern const std::string glsl_bruneton_f_copyIrradiance;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_BRUNETON_IRRADIANCE_H__

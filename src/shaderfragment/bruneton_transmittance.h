@@ -33,6 +33,11 @@
 
 #include <string>
 
+namespace osgHimmel
+{
+
 extern const std::string glsl_bruneton_f_transmittance;
+
+} // namespace osgHimmel
 
 #endif // __GLSL_BRUNETON_TRANSMITTANCE_H__

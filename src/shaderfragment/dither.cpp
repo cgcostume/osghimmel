@@ -29,8 +29,11 @@
 
 #include "dither.h"
 
-#include "pragma_once.h"
+#include "common.h"
 #include "pseudo_rand.h"
+
+namespace osgHimmel
+{
 
 // The dithering mainly relies on a frame-to-frame coherent pseudo 
 // random number, described in pseudo_rand.fsf. The rand value used 
@@ -59,3 +62,5 @@ const std::string glsl_dither
     "    return (vec4(v % uvec4(853)) - 241 - multiplier * 1.41) * 0.00001 * multiplier;\n"
     "}")
 );
+
+} // namespace osgHimmel

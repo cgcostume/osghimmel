@@ -29,8 +29,15 @@
 
 #include "cubemappedhimmel.h"
 
+#include "shaderfragment/common.h"
+#include "shaderfragment/blend_normal.h"
+#include "shaderfragment/fakesun.h"
+
 #include <osg/TextureCubeMap>
 
+
+namespace osgHimmel
+{
 
 CubeMappedHimmel::CubeMappedHimmel(
     const bool fakeSun)
@@ -88,18 +95,7 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 }
 
 
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/version.h"
 
-// VertexShader
-
-// -> specified in AbstractMappedHimmel
-
-
-// FragmentShader
-
-#include "shaderfragment/blend_normal.h"
-#include "shaderfragment/fakesun.h"
 
 const char* CubeMappedHimmel::getFragmentShaderSource()
 {
@@ -132,3 +128,5 @@ const char* CubeMappedHimmel::getFragmentShaderSource()
         "    gl_FragColor = " + (m_fakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
         "}")).c_str();
 }
+
+} // namespace osgHimmel

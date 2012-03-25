@@ -29,7 +29,7 @@
 
 message(STATUS "add static library: osgHimmel")
 
-set(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
+set(HEADER_PATH ${PROJECT_SOURCE_DIR}/include/osgHimmel)
 
 set(LIB_SOURCES
 
@@ -62,7 +62,6 @@ set(LIB_SOURCES
     polarmappedhimmel.cpp
     himmel.cpp
     randommapgenerator.cpp
-    shadermodifier.cpp
     sideraltime.cpp
     spheremappedhimmel.cpp
     stars.cpp
@@ -106,7 +105,6 @@ set(LIB_SOURCES
 	${HEADER_PATH}/pragmanote.h
     ${HEADER_PATH}/himmel.h
     ${HEADER_PATH}/randommapgenerator.h
-    ${HEADER_PATH}/shadermodifier.h
     ${HEADER_PATH}/sideraltime.h
     ${HEADER_PATH}/spheremappedhimmel.h
     ${HEADER_PATH}/stars.h
@@ -146,25 +144,20 @@ set(SHADER_FRAGMENTS
     shaderfragment/dither.cpp
     shaderfragment/fakesun.h
     shaderfragment/fakesun.cpp
-    shaderfragment/flags.h
     shaderfragment/hband.h
     shaderfragment/hband.cpp
     shaderfragment/noise.h
     shaderfragment/noise.cpp
-    shaderfragment/pragma_once.h
     shaderfragment/pseudo_rand.h
-    shaderfragment/pseudo_rand.cpp
-    shaderfragment/quadretrieveray.h
-    shaderfragment/quadretrieveray.cpp
-    shaderfragment/quadtransform.h
-    shaderfragment/quadtransform.cpp
-    shaderfragment/version.h
-    shaderfragment/version.cpp)
+    shaderfragment/pseudo_rand.cpp)
 
 source_group("" FILES ${LIB_SOURCES})    
 source_group("Shader Fragments" FILES ${SHADER_FRAGMENTS})
 
 add_library(osgHimmel SHARED ${LIB_SOURCES} ${SHADER_FRAGMENTS})
+
+include_directories(
+    ${HEADER_PATH})
 
 target_link_libraries(osgHimmel
     ${OPENSCENEGRAPH_LIBRARIES}

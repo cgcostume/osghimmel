@@ -38,6 +38,9 @@
 #include <assert.h>
 
 
+namespace osgHimmel
+{
+
 const float Sun2::meanAnomaly(const t_julianDay t)
 {
     const t_julianDay T(jCenturiesSinceSE(t));
@@ -119,3 +122,5 @@ const t_longf Sun2::meanRadius()
 {
     return Sun::meanRadius();
 }
+
+} // namespace osgHimmel

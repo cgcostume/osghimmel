@@ -29,7 +29,11 @@
 
 #include "noise.h"
 
-#include "pragma_once.h"
+#include "common.h"
+
+
+namespace osgHimmel
+{
 
 // From // JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 KEN PERLIN. (http://mrl.nyu.edu/~perlin/noise/)
 // and (Improving Noise - Perlin - 2002) - http://mrl.nyu.edu/~perlin/paper445.pdf
@@ -111,3 +115,5 @@ const std::string glsl_noise2
     "    return mix(t.x, t.y, fade(f.y));\n"
     "}")
 );
+
+} // namespace osgHimmel

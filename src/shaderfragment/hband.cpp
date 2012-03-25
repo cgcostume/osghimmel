@@ -29,8 +29,11 @@
 
 #include "hband.h"
 
-#include "pragma_once.h"
+#include "common.h"
 
+
+namespace osgHimmel
+{
 
 const std::string glsl_hband
 (
@@ -53,3 +56,5 @@ const std::string glsl_hband
     "    return blend_normal(color, fc, smoothstep(0.0, 1.0, b));\n"
     "}")
 );
+
+} // namespace osgHimmel

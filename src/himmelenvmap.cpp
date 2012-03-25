@@ -32,6 +32,9 @@
 #include <osg/TextureCubeMap>
 
 
+namespace osgHimmel
+{
+
 class EnvMapCallback : public osg::NodeCallback
 {
 public:
@@ -218,3 +221,5 @@ unsigned int HimmelEnvMap::getChildIndex(const Node *node) const
 {
     return m_group->getChildIndex(node);
 }
+
+} // namespace osgHimmel
