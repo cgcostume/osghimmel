@@ -125,8 +125,6 @@ const t_eclf Moon2::position(const t_julianDay t)
     const float mD = _rad(meanElongation(t));
     const float mF = _rad(meanLatitude(t));
 
-    const t_julianDay T(jCenturiesSinceSE(t));
-
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 
     float Sl = mL;
@@ -195,8 +193,6 @@ const float Moon2::distance(const t_julianDay t)
 
     const float mM = _rad(meanAnomaly(t));
     const float mD = _rad(meanElongation(t));
-
-    const t_julianDay T(jCenturiesSinceSE(t));
 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.)
 

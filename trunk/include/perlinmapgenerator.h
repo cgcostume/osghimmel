@@ -31,8 +31,10 @@
 #ifndef __PERLIN_MAP_GENERATOR_H__
 #define __PERLIN_MAP_GENERATOR_H__
 
+#include "declspec.h"
 
-class PerlinMapGenerator
+
+class OSGH_API PerlinMapGenerator
 {
 public:
 

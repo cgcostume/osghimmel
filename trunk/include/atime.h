@@ -31,6 +31,7 @@
 #ifndef __ASTRONOMICAL_TIME_H__
 #define __ASTRONOMICAL_TIME_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 
 #include <time.h>
@@ -38,7 +39,7 @@
 class TimeF;
 
 
-typedef struct s_AstronomicalTime
+typedef struct OSGH_API s_AstronomicalTime
 {
     s_AstronomicalTime();
 

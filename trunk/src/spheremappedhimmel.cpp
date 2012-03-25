@@ -88,6 +88,11 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 }
 
 
+
+
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
+
 // VertexShader
 
 // -> specified in AbstractMappedHimmel
@@ -95,18 +100,19 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 // FragmentShader
 
-#include "shaderfragment/version.h"
 #include "shaderfragment/blend_normal.h"
 #include "shaderfragment/fakesun.h"
 
-const std::string SphereMappedHimmel::getFragmentShaderSource()
+const char* SphereMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 
     +   (m_fakeSun ? glsl_fakesun : "")
-    +
+    
+    +   PRAGMA_ONCE(main,
+
         "in vec4 m_ray;\n"
         "\n"
         // From AbstractMappedHimmel
@@ -134,5 +140,5 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
         "\n"
         "    gl_FragColor = " + (m_fakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
-        "}\n\n";
+        "}")).c_str();
 }

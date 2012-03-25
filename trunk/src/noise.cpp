@@ -38,13 +38,6 @@
 #include <osg/Vec4f>
 
 
-namespace
-{
-    const unsigned int PERMSIZE    (0x100);
-    const unsigned int MAXPERMINDEX(0xff);
-}
-
-
 // From // JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 KEN PERLIN. (http://mrl.nyu.edu/~perlin/noise/)
 // and (Improving Noise - Perlin - 2002) - http://mrl.nyu.edu/~perlin/paper445.pdf
 
@@ -204,16 +197,16 @@ const float Noise::noise2(
 #include "shaderfragment/noise.h"
 
 
-const std::string Noise::glsl_fade()
+const char* Noise::glsl_fade()
 {
-    return ::glsl_fade;
+    return ::glsl_fade.c_str();
 }
 
 
-const std::string Noise::glsl_noise2(const unsigned int size)
+const char* Noise::glsl_noise2(const unsigned int size)
 {
     std::string glsl = ::glsl_noise2;
     replace(glsl, "%SIZE%", static_cast<float>(size));
 
-    return glsl;
+    return glsl.c_str();
 }

@@ -197,8 +197,10 @@ void test_moon2()
 
     ASSERT_AB(long double, 368409.7, Moon2::distance(t), 1000.0);
 
-    ASSERT_AB(long double, _decimal(0, 0, -3.788), Earth2::longitudeNutation(jd(t_aTime(1987, 4, 10))), 0.0005);
-    ASSERT_AB(long double, _decimal(0, 0, +9.443), Earth2::obliquityNutation(jd(t_aTime(1987, 4, 10))), 0.0005);
+    ASSERT_AB(long double, _decimal(0, 0, -3.788), Earth2::longitudeNutation(
+        jd(t_aTime(1987, 4, 10))), 0.0005);
+    ASSERT_AB(long double, _decimal(0, 0, +9.443), Earth2::obliquityNutation(
+        jd(t_aTime(1987, 4, 10))), 0.0005);
 
     // Lunar perigee and apogee, values from: http://en.wikipedia.org/wiki/File:Lunar_perigee_apogee.png
 
@@ -208,5 +210,6 @@ void test_moon2()
     const t_julianDay t1(jd(aTime1));
     const t_julianDay t2(jd(aTime2));
 
-    ASSERT_AB(long double, Earth2::apparentAngularMoonDiameter(t1) / Earth2::apparentAngularMoonDiameter(t2), 1.13, 0.01);
+    ASSERT_AB(long double, Earth2::apparentAngularMoonDiameter(t1) 
+        / Earth2::apparentAngularMoonDiameter(t2), 1.13, 0.01);
 }

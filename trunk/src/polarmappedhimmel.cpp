@@ -35,6 +35,7 @@
 
 #include <assert.h>
 
+
 PolarMappedHimmel::PolarMappedHimmel(
     const e_MappingMode &mappingMode
 ,   const bool hBand
@@ -114,16 +115,16 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 // FragmentShader
 
-#include "shaderfragment/version.h"
-#include "shaderfragment/pragma_once.h"
-#include "shaderfragment/flags.h"
 #include "shaderfragment/blend_normal.h"
-#include "shaderfragment/hband.h"
 #include "shaderfragment/fakesun.h"
+#include "shaderfragment/flags.h"
+#include "shaderfragment/hband.h"
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
 
-const std::string PolarMappedHimmel::getFragmentShaderSource()
+const char* PolarMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_blendNormalExt
 
@@ -208,5 +209,5 @@ const std::string PolarMappedHimmel::getFragmentShaderSource()
         ,
         "    gl_FragColor = fc;")
 
-        "}");
+        "}")).c_str();
 }

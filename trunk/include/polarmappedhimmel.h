@@ -32,6 +32,7 @@
 #ifndef __POLARMAPPEDHIMMEL_H__
 #define __POLARMAPPEDHIMMEL_H__
 
+#include "declspec.h"
 #include "abstractmappedhimmel.h"
 
 #include <map>
@@ -47,7 +48,7 @@ namespace osg
 // uses method presented by Blinn, James F. and Newell, Martin E.
 // in "Texture and reflection in computer generated images" 1976
 
-class PolarMappedHimmel : public AbstractMappedHimmel
+class OSGH_API PolarMappedHimmel : public AbstractMappedHimmel
 {
 public:
 
@@ -86,7 +87,7 @@ protected:
 
     // AbstractHimmel interface
 
-    virtual const std::string getFragmentShaderSource();
+    virtual const char* getFragmentShaderSource();
 
 protected:
 

@@ -52,7 +52,7 @@ namespace
 }
 
 
-StarsGeode::StarsGeode(const std::string &brightStarsFilePath)
+StarsGeode::StarsGeode(const char* brightStarsFilePath)
 :   osg::Geode()
 
 ,   m_program(new osg::Program)
@@ -131,17 +131,15 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 }
 
 
-void StarsGeode::createAndAddDrawable(const std::string &brightStarsFilePath)
+void StarsGeode::createAndAddDrawable(const char* brightStarsFilePath)
 {
-    BrightStars bs(brightStarsFilePath.c_str());
-    const BrightStars::t_stars &stars = bs.stars();
+    BrightStars bs(brightStarsFilePath);
+    const BrightStars::s_BrightStar *stars = bs.stars();
 
-    osg::ref_ptr<osg::Vec4Array> cAry = new osg::Vec4Array(stars.size());
-    osg::ref_ptr<osg::Vec4Array> vAry = new osg::Vec4Array(stars.size());
+    osg::ref_ptr<osg::Vec4Array> cAry = new osg::Vec4Array(bs.numStars());
+    osg::ref_ptr<osg::Vec4Array> vAry = new osg::Vec4Array(bs.numStars());
 
-    const int s = stars.size();
-
-    for(int i = 0; i < stars.size(); ++i)
+    for(unsigned int i = 0; i < bs.numStars(); ++i)
     {
         t_equf equ;
         equ.right_ascension = _rightascd(stars[i].RA, 0, 0);
@@ -169,7 +167,7 @@ void StarsGeode::createAndAddDrawable(const std::string &brightStarsFilePath)
 
 void StarsGeode::setupNode(
     osg::StateSet* stateSet
-,   const std::string &brightStarsFilePath)
+,   const char *brightStarsFilePath)
 {
     createAndAddDrawable(brightStarsFilePath);
 
@@ -380,22 +378,28 @@ const float StarsGeode::defaultColorRatio()
 }
 
 
+
+
+#include "shaderfragment/pragma_once.h"
+#include "shaderfragment/version.h"
+
 // VertexShader
 
-#include "shaderfragment/version.h"
 #include "shaderfragment/common.h"
 
-const std::string StarsGeode::getVertexShaderSource()
+const char* StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
 
     sprintf_s(apparentMagLimit, 8, "%.2f", static_cast<float>(Earth::apparentMagnitudeLimit()));
 
-    return glsl_version_150
+    return (glsl_version_150
 
     +   glsl_cmn_uniform
     +   glsl_horizon
-    +
+    
+    +   PRAGMA_ONCE(main,
+
         "uniform vec3 sun;\n"
         "\n"
         "uniform mat4 R;\n" // rgb and alpha for mix
@@ -453,18 +457,20 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    m_color = vec4(c, scaledB - w1) * b;\n"
-        "}";
+        "}")).c_str();
 }
 
 
 // GeometryShader
 
-const std::string StarsGeode::getGeometryShaderSource()
+const char *StarsGeode::getGeometryShaderSource()
 {
-    return glsl_version_150 +
+    return (glsl_version_150 +
 
         glsl_geometry_ext
-    +
+    
+    +   PRAGMA_ONCE(main, 
+
         "layout (points) in;\n"
         "layout (triangle_Strip, max_vertices = 4) out;\n"
         "\n"
@@ -508,15 +514,17 @@ const std::string StarsGeode::getGeometryShaderSource()
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(+u +v) * k, 1.0);\n"
         "    gl_TexCoord[0].xy = vec2( 1.0,  1.0);\n"
         "    EmitVertex();\n"
-        "}";
+        "}")).c_str();
 }
 
 
 // FragmentShader
 
-const std::string StarsGeode::getFragmentShaderSource()
+const char* StarsGeode::getFragmentShaderSource()
 {
-    return glsl_version_150 +
+    return (glsl_version_150 
+        
+    +   PRAGMA_ONCE(main,
 
         "uniform float quadWidth;\n"
         "uniform float glareIntensity;\n"
@@ -544,5 +552,5 @@ const std::string StarsGeode::getFragmentShaderSource()
         "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
         "\n"
         "    gl_FragColor = m_c * (t + g);\n"
-        "}";
+        "}")).c_str();
 }

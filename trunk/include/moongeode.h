@@ -31,17 +31,19 @@
 #ifndef __MOONGEODE_H__
 #define __MOONGEODE_H__
 
+#include "declspec.h"
+
 #include <osg/Geode>
 
 class Himmel;
 class HimmelQuad;
 
 
-class MoonGeode : public osg::Geode
+class OSGH_API MoonGeode : public osg::Geode
 {
 public:
 
-    MoonGeode(const std::string &cubeMapFilePath);
+    MoonGeode(const char* cubeMapFilePath);
     virtual ~MoonGeode();
 
     void update(const Himmel &himmel);
@@ -82,12 +84,12 @@ protected:
 
     void setupTextures(
         osg::StateSet* stateSet
-    ,   const std::string &cubeMapFilePath);
+    ,   const char* cubeMapFilePath);
 
     void setupShader  (osg::StateSet* stateSet);
 
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
+    const char* getVertexShaderSource();
+    const char* getFragmentShaderSource();
 
 protected:
 

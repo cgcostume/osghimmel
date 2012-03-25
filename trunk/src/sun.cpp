@@ -115,8 +115,6 @@ const t_equd Sun::apparentPosition(const t_julianDay t)
 {
     t_equd equ;
 
-    const t_julianDay T(jCenturiesSinceSE(t));
-
     const t_longf O = _rad(Moon::meanOrbitLongitude(t));
     const t_longf e = _rad(Earth::trueObliquity(t) + 0.00256 * cos(O));
     const t_longf l = _rad(trueLongitude(t) - 0.00569 - 0.00478 * sin(O));

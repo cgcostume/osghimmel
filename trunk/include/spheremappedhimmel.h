@@ -32,6 +32,7 @@
 #ifndef __SPHEREMAPPEDHIMMEL_H__
 #define __SPHEREMAPPEDHIMMEL_H__
 
+#include "declspec.h"
 #include "abstractmappedhimmel.h"
 
 #include <map>
@@ -45,7 +46,7 @@ namespace osg
 // uses method presented by Miller, Gene S. and Hoffman, Robert C. in "Illumination 
 // and Reflection Maps: Simulated Objects in Simulated and Real Environments" 1984
 
-class SphereMappedHimmel : public AbstractMappedHimmel
+class OSGH_API SphereMappedHimmel : public AbstractMappedHimmel
 {
 public:
 
@@ -79,7 +80,7 @@ protected:
 
     // AbstractHimmel interface
 
-    virtual const std::string getFragmentShaderSource();
+    virtual const char* getFragmentShaderSource();
 
 protected:
 

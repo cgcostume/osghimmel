@@ -27,6 +27,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
+message(STATUS "add static library: osgHimmel")
+
 set(HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 
 set(LIB_SOURCES
@@ -83,16 +85,17 @@ set(LIB_SOURCES
     ${HEADER_PATH}/cloudlayerhighgeode.h
     ${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
+	${HEADER_PATH}/declspec.h
     ${HEADER_PATH}/earth.h
     ${HEADER_PATH}/earth2.h
-    ${HEADER_PATH}/milkywaygeode.h
     ${HEADER_PATH}/gaussianmapgenerator.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/horizonband.h
-    ${HEADER_PATH}/interpolate.h
+	${HEADER_PATH}/interpolate.h
     ${HEADER_PATH}/julianday.h
     ${HEADER_PATH}/mathmacros.h
+    ${HEADER_PATH}/milkywaygeode.h
     ${HEADER_PATH}/moon.h
     ${HEADER_PATH}/moon2.h
     ${HEADER_PATH}/moongeode.h
@@ -100,7 +103,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/paraboloidmappedhimmel.h
     ${HEADER_PATH}/perlinmapgenerator.h
     ${HEADER_PATH}/polarmappedhimmel.h
-    ${HEADER_PATH}/pragmanote.h
+	${HEADER_PATH}/pragmanote.h
     ${HEADER_PATH}/himmel.h
     ${HEADER_PATH}/randommapgenerator.h
     ${HEADER_PATH}/shadermodifier.h
@@ -108,14 +111,13 @@ set(LIB_SOURCES
     ${HEADER_PATH}/spheremappedhimmel.h
     ${HEADER_PATH}/stars.h
     ${HEADER_PATH}/starsgeode.h
-    ${HEADER_PATH}/strutils.h
+	${HEADER_PATH}/strutils.h
     ${HEADER_PATH}/sun.h
     ${HEADER_PATH}/sun2.h
     ${HEADER_PATH}/timef.h
-    ${HEADER_PATH}/twounitschanger.h
+    ${HEADER_PATH}/twounitschanger.h)
 
-
-#   shader fragments
+set(SHADER_FRAGMENTS
 
     shaderfragment/blend_difference.h
     shaderfragment/blend_difference.cpp
@@ -159,13 +161,33 @@ set(LIB_SOURCES
     shaderfragment/version.h
     shaderfragment/version.cpp)
 
-source_group_by_path(${PROJECT_SOURCE_DIR} ${LIB_SOURCES})    
+source_group("" FILES ${LIB_SOURCES})    
+source_group("Shader Fragments" FILES ${SHADER_FRAGMENTS})
 
-message(STATUS "add static library: osghimmel")
+add_library(osgHimmel SHARED ${LIB_SOURCES} ${SHADER_FRAGMENTS})
 
-add_library(osghimmel STATIC ${LIB_SOURCES})
-set_default_target_properties(osghimmel ON)
+target_link_libraries(osgHimmel
+    ${OPENSCENEGRAPH_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY})
+
+if(MSVC)
+
+	set_target_properties(osgHimmel
+		PROPERTIES
+		COMPILE_FLAGS "/W4 /WX /fp:fast /Ot /GS-"
+		LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
+		PREFIX "osg${OSG_SOVERSION}-"
+		DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
+
+	add_definitions("-DOSGHIMMEL_EXPORTS")
+
+else(MSVC)
+	set_target_properties(osgHimmel
+		PROPERTIES
+		DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
+endif()
 
 if(OPTION_MAKE_SKYBOX)
-    ADD_DEFINITIONS("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
+    #ADD_DEFINITIONS("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
 endif()

@@ -31,8 +31,10 @@
 #ifndef __RANDOM_MAP_GENERATOR_H__
 #define __RANDOM_MAP_GENERATOR_H__
 
+#include "declspec.h"
 
-class RandomMapGenerator
+
+class OSGH_API RandomMapGenerator
 {
 public:
 

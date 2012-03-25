@@ -31,10 +31,11 @@
 #ifndef __ASTRONOMY2_H__
 #define __ASTRONOMY2_H__
 
+#include "declspec.h"
 #include "abstractastronomy.h"
 
 
-class Astronomy2 : public AbstractAstronomy
+class OSGH_API Astronomy2 : public AbstractAstronomy
 {
 public:
 

@@ -31,12 +31,13 @@
 #ifndef __MOON_H__
 #define __MOON_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-class Moon
+class OSGH_API Moon
 {
 public:
     static const t_longf meanLongitude(const t_julianDay t); 

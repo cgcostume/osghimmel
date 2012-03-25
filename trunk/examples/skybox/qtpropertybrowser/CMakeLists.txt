@@ -102,5 +102,3 @@ add_definitions(-DQT_QTPROPERTYBROWSER_EXPORT)
 add_definitions(-DQT_PLUGIN)
 #add_definitions(-DQT_NO_DEBUG)
 add_definitions(-DQT_STATIC)
-
-set_default_target_properties(qtpropertybrowser OFF)

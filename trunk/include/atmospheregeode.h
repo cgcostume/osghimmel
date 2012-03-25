@@ -31,6 +31,8 @@
 #ifndef __ATMOSPHEREGEODE_H__
 #define __ATMOSPHEREGEODE_H__
 
+#include "declspec.h"
+
 #include <osg/Group>
 
 class AtmospherePrecompute;
@@ -44,7 +46,7 @@ namespace osg
 }
 
 
-class AtmosphereGeode : public osg::Group
+class OSGH_API AtmosphereGeode : public osg::Group
 {
 public:
 
@@ -96,8 +98,8 @@ protected:
     void setupShader  (osg::StateSet* stateSet);
     void updateShader (osg::StateSet* stateSet);
 
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
+    const char* getVertexShaderSource();
+    const char* getFragmentShaderSource();
 
 protected:
 

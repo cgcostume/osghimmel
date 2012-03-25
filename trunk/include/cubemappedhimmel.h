@@ -31,6 +31,7 @@
 #ifndef __CUBEMAPPEDHIMMEL_H__
 #define __CUBEMAPPEDHIMMEL_H__
 
+#include "declspec.h"
 #include "abstractmappedhimmel.h"
 
 #include <map>
@@ -44,7 +45,7 @@ namespace osg
 // uses method presented by Greene, Ned in "Environment 
 // Mapping and Other Applications of World Projections" 1986
 
-class CubeMappedHimmel : public AbstractMappedHimmel
+class OSGH_API CubeMappedHimmel : public AbstractMappedHimmel
 {
 public:
     CubeMappedHimmel(const bool fakeSun = false);
@@ -61,7 +62,7 @@ protected:
 
     // AbstractHimmel interface
 
-    virtual const std::string getFragmentShaderSource();
+    virtual const char* getFragmentShaderSource();
 
 protected:
 

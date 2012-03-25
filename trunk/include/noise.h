@@ -31,6 +31,8 @@
 #ifndef __NOISE_H__
 #define __NOISE_H__
 
+#include "declspec.h"
+
 #include <string>
 
 namespace osg
@@ -41,7 +43,13 @@ namespace osg
 }
 
 
-class Noise
+namespace
+{
+    const unsigned int PERMSIZE    (0x100);
+    const unsigned int MAXPERMINDEX(0xff);
+}
+
+class OSGH_API Noise
 {
 public:
     Noise(const unsigned int size = 256);
@@ -49,13 +57,13 @@ public:
     void generatePermutationMap(unsigned char *dest) const;
 
     static const float fade(const float t);
-    static const std::string glsl_fade();
+    static const char* glsl_fade();
 
     const float noise2(
         const float s
     ,   const float t) const;
 
-    static const std::string glsl_noise2(
+    static const char* glsl_noise2(
         const unsigned int size = 256);
 
 protected:
@@ -89,10 +97,10 @@ protected:
 
 private:
 
-    static const unsigned char m_perm[];
-    static const float m_grad[16][3];
+    /*const ?? throws warnings */ unsigned int m_size;
 
-    const unsigned int m_size;
+    static const unsigned char m_perm[PERMSIZE];
+    static const float m_grad[16][3];
 };
 
 #endif // __NOISE_H__

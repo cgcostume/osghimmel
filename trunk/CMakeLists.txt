@@ -35,54 +35,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 # macros
 
-macro(QT4_AUTO_WRAP outfiles)
-
-    set(moc_headers "")
-    set(ui_files "")
-    set(qrc_files "")
-
-    foreach(fileName ${ARGV})
-
-        if(fileName MATCHES "\\.h$")
-            file(STRINGS ${fileName} lines REGEX Q_OBJECT)
-            IF(lines)
-                list(APPEND moc_headers ${fileName})
-                message(STATUS "moc: ${fileName}")
-            endif()
-        endif()
-        
-        if(fileName MATCHES "\\.ui$")
-            list(APPEND ui_files ${fileName})
-            message(STATUS "uic: ${fileName}")
-        endif()
-
-        if(fileName MATCHES "\\.qrc$")
-            list(APPEND qrc_files ${fileName})
-            message(STATUS "qrc: ${fileName}")
-        endif()
-
-    endforeach()
-
-    qt4_wrap_cpp(mocGeneratedByHeader ${moc_headers})
-    qt4_wrap_ui(uicGenerated ${ui_files})
-
-    qt4_add_resources(mocGeneratedByRessources ${qrc_files})
-
-    list(APPEND ${outfiles}
-        ${uicGenerated}
-        ${mocGeneratedByHeader} 
-        ${mocGeneratedByRessources})
-
-    source_group("_ Qt Generated" FILES 
-        ${uicGenerated}
-        ${mocGeneratedByHeader}
-		${mocGeneratedByRessources})
-
-	source_group("_ CMake Rules" REGULAR_EXPRESSION "rule$")
-
-endmacro()
-
-
 macro(SOURCE_GROUP_BY_PATH parent_path)
 
     foreach(filename ${ARGV})
@@ -101,38 +53,10 @@ macro(SOURCE_GROUP_BY_PATH parent_path)
 endmacro()
 
 
-macro(SET_DEFAULT_TARGET_PROPERTIES target w4)
-
-    if(MSVC)
-
-        if(w4)
-            set_target_properties(${target}
-                PROPERTIES
-                COMPILE_FLAGS "/W4 /fp:fast /Ot /GS-"
-                LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
-                DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
-        else(w4)
-            set_target_properties(${target}
-                PROPERTIES
-                COMPILE_FLAGS "/fp:fast /Ot /GS-"
-                LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
-                DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
-        endif()
-
-    else(MSVC)
-
-        set_target_properties(${target}
-            PROPERTIES
-            DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
-
-    endif()
-
-endmacro()
-
 # config
 
-set(PROJECT_NAME osghimmel)
-set(PROJECT_NAME osghimmel)
+set(PROJECT_NAME osgHimmel)
+set(PROJECT_NAME osgHimmel)
 
 project(${PROJECT_NAME} C CXX)
 
@@ -155,6 +79,7 @@ option(OPTION_MAKE_DEMOS "Make Demos" ON)
 option(OPTION_MAKE_SKYBOX "Make SkyBox - Sandbox for osgHimmel (requires Qt)" ON)
 option(OPTION_MAKE_TESTS "Make Tests" ON)
 
+
 # 3rdp and resources
 
 find_package(OpenGL REQUIRED)
@@ -164,32 +89,10 @@ find_package(OpenSceneGraph REQUIRED
     osgDB 
     osgGA)
 
-if(OPTION_MAKE_DEMOS OR OPTION_MAKE_SKYBOX)
-    
-    set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources" CACHE PATH "Resources for osghimmel binaries.")
+string(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
 
-    if(NOT EXISTS "${RESOURCE_DIR}/")
-        message(WARNING "Resource dir not found, please specify RESOURCE_DIR.")
-    endif()
-
-    string(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
-
-    set(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
-    set(OSG_SOVERSION "80" CACHE STRING "OSG binaries version (osg##.dll).")
-    
-endif()
-
-if(OPTION_MAKE_SKYBOX)
-
-    set(QT_MIN_VERSION "4.7.0")
-    find_package(Qt4 COMPONENTS QtCore QtOpenGL QtGui REQUIRED)
-    include(${QT_USE_FILE})
-
-    if(NOT QT4_FOUND)
-        message(WARNING "Skybox project will be ignored.")
-    endif(NOT QT4_FOUND)
-
-endif()
+set(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
+set(OSG_SOVERSION "80" CACHE STRING "OSG binaries version (osg##.dll).")
 
 
 # lib/bin copy
@@ -200,43 +103,12 @@ if(NOT EXISTS ${OSG_PLUGIN_DIR}/)
     message(WARNING "osgPlugins dir not found, please specify OSG_PLUGIN_DIR.")
 endif()
 
-
-# install
-   
-install(DIRECTORY "${RESOURCE_DIR}" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
 if(NOT EXISTS ${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll)
     message(WARNING "OSG_SOVERSION (${OSG_SOVERSION}) seems wrong. ${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll not found.")
 endif()
 
-install(FILES 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtild.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDBd.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGAd.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgTextd.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewerd.dll" 
-    "${OSG_BINARY_DIR}/ot11-OpenThreadsd.dll" 
-    "${OSG_PLUGIN_DIR}/osgdb_3dsd.dll"
-    "${OSG_PLUGIN_DIR}/osgdb_tgad.dll"
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    CONFIGURATIONS Debug)
 
-install(FILES 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osg.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtil.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDB.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGA.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgText.dll" 
-    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewer.dll" 
-    "${OSG_BINARY_DIR}/ot11-OpenThreads.dll" 
-    "${OSG_PLUGIN_DIR}/osgdb_3ds.dll"
-    "${OSG_PLUGIN_DIR}/osgdb_tga.dll"
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    CONFIGURATIONS Release)
-
-
-# qt is required for apps only, so appropriate find_package is called there
+# sources
 
 include_directories(
     ${CMAKE_BINARY_DIR}
@@ -245,12 +117,15 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${OSG_INCLUDE_DIR})
 
+
 add_subdirectory("src")
 if(OPTION_MAKE_TESTS)
     add_subdirectory("tests")
 endif()
+if(OPTION_MAKE_DEMOS OR OPTION_MAKE_SKYBOX)
+	add_subdirectory("examples")
+endif()
 
-add_subdirectory("examples")
 
 # cpack deploy
 

@@ -31,6 +31,8 @@
 #ifndef __CLOUDLAYERHIGHGEODE_H__
 #define __CLOUDLAYERHIGHGEODE_H__
 
+#include "declspec.h"
+
 #include <osg/Group>
 
 class Himmel;
@@ -42,7 +44,7 @@ namespace osg
 }
 
 
-class CloudLayerHighGeode : public osg::Group
+class OSGH_API CloudLayerHighGeode : public osg::Group
 {
 public:
 
@@ -68,8 +70,8 @@ protected:
     void setupTextures(osg::StateSet* stateSet);
     void setupShader  (osg::StateSet* stateSet);
 
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
+    const char* getVertexShaderSource();
+    const char* getFragmentShaderSource();
 
 protected:
 

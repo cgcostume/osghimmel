@@ -31,12 +31,13 @@
 #ifndef __MOON2_H__
 #define __MOON2_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 #include "julianday.h"
 #include "coords.h"
 
 
-class Moon2 // Lower Accuracy
+class OSGH_API Moon2 // Lower Accuracy
 {
 public:
 

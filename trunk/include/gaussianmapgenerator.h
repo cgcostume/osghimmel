@@ -31,8 +31,10 @@
 #ifndef __GAUSSIAN_MAP_GENERATOR_H__
 #define __GAUSSIAN_MAP_GENERATOR_H__
 
+#include "declspec.h"
 
-class GaussianMapGenerator
+
+class OSGH_API GaussianMapGenerator
 {
 public:
 

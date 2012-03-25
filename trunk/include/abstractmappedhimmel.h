@@ -31,6 +31,7 @@
 #ifndef __ABSTRACTMAPPEDHIMMEL_H__
 #define __ABSTRACTMAPPEDHIMMEL_H__
 
+#include "declspec.h"
 #include "abstracthimmel.h"
 #include "twounitschanger.h"
 #include "pragmanote.h"
@@ -38,13 +39,18 @@
 class TimeF;
 class HimmelQuad;
 
+#ifdef OSGHIMMEL_EXPORTS
+#include <osg/MatrixTransform>
+#else // OSGHIMMEL_EXPORTS
 namespace osg
 {
     class MatrixTransform;
 }
+#endif // OSGHIMMEL_EXPORTS
 
 
-class AbstractMappedHimmel : public AbstractHimmel
+
+class OSGH_API AbstractMappedHimmel : public AbstractHimmel
 {
 public:
 
@@ -130,8 +136,8 @@ protected:
 
     // abstract interface
 
-    virtual const std::string getVertexShaderSource();
-    virtual const std::string getFragmentShaderSource() = 0;
+    virtual const char* getVertexShaderSource();
+    virtual const char* getFragmentShaderSource() = 0;
 
     // getter
 

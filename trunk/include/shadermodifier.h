@@ -33,6 +33,7 @@
 #ifndef __SHADERMODIFIER_H__
 #define __SHADERMODIFIER_H__
 
+#include "declspec.h"
 #include "pragmanote.h"
 
 #include <string>
@@ -43,20 +44,63 @@
 #include <osg/Shader>
 
 
+class OSGH_API ShaderModifier
+{
+public:
+    ShaderModifier();
+    virtual ~ShaderModifier();
+
+    void unregisterIdentifiersChangedCallback(void *object);
+    void registerIdentifiersChangedCallback(
+        void *object
+    ,   void(*callback)(void*));
+
+    const char* getIdentifier(const unsigned int i) const;
+    const unsigned int getNumIdentifiers() const;
+
+    // Registers a shader by an identifier and replaces its source if 
+    // already modified. Returns identifier that differs from given one.
+    const char* registerShader(
+        const char* identifier
+    ,   osg::Shader *shader);
+
+    void unregisterShader(osg::Shader *shader);
+
+
+    // manipulation
+
+    const osg::Shader::Type getType(const char* identifier) const;
+    const char* getSource(const char* identifier) const;
+
+    // All shaders sources related to identifier get replaced. Update is
+    // optional and can be explcitily called later via update().
+    void setSource(
+        const char* identifier
+        ,   const char* source
+        ,   const bool update = true);
+
+    // Updates all modified shader sources, that are not updated yet.
+    void update();
+
+
+private:
+
+};
+
+
 // Allows manipulation of shader sources registered elsewhere. 
 // Helps to decouple shader manipulation of specific shader instances and 
 // GUIs via identifiers.
 
-class ShaderModifier
+class PrivateShaderModifier
 {
 public:
     typedef std::string t_identifier;
     typedef std::vector<t_identifier> t_identifiers;
 
 public:
-
-    ShaderModifier();
-    virtual ~ShaderModifier();
+    PrivateShaderModifier();
+    virtual ~PrivateShaderModifier();
    
     void unregisterIdentifiersChangedCallback(void *object);
     void registerIdentifiersChangedCallback(

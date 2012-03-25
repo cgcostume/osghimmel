@@ -31,11 +31,12 @@
 #ifndef __EARTH2_H__
 #define __EARTH2_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 #include "julianday.h"
 
 
-class Earth2 // Lower Accuracy
+class OSGH_API Earth2 // Lower Accuracy
 {
 public:
 

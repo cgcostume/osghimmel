@@ -32,6 +32,7 @@
 #ifndef __PARABOLOIDMAPPEDHIMMEL_H__
 #define __PARABOLOIDMAPPEDHIMMEL_H__
 
+#include "declspec.h"
 #include "abstractmappedhimmel.h"
 
 #include <map>
@@ -50,7 +51,7 @@ namespace osg
 // Dual-Paraboloid not supported yet...
 // The map is mapped towards +z (top).
 
-class ParaboloidMappedHimmel : public AbstractMappedHimmel
+class OSGH_API ParaboloidMappedHimmel : public AbstractMappedHimmel
 {
 public:
     ParaboloidMappedHimmel(
@@ -73,7 +74,7 @@ protected:
 
     // AbstractHimmel interface
 
-    virtual const std::string getFragmentShaderSource();
+    virtual const char* getFragmentShaderSource();
 
 protected:
 

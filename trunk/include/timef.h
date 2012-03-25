@@ -31,6 +31,7 @@
 #ifndef __TIMEF_H__
 #define __TIMEF_H__
 
+#include "declspec.h"
 #include "typedefs.h"
 
 #include <time.h>
@@ -48,7 +49,7 @@ namespace osg
 // The time starts cycling automatically, but can also be paused, stopped, 
 // or set to a specific value.
 
-class TimeF
+class OSGH_API TimeF
 {
     enum e_Mode
     {

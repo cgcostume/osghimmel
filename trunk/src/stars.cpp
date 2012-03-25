@@ -114,27 +114,25 @@ const osg::Vec3f Stars::sRgbColor(const osg::Vec3f xyzTristimulus)
 
 
 const t_equd Stars::apparentPosition(
-    const t_julianDay t
-,   const t_longf a2000
-,   const t_longf d2000
-,   const t_longf mpa2000
-,   const t_longf mpd2000)
+    const t_julianDay /*t*/
+,   const t_longf /*a2000*/
+,   const t_longf /*d2000*/
+,   const t_longf /*mpa2000*/
+,   const t_longf /*mpd2000*/)
 {
-    const t_julianDay T(jCenturiesSinceSE(t));
+    //const t_julianDay T(jCenturiesSinceSE(t));
 
     // (AA.20.1)
 
-    const t_longf m  = (_decimal(0, 0, 3.07496)) + (_decimal(0, 0, 0.00186)) * T * 100.0;
-    const t_longf n  = _arcsecs(_decimal(0, 0, 1.33621)) - _arcsecs(_decimal(0, 0, 0.00057)) * T * 100.0;
+    //const t_longf m  = (_decimal(0, 0, 3.07496)) + (_decimal(0, 0, 0.00186)) * T * 100.0;
+    //const t_longf n  = _arcsecs(_decimal(0, 0, 1.33621)) - _arcsecs(_decimal(0, 0, 0.00057)) * T * 100.0;
 
-    const t_longf Da = m + n * sin(_rad(mpa2000)) * tan(_rad(mpd2000));
-    const t_longf Db = n * cos(_rad(mpa2000));
-
-    t_equd equ;
+    //const t_longf Da = m + n * sin(_rad(mpa2000)) * tan(_rad(mpd2000));
+    //const t_longf Db = n * cos(_rad(mpa2000));
 
     // TODO
 
-    return equ;
+    return t_equd();
 }
 
 

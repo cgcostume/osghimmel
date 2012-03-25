@@ -36,17 +36,17 @@
 #include <assert.h>
 
 
-ShaderModifier::ShaderModifier()
+PrivateShaderModifier::PrivateShaderModifier()
 {
 }
 
 
-ShaderModifier::~ShaderModifier()
+PrivateShaderModifier::~PrivateShaderModifier()
 {
 }
 
 
-const ShaderModifier::t_identifiers ShaderModifier::getIdentifiers() const
+const PrivateShaderModifier::t_identifiers PrivateShaderModifier::getIdentifiers() const
 {
     t_identifiers identifiers;
 
@@ -62,7 +62,7 @@ const ShaderModifier::t_identifiers ShaderModifier::getIdentifiers() const
 }
 
 
-const ShaderModifier::t_identifier ShaderModifier::registerShader(
+const PrivateShaderModifier::t_identifier PrivateShaderModifier::registerShader(
     t_identifier identifier
 ,   osg::Shader *shader)
 {
@@ -103,7 +103,7 @@ const ShaderModifier::t_identifier ShaderModifier::registerShader(
 }
 
 
-const osg::Shader::Type ShaderModifier::getType(const t_identifier &identifier) const
+const osg::Shader::Type PrivateShaderModifier::getType(const t_identifier &identifier) const
 {
     // Take the first in set and use its Type.
     
@@ -118,7 +118,7 @@ const osg::Shader::Type ShaderModifier::getType(const t_identifier &identifier) 
 }
 
 
-const std::string ShaderModifier::makeIdentifier(
+const std::string PrivateShaderModifier::makeIdentifier(
     const t_identifier &identifier
 ,   osg::Shader *shader)
 {
@@ -146,7 +146,7 @@ const std::string ShaderModifier::makeIdentifier(
 }
 
 
-void ShaderModifier::unregisterShader(osg::Shader *shader)
+void PrivateShaderModifier::unregisterShader(osg::Shader *shader)
 {
     if(!shader)
     {
@@ -179,7 +179,7 @@ void ShaderModifier::unregisterShader(osg::Shader *shader)
 }
 
 
-const std::string ShaderModifier::getSource(const ShaderModifier::t_identifier &identifier) const
+const std::string PrivateShaderModifier::getSource(const PrivateShaderModifier::t_identifier &identifier) const
 {
     t_sourcesByIdentifier::const_iterator f(m_sourcesByIdentifier.find(identifier));
 
@@ -193,8 +193,8 @@ const std::string ShaderModifier::getSource(const ShaderModifier::t_identifier &
 }
 
 
-void ShaderModifier::setSource(
-    const ShaderModifier::t_identifier &identifier
+void PrivateShaderModifier::setSource(
+    const PrivateShaderModifier::t_identifier &identifier
 ,   const std::string &source
 ,   const bool update)
 {
@@ -222,7 +222,7 @@ void ShaderModifier::setSource(
 }
 
 
-void ShaderModifier::update()
+void PrivateShaderModifier::update()
 {
     t_identifierSet::const_iterator i(m_modified.begin());
     const t_identifierSet::const_iterator ie(m_modified.end());
@@ -243,7 +243,7 @@ void ShaderModifier::update()
 }
 
 
-void ShaderModifier::registerIdentifiersChangedCallback(
+void PrivateShaderModifier::registerIdentifiersChangedCallback(
     void *object
 ,   void(*callback)(void*))
 {
@@ -251,7 +251,7 @@ void ShaderModifier::registerIdentifiersChangedCallback(
 }
 
 
-void ShaderModifier::unregisterIdentifiersChangedCallback(void *object)
+void PrivateShaderModifier::unregisterIdentifiersChangedCallback(void *object)
 {
     const t_callbacks::const_iterator i(m_callbacks.find(object));
 
@@ -260,7 +260,7 @@ void ShaderModifier::unregisterIdentifiersChangedCallback(void *object)
 }
 
 
-void ShaderModifier::identifiersChanged()
+void PrivateShaderModifier::identifiersChanged()
 {
     t_callbacks::const_iterator i(m_callbacks.begin());
     const t_callbacks::const_iterator iEnd(m_callbacks.end());
