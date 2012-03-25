@@ -43,16 +43,16 @@
 #include "earth.h"
 #include "strutils.h"
 
+#include "shaderfragment/bruneton_common.h"
+#include "shaderfragment/bruneton_inscatter.h"
+#include "shaderfragment/bruneton_irradiance.h"
+#include "shaderfragment/bruneton_transmittance.h"
+
 #include <osg/Image>
 #include <osg/Geometry>
 #include <osg/Texture2D>
 #include <osg/Texture3D>
 #include <osgViewer/CompositeViewer>
-
-#include "shaderfragment/bruneton_common.h"
-#include "shaderfragment/bruneton_inscatter.h"
-#include "shaderfragment/bruneton_irradiance.h"
-#include "shaderfragment/bruneton_transmittance.h"
 
 #include <assert.h>
 
