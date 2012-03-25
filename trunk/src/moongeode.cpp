@@ -30,7 +30,6 @@
 #include "moongeode.h"
 
 #include "himmel.h"
-#include "shadermodifier.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
 
