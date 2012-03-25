@@ -30,7 +30,6 @@
 #include "atmospheregeode.h"
 
 #include "himmel.h"
-#include "shadermodifier.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
 #include "atmosphereprecompute.h"

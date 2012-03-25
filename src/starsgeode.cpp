@@ -30,7 +30,6 @@
 #include "starsgeode.h"
 
 #include "himmel.h"
-#include "shadermodifier.h"
 #include "abstractastronomy.h"
 #include "randommapgenerator.h"
 #include "mathmacros.h"
