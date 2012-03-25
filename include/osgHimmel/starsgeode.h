@@ -81,14 +81,6 @@ public:
     static const float defaultScattering();
 
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 protected:
 
     void setupUniforms(osg::StateSet* stateSet);
@@ -127,6 +119,14 @@ protected:
 
     // TODO: replace with VMag intensity function of procedural himmel
     osg::ref_ptr<osg::Uniform> u_sun;
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+public:
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 
 } // namespace osgHimmel

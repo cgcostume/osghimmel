@@ -195,24 +195,6 @@ const bool AbstractHimmel::isDirty() const
 
 
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-ShaderModifier *AbstractHimmel::m_shaderModifier = NULL;
-
-void AbstractHimmel::setupShaderModifier(ShaderModifier *shaderModifier)
-{
-    m_shaderModifier = shaderModifier;
-}
-
-ShaderModifier *AbstractHimmel::shaderModifier()
-{  
-    return m_shaderModifier;
-}
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-
-
 
 void AbstractHimmel::setCameraHint(osg::Camera *camera)
 {

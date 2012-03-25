@@ -124,24 +124,6 @@ void MilkyWayGeode::setupShader(osg::StateSet* stateSet)
 }
 
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-osg::Shader *MilkyWayGeode::vertexShader()
-{
-    return m_vShader;
-}
-osg::Shader *MilkyWayGeode::geometryShader()
-{
-    return NULL;
-}
-osg::Shader *MilkyWayGeode::fragmentShader()
-{
-    return m_fShader;
-}
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-
 void MilkyWayGeode::setupTextures(
     osg::StateSet* stateSet
 ,   const char* cubeMapFilePath)
@@ -354,5 +336,25 @@ const char* MilkyWayGeode::getFragmentShaderSource()
         "    gl_FragColor = vec4(c * b, 1.0);\n"
         "}")).c_str();
 }
+
+
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+
+osg::Shader *MilkyWayGeode::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *MilkyWayGeode::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *MilkyWayGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 
 } // namespace osgHimmel
