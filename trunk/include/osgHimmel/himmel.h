@@ -36,22 +36,26 @@
 #include "atime.h"
 
 #ifdef OSGHIMMEL_EXPORTS
+
 #include "abstractastronomy.h"
 #include "atmospheregeode.h"
 #include "moongeode.h"
 #include "starsgeode.h"
 #include "milkywaygeode.h"
 #include "cloudlayerhighgeode.h"
+
 #else // #ifdef OSGHIMMEL_EXPORTS
+
 namespace osgHimmel
 {
-class AbstractAstronomy;
-class AtmosphereGeode;
-class MoonGeode;
-class StarsGeode;
-class MilkyWayGeode;
-class CloudLayerHighGeode;
+    class AbstractAstronomy;
+    class AtmosphereGeode;
+    class MoonGeode;
+    class StarsGeode;
+    class MilkyWayGeode;
+    class CloudLayerHighGeode;
 } // namespace osgHimmel
+
 #endif // #ifdef OSGHIMMEL_EXPORTS
 
 
@@ -132,11 +136,6 @@ protected:
     // required since other geodes are rendered with blending 
     // enabled.
     void addAntiCull();
-
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    void registerShader() const;
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
 

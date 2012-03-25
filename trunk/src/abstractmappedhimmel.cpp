@@ -232,40 +232,22 @@ void AbstractMappedHimmel::postInitialize()
 void AbstractMappedHimmel::makeVertexShader()
 {
     m_vShader->setShaderSource(getVertexShaderSource());
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->registerShader(getName(), m_vShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
 void AbstractMappedHimmel::unmakeVertexShader()
 {
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->unregisterShader(m_vShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
 void AbstractMappedHimmel::makeFragmentShader()
 {
     m_fShader->setShaderSource(getFragmentShaderSource());
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->registerShader(getName(), m_fShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
 void AbstractMappedHimmel::unmakeFragmentShader()
 {
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    if(shaderModifier())
-        shaderModifier()->unregisterShader(m_fShader);
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 }
 
 
@@ -372,5 +354,25 @@ const char* AbstractMappedHimmel::getVertexShaderSource()
         "    quadTransform();\n"
         "}")).c_str();
 }
+
+
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+
+osg::Shader *AbstractMappedHimmel::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *AbstractMappedHimmel::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *AbstractMappedHimmel::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 
 } // namespace osgHimmel

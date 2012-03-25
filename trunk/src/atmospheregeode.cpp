@@ -138,24 +138,6 @@ void AtmosphereGeode::updateShader(osg::StateSet*)
 }
 
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-osg::Shader *AtmosphereGeode::vertexShader()
-{
-    return m_vShader;
-}
-osg::Shader *AtmosphereGeode::geometryShader()
-{
-    return NULL;
-}
-osg::Shader *AtmosphereGeode::fragmentShader()
-{
-    return m_fShader;
-}
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-
 void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
 {
     u_sunScale = new osg::Uniform("sunScale", 1.f); // apparent angular radius (not diameter!)
@@ -570,5 +552,25 @@ const char* AtmosphereGeode::getFragmentShaderSource()
         "        + dither(4, int(cmn[3]));\n" // Eq (16)
         "}").c_str();
 }
+
+
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+
+osg::Shader *AtmosphereGeode::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *AtmosphereGeode::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *AtmosphereGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 
 } // namespace osgHimmel

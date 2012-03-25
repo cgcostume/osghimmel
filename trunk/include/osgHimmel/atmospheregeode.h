@@ -84,14 +84,6 @@ public:
     void setScatteringMie(const float coefficient); 
     void setPhaseG(const float g);  // [-1;+1]
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 protected:
 
     void precompute();
@@ -124,6 +116,14 @@ protected:
     osg::ref_ptr<osg::Uniform> u_lheurebleue;
 
     float m_scale;
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+public:
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 
 } // namespace osgHimmel

@@ -110,22 +110,6 @@ void CloudLayerHighGeode::setupShader(osg::StateSet* stateSet)
 }
 
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-osg::Shader *CloudLayerHighGeode::vertexShader()
-{
-    return m_vShader;
-}
-osg::Shader *CloudLayerHighGeode::geometryShader()
-{
-    return NULL;
-}
-osg::Shader *CloudLayerHighGeode::fragmentShader()
-{
-    return m_fShader;
-}
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 
 void CloudLayerHighGeode::setupUniforms(osg::StateSet* stateSet)
@@ -265,5 +249,25 @@ const char* CloudLayerHighGeode::getFragmentShaderSource()
         "    gl_FragColor = vec4(vec3(n) * 0.5 + 0.5, 1);\n"
         "}")).c_str();
 }
+
+
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+
+osg::Shader *CloudLayerHighGeode::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *CloudLayerHighGeode::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *CloudLayerHighGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 
 } // namespace osgHimmel

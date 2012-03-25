@@ -135,12 +135,6 @@ Himmel::Himmel(
         addChild(m_highLayer);
         m_highLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
     }
-
-
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    registerShader();
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 };
 
 
@@ -156,47 +150,6 @@ Himmel::~Himmel()
     delete m_astronomy;
 };
 
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-void Himmel::registerShader() const
-{
-    if(!shaderModifier())
-        return;
-
-    if(m_milkyway)
-    {
-        shaderModifier()->registerShader(m_milkyway->getName(), m_milkyway->vertexShader());
-        shaderModifier()->registerShader(m_milkyway->getName(), m_milkyway->fragmentShader());
-    }
-
-    if(m_moon)
-    {
-        shaderModifier()->registerShader(m_moon->getName(), m_moon->vertexShader());
-        shaderModifier()->registerShader(m_moon->getName(), m_moon->fragmentShader());
-    }
-
-    if(m_stars)
-    {
-        shaderModifier()->registerShader(m_stars->getName(), m_stars->vertexShader());
-        shaderModifier()->registerShader(m_stars->getName(), m_stars->geometryShader());
-        shaderModifier()->registerShader(m_stars->getName(), m_stars->fragmentShader());
-    }
-
-    if(m_atmosphere)
-    {
-        shaderModifier()->registerShader(m_atmosphere->getName(), m_atmosphere->vertexShader());
-        shaderModifier()->registerShader(m_atmosphere->getName(), m_atmosphere->fragmentShader());
-    }
-
-    if(m_highLayer)
-    {
-        shaderModifier()->registerShader(m_highLayer->getName(), m_highLayer->vertexShader());
-        shaderModifier()->registerShader(m_highLayer->getName(), m_highLayer->fragmentShader());
-    }
-}
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 void Himmel::update()
 {

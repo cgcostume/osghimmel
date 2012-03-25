@@ -195,26 +195,6 @@ void StarsGeode::setupShader(osg::StateSet* stateSet)
 }
 
 
-
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-osg::Shader *StarsGeode::vertexShader()
-{
-    return m_vShader;
-}
-osg::Shader *StarsGeode::geometryShader()
-{
-    return m_gShader;
-}
-osg::Shader *StarsGeode::fragmentShader()
-{
-    return m_fShader;
-}
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-
 void StarsGeode::setupTextures(osg::StateSet* stateSet)
 {   
     const int noiseN = 256;
@@ -548,5 +528,25 @@ const char* StarsGeode::getFragmentShaderSource()
         "    gl_FragColor = m_c * (t + g);\n"
         "}")).c_str();
 }
+
+
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+
+osg::Shader *StarsGeode::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *StarsGeode::geometryShader()
+{
+    return m_gShader;
+}
+osg::Shader *StarsGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 
 } // namespace osgHimmel

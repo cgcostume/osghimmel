@@ -57,14 +57,6 @@ public:
 
     void update(const Himmel &himmel);
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 protected:
 
     void precompute();
@@ -89,6 +81,14 @@ protected:
 
     osg::ref_ptr<osg::Uniform> u_perm;
     osg::ref_ptr<osg::Uniform> u_perlin;
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+public:
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 
 } // namespace osgHimmel

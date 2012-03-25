@@ -37,10 +37,6 @@
 #include <osg/Transform>
 #include <osg/NodeCallback>
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-#include "shadermodifier.h"
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 
 namespace osgHimmel
 {
@@ -103,12 +99,6 @@ public:
     const unsigned int getViewSizeWidthHint() const;
     const unsigned int getViewSizeHeightHint() const;
 
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-    static void setupShaderModifier(ShaderModifier *shaderModifier);
-    static ShaderModifier *shaderModifier();
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 protected:
 
     void setupNode(osg::StateSet* stateSet);
@@ -140,13 +130,6 @@ protected:
     osg::Camera *m_cameraHint;
     unsigned int m_widthHint;
     unsigned int m_heightHint;
-
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-private:
-    static ShaderModifier *m_shaderModifier;
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 };
 
 } // namespace osgHimmel

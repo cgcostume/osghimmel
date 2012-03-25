@@ -193,6 +193,14 @@ protected:
     TimeF *m_razTimef;    
 
     const bool m_fakeSun;
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+public:
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 
 } // namespace osgHimmel

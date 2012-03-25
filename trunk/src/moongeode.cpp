@@ -146,24 +146,6 @@ void MoonGeode::setupShader(osg::StateSet* stateSet)
 }
 
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-osg::Shader *MoonGeode::vertexShader()
-{
-    return m_vShader;
-}
-osg::Shader *MoonGeode::geometryShader()
-{
-    return NULL;
-}
-osg::Shader *MoonGeode::fragmentShader()
-{
-    return m_fShader;
-}
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-
 void MoonGeode::setupTextures(
     osg::StateSet* stateSet
 ,   const char* cubeMapFilePath)
@@ -485,5 +467,25 @@ const char* MoonGeode::getFragmentShaderSource()
         //    gl_FragColor = vec4(vec3(cd), 1.0);
         //    gl_FragColor = vec4(d * vec3(1.06, 1.06, 0.98), 1.0);
 }
+
+
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+
+osg::Shader *MoonGeode::vertexShader()
+{
+    return m_vShader;
+}
+osg::Shader *MoonGeode::geometryShader()
+{
+    return NULL;
+}
+osg::Shader *MoonGeode::fragmentShader()
+{
+    return m_fShader;
+}
+
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 
 } // namespace osgHimmel

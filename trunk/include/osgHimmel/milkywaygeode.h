@@ -42,10 +42,6 @@ namespace osgHimmel
 class Himmel;
 class HimmelQuad;
 
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-class ShaderModifier;
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
-
 
 class OSGH_API MilkyWayGeode : public osg::Geode
 {
@@ -75,15 +71,6 @@ public:
     const float setScattering(const float scattering);
     const float getScattering() const;
     static const float defaultScattering();
-
-
-#ifdef OSGHIMMEL_ENABLE_SHADERMODIFIER
-
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
-
-#endif // OSGHIMMEL_ENABLE_SHADERMODIFIER
 
 protected:
 
@@ -115,7 +102,15 @@ protected:
     osg::ref_ptr<osg::Uniform> u_milkywayCube;
     osg::ref_ptr<osg::Uniform> u_color;
     osg::ref_ptr<osg::Uniform> u_scaledB;
-    osg::ref_ptr<osg::Uniform> u_scattering;    
+    osg::ref_ptr<osg::Uniform> u_scattering;
+
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+public:
+    osg::Shader *vertexShader();
+    osg::Shader *geometryShader();
+    osg::Shader *fragmentShader();
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 
 } // namespace osgHimmel
