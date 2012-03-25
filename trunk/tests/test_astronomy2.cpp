@@ -32,16 +32,18 @@
 
 #include "test.h"
 
-#include "include/mathmacros.h"
-#include "include/atime.h"
-#include "include/julianday.h"
-#include "include/sideraltime.h"
-#include "include/coords.h"
-#include "include/stars.h"
-#include "include/moon2.h"
-#include "include/sun2.h"
-#include "include/earth2.h"
+#include "osgHimmel/mathmacros.h"
+#include "osgHimmel/atime.h"
+#include "osgHimmel/julianday.h"
+#include "osgHimmel/sideraltime.h"
+#include "osgHimmel/coords.h"
+#include "osgHimmel/stars.h"
+#include "osgHimmel/moon2.h"
+#include "osgHimmel/sun2.h"
+#include "osgHimmel/earth2.h"
 
+
+using namespace osgHimmel;
 
 void test_coords2();
 void test_sun2();

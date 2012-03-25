@@ -54,3 +54,29 @@ target_link_libraries(tests
 
 install(TARGETS tests
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	
+# install
+
+install(FILES 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtild.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDBd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGAd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgTextd.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewerd.dll" 
+    "${OSG_BINARY_DIR}/ot12-OpenThreadsd.dll" 
+    "${OSG_BINARY_DIR}/zlib1d.dll" 
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    CONFIGURATIONS Debug)
+
+install(FILES 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osg.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgUtil.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgDB.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgGA.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgText.dll" 
+    "${OSG_BINARY_DIR}/osg${OSG_SOVERSION}-osgViewer.dll" 
+    "${OSG_BINARY_DIR}/ot12-OpenThreads.dll" 
+    "${OSG_BINARY_DIR}/zlib1.dll" 
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    CONFIGURATIONS Release)	
