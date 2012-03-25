@@ -32,8 +32,10 @@
 
 #include "test.h"
 
-#include "include/mathmacros.h"
+#include "osgHimmel/mathmacros.h"
 
+
+using namespace osgHimmel;
 
 void test_math()
 {

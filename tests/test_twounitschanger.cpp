@@ -32,8 +32,10 @@
 
 #include "test.h"
 
-#include "include/twounitschanger.h"
+#include "osgHimmel/twounitschanger.h"
 
+
+using namespace osgHimmel;
 
 void test_twounitschanger()
 {

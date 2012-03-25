@@ -55,6 +55,7 @@
 #include <osgViewer/CompositeViewer>
 
 #include <assert.h>
+#include <cstring>
 
 
 namespace osgHimmel

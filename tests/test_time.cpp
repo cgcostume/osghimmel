@@ -32,11 +32,14 @@
 
 #include "test.h"
 
-#include "include/atime.h"
-#include "include/timef.h"
-#include "include/mathmacros.h"
+#include "osgHimmel/atime.h"
+#include "osgHimmel/timef.h"
+#include "osgHimmel/mathmacros.h"
 
 #include <time.h>
+
+
+using namespace osgHimmel;
 
 void test_time()
 {
