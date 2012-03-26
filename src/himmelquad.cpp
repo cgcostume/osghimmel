@@ -49,9 +49,4 @@ HimmelQuad::HimmelQuad()
         new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 }
 
-
-HimmelQuad::~HimmelQuad()
-{
-};
-
 } // namespace osgHimmel

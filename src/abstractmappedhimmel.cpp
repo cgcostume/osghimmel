@@ -94,7 +94,7 @@ AbstractMappedHimmel::AbstractMappedHimmel(
     geode->addDrawable(m_hquad);
 
     m_razTransform->addChild(geode);
-    addChild(m_razTransform.get());
+    addChild(m_razTransform);
 };
 
 
@@ -104,7 +104,6 @@ AbstractMappedHimmel::~AbstractMappedHimmel()
     unmakeFragmentShader();
 
     delete m_razTimef;
-    delete m_hquad;
 };
 
 

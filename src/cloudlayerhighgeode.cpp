@@ -65,16 +65,16 @@ CloudLayerHighGeode::CloudLayerHighGeode()
 {
     setName("CloudLayerHigh");
 
-    osg::StateSet* stateSet = getOrCreateStateSet();
+    //osg::StateSet* stateSet = getOrCreateStateSet();
 
-    setupNode(stateSet);
-    setupUniforms(stateSet);
-    setupShader(stateSet);
-    setupTextures(stateSet);
+    //setupNode(stateSet);
+    //setupUniforms(stateSet);
+    //setupShader(stateSet);
+    //setupTextures(stateSet);
 
-    osg::Geode *geode = new osg::Geode;
-    geode->addDrawable(m_hquad);
-    addChild(geode);
+    //osg::Geode *geode = new osg::Geode;
+    //geode->addDrawable(m_hquad);
+    //addChild(geode);
 };
 
 

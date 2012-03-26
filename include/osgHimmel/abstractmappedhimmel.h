@@ -35,6 +35,7 @@
 #include "abstracthimmel.h"
 #include "twounitschanger.h"
 #include "pragmanote.h"
+#include "himmelquad.h"
 
 #ifdef OSGHIMMEL_EXPORTS
 #include <osg/MatrixTransform>
@@ -50,7 +51,6 @@ namespace osgHimmel
 {
 
 class TimeF;
-class HimmelQuad;
 
 
 class OSGH_API AbstractMappedHimmel : public AbstractHimmel
@@ -160,7 +160,7 @@ protected:
 
 protected:
 
-    HimmelQuad *m_hquad;
+    osg::ref_ptr<HimmelQuad> m_hquad;
 
     TwoUnitsChanger m_changer;
 
