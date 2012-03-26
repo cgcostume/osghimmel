@@ -65,7 +65,7 @@ protected:
     virtual void postInitialize();
 
 protected:
-    osg::ref_ptr<osgHimmel::CubeMappedHimmel> m_himmel;
+    osgHimmel::CubeMappedHimmel *m_himmel;
 };
 
 

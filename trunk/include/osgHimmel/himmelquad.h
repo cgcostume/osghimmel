@@ -41,7 +41,6 @@ class HimmelQuad : public osg::Geometry
 {
 public:
     HimmelQuad();
-    virtual ~HimmelQuad();
 };
 
 } // namespace osgHimmel
