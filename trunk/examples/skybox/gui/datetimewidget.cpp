@@ -32,13 +32,16 @@
 
 #include "abstracthimmelscene.h"
 
-#include "include/timef.h"
-#include "include/mathmacros.h"
+#include "osgHimmel/timef.h"
+#include "osgHimmel/mathmacros.h"
 
 #include <QTimer>
 #include <QRegExp>
 
 #include <assert.h>
+
+
+using namespace osgHimmel;
 
 
 DateTimeWidget::DateTimeWidget(

@@ -490,17 +490,18 @@ void AtmospherePrecompute::setupLayerUniforms(
 
 
 osg::Program *AtmospherePrecompute::setupProgram(
-    const char* fragmentShaderSource)
+    const std::string &fragmentShaderSource)
 {
-    assert(strlen(fragmentShaderSource) > 0);
+    assert(!fragmentShaderSource.empty());
 
     osg::Program *program(new osg::Program);
 
     program->addShader(new osg::Shader(osg::Shader::VERTEX,   glsl_bruneton_v_default));
 
-    if(strlen(fragmentShaderSource) > 0)
+    if(!fragmentShaderSource.empty())
     {
-        const char *source = substituteMacros(fragmentShaderSource);
+        std::string source(fragmentShaderSource);
+        substituteMacros(source);
         program->addShader(new osg::Shader(osg::Shader::FRAGMENT, source));
     }
 
@@ -757,45 +758,41 @@ void AtmospherePrecompute::render3D(
 }
 
 
-const char *AtmospherePrecompute::substituteMacros(const char *source)
+void AtmospherePrecompute::substituteMacros(std::string &source)
 {
     // Replace Precomputed Texture Config "MACROS"
 
     const t_preTexCfg &tc(getTextureConfig());
 
-    std::string temp(source);
+    replace(source, "%TRANSMITTANCE_W%", tc.transmittanceWidth);
+    replace(source, "%TRANSMITTANCE_H%", tc.transmittanceHeight);
 
-    replace(temp, "%TRANSMITTANCE_W%", tc.transmittanceWidth);
-    replace(temp, "%TRANSMITTANCE_H%", tc.transmittanceHeight);
+    replace(source, "%SKY_W%", tc.skyWidth);
+    replace(source, "%SKY_H%", tc.skyHeight);
 
-    replace(temp, "%SKY_W%", tc.skyWidth);
-    replace(temp, "%SKY_H%", tc.skyHeight);
+    replace(source, "%RES_R%", tc.resR);
+    replace(source, "%RES_MU%", tc.resMu);
+    replace(source, "%RES_MU_S%", tc.resMuS);
+    replace(source, "%RES_NU%", tc.resNu);
 
-    replace(temp, "%RES_R%", tc.resR);
-    replace(temp, "%RES_MU%", tc.resMu);
-    replace(temp, "%RES_MU_S%", tc.resMuS);
-    replace(temp, "%RES_NU%", tc.resNu);
-
-    replace(temp, "%TRANSMITTANCE_INTEGRAL_SAMPLES%", tc.transmittanceIntegralSamples);
-    replace(temp, "%INSCATTER_INTEGRAL_SAMPLES%", tc.inscatterIntegralSamples);
-    replace(temp, "%IRRADIANCE_INTEGRAL_SAMPLES%", tc.irradianceIntegralSamples);
-    replace(temp, "%INSCATTER_SPHERICAL_INTEGRAL_SAMPLES%", tc.inscatterSphericalIntegralSamples);
+    replace(source, "%TRANSMITTANCE_INTEGRAL_SAMPLES%", tc.transmittanceIntegralSamples);
+    replace(source, "%INSCATTER_INTEGRAL_SAMPLES%", tc.inscatterIntegralSamples);
+    replace(source, "%IRRADIANCE_INTEGRAL_SAMPLES%", tc.irradianceIntegralSamples);
+    replace(source, "%INSCATTER_SPHERICAL_INTEGRAL_SAMPLES%", tc.inscatterSphericalIntegralSamples);
 
     // Replace Physical Model Config "MACROS"
 
     const t_modelCfg &mc(getModelConfig());
 
-    replace(temp, "%AVERAGE_GROUND_REFLECTANCE%", mc.avgGroundReflectance);
+    replace(source, "%AVERAGE_GROUND_REFLECTANCE%", mc.avgGroundReflectance);
 
-    replace(temp, "%HR%", mc.HR);
-    replace(temp, "%betaR%", mc.betaR);
+    replace(source, "%HR%", mc.HR);
+    replace(source, "%betaR%", mc.betaR);
         
-    replace(temp, "%HM%", mc.HM);
-    replace(temp, "%betaMSca%", mc.betaMSca);
-    replace(temp, "%betaMEx%", mc.betaMEx);
-    replace(temp, "%mieG%", mc.mieG);
-
-    return temp.c_str();
+    replace(source, "%HM%", mc.HM);
+    replace(source, "%betaMSca%", mc.betaMSca);
+    replace(source, "%betaMEx%", mc.betaMEx);
+    replace(source, "%mieG%", mc.mieG);
 }
 
 } // namespace osgHimmel

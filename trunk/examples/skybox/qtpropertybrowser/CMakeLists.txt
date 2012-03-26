@@ -96,6 +96,10 @@ add_library(qtpropertybrowser STATIC
     ${sources}
     ${resources})
 
+set_target_properties(qtpropertybrowser
+	PROPERTIES
+	DEBUG_POSTFIX "d${DEBUG_POSTFIX}")		
+	
 add_definitions(${QT_DEFINITIONS})
 add_definitions(-DQT_DLL)
 add_definitions(-DQT_QTPROPERTYBROWSER_EXPORT)

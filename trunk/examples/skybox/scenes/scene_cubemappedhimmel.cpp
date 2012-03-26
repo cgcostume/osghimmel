@@ -30,8 +30,9 @@
 #include "scene_cubemappedhimmel.h"
 
 #include "utils/tr.h"
+#include "utils/shadermodifier.h"
 
-#include "include/cubemappedhimmel.h"
+#include "osgHimmel/cubemappedhimmel.h"
 
 #include <osg/TextureCubeMap>
 #include <osgDB/ReadFile>
@@ -45,6 +46,9 @@ namespace
 
     const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
 }
+
+using namespace osgHimmel;
+
 
 Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
@@ -103,6 +107,14 @@ AbstractHimmel *Scene_CubeMappedHimmel::himmel()
 }
 
 
+void Scene_CubeMappedHimmel::postInitialize()
+{
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getVertexShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getGeometryShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getFragmentShader());
+}
+
+
 void Scene_CubeMappedHimmel::registerProperties()
 {
     AbstractHimmelScene::registerProperties();
@@ -111,6 +123,7 @@ void Scene_CubeMappedHimmel::registerProperties()
 
     createProperty(*cubeGroup, PROPERTY_RAZSPEED, 0.0, -99999.0, 99999.0, 10.0); 
 }
+
 
 void Scene_CubeMappedHimmel::propertyChanged(
     QtProperty *p

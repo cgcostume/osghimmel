@@ -29,11 +29,12 @@
 
 #include "scene_polarmappedhimmel.h"
 
-#include "include/polarmappedhimmel.h"
-#include "include/horizonband.h"
-
 #include "utils/tr.h"
 #include "utils/qt2osg.h"
+#include "utils/shadermodifier.h"
+
+#include "osgHimmel/polarmappedhimmel.h"
+#include "osgHimmel/horizonband.h"
 
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
@@ -59,6 +60,9 @@ namespace
     const QString PROPERTY_HBAND_BACKGROUND(TR("Bottom Color"));
 }
 
+using namespace osgHimmel;
+
+
 Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
 ,   m_himmel(NULL)
@@ -70,17 +74,15 @@ Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
     m_himmel->setTransitionDuration(0.05f);
     m_himmel->setSecondsPerRAZ(2000.f);
 
-    /*m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
+    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
     m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
-    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));*/
-    m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_pho_a.png"));
+    m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
 
-    //m_himmel->pushTextureUnit(0, 0.0f);
-    //m_himmel->pushTextureUnit(1, 0.2f);
-    //m_himmel->pushTextureUnit(2, 0.4f);
-    //m_himmel->pushTextureUnit(3, 0.6f);
     m_himmel->pushTextureUnit(0, 0.0f);
+    m_himmel->pushTextureUnit(1, 0.2f);
+    m_himmel->pushTextureUnit(2, 0.4f);
+    m_himmel->pushTextureUnit(3, 0.6f);
 
     addChild(m_himmel);
 }
@@ -94,6 +96,14 @@ Scene_PolarMappedHimmel::~Scene_PolarMappedHimmel()
 AbstractHimmel *Scene_PolarMappedHimmel::himmel()
 {
     return m_himmel;
+}
+
+
+void Scene_PolarMappedHimmel::postInitialize()
+{
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getVertexShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getGeometryShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getFragmentShader());
 }
 
 

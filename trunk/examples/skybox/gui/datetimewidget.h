@@ -41,8 +41,12 @@ class Ui_DateTimeWidget;
 class QTimer;
 class QDateTime;
 
-class TimeF;
 class AbstractHimmelScene;
+
+namespace osgHimmel
+{
+    class TimeF;
+}
 
 
 class DateTimeWidget 
@@ -52,7 +56,7 @@ class DateTimeWidget
 
 public:
     DateTimeWidget(
-        TimeF &timef
+        osgHimmel::TimeF &timef
     ,   QWidget *parent = NULL);
 
     virtual ~DateTimeWidget();
@@ -113,7 +117,7 @@ protected:
 protected:
     std::auto_ptr<Ui_DateTimeWidget> m_ui;
 
-    TimeF &m_timef;
+    osgHimmel::TimeF &m_timef;
     AbstractHimmelScene *m_scene;
 
     QTimer *m_timer;

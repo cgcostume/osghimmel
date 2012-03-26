@@ -332,9 +332,9 @@ const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
 
 
 
-const char* AbstractMappedHimmel::getVertexShaderSource()
+const std::string AbstractMappedHimmel::getVertexShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
     
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
@@ -352,7 +352,7 @@ const char* AbstractMappedHimmel::getVertexShaderSource()
         "    m_razInvariant = m_ray * razInverse;\n"
         "\n"
         "    quadTransform();\n"
-        "}")).c_str();
+        "}");
 }
 
 
@@ -360,15 +360,15 @@ const char* AbstractMappedHimmel::getVertexShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *AbstractMappedHimmel::vertexShader()
+osg::Shader *AbstractMappedHimmel::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *AbstractMappedHimmel::geometryShader()
+osg::Shader *AbstractMappedHimmel::getGeometryShader()
 {
     return NULL;
 }
-osg::Shader *AbstractMappedHimmel::fragmentShader()
+osg::Shader *AbstractMappedHimmel::getFragmentShader()
 {
     return m_fShader;
 }

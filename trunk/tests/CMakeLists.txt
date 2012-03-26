@@ -52,9 +52,13 @@ target_link_libraries(tests
     osgHimmel
     ${OPENSCENEGRAPH_LIBRARIES})
 
+set_target_properties(tests
+	PROPERTIES
+	DEBUG_POSTFIX "d${DEBUG_POSTFIX}")		
+	
 install(TARGETS tests
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-	
+
 # install
 
 install(FILES 

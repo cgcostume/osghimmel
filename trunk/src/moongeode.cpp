@@ -315,9 +315,9 @@ const float MoonGeode::defaultEarthShineIntensity()
 
 
 
-const char* MoonGeode::getVertexShaderSource()
+const std::string MoonGeode::getVertexShaderSource()
 {
-    return (glsl_version_150 +
+    return glsl_version_150 +
 
     +   PRAGMA_ONCE(main,
 
@@ -345,13 +345,13 @@ const char* MoonGeode::getVertexShaderSource()
         "\n"
         "    gl_TexCoord[0] = gl_Vertex;\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(m_eye, 1.0);\n"
-        "}")).c_str();
+        "}");
 }
 
 
-const char* MoonGeode::getFragmentShaderSource()
+const std::string MoonGeode::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
     
     +   glsl_cmn_uniform
     +   glsl_horizon
@@ -456,7 +456,7 @@ const char* MoonGeode::getFragmentShaderSource()
         "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
         "\n"
         "    gl_FragColor = vec4(diffuse * b, 1.0);\n"
-        "}")).c_str();
+        "}");
 
         // Debug.
 
@@ -472,15 +472,15 @@ const char* MoonGeode::getFragmentShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *MoonGeode::vertexShader()
+osg::Shader *MoonGeode::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *MoonGeode::geometryShader()
+osg::Shader *MoonGeode::getGeometryShader()
 {
     return NULL;
 }
-osg::Shader *MoonGeode::fragmentShader()
+osg::Shader *MoonGeode::getFragmentShader()
 {
     return m_fShader;
 }

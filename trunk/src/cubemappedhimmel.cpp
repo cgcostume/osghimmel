@@ -97,9 +97,9 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 
 
 
-const char* CubeMappedHimmel::getFragmentShaderSource()
+const std::string CubeMappedHimmel::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 
@@ -126,7 +126,7 @@ const char* CubeMappedHimmel::getFragmentShaderSource()
         "        textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
         "\n"
         "    gl_FragColor = " + (m_fakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
-        "}")).c_str();
+        "}");
 }
 
 } // namespace osgHimmel

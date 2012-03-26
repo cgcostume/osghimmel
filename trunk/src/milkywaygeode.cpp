@@ -269,9 +269,9 @@ const float MilkyWayGeode::defaultScattering()
 
 
 
-const char* MilkyWayGeode::getVertexShaderSource()
+const std::string MilkyWayGeode::getVertexShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
@@ -288,13 +288,13 @@ const char* MilkyWayGeode::getVertexShaderSource()
         "    m_eye = quadRetrieveRay();\n"
         "    m_ray = R * m_eye;\n"
         "    quadTransform();\n"
-        "}")).c_str();
+        "}");
 }
 
 
-const char* MilkyWayGeode::getFragmentShaderSource()
+const std::string MilkyWayGeode::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_cmn_uniform
     +   glsl_horizon
@@ -334,7 +334,7 @@ const char* MilkyWayGeode::getFragmentShaderSource()
         "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    gl_FragColor = vec4(c * b, 1.0);\n"
-        "}")).c_str();
+        "}");
 }
 
 
@@ -342,15 +342,15 @@ const char* MilkyWayGeode::getFragmentShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *MilkyWayGeode::vertexShader()
+osg::Shader *MilkyWayGeode::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *MilkyWayGeode::geometryShader()
+osg::Shader *MilkyWayGeode::getGeometryShader()
 {
     return NULL;
 }
-osg::Shader *MilkyWayGeode::fragmentShader()
+osg::Shader *MilkyWayGeode::getFragmentShader()
 {
     return m_fShader;
 }

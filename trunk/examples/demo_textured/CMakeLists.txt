@@ -41,7 +41,11 @@ target_link_libraries(demo_textured
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
-   
+
+set_target_properties(demo_textured
+	PROPERTIES
+	DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
+	
 install(TARGETS demo_textured
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 

@@ -118,9 +118,9 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 
 
-const char* PolarMappedHimmel::getFragmentShaderSource()
+const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_blendNormalExt
 
@@ -205,7 +205,7 @@ const char* PolarMappedHimmel::getFragmentShaderSource()
         ,
         "    gl_FragColor = fc;")
 
-        "}")).c_str();
+        "}");
 }
 
 } // namespace osgHimmel

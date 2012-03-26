@@ -35,14 +35,19 @@
 
 #include <osg/Group>
 
+class ShaderModifier;
+
 namespace osg
 {
     class Camera;
     class Viewport;
 }
 
-class AbstractHimmel;
-class TimeF;
+namespace osgHimmel
+{
+    class AbstractHimmel;
+    class TimeF;
+}
 
 
 class AbstractHimmelScene 
@@ -53,10 +58,11 @@ public:
 
     virtual ~AbstractHimmelScene();
     
-    void assignTime(TimeF *timef);
-    TimeF *timef();
+    void assignTime(osgHimmel::TimeF *timef);
+    osgHimmel::TimeF *timef();
 
-    
+    ShaderModifier *shaderModifier();
+
     virtual const bool hasLocationSupport() const = 0;
 
     virtual const double setLatitude(const double latitude);
@@ -69,12 +75,13 @@ public:
     void hintViewSize(unsigned int width, unsigned int height);
 
 
+    void initialize();
 
 protected:
 
     AbstractHimmelScene(osg::Camera *camera);
 
-    virtual AbstractHimmel *himmel() = 0;
+    virtual osgHimmel::AbstractHimmel *himmel() = 0;
 
     // AbstractPropertySupport Interface
 
@@ -83,10 +90,14 @@ protected:
     ,   const QString &name);
     virtual void registerProperties();
 
+    virtual void postInitialize() = 0;
+
 protected:
 
     osg::Camera *m_camera;
     osg::Viewport *m_viewport;
+
+    ShaderModifier *m_shaderModifier;
 };
 
 #endif // __ABSTRACTHIMMELSCENE_H__

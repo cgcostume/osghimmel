@@ -30,9 +30,10 @@
 #include "abstracthimmelscene.h"
 
 #include "utils/tr.h"
+#include "utils/shadermodifier.h"
 
-#include "include/abstracthimmel.h"
-#include "include/timef.h"
+#include "osgHimmel/abstracthimmel.h"
+#include "osgHimmel/timef.h"
 
 #include <osg/Camera>
 #include <osgViewer/View>
@@ -47,6 +48,7 @@ namespace
     const QString GROUP_ABSTRACTHIMMEL(TR("Abstract Himmel"));
 }
 
+using namespace osgHimmel;
 
 AbstractHimmelScene::AbstractHimmelScene(osg::Camera *camera)
 :   osg::Group()
@@ -54,6 +56,8 @@ AbstractHimmelScene::AbstractHimmelScene(osg::Camera *camera)
 
 ,   m_camera(camera)
 ,   m_viewport(NULL)
+
+,   m_shaderModifier(new ShaderModifier)
 {
     assert(camera);
     m_viewport = m_camera->getViewport();
@@ -62,6 +66,22 @@ AbstractHimmelScene::AbstractHimmelScene(osg::Camera *camera)
 
 AbstractHimmelScene::~AbstractHimmelScene()
 {
+    delete m_shaderModifier;
+}
+
+
+void AbstractHimmelScene::initialize()
+{
+    assert(himmel());
+    himmel()->initialize();
+
+    postInitialize();
+}
+
+
+ShaderModifier *AbstractHimmelScene::shaderModifier()
+{
+    return m_shaderModifier;
 }
 
 

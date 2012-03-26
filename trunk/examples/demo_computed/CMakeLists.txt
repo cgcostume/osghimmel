@@ -42,6 +42,10 @@ target_link_libraries(demo_computed
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
 
+set_target_properties(demo_computed
+	PROPERTIES
+	DEBUG_POSTFIX "d${DEBUG_POSTFIX}")	
+	
 install(TARGETS demo_computed
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 

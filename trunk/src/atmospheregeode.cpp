@@ -130,7 +130,7 @@ void AtmosphereGeode::setupShader(osg::StateSet* stateSet)
 
 void AtmosphereGeode::updateShader(osg::StateSet*)
 {
-    char* fSource(const_cast<char*>(getFragmentShaderSource()));
+    std::string fSource(getFragmentShaderSource());
     m_precompute->substituteMacros(fSource);
 
     m_fShader->setShaderSource(fSource);
@@ -312,9 +312,9 @@ void AtmosphereGeode::setPhaseG(const float g)
 
 
 
-const char* AtmosphereGeode::getVertexShaderSource()
+const std::string AtmosphereGeode::getVertexShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
@@ -329,13 +329,13 @@ const char* AtmosphereGeode::getVertexShaderSource()
         "\n"
         "    m_ray = quadRetrieveRay();\n"
         "    quadTransform();\n"
-        "}")).c_str();
+        "}");
 }
 
 
-const char* AtmosphereGeode::getFragmentShaderSource()
+const std::string AtmosphereGeode::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_cmn_uniform
     +   
@@ -549,7 +549,7 @@ const char* AtmosphereGeode::getFragmentShaderSource()
         "\n"
         "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0)\n"
         "        + dither(4, int(cmn[3]));\n" // Eq (16)
-        "}").c_str();
+        "}";
 }
 
 
@@ -557,15 +557,15 @@ const char* AtmosphereGeode::getFragmentShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *AtmosphereGeode::vertexShader()
+osg::Shader *AtmosphereGeode::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *AtmosphereGeode::geometryShader()
+osg::Shader *AtmosphereGeode::getGeometryShader()
 {
     return NULL;
 }
-osg::Shader *AtmosphereGeode::fragmentShader()
+osg::Shader *AtmosphereGeode::getFragmentShader()
 {
     return m_fShader;
 }

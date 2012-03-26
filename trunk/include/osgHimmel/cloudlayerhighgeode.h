@@ -66,8 +66,8 @@ protected:
     void setupTextures(osg::StateSet* stateSet);
     void setupShader  (osg::StateSet* stateSet);
 
-    const char* getVertexShaderSource();
-    const char* getFragmentShaderSource();
+    const std::string getVertexShaderSource();
+    const std::string getFragmentShaderSource();
 
 protected:
 
@@ -85,9 +85,9 @@ protected:
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 public:
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
+    osg::Shader *getVertexShader();
+    osg::Shader *getGeometryShader();
+    osg::Shader *getFragmentShader();
 #endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 

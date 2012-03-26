@@ -51,9 +51,9 @@
 
 #include "utils/import.h"
 
-#include "include/atime.h"
-#include "include/timef.h"
-#include "include/shadermodifier.h"
+#include "osgHimmel/atime.h"
+#include "osgHimmel/timef.h"
+#include "osgHimmel/abstracthimmel.h"
 
 #include <QFileInfo>
 #include <QFileDialog>
@@ -83,6 +83,9 @@ namespace
 
     const float INITIAL_CAMERA_FOV(56.f);
 }
+
+
+using namespace osgHimmel;
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -243,6 +246,9 @@ void MainWindow::himmelChanged()
 
     if(m_himmel)
     {
+        m_himmel->initialize();
+        m_glslEditor->assign(m_himmel->shaderModifier());
+
         m_himmel->assignTime(m_timef);
         m_root->addChild(m_himmel.get());
 
@@ -268,7 +274,9 @@ void MainWindow::clearHimmel()
 {
     if(m_himmel)
     {
-        m_root->removeChild(m_himmel.get());
+        m_glslEditor->assign(NULL);
+
+        m_root->removeChild(m_himmel);
         m_himmel = NULL;
     }
 }

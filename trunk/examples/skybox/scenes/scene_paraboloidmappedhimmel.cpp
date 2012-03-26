@@ -31,9 +31,10 @@
 
 #include "utils/tr.h"
 #include "utils/qt2osg.h"
+#include "utils/shadermodifier.h"
 
-#include "include/paraboloidmappedhimmel.h"
-#include "include/horizonband.h"
+#include "osgHimmel/paraboloidmappedhimmel.h"
+#include "osgHimmel/horizonband.h"
 
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
@@ -55,6 +56,9 @@ namespace
     const QString PROPERTY_HBAND_COLOR (TR("Color"));
     const QString PROPERTY_HBAND_BACKGROUND(TR("Background"));
 }
+
+using namespace osgHimmel;
+
 
 Scene_ParaboloidMappedHimmel::Scene_ParaboloidMappedHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
@@ -90,6 +94,14 @@ Scene_ParaboloidMappedHimmel::~Scene_ParaboloidMappedHimmel()
 AbstractHimmel *Scene_ParaboloidMappedHimmel::himmel()
 {
     return m_himmel;
+}
+
+
+void Scene_ParaboloidMappedHimmel::postInitialize()
+{
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getVertexShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getGeometryShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getFragmentShader());
 }
 
 

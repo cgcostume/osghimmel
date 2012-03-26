@@ -33,7 +33,10 @@
 
 #include "abstracthimmelscene.h"
 
-class CubeMappedHimmel;
+namespace osgHimmel
+{
+    class CubeMappedHimmel;
+}
 
 
 class Scene_CubeMappedHimmel 
@@ -44,7 +47,7 @@ public:
 
     virtual ~Scene_CubeMappedHimmel();
 
-    virtual AbstractHimmel *himmel();
+    virtual osgHimmel::AbstractHimmel *himmel();
 
     virtual const bool hasLocationSupport() const 
     {
@@ -59,8 +62,10 @@ protected:
         QtProperty *p
     ,   const QString &name);
 
+    virtual void postInitialize();
+
 protected:
-    osg::ref_ptr<CubeMappedHimmel> m_himmel;
+    osg::ref_ptr<osgHimmel::CubeMappedHimmel> m_himmel;
 };
 
 
