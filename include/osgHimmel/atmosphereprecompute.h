@@ -133,7 +133,7 @@ public:
     const bool compute(const bool ifDirtyOnly = true);
     void dirty();
 
-    const char* substituteMacros(const char* source);
+    void substituteMacros(std::string &source);
 
 protected:
 
@@ -175,7 +175,7 @@ protected:
     ,   const int layer);
 
     osg::Program *setupProgram(
-        const char* fragmentShaderSource);
+        const std::string &fragmentShaderSource);
 
     osg::Camera *setupCamera(
         const int viewportWidth

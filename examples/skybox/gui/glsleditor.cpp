@@ -30,39 +30,51 @@
 #include "glsleditor.h"
 #include "examples/skybox/ui_glsleditor.h"
 
-#include "include/shadermodifier.h"
-#include "include/abstracthimmel.h"
+#include "utils/shadermodifier.h"
+
+#include "osgHimmel/abstracthimmel.h"
 
 #include <assert.h>
+
+
+using namespace osgHimmel;
 
 
 GlslEditor::GlslEditor(QWidget* parent)
 :   QWidget(parent)
 ,   m_ui(new Ui_GlslEditor)
-,   m_shaderModifier(new ShaderModifier())
+,   m_shaderModifier(NULL)
 ,   m_activeDocument(NULL)
 {
     m_ui->setupUi(this);
-
-    AbstractHimmel::setupShaderModifier(m_shaderModifier);
-    m_shaderModifier->registerIdentifiersChangedCallback(
-        this, GlslEditor::wrapped_identifiersChanged);
 }
 
 
 GlslEditor::~GlslEditor()
 {    
-    m_shaderModifier->unregisterIdentifiersChangedCallback(this);
-    AbstractHimmel::setupShaderModifier(NULL);
-
-    delete m_shaderModifier;
-
     //m_ui->glslTextEdit->setDocument(NULL); -> crash in QSyntaxHighlighter
     foreach(QTextDocument *textdoc, m_documentsByIdentifier)
         delete textdoc;
 
     m_documentsByIdentifier.clear();
     m_sourcesByIdentifier.clear();
+}
+
+
+void GlslEditor::assign(ShaderModifier *shaderModifier)
+{
+    if(m_shaderModifier)
+        m_shaderModifier->unregisterIdentifiersChangedCallback(this);
+
+    m_shaderModifier = shaderModifier;
+
+    if(m_shaderModifier)
+    {
+        m_shaderModifier->registerIdentifiersChangedCallback(
+            this, GlslEditor::wrapped_identifiersChanged);
+
+        identifiersChanged();
+    }
 }
 
 

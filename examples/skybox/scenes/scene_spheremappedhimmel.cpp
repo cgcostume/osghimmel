@@ -29,9 +29,10 @@
 
 #include "scene_spheremappedhimmel.h"
 
-#include "include/spheremappedhimmel.h"
-
 #include "utils/tr.h"
+#include "utils/shadermodifier.h"
+
+#include "osgHimmel/spheremappedhimmel.h"
 
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
@@ -45,6 +46,9 @@ namespace
 
     const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
 }
+
+using namespace osgHimmel;
+
 
 Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
@@ -74,6 +78,14 @@ Scene_SphereMappedHimmel::~Scene_SphereMappedHimmel()
 AbstractHimmel *Scene_SphereMappedHimmel::himmel()
 {
     return m_himmel;
+}
+
+
+void Scene_SphereMappedHimmel::postInitialize()
+{
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getVertexShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getGeometryShader());
+    shaderModifier()->registerShader(m_himmel->getName(), m_himmel->getFragmentShader());
 }
 
 

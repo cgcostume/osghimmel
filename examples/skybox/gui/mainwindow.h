@@ -54,7 +54,11 @@ class DateTimeWidget;
 class GlslEditor;
 class PropertyWidget;
 class AbstractHimmelScene;
-class TimeF;
+
+namespace osgHimmel
+{
+    class TimeF;
+}
 
 namespace osgViewer 
 {
@@ -150,7 +154,7 @@ private:
     std::auto_ptr<Ui_MainWindow> m_ui;
     LogOutputLabel *m_logStatusLabel;
 
-    TimeF *m_timef;
+    osgHimmel::TimeF *m_timef;
 
     osg::ref_ptr<AbstractHimmelScene> m_himmel;
 

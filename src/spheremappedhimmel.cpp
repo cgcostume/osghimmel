@@ -97,9 +97,9 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 
 
-const char* SphereMappedHimmel::getFragmentShaderSource()
+const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
 //  +   glsl_f_blendNormalExt // using mix
 
@@ -134,7 +134,7 @@ const char* SphereMappedHimmel::getFragmentShaderSource()
         "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
         "\n"
         "    gl_FragColor = " + (m_fakeSun ? "fc + fakeSun(fc.a)" : "fc") + ";\n"
-        "}")).c_str();
+        "}");
 }
 
 } // namespace osgHimmel

@@ -61,6 +61,9 @@ public:
     AbstractHimmel();
     virtual ~AbstractHimmel();
 
+    // (Initialize is automatically called at least on first update)
+    void initialize();
+
     // The timef gets updated but takes no ownership.
     void assignTime(
         TimeF *timef
@@ -106,7 +109,6 @@ protected:
     // Called by the HimmelUpdateCallback. Call this first when inherited!
     virtual void update();
 
-    void initialize();
     virtual void postInitialize() { };
 
 

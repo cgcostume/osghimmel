@@ -185,9 +185,9 @@ void CloudLayerHighGeode::setupTextures(osg::StateSet* stateSet)
 
 
 
-const char* CloudLayerHighGeode::getVertexShaderSource()
+const std::string CloudLayerHighGeode::getVertexShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_quadRetrieveRay
     +   glsl_quadTransform
@@ -202,13 +202,13 @@ const char* CloudLayerHighGeode::getVertexShaderSource()
         "\n"
         "    m_ray = quadRetrieveRay();\n"
         "    quadTransform();\n"
-        "}")).c_str();
+        "}");
 }
 
 
-const char* CloudLayerHighGeode::getFragmentShaderSource()
+const std::string CloudLayerHighGeode::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_cmn_uniform
     +   glsl_horizon
@@ -247,7 +247,7 @@ const char* CloudLayerHighGeode::getFragmentShaderSource()
         "        n += noise2(gl_FragCoord.xy * pow(2.0, float(octave + j)) / 256) / pow(2.0, float(j));\n"
         "\n"
         "    gl_FragColor = vec4(vec3(n) * 0.5 + 0.5, 1);\n"
-        "}")).c_str();
+        "}");
 }
 
 
@@ -255,15 +255,15 @@ const char* CloudLayerHighGeode::getFragmentShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *CloudLayerHighGeode::vertexShader()
+osg::Shader *CloudLayerHighGeode::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *CloudLayerHighGeode::geometryShader()
+osg::Shader *CloudLayerHighGeode::getGeometryShader()
 {
     return NULL;
 }
-osg::Shader *CloudLayerHighGeode::fragmentShader()
+osg::Shader *CloudLayerHighGeode::getFragmentShader()
 {
     return m_fShader;
 }

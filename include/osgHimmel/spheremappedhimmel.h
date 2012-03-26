@@ -83,7 +83,7 @@ protected:
 
     // AbstractHimmel interface
 
-    virtual const char* getFragmentShaderSource();
+    virtual const std::string getFragmentShaderSource();
 
 protected:
 

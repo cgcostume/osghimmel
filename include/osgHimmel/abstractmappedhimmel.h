@@ -139,8 +139,8 @@ protected:
 
     // abstract interface
 
-    virtual const char* getVertexShaderSource();
-    virtual const char* getFragmentShaderSource() = 0;
+    virtual const std::string getVertexShaderSource();
+    virtual const std::string getFragmentShaderSource() = 0;
 
     // getter
 
@@ -197,9 +197,9 @@ protected:
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 public:
-    osg::Shader *vertexShader();
-    osg::Shader *geometryShader();
-    osg::Shader *fragmentShader();
+    osg::Shader *getVertexShader();
+    osg::Shader *getGeometryShader();
+    osg::Shader *getFragmentShader();
 #endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 

@@ -113,9 +113,9 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 
 
 
-const char* ParaboloidMappedHimmel::getFragmentShaderSource()
+const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 {
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_blendNormalExt
     
@@ -149,7 +149,7 @@ const char* ParaboloidMappedHimmel::getFragmentShaderSource()
     +
         "\n"
         "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
-        "}")).c_str();
+        "}");
 }
 
 } // namespace osgHimmel

@@ -364,13 +364,13 @@ const float StarsGeode::defaultColorRatio()
 
 
 
-const char* StarsGeode::getVertexShaderSource()
+const std::string StarsGeode::getVertexShaderSource()
 {
     char apparentMagLimit[8];
 
     sprintf_s(apparentMagLimit, 8, "%.2f", static_cast<float>(Earth::apparentMagnitudeLimit()));
 
-    return (glsl_version_150
+    return glsl_version_150
 
     +   glsl_cmn_uniform
     +   glsl_horizon
@@ -434,13 +434,13 @@ const char* StarsGeode::getVertexShaderSource()
         "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
         "    m_color = vec4(c, scaledB - w1) * b;\n"
-        "}")).c_str();
+        "}");
 }
 
 
-const char *StarsGeode::getGeometryShaderSource()
+const std::string StarsGeode::getGeometryShaderSource()
 {
-    return (glsl_version_150 +
+    return glsl_version_150 +
 
         glsl_geometry_ext
     
@@ -489,13 +489,13 @@ const char *StarsGeode::getGeometryShaderSource()
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(+u +v) * k, 1.0);\n"
         "    gl_TexCoord[0].xy = vec2( 1.0,  1.0);\n"
         "    EmitVertex();\n"
-        "}")).c_str();
+        "}");
 }
 
 
-const char* StarsGeode::getFragmentShaderSource()
+const std::string StarsGeode::getFragmentShaderSource()
 {
-    return (glsl_version_150 
+    return glsl_version_150 
         
     +   PRAGMA_ONCE(main,
 
@@ -525,7 +525,7 @@ const char* StarsGeode::getFragmentShaderSource()
         "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
         "\n"
         "    gl_FragColor = m_c * (t + g);\n"
-        "}")).c_str();
+        "}");
 }
 
 
@@ -533,15 +533,15 @@ const char* StarsGeode::getFragmentShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *StarsGeode::vertexShader()
+osg::Shader *StarsGeode::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *StarsGeode::geometryShader()
+osg::Shader *StarsGeode::getGeometryShader()
 {
     return m_gShader;
 }
-osg::Shader *StarsGeode::fragmentShader()
+osg::Shader *StarsGeode::getFragmentShader()
 {
     return m_fShader;
 }

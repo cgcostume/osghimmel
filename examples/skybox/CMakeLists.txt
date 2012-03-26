@@ -154,6 +154,8 @@ set(SKYBOX_SOURCES
     utils/log.cpp
     utils/qt2osg.h
     utils/qt2osg.cpp
+    utils/shadermodifier.h
+    utils/shadermodifier.cpp
     utils/tr.h)
 
 qt4_auto_wrap(QT4_SOURCES ${SKYBOX_SOURCES})
@@ -164,7 +166,7 @@ include_directories(
     ${QT_INCLUDES})
     
 if(MSVC)
-    add_executable(skybox WIN32 ${QT4_SOURCES} ${SKYBOX_SOURCES})
+    add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
 else(MSVC)
     add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
 endif()
@@ -179,6 +181,10 @@ target_link_libraries(skybox
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
 
+set_target_properties(skybox
+	PROPERTIES
+	DEBUG_POSTFIX "d${DEBUG_POSTFIX}")	
+	
 install(TARGETS skybox
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     CONFIGURATIONS Debug Release)
@@ -195,6 +201,6 @@ install(FILES
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     CONFIGURATIONS Release)
 
-add_definitions("-DOSGHIMMEL_ENABLE_SHADERMODIFIER")
+add_definitions("-DOSGHIMMEL_EXPOSE_SHADERS")
 
 add_definitions("-D_CRT_SECURE_NO_WARNINGS")

@@ -29,15 +29,16 @@
 
 #include "scene_proceduralhimmel.h"
 
-#include "include/himmel.h"
-#include "include/atmospheregeode.h"
-#include "include/moongeode.h"
-#include "include/starsgeode.h"
-#include "include/milkywaygeode.h"
-#include "include/abstractastronomy.h"
-
 #include "utils/tr.h"
 #include "utils/qt2osg.h"
+#include "utils/shadermodifier.h"
+
+#include "osgHimmel/himmel.h"
+#include "osgHimmel/atmospheregeode.h"
+#include "osgHimmel/moongeode.h"
+#include "osgHimmel/starsgeode.h"
+#include "osgHimmel/milkywaygeode.h"
+#include "osgHimmel/abstractastronomy.h"
 
 #include <osg/Light>
 #include <osg/LightSource>
@@ -92,42 +93,45 @@ namespace
     const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (MilkyWay)"));
 }
 
+using namespace osgHimmel;
+
+
 // TEMP
-
-#include <osg/NodeCallback>
-#include <osgUtil/CullVisitor>
-
-#include <math.h>
-
-class ns : public osg::NodeCallback
-{
-    public:
-    
-        ns(osg::Light *light, Himmel *himmel)
-        :   m_ligth(light)
-        ,   m_himmel(himmel)
-        {
-        }
-       
-        virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
-        {
-            traverse(node, nv);
-            
-            osg::Vec3 p = m_himmel->getSunPosition();
-
-            float t1 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.1, 32)) + 0.05;
-            float t2 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.2, 16));
-
-            p *= 10000;
-            m_ligth->setPosition(osg::Vec4(p.x(), p.y(), p.z(), 1.0));
-            //m_ligth->setDiffuse(osg::Vec4(1.0, 1.0, 1.0, 1.0));
-            m_ligth->setDiffuse(osg::Vec4(1.0 * t2, 0.95 * t2, 0.9 * t2, 1.0));
-        }
-
-protected:
-    osg::Light *m_ligth;
-    Himmel* m_himmel;
-};
+//
+//#include <osg/NodeCallback>
+//#include <osgUtil/CullVisitor>
+//
+//#include <math.h>
+//
+//class ns : public osg::NodeCallback
+//{
+//    public:
+//    
+//        ns(osg::Light *light, Himmel *himmel)
+//        :   m_ligth(light)
+//        ,   m_himmel(himmel)
+//        {
+//        }
+//       
+//        virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
+//        {
+//            traverse(node, nv);
+//            
+//            osg::Vec3 p = m_himmel->getSunPosition();
+//
+//            float t1 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.1, 32)) + 0.05;
+//            float t2 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.2, 16));
+//
+//            p *= 10000;
+//            m_ligth->setPosition(osg::Vec4(p.x(), p.y(), p.z(), 1.0));
+//            //m_ligth->setDiffuse(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+//            m_ligth->setDiffuse(osg::Vec4(1.0 * t2, 0.95 * t2, 0.9 * t2, 1.0));
+//        }
+//
+//protected:
+//    osg::Light *m_ligth;
+//    Himmel* m_himmel;
+//};
 
 
 Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
@@ -155,7 +159,7 @@ Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
 
     lsource->setStateSetModes(*group->getOrCreateStateSet(), osg::StateAttribute::ON);
 
-    m_himmel->addUpdateCallback(new ns(light, m_himmel));
+//    m_himmel->addUpdateCallback(new ns(light, m_himmel));
 }
 
 
@@ -167,6 +171,38 @@ Scene_ProceduralHimmel::~Scene_ProceduralHimmel()
 AbstractHimmel *Scene_ProceduralHimmel::himmel()
 {
     return m_himmel;
+}
+
+
+void Scene_ProceduralHimmel::postInitialize()
+{
+    if(m_himmel->milkyway())
+    {
+        shaderModifier()->registerShader(m_himmel->milkyway()->getName(), m_himmel->milkyway()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->milkyway()->getName(), m_himmel->milkyway()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->milkyway()->getName(), m_himmel->milkyway()->getFragmentShader());
+    }
+
+    if(m_himmel->stars())
+    {
+        shaderModifier()->registerShader(m_himmel->stars()->getName(), m_himmel->stars()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->stars()->getName(), m_himmel->stars()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->stars()->getName(), m_himmel->stars()->getFragmentShader());
+    }
+
+    if(m_himmel->atmosphere())
+    {
+        shaderModifier()->registerShader(m_himmel->atmosphere()->getName(), m_himmel->atmosphere()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->atmosphere()->getName(), m_himmel->atmosphere()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->atmosphere()->getName(), m_himmel->atmosphere()->getFragmentShader());
+    }
+
+    if(m_himmel->moon())
+    {
+        shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getFragmentShader());
+    }
 }
 
 
@@ -241,7 +277,8 @@ void Scene_ProceduralHimmel::propertyChanged(
     else if(PROPERTY_ATM_BETARR == name
          || PROPERTY_ATM_BETARG == name
          || PROPERTY_ATM_BETARB == name)
-        m_himmel->atmosphere()->setScatteringRayleigh(osg::Vec3(doubleValue(PROPERTY_ATM_BETARR), doubleValue(PROPERTY_ATM_BETARG), doubleValue(PROPERTY_ATM_BETARB)) * 1e-3); 
+        m_himmel->atmosphere()->setScatteringRayleigh(
+            osg::Vec3(doubleValue(PROPERTY_ATM_BETARR), doubleValue(PROPERTY_ATM_BETARG), doubleValue(PROPERTY_ATM_BETARB)) * 1e-3f); 
     else if(PROPERTY_ATM_HM == name)
         m_himmel->atmosphere()->setThicknessMie(doubleValue(PROPERTY_ATM_HM)); 
     else if(PROPERTY_ATM_BETAM == name)
