@@ -35,10 +35,23 @@
 namespace osgHimmel
 {
 
-const std::string glsl_blendScreen(
-    PRAGMA_ONCE(blendScreen, IMP_COMPOSE(screen, b + s - (b * s))));
+const std::string glsl_blendScreen()
+{
+    static const std::string source(
 
-const std::string glsl_blendScreenExt(
-    PRAGMA_ONCE(blendScreenExt, IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s))));
+        PRAGMA_ONCE(blendScreen, IMP_COMPOSE(screen, b + s - (b * s))));
+
+    return source;
+};
+
+
+const std::string glsl_blendScreenExt()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(blendScreenExt, IMP_COMPOSE_SRC_ALPHA(screen, b + s - (b * s))));
+
+    return source;
+};
 
 } // namespace osgHimmel

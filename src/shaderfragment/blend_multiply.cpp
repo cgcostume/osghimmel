@@ -36,10 +36,23 @@
 namespace osgHimmel
 {
 
-const std::string glsl_blendMultiply(
-    PRAGMA_ONCE(blendMultiply, IMP_COMPOSE(multiply, b * s)));
+const std::string glsl_blendMultiply()
+{
+    static const std::string source(
 
-const std::string glsl_blendMultiplyExt(
-    PRAGMA_ONCE(blendMultyplyExt, IMP_COMPOSE_SRC_ALPHA(multiply, b * s)));
+        PRAGMA_ONCE(blendMultiply, IMP_COMPOSE(multiply, b * s)));
+
+    return source;
+};
+
+
+const std::string glsl_blendMultiplyExt()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(blendMultyplyExt, IMP_COMPOSE_SRC_ALPHA(multiply, b * s)));
+
+    return source;
+};
 
 } // namespace osgHimmel

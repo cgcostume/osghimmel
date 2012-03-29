@@ -33,7 +33,7 @@
 
 #include "declspec.h"
 
-#include <osg/Group>
+#include <osg/Geode>
 
 namespace osg
 {
@@ -50,7 +50,7 @@ class Himmel;
 class HimmelQuad;
 
 
-class OSGH_API AtmosphereGeode : public osg::Group
+class OSGH_API AtmosphereGeode : public osg::Geode
 {
 public:
 

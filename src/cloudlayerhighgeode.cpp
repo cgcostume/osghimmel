@@ -187,10 +187,10 @@ void CloudLayerHighGeode::setupTextures(osg::StateSet* stateSet)
 
 const std::string CloudLayerHighGeode::getVertexShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_quadRetrieveRay
-    +   glsl_quadTransform
+    +   glsl_quadRetrieveRay()
+    +   glsl_quadTransform()
     
     +   PRAGMA_ONCE(main,
     
@@ -208,12 +208,12 @@ const std::string CloudLayerHighGeode::getVertexShaderSource()
 
 const std::string CloudLayerHighGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_cmn_uniform
-    +   glsl_horizon
+    +   glsl_cmn_uniform()
+    +   glsl_horizon()
 
-    +   glsl_cloud_layer_intersection
+    +   glsl_cloud_layer_intersection()
 
     +   Noise::fadeGlslSource()
     +   Noise::noise2GlslSource(256u)

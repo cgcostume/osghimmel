@@ -74,40 +74,44 @@ namespace osgHimmel
 
 // computes transmittance table T using Eq (5)
 
-const std::string glsl_bruneton_f_transmittance
-(
-    glsl_bruneton_const_Samples
-+   glsl_cmn_uniform
-+   glsl_bruneton_const_R
-+   glsl_bruneton_const_M
-+   glsl_bruneton_const_TSize
+const std::string glsl_bruneton_f_transmittance()
+{
+    static const std::string source(
 
-+   glsl_bruneton_limit
-+   glsl_bruneton_transmittanceRMu
+        glsl_bruneton_const_Samples()
+    +   glsl_cmn_uniform()
+    +   glsl_bruneton_const_R()
+    +   glsl_bruneton_const_M()
+    +   glsl_bruneton_const_TSize()
 
-+   PRAGMA_ONCE(main,
+    +   glsl_bruneton_limit()
+    +   glsl_bruneton_transmittanceRMu()
+
+    +   PRAGMA_ONCE(main,
     
-    "float opticalDepth(float H, float r, float mu) {\n"
-    "    float result = 0.0;\n"
-    "    float dx = limit(r, mu) / float(TRANSMITTANCE_INTEGRAL_SAMPLES);\n"
-    "    float xi = 0.0;\n"
-    "    float yi = exp(-(r - cmn[1]) / H);\n"
-    "    for (int i = 1; i <= TRANSMITTANCE_INTEGRAL_SAMPLES; ++i) {\n"
-    "        float xj = float(i) * dx;\n"
-    "        float yj = exp(-(sqrt(r * r + xj * xj + 2.0 * xj * r * mu) - cmn[1]) / H);\n"
-    "        result += (yi + yj) / 2.0 * dx;\n"
-    "        xi = xj;\n"
-    "        yi = yj;\n"
-    "    }\n"
-    "    return mu < -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) ? 1e9 : result;\n"
-    "}\n"
-    "\n"
-    "void main() {\n"
-    "    float r, muS;\n"
-    "    getTransmittanceRMu(r, muS);\n"
-    "    vec3 depth = betaR * opticalDepth(HR, r, muS) + betaMEx * opticalDepth(HM, r, muS);\n"
-    "    gl_FragColor = vec4(exp(-depth), 0.0);\n" // Eq (5)
-    "}")
-);
+        "float opticalDepth(float H, float r, float mu) {\n"
+        "    float result = 0.0;\n"
+        "    float dx = limit(r, mu) / float(TRANSMITTANCE_INTEGRAL_SAMPLES);\n"
+        "    float xi = 0.0;\n"
+        "    float yi = exp(-(r - cmn[1]) / H);\n"
+        "    for (int i = 1; i <= TRANSMITTANCE_INTEGRAL_SAMPLES; ++i) {\n"
+        "        float xj = float(i) * dx;\n"
+        "        float yj = exp(-(sqrt(r * r + xj * xj + 2.0 * xj * r * mu) - cmn[1]) / H);\n"
+        "        result += (yi + yj) / 2.0 * dx;\n"
+        "        xi = xj;\n"
+        "        yi = yj;\n"
+        "    }\n"
+        "    return mu < -sqrt(1.0 - (cmn[1] / r) * (cmn[1] / r)) ? 1e9 : result;\n"
+        "}\n"
+        "\n"
+        "void main() {\n"
+        "    float r, muS;\n"
+        "    getTransmittanceRMu(r, muS);\n"
+        "    vec3 depth = betaR * opticalDepth(HR, r, muS) + betaMEx * opticalDepth(HM, r, muS);\n"
+        "    gl_FragColor = vec4(exp(-depth), 0.0);\n" // Eq (5)
+        "}"));
+
+    return source;
+};
 
 } // namespace osgHimmel

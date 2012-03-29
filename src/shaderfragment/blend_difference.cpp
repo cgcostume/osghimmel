@@ -37,10 +37,23 @@
 namespace osgHimmel
 {
 
-const std::string glsl_blendDifference(
-    PRAGMA_ONCE(blendDifference, IMP_COMPOSE(difference, fabs(b - s))));
+const std::string glsl_blendDifference()
+{
+    static const std::string source(
 
-const std::string glsl_blendDifferenceExt(
-    PRAGMA_ONCE(blendDifferenceExt, IMP_COMPOSE_SRC_ALPHA(difference, fabs(b - s))));
+        PRAGMA_ONCE(blendDifference, IMP_COMPOSE(difference, fabs(b - s))));
+
+    return source;
+};
+
+
+const std::string glsl_blendDifferenceExt()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(blendDifferenceExt, IMP_COMPOSE_SRC_ALPHA(difference, fabs(b - s))));
+
+    return source;
+};
 
 } // namespace osgHimmel

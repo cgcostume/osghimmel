@@ -115,12 +115,12 @@ osg::StateAttribute *ParaboloidMappedHimmel::getTextureAttribute(const GLint tex
 
 const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_blendNormalExt
+    +   glsl_blendNormalExt()
     
-    +   (m_fakeSun ? glsl_fakesun : "")
-    +   (m_withHBand ? glsl_hband : "")
+    +   (m_fakeSun ? glsl_fakesun() : "")
+    +   (m_withHBand ? glsl_hband() : "")
 
     +   PRAGMA_ONCE(main,
 

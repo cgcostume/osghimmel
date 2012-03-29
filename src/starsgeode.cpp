@@ -370,10 +370,9 @@ const std::string StarsGeode::getVertexShaderSource()
 
     sprintf_s(apparentMagLimit, 8, "%.2f", static_cast<float>(Earth::apparentMagnitudeLimit()));
 
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_cmn_uniform
-    +   glsl_horizon
+    +   glsl_horizon()
     
     +   PRAGMA_ONCE(main,
 
@@ -440,9 +439,9 @@ const std::string StarsGeode::getVertexShaderSource()
 
 const std::string StarsGeode::getGeometryShaderSource()
 {
-    return glsl_version_150 +
+    return glsl_version_150() +
 
-        glsl_geometry_ext
+        glsl_geometry_ext()
     
     +   PRAGMA_ONCE(main, 
 
@@ -495,7 +494,7 @@ const std::string StarsGeode::getGeometryShaderSource()
 
 const std::string StarsGeode::getFragmentShaderSource()
 {
-    return glsl_version_150 
+    return glsl_version_150()
         
     +   PRAGMA_ONCE(main,
 

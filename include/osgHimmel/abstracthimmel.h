@@ -105,6 +105,7 @@ public:
 protected:
 
     void setupNode(osg::StateSet* stateSet);
+    void addAntiCull();
 
     // Called by the HimmelUpdateCallback. Call this first when inherited!
     virtual void update();

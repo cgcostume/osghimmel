@@ -76,44 +76,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const std::string glsl_fade
-(
-    PRAGMA_ONCE(fade, 
+const std::string glsl_fade()
+{
+    static const std::string source(
 
-    "float fade(const float t)\n"
-    "{\n"
-    "    return t * t * t * (t * (t * 6 - 15) + 10);\n"
-    "}")
-);
+        PRAGMA_ONCE(fade, 
 
-const std::string glsl_noise2
-(
-    PRAGMA_ONCE(noise2,
+        "float fade(const float t)\n"
+        "{\n"
+        "    return t * t * t * (t * (t * 6 - 15) + 10);\n"
+        "}"));
 
-    "float noise2(\n"
-    "    const sampler2D perm\n"
-    ",   const vec2 st\n"
-    ",   const float fade)\n"
-    "{\n"
-    "    const float o  = 1.0 / %SIZE%;\n"
-    "\n"
-    "    vec2 i = o * floor(st);\n"
-    "    vec2 f = fract(st);\n"
-    "\n"
-    "    vec2 AA = texture2D(perm, i).xy               * 256.0 - 1.0;\n"
-    "    vec2 BA = texture2D(perm, i + vec2( o, 0)).xy * 256.0 - 1.0;\n"
-    "    vec2 AB = texture2D(perm, i + vec2( 0, o)).xy * 256.0 - 1.0;\n"
-    "    vec2 BB = texture2D(perm, i + vec2( o, o)).xy * 256.0 - 1.0;\n"
-    "\n"
-    "    float dAA = dot(AA, f              );\n"
-    "    float dBA = dot(BA, f - vec2( 1, 0));\n"
-    "    float dAB = dot(AB, f - vec2( 0, 1));\n"
-    "    float dBB = dot(BB, f - vec2( 1, 1));\n"
-    "\n"
-    "    vec2 t = mix(vec2(dAA, dAB), vec2(dBA, dBB), fade(f.x));\n"
-    "\n"
-    "    return mix(t.x, t.y, fade(f.y));\n"
-    "}")
-);
+    return source;
+}
+
+
+const std::string glsl_noise2()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(noise2,
+
+        "float noise2(\n"
+        "    const sampler2D perm\n"
+        ",   const vec2 st\n"
+        ",   const float fade)\n"
+        "{\n"
+        "    const float o  = 1.0 / %SIZE%;\n"
+        "\n"
+        "    vec2 i = o * floor(st);\n"
+        "    vec2 f = fract(st);\n"
+        "\n"
+        "    vec2 AA = texture2D(perm, i).xy               * 256.0 - 1.0;\n"
+        "    vec2 BA = texture2D(perm, i + vec2( o, 0)).xy * 256.0 - 1.0;\n"
+        "    vec2 AB = texture2D(perm, i + vec2( 0, o)).xy * 256.0 - 1.0;\n"
+        "    vec2 BB = texture2D(perm, i + vec2( o, o)).xy * 256.0 - 1.0;\n"
+        "\n"
+        "    float dAA = dot(AA, f              );\n"
+        "    float dBA = dot(BA, f - vec2( 1, 0));\n"
+        "    float dAB = dot(AB, f - vec2( 0, 1));\n"
+        "    float dBB = dot(BB, f - vec2( 1, 1));\n"
+        "\n"
+        "    vec2 t = mix(vec2(dAA, dAB), vec2(dBA, dBB), fade(f.x));\n"
+        "\n"
+        "    return mix(t.x, t.y, fade(f.y));\n"
+        "}"));
+
+    return source;
+};
 
 } // namespace osgHimmel

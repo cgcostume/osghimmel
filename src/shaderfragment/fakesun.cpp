@@ -35,28 +35,32 @@
 namespace osgHimmel
 {
 
-const std::string glsl_fakesun
-(
-    PRAGMA_ONCE(fakeSun,
+const std::string glsl_fakesun()
+{
+    static const std::string source(
 
-    "vec4 fakeSun(\n"
-    "    const vec3 eye\n"
-    ",   const vec3 sun\n"
-    ",   const vec4 coeffs\n"
-    ",   const float scale\n"
-    ",   const float alpha)\n"
-    "{\n"
-    "    vec3 fix = normalize(eye.xyz);\n"
-    "\n"
-    "    float s = scale * 2.0 / length(normalize(sun) - eye);\n"
-    "\n"
-    "    s *= alpha * 0.1 + 0.2;\n"            // Reduce suns' size on low alpha.
-    "    s *= clamp(eye.z + 0.1, 0.0, 0.1);\n" // Disappear in lower hemisphere.
-    "\n"
-    "    s  = clamp(clamp(s, 0.0, 2.0) - (1.0 - alpha) * 2.0, 0.0, 2.0);\n"
-    "\n"
-    "    return vec4(coeffs.rgb * s, coeffs.a);\n"
-    "}")
-);
+        PRAGMA_ONCE(fakeSun,
+
+        "vec4 fakeSun(\n"
+        "    const vec3 eye\n"
+        ",   const vec3 sun\n"
+        ",   const vec4 coeffs\n"
+        ",   const float scale\n"
+        ",   const float alpha)\n"
+        "{\n"
+        "    vec3 fix = normalize(eye.xyz);\n"
+        "\n"
+        "    float s = scale * 2.0 / length(normalize(sun) - eye);\n"
+        "\n"
+        "    s *= alpha * 0.1 + 0.2;\n"            // Reduce suns' size on low alpha.
+        "    s *= clamp(eye.z + 0.1, 0.0, 0.1);\n" // Disappear in lower hemisphere.
+        "\n"
+        "    s  = clamp(clamp(s, 0.0, 2.0) - (1.0 - alpha) * 2.0, 0.0, 2.0);\n"
+        "\n"
+        "    return vec4(coeffs.rgb * s, coeffs.a);\n"
+        "}"));
+
+    return source;
+};
 
 } // namespace osgHimmel

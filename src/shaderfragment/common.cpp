@@ -33,76 +33,100 @@
 namespace osgHimmel
 {
 
-const std::string glsl_version_150
-(
-    PRAGMA_ONCE(version,
+const std::string glsl_version_150()
+{
+    static const std::string source(
 
-    "#version 150 compatibility")
-);
+        PRAGMA_ONCE(version,
 
+        "#version 150 compatibility"));
 
-const std::string glsl_geometry_ext
-(
-    PRAGMA_ONCE(GL_EXT_geometry_shader4,
-
-    "#extension GL_EXT_geometry_shader4 : enable")
-);
+    return source;
+};
 
 
-const std::string glsl_quadTransform
-(
-    PRAGMA_ONCE(quadTransform,
+const std::string glsl_geometry_ext()
+{
+    static const std::string source(
 
-    "void quadTransform()\n"
-    "{\n"
-    "    gl_Position = gl_Vertex;\n"
-    "}")
-);
+        PRAGMA_ONCE(GL_EXT_geometry_shader4,
 
+        "#extension GL_EXT_geometry_shader4 : enable"));
 
-const std::string glsl_quadRetrieveRay
-(
-    PRAGMA_ONCE(quadRetrieveRay,
-
-    "vec4 quadRetrieveRay()\n"
-    "{\n"
-    "    return gl_ProjectionMatrixInverse * gl_Vertex * gl_ModelViewMatrix;\n"
-    "}")
-);
+    return source;
+};
 
 
-const std::string glsl_cmn_uniform
-(
-    PRAGMA_ONCE(cmn,
+const std::string glsl_quadTransform()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(quadTransform,
+
+        "void quadTransform()\n"
+        "{\n"
+        "    gl_Position = gl_Vertex;\n"
+        "}"));
+
+    return source;
+};
+
+
+const std::string glsl_quadRetrieveRay()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(quadRetrieveRay,
+
+        "vec4 quadRetrieveRay()\n"
+        "{\n"
+        "    return gl_ProjectionMatrixInverse * gl_Vertex * gl_ModelViewMatrix;\n"
+        "}"));
+
+    return source;
+};
+
+
+const std::string glsl_cmn_uniform()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(cmn,
     
-    "uniform vec4 cmn;")
-);
+        "uniform vec4 cmn;"));
+
+    return source;
+};
 
 
 // Returns unit intersection distance with the ground. Use for 
 // e.g. horizon related discarding of elements
 
-const std::string glsl_horizon 
-(
-    glsl_cmn_uniform +
+const std::string glsl_horizon()
+{
+    static const std::string source(
 
-    PRAGMA_ONCE(belowHorizon,
+        glsl_cmn_uniform()
 
-    "float tAtm(vec3 ray)\n"
-    "{\n"
-    "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
-    "    vec3 v = normalize(ray);\n"
-    "\n"
-    "    float r = length(x);\n"
-    "    float mu = dot(x, v) / r;\n"
-    "\n"
-    "    return r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);\n"
-    "}\n"
-    "\n"
-    "bool belowHorizon(vec3 ray)\n"
-    "{\n"
-    "   return tAtm(ray) < 0.0;\n"
-    "}")
-);
+    +   PRAGMA_ONCE(belowHorizon,
+
+        "float tAtm(vec3 ray)\n"
+        "{\n"
+        "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
+        "    vec3 v = normalize(ray);\n"
+        "\n"
+        "    float r = length(x);\n"
+        "    float mu = dot(x, v) / r;\n"
+        "\n"
+        "    return r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);\n"
+        "}\n"
+        "\n"
+        "bool belowHorizon(vec3 ray)\n"
+        "{\n"
+        "   return tAtm(ray) < 0.0;\n"
+        "}"));
+
+    return source;
+};
 
 } // namespace osgHimmel

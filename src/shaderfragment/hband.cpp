@@ -35,26 +35,30 @@
 namespace osgHimmel
 {
 
-const std::string glsl_hband
-(
-    PRAGMA_ONCE(hband,
+const std::string glsl_hband()
+{
+    static const std::string source(
 
-    "vec4 hband(\n"
-    "    const float z\n"
-    ",   const float scale\n"
-    ",   const float width\n"
-    ",   const float offset\n"
-    ",   const vec4 color\n"
-    ",   const vec4 background\n"
-    ",   vec4 fc /* fragment color */)\n"
-    "{\n"
-    "    if(z < offset)\n"
-    "        fc = background;\n"
-    "\n"
-    "    float b = abs((z - offset) / scale) - width;\n"
-    "\n"
-    "    return blend_normal(color, fc, smoothstep(0.0, 1.0, b));\n"
-    "}")
-);
+        PRAGMA_ONCE(hband,
+
+        "vec4 hband(\n"
+        "    const float z\n"
+        ",   const float scale\n"
+        ",   const float width\n"
+        ",   const float offset\n"
+        ",   const vec4 color\n"
+        ",   const vec4 background\n"
+        ",   vec4 fc /* fragment color */)\n"
+        "{\n"
+        "    if(z < offset)\n"
+        "        fc = background;\n"
+        "\n"
+        "    float b = abs((z - offset) / scale) - width;\n"
+        "\n"
+        "    return blend_normal(color, fc, smoothstep(0.0, 1.0, b));\n"
+        "}"));
+
+    return source;
+};
 
 } // namespace osgHimmel

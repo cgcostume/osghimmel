@@ -36,7 +36,7 @@
 namespace osgHimmel
 {
 
-extern const std::string glsl_bruneton_f_transmittance;
+const std::string glsl_bruneton_f_transmittance();
 
 } // namespace osgHimmel
 

@@ -99,11 +99,11 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 
 const std::string CubeMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
 //  +   glsl_f_blendNormalExt // using mix
 
-    +   (m_fakeSun ? glsl_fakesun : "")
+    +   (m_fakeSun ? glsl_fakesun() : "")
     
     +   PRAGMA_ONCE(main,
 

@@ -52,7 +52,7 @@ namespace osgHimmel
 {
 
 AtmosphereGeode::AtmosphereGeode()
-:   osg::Group()
+:   osg::Geode()
 
 ,   m_precompute(NULL)
 
@@ -85,9 +85,7 @@ AtmosphereGeode::AtmosphereGeode()
 
     precompute();
 
-    osg::Geode *geode = new osg::Geode;
-    geode->addDrawable(m_hquad);
-    addChild(geode);
+    addDrawable(m_hquad);
 };
 
 
@@ -314,10 +312,10 @@ void AtmosphereGeode::setPhaseG(const float g)
 
 const std::string AtmosphereGeode::getVertexShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_quadRetrieveRay
-    +   glsl_quadTransform
+    +   glsl_quadRetrieveRay()
+    +   glsl_quadTransform()
 
     +   PRAGMA_ONCE(main,
 
@@ -335,19 +333,19 @@ const std::string AtmosphereGeode::getVertexShaderSource()
 
 const std::string AtmosphereGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_cmn_uniform
+    +   glsl_cmn_uniform()
     +   
         "uniform vec3 sun;\n"
 
-    +   glsl_pseudo_rand
-    +   glsl_dither
+    +   glsl_pseudo_rand()
+    +   glsl_dither()
 
-    +   glsl_bruneton_const_RSize
-    +   glsl_bruneton_const_R
-    +   glsl_bruneton_const_M
-    +   glsl_bruneton_const_PI
+    +   glsl_bruneton_const_RSize()
+    +   glsl_bruneton_const_R()
+    +   glsl_bruneton_const_M()
+    +   glsl_bruneton_const_PI()
 
 
     +   "in vec4 m_ray;\n"
@@ -366,18 +364,18 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "uniform sampler3D inscatterSampler;\n"     // precomputed inscattered light (S table)
         "\n"
 
-    +   glsl_bruneton_opticalDepth
-    +   glsl_bruneton_transmittanceUV
-    +   glsl_bruneton_transmittance
-    +   glsl_bruneton_transmittanceWithShadow
-    +   glsl_bruneton_analyticTransmittance
-    +   glsl_bruneton_irradianceUV
-    +   glsl_bruneton_irradiance
-    +   glsl_bruneton_texture4D
-    +   glsl_bruneton_phaseFunctionR
-    +   glsl_bruneton_phaseFunctionM
-    +   glsl_bruneton_mie
-    +   glsl_bruneton_hdr
+    +   glsl_bruneton_opticalDepth()
+    +   glsl_bruneton_transmittanceUV()
+    +   glsl_bruneton_transmittance()
+    +   glsl_bruneton_transmittanceWithShadow()
+    +   glsl_bruneton_analyticTransmittance()
+    +   glsl_bruneton_irradianceUV()
+    +   glsl_bruneton_irradiance()
+    +   glsl_bruneton_texture4D()
+    +   glsl_bruneton_phaseFunctionR()
+    +   glsl_bruneton_phaseFunctionM()
+    +   glsl_bruneton_mie()
+    +   glsl_bruneton_hdr()
 
     +
         // inscattered light along ray x+tv, when sun in direction s (=S[L]-T(x,x0)S[L]|x0)

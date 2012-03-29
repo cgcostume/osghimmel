@@ -36,9 +36,9 @@
 namespace osgHimmel
 {
 
-extern const std::string glsl_bruneton_f_irradiance1;
-extern const std::string glsl_bruneton_f_irradianceN;
-extern const std::string glsl_bruneton_f_copyIrradiance;
+const std::string glsl_bruneton_f_irradiance1();    // requires: transmittanceSampler
+const std::string glsl_bruneton_f_irradianceN();    // requires: deltaSRSampler, deltaSMSampler, first
+const std::string glsl_bruneton_f_copyIrradiance(); // requires: k, deltaESampler, irradianceSampler
 
 } // namespace osgHimmel
 

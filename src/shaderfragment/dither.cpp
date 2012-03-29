@@ -44,23 +44,29 @@ namespace osgHimmel
 // The exact value of most of the used constant values where gathered 
 // by trial and error and benchmarked by subjective perception.
 
-const std::string glsl_dither
-(
-    glsl_pseudo_rand +
+const std::string glsl_dither()
+{
+    static const std::string source(
 
-    PRAGMA_ONCE(dither,
+        glsl_pseudo_rand()
 
-    "vec4 dither(\n"
-    "    float multiplier\n"
-    ",   int seed)\n"
-    "{\n"
-    "    float r = pseudo_rand(gl_FragCoord.xy, seed);\n"
-    "    uvec4 v = uint(r * 3571) * uvec4(67, 89, 23, 71);\n"
-    "\n"
-    // A ditheringMultiplier of 1 will add frame to frame coherent noise for each pixel of about +-1.
-    // The average brightness of the rendering will roughly remain unchanged.
-    "    return (vec4(v % uvec4(853)) - 241 - multiplier * 1.41) * 0.00001 * multiplier;\n"
-    "}")
-);
+    +   PRAGMA_ONCE(dither,
+
+        "vec4 dither(\n"
+        "    float multiplier\n"
+        ",   int seed)\n"
+        "{\n"
+        "    float r = pseudo_rand(gl_FragCoord.xy, seed);\n"
+        "    uvec4 v = uint(r * 3571) * uvec4(67, 89, 23, 71);\n"
+        "\n"
+        // A ditheringMultiplier of 1 will add frame to frame coherent noise for each pixel of about +-1.
+        // The average brightness of the rendering will roughly remain unchanged.
+        "    return (vec4(v % uvec4(853)) - 241 - multiplier * 1.41) * 0.00001 * multiplier;\n"
+        "}"));
+
+    return source;
+};
+
+
 
 } // namespace osgHimmel

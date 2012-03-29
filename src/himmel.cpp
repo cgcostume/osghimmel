@@ -56,10 +56,10 @@ Himmel *Himmel::create()
     // e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
 
     return new Himmel(
-        NULL // new MilkyWayGeode("resources/milkyway?.png")
-    ,   NULL // new MoonGeode("resources/moon?.png")
+        new MilkyWayGeode("resources/milkyway?.png")
+    ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
-    ,   NULL // new AtmosphereGeode()
+    ,   new AtmosphereGeode()
     ,   NULL // new CloudLayerHighGeode()
     ,   new Astronomy());
 }
@@ -86,10 +86,6 @@ Himmel::Himmel(
 {
     assert(m_astronomy);
 
-    setCullingActive(false);
-
-    addAntiCull(); // Required to be added prior to milkyway.
-
     u_sun = new osg::Uniform("sun", osg::Vec3(0.0, 0.0, 0.0));
     getOrCreateStateSet()->addUniform(u_sun);
 
@@ -105,35 +101,36 @@ Himmel::Himmel(
 
 
     int bin = 0;
+    static const std::string binName("RenderBin");
 
     if(m_milkyway)
     {
         addChild(m_milkyway);
-        m_milkyway->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+        m_milkyway->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
 
     if(m_stars)
     {
         addChild(m_stars);
-        m_stars->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+        m_stars->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
 
     if(m_moon)
     {
         addChild(m_moon);
-        m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+        m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
 
     if(m_atmosphere)
     {
         addChild(m_atmosphere);
-        m_atmosphere->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+        m_atmosphere->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
 
     if(m_highLayer)
     {
         addChild(m_highLayer);
-        m_highLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, "RenderBin");
+        m_highLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
 };
 
@@ -204,25 +201,6 @@ const osg::Vec3 Himmel::getSunPosition() const
 const osg::Vec3 Himmel::getSunPosition(const t_aTime &aTime) const
 {
     return astro()->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude());
-}
-
-
-void Himmel::addAntiCull()
-{
-    // Add a unit cube to this geode, to avoid culling of stars, moon, etc. 
-    // caused by automatic near far retrieval of osg. This geode should be 
-    // added prior to the atmosphere node, since all other nodes are drawn
-    // with blending enabled, and would make the cubes' points visible.
-
-    osg::ref_ptr<osg::Geode> antiCull = new osg::Geode();
-    addChild(antiCull);
-
-    osg::Box *cube = new osg::Box(osg::Vec3(), 2.f);
-
-    osg::ShapeDrawable *cubeDrawable = new osg::ShapeDrawable(cube);
-    cubeDrawable->setColor(osg::Vec4(0.f, 0.f, 0.f, 1.f));
-
-    antiCull->addDrawable(cubeDrawable);
 }
 
 
