@@ -102,7 +102,7 @@ unsigned int BrightStars::fromFile(const char *fileName)
 
     std::ifstream instream(fileName, std::ios::binary);
 
-    instream.read((char*)&m_stars, sizeof(m_stars));
+    instream.read(reinterpret_cast<char*>(m_stars), fileSize);
 
     return m_numStars;
 }

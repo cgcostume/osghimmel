@@ -74,14 +74,14 @@ namespace osgHimmel
 #endif // IF_NOT_ENABLED
     
 
-extern const std::string glsl_version_150;
-extern const std::string glsl_geometry_ext;
+const std::string glsl_version_150();
+const std::string glsl_geometry_ext();
 
-extern const std::string glsl_quadRetrieveRay; // vec4 quadRetrieveRay()
-extern const std::string glsl_quadTransform; // void quadTransform()
+const std::string glsl_quadRetrieveRay(); // vec4 quadRetrieveRay()
+const std::string glsl_quadTransform(); // void quadTransform()
 
-extern const std::string glsl_cmn_uniform;
-extern const std::string glsl_horizon; // bool belowHorizon(vec3 ray)
+const std::string glsl_cmn_uniform();
+const std::string glsl_horizon(); // bool belowHorizon(vec3 ray)
 
 } // namespace osgHimmel
 

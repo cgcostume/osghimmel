@@ -36,8 +36,8 @@
 namespace osgHimmel
 {
 
-extern const std::string glsl_blendDifference;
-extern const std::string glsl_blendDifferenceExt;
+const std::string glsl_blendDifference();
+const std::string glsl_blendDifferenceExt();
 
 } // namespace osgHimmel
 

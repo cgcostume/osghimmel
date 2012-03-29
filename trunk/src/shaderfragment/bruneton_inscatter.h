@@ -36,12 +36,12 @@
 namespace osgHimmel
 {
 
-extern const std::string glsl_bruneton_f_inscatter1;        // requires: r, dhdH
-extern const std::string glsl_bruneton_f_inscatterN;        // requires: r, dhdH, deltaJSampler, transmittanceSampler
-extern const std::string glsl_bruneton_f_inscatterS;        // requires: r, dhdH, deltaESampler, deltaSRSampler, deltaSMSampler, transmittanceSampler, first
+const std::string glsl_bruneton_f_inscatter1();        // requires: r, dhdH
+const std::string glsl_bruneton_f_inscatterN();        // requires: r, dhdH, deltaJSampler, transmittanceSampler
+const std::string glsl_bruneton_f_inscatterS();        // requires: r, dhdH, deltaESampler, deltaSRSampler, deltaSMSampler, transmittanceSampler, first
 
-extern const std::string glsl_bruneton_f_copyInscatter1;    // requires: deltaSRSampler, deltaSMSampler, layer
-extern const std::string glsl_bruneton_f_copyInscatterN;    // requires: r, dhdH, layer, deltaSRSampler, inscatterSampler
+const std::string glsl_bruneton_f_copyInscatter1();    // requires: deltaSRSampler, deltaSMSampler, layer
+const std::string glsl_bruneton_f_copyInscatterN();    // requires: r, dhdH, layer, deltaSRSampler, inscatterSampler
 
 } // namespace osgHimmel
 

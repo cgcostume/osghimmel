@@ -42,7 +42,6 @@
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
-
 namespace osgHimmel
 {
 
@@ -78,7 +77,6 @@ MoonGeode::MoonGeode(const char* cubeMapFilePath)
     setupUniforms(stateSet);
     setupShader(stateSet);
     setupTextures(stateSet, cubeMapFilePath);
-
 
     addDrawable(m_hquad);
 };
@@ -121,15 +119,8 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
 }
 
 
-void MoonGeode::setupNode(osg::StateSet*)
+void MoonGeode::setupNode(osg::StateSet* )
 {
-//    // This prevents objects rendered afterwards to appear inside the moon.
-
-    //osg::Depth* depth = new osg::Depth(osg::Depth::LESS);    
-    //stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
-
-    //osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
-    //stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
 
@@ -317,7 +308,7 @@ const float MoonGeode::defaultEarthShineIntensity()
 
 const std::string MoonGeode::getVertexShaderSource()
 {
-    return glsl_version_150 +
+    return glsl_version_150() +
 
     +   PRAGMA_ONCE(main,
 
@@ -351,10 +342,10 @@ const std::string MoonGeode::getVertexShaderSource()
 
 const std::string MoonGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
     
-    +   glsl_cmn_uniform
-    +   glsl_horizon
+    +   glsl_cmn_uniform()
+    +   glsl_horizon()
 
     +   PRAGMA_ONCE(main,
 

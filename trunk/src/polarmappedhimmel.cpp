@@ -120,12 +120,12 @@ osg::StateAttribute *PolarMappedHimmel::getTextureAttribute(const GLint textureU
 
 const std::string PolarMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_blendNormalExt
+    +   glsl_blendNormalExt()
 
-    +   glsl_fakesun
-    +   glsl_hband
+    +   glsl_fakesun()
+    +   glsl_hband()
     +
         PRAGMA_ONCE(main, 
 

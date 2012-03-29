@@ -99,11 +99,11 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
 //  +   glsl_f_blendNormalExt // using mix
 
-    +   (m_fakeSun ? glsl_fakesun : "")
+    +   (m_fakeSun ? glsl_fakesun() : "")
     
     +   PRAGMA_ONCE(main,
 
@@ -113,7 +113,7 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
 
         "uniform float srcAlpha;\n"
         "\n"
-        "uniform sampler2D back;\n"
+        "uniform sampler2D back;\n" 
         "uniform sampler2D src;\n"
         "\n"
         // Color Retrieval

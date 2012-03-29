@@ -36,48 +36,48 @@
 namespace osgHimmel
 {
 
-extern const std::string glsl_bruneton_v_default;
+const std::string glsl_bruneton_v_default();
 
-//extern const std::string glsl_bruneton_g_default;
+//const std::string glsl_bruneton_g_default();
 
 // TEXTURE SIZE
     
-extern const std::string glsl_bruneton_const_TSize;
-extern const std::string glsl_bruneton_const_ISize;
-extern const std::string glsl_bruneton_const_RSize;
+const std::string glsl_bruneton_const_TSize();
+const std::string glsl_bruneton_const_ISize();
+const std::string glsl_bruneton_const_RSize();
 
 // NUMERICAL INTEGRATION PARAMETERS
 
-extern const std::string glsl_bruneton_const_Samples;
-extern const std::string glsl_bruneton_const_PI;
+const std::string glsl_bruneton_const_Samples();
+const std::string glsl_bruneton_const_PI();
 
 // PHYSICAL MODEL PARAMETERS
 
-extern const std::string glsl_bruneton_const_avgReflectance;
-extern const std::string glsl_bruneton_const_R;
-extern const std::string glsl_bruneton_const_M;
+const std::string glsl_bruneton_const_avgReflectance();
+const std::string glsl_bruneton_const_R();
+const std::string glsl_bruneton_const_M();
 
 // PARAMETERIZATION FUNCTIONS
 
-extern const std::string glsl_bruneton_texture4D;           // requires: RES_MU, RES_MU_S, RES_R, RES_NU, cmn
-extern const std::string glsl_bruneton_muMuSNu;             // requires: RES_MU, RES_MU_S, RES_NU, cmn
-extern const std::string glsl_bruneton_transmittanceUV;     // requires: cmn
-extern const std::string glsl_bruneton_transmittanceRMu;    // requires: TRANSMITTANCE_H, TRANSMITTANCE_W, cmn
-extern const std::string glsl_bruneton_irradianceUV;        // requires: cmn
-extern const std::string glsl_bruneton_irradianceRMuS;      // requires: SKY_H, SKY_W, cmn
+const std::string glsl_bruneton_texture4D();           // requires: RES_MU, RES_MU_S, RES_R, RES_NU, cmn
+const std::string glsl_bruneton_muMuSNu();             // requires: RES_MU, RES_MU_S, RES_NU, cmn
+const std::string glsl_bruneton_transmittanceUV();     // requires: cmn
+const std::string glsl_bruneton_transmittanceRMu();    // requires: TRANSMITTANCE_H, TRANSMITTANCE_W, cmn
+const std::string glsl_bruneton_irradianceUV();        // requires: cmn
+const std::string glsl_bruneton_irradianceRMuS();      // requires: SKY_H, SKY_W, cmn
 
 // UTILITY FUNCTIONS
 
-extern const std::string glsl_bruneton_transmittance;       // requires: transmittanceSampler, transmittanceUV
-extern const std::string glsl_bruneton_transmittanceWithShadow; // requires: cmn, transmittance()
-extern const std::string glsl_bruneton_limit;               // requires: RL, cmn
-extern const std::string glsl_bruneton_hdr;                 // requires: -
-extern const std::string glsl_bruneton_opticalDepth;        // requires: cmn
-extern const std::string glsl_bruneton_analyticTransmittance; // requires: opticalDepth(), HR, betaR, HM, betaMEx
-extern const std::string glsl_bruneton_irradiance;          // requires: irradianceUV()
-extern const std::string glsl_bruneton_phaseFunctionR;      // requires: PI
-extern const std::string glsl_bruneton_phaseFunctionM;      // requires: PI, mieG
-extern const std::string glsl_bruneton_mie;                 // requires: betaR
+const std::string glsl_bruneton_transmittance();       // requires: transmittanceSampler, transmittanceUV
+const std::string glsl_bruneton_transmittanceWithShadow(); // requires: cmn, transmittance()
+const std::string glsl_bruneton_limit();               // requires: RL, cmn
+const std::string glsl_bruneton_hdr();                 // requires: -
+const std::string glsl_bruneton_opticalDepth();        // requires: cmn
+const std::string glsl_bruneton_analyticTransmittance(); // requires: opticalDepth(), HR, betaR, HM, betaMEx
+const std::string glsl_bruneton_irradiance();          // requires: irradianceUV()
+const std::string glsl_bruneton_phaseFunctionR();      // requires: PI
+const std::string glsl_bruneton_phaseFunctionM();      // requires: PI, mieG
+const std::string glsl_bruneton_mie();                 // requires: betaR
 
 } // namespace osgHimmel
  

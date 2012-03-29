@@ -49,23 +49,27 @@ namespace osgHimmel
 // The exact value of most of the used constant values where gathered 
 // by trial and error and benchmarked by subjective perception.
 
-const std::string glsl_pseudo_rand
-(
-    PRAGMA_ONCE(pseudo_rand,
+const std::string glsl_pseudo_rand()
+{
+    static const std::string source(
 
-    "float pseudo_rand(\n"
-    "    const vec2 i\n"
-    ",   const int seed)\n"
-    "{\n"
-    "    int i1 = int(i.x + i.y * 1733);\n"
-    "    i1 = (i1 << 7) ^ i1 + seed;\n"  // seed
-    "\n"
-    "    int i2 = int(i.y + i.x * 1103);\n"
-    "    i2 = (i2 << 7) ^ i2 + seed;\n"  // seed
-    "\n"
-    "    i1 ^= i2;\n"
-    "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
-    "}")
-);
+        PRAGMA_ONCE(pseudo_rand,
+
+        "float pseudo_rand(\n"
+        "    const vec2 i\n"
+        ",   const int seed)\n"
+        "{\n"
+        "    int i1 = int(i.x + i.y * 1733);\n"
+        "    i1 = (i1 << 7) ^ i1 + seed;\n"  // seed
+        "\n"
+        "    int i2 = int(i.y + i.x * 1103);\n"
+        "    i2 = (i2 << 7) ^ i2 + seed;\n"  // seed
+        "\n"
+        "    i1 ^= i2;\n"
+        "    return 1.0 - float((i1 * (i1 * i1 * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0;\n"
+        "}"));
+
+    return source;
+};
 
 } // namespace osgHimmel

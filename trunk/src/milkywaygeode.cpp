@@ -271,10 +271,10 @@ const float MilkyWayGeode::defaultScattering()
 
 const std::string MilkyWayGeode::getVertexShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_quadRetrieveRay
-    +   glsl_quadTransform
+    +   glsl_quadRetrieveRay()
+    +   glsl_quadTransform()
     
     +   PRAGMA_ONCE(main,
 
@@ -294,10 +294,10 @@ const std::string MilkyWayGeode::getVertexShaderSource()
 
 const std::string MilkyWayGeode::getFragmentShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
 
-    +   glsl_cmn_uniform
-    +   glsl_horizon
+    +   glsl_cmn_uniform()
+    +   glsl_horizon()
 
     +   PRAGMA_ONCE(main,
 

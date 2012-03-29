@@ -29,7 +29,6 @@
 
 #include "himmelquad.h"
 
-
 namespace osgHimmel
 {
 

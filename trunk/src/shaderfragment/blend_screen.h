@@ -36,8 +36,8 @@
 namespace osgHimmel
 {
 
-extern const std::string glsl_blendScreen;
-extern const std::string glsl_blendScreenExt;
+const std::string glsl_blendScreen();
+const std::string glsl_blendScreenExt();
 
 } // namespace osgHimmel
 

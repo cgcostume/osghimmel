@@ -188,14 +188,14 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         
     targets2D[0]  = m_transmittanceTexture;
 
-    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_transmittance.c_str());
+    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_transmittance().c_str());
 
     // computes irradiance texture deltaE (line 2 in algorithm 4.1)
 
     targets2D[0]  = m_deltaETexture;
     samplers2D[0] = m_transmittanceTexture;
 
-    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradiance1.c_str());
+    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradiance1().c_str());
 
     // computes single scattering texture deltaS (line 3 in algorithm 4.1)
 
@@ -203,7 +203,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     targets3D[1]  = m_deltaSMTexture;
     samplers2D[0] = m_transmittanceTexture;
 
-    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatter1.c_str());
+    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatter1().c_str());
 
     // copies deltaE into irradiance texture E (line 4 in algorithm 4.1)
 
@@ -213,7 +213,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     samplers2D[0] = m_deltaETexture;
     uniforms.push_back(new osg::Uniform("k", 0.f));
 
-    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance.c_str());
+    render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance().c_str());
 
     // copies deltaS into inscatter texture S (line 5 in algorithm 4.1)
 
@@ -221,7 +221,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
     samplers3D[0] = m_deltaSRTexture;
     samplers3D[1] = m_deltaSMTexture;
 
-    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatter1.c_str());
+    render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatter1().c_str());
      
     // loop for each scattering order (line 6 in algorithm 4.1)
 
@@ -238,7 +238,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[3] = m_deltaSMTexture;
         uniforms.push_back(new osg::Uniform("first", first));
 
-        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterS.c_str());
+        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterS().c_str());
 
         // computes deltaE (line 8 in algorithm 4.1)
 
@@ -248,7 +248,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[2] = m_deltaSMTexture;
         uniforms.push_back(new osg::Uniform("first", first));
 
-        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradianceN.c_str());
+        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_irradianceN().c_str());
 
         // computes deltaS (line 9 in algorithm 4.1)
 
@@ -257,7 +257,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[1] = m_deltaJTexture;
         uniforms.push_back(new osg::Uniform("first", first));
 
-        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterN.c_str());
+        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_inscatterN().c_str());
 
 
         // NOTE: http://www.opengl.org/wiki/GLSL_:_common_mistakes#Sampling_and_Rendering_to_the_Same_Texture
@@ -269,7 +269,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers2D[1] = m_irradianceTexture;
         uniforms.push_back(new osg::Uniform("k", 1.f));
 
-        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance.c_str());
+        render2D(viewer, quad, targets2D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyIrradiance().c_str());
 
         // adds deltaS into inscatter texture S (line 11 in algorithm 4.1)
       
@@ -277,7 +277,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
         samplers3D[0] = m_deltaSRTexture;
         samplers3D[1] = m_inscatterTexture;
 
-        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatterN.c_str());
+        render3D(viewer, quad, targets3D, samplers2D, samplers3D, uniforms, glsl_bruneton_f_copyInscatterN().c_str());
     }
 
     // Unref
@@ -496,7 +496,7 @@ osg::Program *AtmospherePrecompute::setupProgram(
 
     osg::Program *program(new osg::Program);
 
-    program->addShader(new osg::Shader(osg::Shader::VERTEX,   glsl_bruneton_v_default));
+    program->addShader(new osg::Shader(osg::Shader::VERTEX,   glsl_bruneton_v_default()));
 
     if(!fragmentShaderSource.empty())
     {

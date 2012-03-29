@@ -37,10 +37,23 @@
 namespace osgHimmel
 {
 
-const std::string glsl_blendNormal(
-    PRAGMA_ONCE(blendNormal, IMP_COMPOSE(normal, s)));
+const std::string glsl_blendNormal()
+{
+    static const std::string source(
 
-const std::string glsl_blendNormalExt(
-    PRAGMA_ONCE(blendNormalExt, IMP_COMPOSE_SRC_ALPHA(normal, s)));
+        PRAGMA_ONCE(blendNormal, IMP_COMPOSE(normal, s)));
+
+    return source;
+};
+
+
+const std::string glsl_blendNormalExt()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(blendNormalExt, IMP_COMPOSE_SRC_ALPHA(normal, s)));
+
+    return source;
+};
 
 } // namespace osgHimmel

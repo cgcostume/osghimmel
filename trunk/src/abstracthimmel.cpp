@@ -106,15 +106,28 @@ bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVis
 
 void AbstractHimmel::setupNode(osg::StateSet* stateSet)
 {
+    setCullingActive(false);
+
+    addAntiCull();
+
     // Only draw at back plane.
     osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+}
 
+
+void AbstractHimmel::addAntiCull()
+{
+    // Add a unit cube to this geode, to avoid culling of stars, moon, etc. 
+    // caused by automatic near far retrieval of osg. This geode should be 
+    // added prior to the atmosphere node, since all other nodes are drawn
+    // with blending enabled, and would make the cubes' points visible.
 
     osg::ref_ptr<osg::Geode> antiCull = new osg::Geode();
     addChild(antiCull);
 
-    osg::Box *cube = new osg::Box(osg::Vec3(), 10000.f);
+    // 2 * 2 ^ 0.5 -> should fit an rotating cube with radius 1
+    osg::Box *cube = new osg::Box(osg::Vec3(), 2.8284f); 
 
     osg::ShapeDrawable *cubeDrawable = new osg::ShapeDrawable(cube);
     cubeDrawable->setColor(osg::Vec4(0.f, 0.f, 0.f, 1.f));

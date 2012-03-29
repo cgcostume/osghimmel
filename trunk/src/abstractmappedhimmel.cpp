@@ -333,10 +333,10 @@ const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
 
 const std::string AbstractMappedHimmel::getVertexShaderSource()
 {
-    return glsl_version_150
+    return glsl_version_150()
     
-    +   glsl_quadRetrieveRay
-    +   glsl_quadTransform
+    +   glsl_quadRetrieveRay()
+    +   glsl_quadTransform()
 
     +   PRAGMA_ONCE(main,
 

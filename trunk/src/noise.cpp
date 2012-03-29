@@ -201,13 +201,13 @@ const float Noise::noise2(
 
 const char* Noise::fadeGlslSource()
 {
-    return glsl_fade.c_str();
+    return glsl_fade().c_str();
 }
 
 
 const char* Noise::noise2GlslSource(const unsigned int size)
 {
-    std::string glsl = glsl_noise2;
+    std::string glsl = glsl_noise2();
     replace(glsl, "%SIZE%", static_cast<float>(size));
 
     return glsl.c_str();
