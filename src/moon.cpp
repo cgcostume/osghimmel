@@ -31,7 +31,7 @@
 
 #include "sun.h"
 #include "earth.h"
-#include "sideraltime.h"
+#include "siderealtime.h"
 #include "mathmacros.h"
 
 #include <assert.h>
@@ -399,11 +399,114 @@ const t_longf Moon::distance(const t_julianDay t)
 }
 
 
+void Moon::opticalLibrations(
+    const t_julianDay t
+,   t_longf &l /* librations in longitude */
+,   t_longf &b /* librations in latitude  */)
+{
+    // (AA.51.1)
+
+    const t_longf Dr = _rad(Earth::longitudeNutation(t));
+
+    const t_longf F  = _rad(meanLatitude(t));
+    const t_longf O  = _rad(meanOrbitLongitude(t));
+
+    const t_ecld ecl = position(t);
+    const t_longf lo = _rad(ecl.longitude);
+    const t_longf la = _rad(ecl.latitude);
+
+    static const t_longf I = _rad(1.54242);
+
+    const t_longf cos_la = cos(la);
+    const t_longf sin_la = sin(la);
+    const t_longf cos_I  = cos(I);
+    const t_longf sin_I  = sin(I);
+
+    const t_longf W  = _rev(lo - Dr - O);
+    const t_longf sin_W  = sin(W);
+
+    const t_longf A  = _rev(atan2(sin_W * cos_la * cos_I - sin_la * sin_I, cos(W) * cos_la));
+
+    l = _deg(A - F);
+    b = _deg(asin(-sin_W * cos_la * sin_I - sin_la * cos_I));
+}
+
+
+const t_longf Moon::parallacticAngle(
+    const t_aTime &aTime
+,   const t_longf latitude
+,   const t_longf longitude)
+{
+    // (AA.13.1)
+
+    const t_julianDay t(jd(aTime));
+
+    const t_longf la = _rad(latitude);
+    const t_longf lo = _rad(longitude);
+
+    const t_equd pos = apparentPosition(t);
+    const t_longf ra = _rad(pos.right_ascension);
+    const t_longf de = _rad(pos.declination);
+     
+    const t_longf s  = _rad(siderealTime(aTime));
+
+    // (AA.p88) - local hour angle
+
+    const t_longf H = s + lo - ra;
+
+    const t_longf cos_la = cos(la);
+    const t_longf P = atan2(sin(H) * cos_la, sin(la) * cos(de) - sin(de) * cos_la * cos(H));
+
+    return _deg(P);
+}
+
+
+const t_longf Moon::positionAngleOfAxis(const t_julianDay t)
+{
+    // (AA.p344)
+
+    const t_equd pos = apparentPosition(t);
+
+    const t_longf a  = _rad(pos.right_ascension);
+    const t_longf e  = _rad(Earth::meanObliquity(t));
+
+    const t_longf Dr = _rad(Earth::longitudeNutation(t));
+    const t_longf O  = _rad(meanOrbitLongitude(t));
+
+    const t_longf V  = O + Dr;
+
+    static const t_longf I = _rad(1.54242);
+    const t_longf sin_I  = sin(I);
+
+    const t_longf X  = sin_I * sin(V);
+    const t_longf Y  = sin_I * cos(V) * cos(e) - cos(I) * sin(e);
+
+    // optical libration in latitude
+
+    const t_ecld ecl = position(t);
+
+    const t_longf lo = _rad(ecl.longitude);
+    const t_longf la = _rad(ecl.latitude);
+
+    const t_longf W  = _rev(lo - Dr - O);
+    const t_longf b = asin(-sin(W) * cos(la) * sin_I - sin(la) * cos(I));
+
+    // final angle
+
+    const t_longf w  = _rev(atan2(X, Y));
+    const t_longf P = asin(sqrt(X * X + Y * Y) * cos(a - w) / cos(b));
+
+    return _deg(P);
+}
+
+
 const t_longf Moon::meanRadius()
 {
     // http://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 
-    return 1737.1; // in kilometers
+    static const t_longf r = 1737.1; // in kilometers
+
+    return r; 
 }
 
 } // namespace osgHimmel

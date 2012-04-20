@@ -135,7 +135,7 @@ protected:
     // background that is used if no milkyway is given. This is
     // required since other geodes are rendered with blending 
     // enabled.
-    void addAntiCull();
+    osg::Geode *addAntiCull();
 
 protected:
 

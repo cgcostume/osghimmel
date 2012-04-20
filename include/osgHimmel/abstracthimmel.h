@@ -34,7 +34,7 @@
 #include "declspec.h"
 #include "typedefs.h"
 
-#include <osg/Transform>
+#include <osg/MatrixTransform>
 #include <osg/NodeCallback>
 
 
@@ -43,7 +43,7 @@ namespace osgHimmel
 
 class TimeF;
 
-class OSGH_API AbstractHimmel : public osg::Transform
+class OSGH_API AbstractHimmel : public osg::MatrixTransform
 {
 private:
 
@@ -81,6 +81,13 @@ public:
         return m_autoUpdateTime;
     }
 
+    void setReferenceBoundingRadius(const float radius);
+
+
+    // From osg::Group:
+
+    virtual void traverse(osg::NodeVisitor &nv);
+
     // From osg::Transform:
 
     // Get the transformation matrix which moves from local coords to world coords.
@@ -105,7 +112,6 @@ public:
 protected:
 
     void setupNode(osg::StateSet* stateSet);
-    void addAntiCull();
 
     // Called by the HimmelUpdateCallback. Call this first when inherited!
     virtual void update();
@@ -121,6 +127,8 @@ protected:
     bool m_dirty;
 
     //
+
+    float m_referenceBoundingRadius;
 
     TimeF *m_timef;
     bool m_autoUpdateTime;

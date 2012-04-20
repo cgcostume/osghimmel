@@ -99,6 +99,7 @@ protected:
 
     void clearHimmel();
     void himmelChanged();
+    void sceneChanged();
 
     const bool insert3DObjectFromFile(const QFileInfo &fileInfo);
     void remove3DObjectsFromScene();

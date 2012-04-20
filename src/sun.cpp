@@ -31,7 +31,7 @@
 
 #include "earth.h"
 #include "moon.h"
-#include "sideraltime.h"
+#include "siderealtime.h"
 #include "mathmacros.h"
 
 #include <assert.h>

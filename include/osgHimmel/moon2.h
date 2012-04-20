@@ -61,7 +61,19 @@ public:
 
     static const float distance(const t_julianDay t);
 
-    static const t_longf meanRadius();
+    static void opticalLibrations(
+        const t_julianDay t
+    ,   float &l /* librations in longitude */
+    ,   float &b /* librations in latitude  */);
+
+    static const float parallacticAngle(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude);
+
+    static const float positionAngleOfAxis(const t_julianDay t);
+
+    static const float meanRadius();
 };
 
 } // namespace osgHimmel

@@ -32,6 +32,7 @@
 #include "himmel.h"
 #include "himmelquad.h"
 #include "abstractastronomy.h"
+#include "mathmacros.h"
 
 #include "shaderfragment/common.h"
 
@@ -41,6 +42,10 @@
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
+
+#include "moon.h"
+#include "earth.h"
+#include "siderealtime.h"
 
 namespace osgHimmel
 {
@@ -92,9 +97,7 @@ void MoonGeode::update(const Himmel &himmel)
     osg::Vec3 moonv = himmel.astro()->getMoonPosition();
     u_moon->set(osg::Vec4(moonv, himmel.astro()->getAngularMoonRadius() * m_scale));
 
-    // HACK: just orient the moon towards the earth. 
-    // TODO: apply optical libration and real phase of the moon.
-    u_R->set(osg::Matrix::rotate(osg::Vec3(0.0, 1.0, 0.0), moonv));
+    u_R->set(himmel.astro()->getMoonOrientation());
 }
 
 
@@ -326,8 +329,8 @@ const std::string MoonGeode::getVertexShaderSource()
         "    vec3 m = moon.xyz;\n"
         "\n"
         //  tangent space of the unitsphere at m.
-        "    vec3 u = normalize(cross(m, vec3(1)));\n"
-        "    vec3 v = normalize(cross(u, m));\n"
+        "    vec3 u = normalize(cross(vec3(0, 0, 1), m));\n"
+        "    vec3 v = normalize(cross(m, u));\n"
         "    m_tangent = mat4(vec4(u, 0.0), vec4(v, 0.0), vec4(m, 0.0), vec4(vec3(0.0), 1.0));\n"
         "\n"
         "    float mScale = tan(moon.a) * SQRT2;\n"
@@ -391,13 +394,13 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    vec3 mt = mn.zyx;\n"
         "    vec3 mb = mn.xzy;\n"
         "\n"
-        // Texture Lookup direction -> "FrontFacing".
-        "    vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * R).xyz;\n"
-        "\n"
-        "    vec4 c  = textureCube(moonCube, vec3(-q.x, q.y, -q.z));\n"
-        "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"
-        "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
-        "\n"
+//        // Texture Lookup direction -> "FrontFacing".
+//        "    vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * R).xyz;\n"
+//        "\n"
+//        "    vec4 c  = textureCube(moonCube, vec3(-q.x, q.y, -q.z));\n"
+//        "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"
+//        "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
+//        "\n"
         "    vec3 m = moon.xyz;\n"
         "\n"
         // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
@@ -406,23 +409,23 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    float p     = acos(cos_p);\n"
         "    float tan_p = tan(p);\n"
         "\n"
-        "    float dot_ne = dot(n, eye);\n"
-        "    float dot_nl = dot(n, sun);\n"
+        "    float dot_ne = dot(mn, eye);\n"
+        "    float dot_nl = dot(mn, sun);\n"
         "\n"
         "    float g = 0.6;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
         "    float t = 0.1;\n" // small amount of forward scattering
         "\n"
         // Retrodirective.
-        "    float R = 2.0 - tan_p / (2.0 * g) \n"
+        "    float _R = 2.0 - tan_p / (2.0 * g) \n"
         "        * (1.0 - exp(-g / tan_p))     \n"
         "        * (3.0 - exp(-g / tan_p));    \n"
         "\n"
         // Scattering.
-        "    float S = (sin(p) + (PI - p) * cos_p) / PI \n"
+        "    float _S = (sin(p) + (PI - p) * cos_p) / PI \n"
         "        + t * (1.0 - cos_p) * (1.0 - cos_p);\n"
         "\n"
         // BRDF
-        "    float F = TWO_OVER_THREEPI * R * S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
+        "    float F = TWO_OVER_THREEPI * _R * _S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
         "\n"
         "    if(dot_nl > 0.0)\n"
         "        F = 0.0;\n"
@@ -437,16 +440,21 @@ const std::string MoonGeode::getFragmentShaderSource()
         //"    float op2 = dot(-m, s);
         //"    float Eem = 0.1 * op2 * op2;
 
+        // Fetch Albedo and apply orientation for correct "FrontFacing" with optical librations.
+        "    vec3 stu = (vec4(x, y, z, 1.0) * R).xyz;\n"
+        "    vec3 c = textureCube(moonCube, stu).xyz;\n"
         "\n"
         "    vec3 diffuse = vec3(0);\n"
         "    diffuse += earthShine.w * earthShine.rgb * Eem;\n"
         "    diffuse += sunShine.w * sunShine.rgb * F;\n"
-        "    diffuse *= c.a;\n"
+        "\n"
+        "    diffuse *= c;\n"
+        "    diffuse  = max(vec3(0.0), diffuse);\n"
         "\n"
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
         "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
         "\n"
-        "    gl_FragColor = vec4(diffuse * b, 1.0);\n"
+        "    gl_FragColor = vec4(diffuse * 50, 1.0);\n"
         "}");
 
         // Debug.

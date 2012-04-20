@@ -30,7 +30,7 @@
 #include "stars.h"
 
 #include "mathmacros.h"
-#include "sideraltime.h"
+#include "siderealtime.h"
 
 
 namespace osgHimmel

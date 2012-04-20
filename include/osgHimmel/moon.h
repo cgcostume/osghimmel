@@ -60,6 +60,18 @@ public:
 
     static const t_longf distance(const t_julianDay t);
 
+    static void opticalLibrations(
+        const t_julianDay t
+    ,   t_longf &l /* librations in longitude */
+    ,   t_longf &b /* librations in latitude  */);
+
+    static const t_longf parallacticAngle(
+        const t_aTime &aTime
+    ,   const t_longf latitude
+    ,   const t_longf longitude);
+
+    static const t_longf positionAngleOfAxis(const t_julianDay t);
+
     static const t_longf meanRadius();
 };
 

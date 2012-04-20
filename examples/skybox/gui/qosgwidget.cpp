@@ -188,113 +188,113 @@ void QOsgWidget::resizeEvent(QResizeEvent *event)
 
 void QOsgWidget::keyPressEvent(QKeyEvent *event)
 {
-    if(!m_gw.valid()) 
-        return;
+    //if(!m_gw.valid()) 
+    //    return;
 
-    const osgGA::GUIEventAdapter::KeySymbol keySymbol = 
-        static_cast<osgGA::GUIEventAdapter::KeySymbol>(*(event->text().toAscii().data()));
+    //const osgGA::GUIEventAdapter::KeySymbol keySymbol = 
+    //    static_cast<osgGA::GUIEventAdapter::KeySymbol>(*(event->text().toAscii().data()));
 
-    m_gw->getEventQueue()->keyPress(keySymbol);
+    //m_gw->getEventQueue()->keyPress(keySymbol);
 }
 
 
 void QOsgWidget::keyReleaseEvent(QKeyEvent *event)
 {
-    if(!m_gw.valid()) 
-        return;
+    //if(!m_gw.valid()) 
+    //    return;
 
-    const osgGA::GUIEventAdapter::KeySymbol keySymbol = 
-        static_cast<osgGA::GUIEventAdapter::KeySymbol>(*(event->text().toAscii().data()));
+    //const osgGA::GUIEventAdapter::KeySymbol keySymbol = 
+    //    static_cast<osgGA::GUIEventAdapter::KeySymbol>(*(event->text().toAscii().data()));
 
-    m_gw->getEventQueue()->keyRelease(keySymbol);
+    //m_gw->getEventQueue()->keyRelease(keySymbol);
 }
 
 
 void QOsgWidget::mousePressEvent(QMouseEvent *event)
 {
-    if(!m_gw.valid()) 
-        return;
+    //if(!m_gw.valid()) 
+    //    return;
 
-    // if you like cross
-    setCursor(Qt::CrossCursor);
+    //// if you like cross
+    //setCursor(Qt::CrossCursor);
 
-    int button(0);
-    switch(event->button())
-    {
-    case(Qt::LeftButton):
-        button = 1;
-        break;
-    case(Qt::MidButton):
-        button = 2;
-        break;
-    case(Qt::RightButton):
-        button = 3;
-        break;
-    case(Qt::NoButton):
-    default:
-        break;
-    }
-    m_gw->getEventQueue()->mouseButtonPress(event->x(), event->y(), button);
+    //int button(0);
+    //switch(event->button())
+    //{
+    //case(Qt::LeftButton):
+    //    button = 1;
+    //    break;
+    //case(Qt::MidButton):
+    //    button = 2;
+    //    break;
+    //case(Qt::RightButton):
+    //    button = 3;
+    //    break;
+    //case(Qt::NoButton):
+    //default:
+    //    break;
+    //}
+    //m_gw->getEventQueue()->mouseButtonPress(event->x(), event->y(), button);
 }
 
 
 void QOsgWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if(!m_gw.valid()) 
-        return;
+    //if(!m_gw.valid()) 
+    //    return;
 
-    int button(0);
-    switch(event->button())
-    {
-    case(Qt::LeftButton):
-        button = 1;
-        break;
-    case(Qt::MidButton):
-        button = 2;
-        break;
-    case(Qt::RightButton): 
-        button = 3;
-        break;
-    case(Qt::NoButton):
-    default: 
-        break;
-    }
-    m_gw->getEventQueue()->mouseDoubleButtonPress(event->x(), event->y(), button);
+    //int button(0);
+    //switch(event->button())
+    //{
+    //case(Qt::LeftButton):
+    //    button = 1;
+    //    break;
+    //case(Qt::MidButton):
+    //    button = 2;
+    //    break;
+    //case(Qt::RightButton): 
+    //    button = 3;
+    //    break;
+    //case(Qt::NoButton):
+    //default: 
+    //    break;
+    //}
+    //m_gw->getEventQueue()->mouseDoubleButtonPress(event->x(), event->y(), button);
 }
 
 
 void QOsgWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(!m_gw.valid()) 
-        return;
+    //if(!m_gw.valid()) 
+    //    return;
 
-    int button(0);
+    //int button(0);
 
-    switch(event->button())
-    {
-    case(Qt::LeftButton): 
-        button = 1; 
-        break;
-    case(Qt::MidButton): 
-        button = 2; 
-        break;
-    case(Qt::RightButton):
-        button = 3;
-        break;
-    case(Qt::NoButton): 
-    default: 
-        break;
-    }
-    m_gw->getEventQueue()->mouseButtonRelease(event->x(), event->y(), button);
+    //switch(event->button())
+    //{
+    //case(Qt::LeftButton): 
+    //    button = 1; 
+    //    break;
+    //case(Qt::MidButton): 
+    //    button = 2; 
+    //    break;
+    //case(Qt::RightButton):
+    //    button = 3;
+    //    break;
+    //case(Qt::NoButton): 
+    //default: 
+    //    break;
+    //}
+    //m_gw->getEventQueue()->mouseButtonRelease(event->x(), event->y(), button);
 }
 
 
 void QOsgWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if(!m_gw.valid()) 
-        return;
+    //if(!m_gw.valid()) 
+    //    return;
 
-    m_gw->getEventQueue()->mouseMotion(event->x(), event->y());
+    //m_gw->getEventQueue()->mouseMotion(event->x(), event->y());
 }
 
 
