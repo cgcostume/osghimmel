@@ -258,6 +258,8 @@ void MainWindow::himmelChanged()
     }
 
     m_propertyWidget->assign(m_himmel);
+
+    sceneChanged();
 }
 
 
@@ -461,10 +463,12 @@ const bool MainWindow::insert3DObjectFromFile(const QFileInfo &fileInfo)
     }
 
     // optimize the scene graph, remove redundant nodes and state etc.
-//    osgUtil::Optimizer optimizer;
-//    optimizer.optimize(loadedScene.get());
+    //osgUtil::Optimizer optimizer;
+    //optimizer.optimize(loadedScene.get());
 
     m_scene->addChild(loadedScene.get());
+    sceneChanged();
+
     return true;
 }
 
@@ -474,6 +478,14 @@ void MainWindow::remove3DObjectsFromScene()
     assert(m_scene);
 
     m_scene->removeChildren(0, m_scene->getNumChildren());
+    sceneChanged();
+}
+
+
+void MainWindow::sceneChanged()
+{
+    if(m_himmel)
+        m_himmel->himmel()->setReferenceBoundingRadius(m_scene->getBound().radius() * 8.f);
 }
 
 

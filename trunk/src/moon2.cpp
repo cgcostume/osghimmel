@@ -32,7 +32,7 @@
 #include "moon.h"
 #include "sun2.h"
 #include "earth2.h"
-#include "sideraltime.h"
+#include "siderealtime.h"
 #include "mathmacros.h"
 
 #include <assert.h>
@@ -212,7 +212,108 @@ const float Moon2::distance(const t_julianDay t)
 }
 
 
-const t_longf Moon2::meanRadius()
+void Moon2::opticalLibrations(
+    const t_julianDay t
+,   float &l /* librations in longitude */
+,   float &b /* librations in latitude  */)
+{
+    // (AA.51.1)
+
+    const float Dr = _rad(Earth2::longitudeNutation(t));
+
+    const float F  = _rad(meanLatitude(t));
+    const float O  = _rad(meanOrbitLongitude(t));
+
+    const t_eclf ecl = position(t);
+    const float lo = _rad(ecl.longitude);
+    const float la = _rad(ecl.latitude);
+
+    static const float I = _rad(1.54242f);
+
+    const float cos_la = cos(la);
+    const float sin_la = sin(la);
+    const float cos_I  = cos(I);
+    const float sin_I  = sin(I);
+
+    const float W  = _rev(lo - Dr - O);
+    const float sin_W  = sin(W);
+
+    const float A  = _rev(atan2(sin_W * cos_la * cos_I - sin_la * sin_I, cos(W) * cos_la));
+
+    l = _deg(A - F);
+    b = _deg(asin(-sin_W * cos_la * sin_I - sin_la * cos_I));
+}
+
+
+const float Moon2::parallacticAngle(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude)
+{
+    // (AA.13.1)
+
+    const t_julianDay t(jd(aTime));
+
+    const float la   = _rad(latitude);
+    const float lo   = _rad(longitude);
+
+    const t_equf pos = apparentPosition(t);
+    const float ra   = _rad(pos.right_ascension);
+    const float de   = _rad(pos.declination);
+
+    const float s    = _rad(siderealTime(aTime));
+
+    // (AA.p88) - local hour angle
+
+    const float H = s + lo - ra;
+
+    const float cos_la = cos(la);
+    const float P = atan2(sin(H) * cos_la, sin(la) * cos(de) - sin(de) * cos_la * cos(H));
+
+    return _deg(P);
+}
+
+
+const float Moon2::positionAngleOfAxis(const t_julianDay t)
+{
+    // (AA.p344)
+
+    const t_equf pos = apparentPosition(t);
+
+    const float a  = _rad(pos.right_ascension);
+    const float e  = _rad(Earth2::meanObliquity(t));
+
+    const float Dr = _rad(Earth2::longitudeNutation(t));
+    const float O  = _rad(meanOrbitLongitude(t));
+
+    const float V  = O + Dr;
+
+    static const float I = _rad(1.54242);
+    const float sin_I  = sin(I);
+
+    const float X  = sin_I * sin(V);
+    const float Y  = sin_I * cos(V) * cos(e) - cos(I) * sin(e);
+
+    // optical libration in latitude
+
+    const t_eclf ecl = position(t);
+
+    const float lo = _rad(ecl.longitude);
+    const float la = _rad(ecl.latitude);
+
+    const float W  = _rev(lo - Dr - O);
+    const float b = asin(-sin(W) * cos(la) * sin_I - sin(la) * cos(I));
+
+    // final angle
+
+    const float w  = _rev(atan2(X, Y));
+    const float P = asin(sqrt(X * X + Y * Y) * cos(a - w) / cos(b));
+
+    return _deg(P);
+}
+
+
+const float Moon2::meanRadius()
 {
     return Moon::meanRadius();
 }

@@ -45,6 +45,7 @@
 #include <osg/BlendFunc>
 #include <osg/Image>
 #include <osg/Texture1D>
+#include <osg/Depth>
 
 
 namespace
@@ -174,6 +175,9 @@ void StarsGeode::setupNode(
 ,   const char *brightStarsFilePath)
 {
     createAndAddDrawable(brightStarsFilePath);
+
+    osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);    
+    stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 
     osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
     stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);

@@ -65,6 +65,13 @@ public:
     const float getLongitude() const;
 
 
+    const osg::Matrix getMoonOrientation() const;
+    const osg::Matrix getMoonOrientation(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
+
+
     const bool setOverrideMoonPosition(const bool enabled); 
     const bool getOverrideMoonPosition() const;
 
@@ -102,6 +109,11 @@ protected:
     ,   const float longitude) const = 0;
 
     virtual const osg::Vec3 sunPosition(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const = 0;
+
+    virtual const osg::Matrix moonOrientation(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const = 0;

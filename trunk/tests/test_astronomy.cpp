@@ -34,7 +34,7 @@
 #include "osgHimmel/mathmacros.h"
 #include "osgHimmel/atime.h"
 #include "osgHimmel/julianday.h"
-#include "osgHimmel/sideraltime.h"
+#include "osgHimmel/siderealtime.h"
 #include "osgHimmel/coords.h"
 #include "osgHimmel/moon.h"
 #include "osgHimmel/sun.h"
@@ -305,12 +305,12 @@ void test_sun()
 
 void test_moon()
 {
-    // Berlin
-    
-    long double lat = _decimal(52, 31, 0);
-    long double lon = _decimal(13, 24, 0);
-
     // Test nutation and obliquity.
+    {
+    // Berlin
+
+    const t_longf lat = _decimal(52, 31, 0);
+    const t_longf lon = _decimal(13, 24, 0);
 
     // Azimuth is interpreted from north from:
     // http://www.sunposition.info/sunposition/spc/locations.php
@@ -337,9 +337,10 @@ void test_moon()
         jd(t_aTime(1987, 4, 10))), 0.0002);
     ASSERT_AB(long double, _decimal(0, 0, +9.443), Earth::obliquityNutation(
         jd(t_aTime(1987, 4, 10))), 0.0002);
+    }
 
     // Lunar perigee and apogee, values from: http://en.wikipedia.org/wiki/File:Lunar_perigee_apogee.png
-
+    {
     const t_aTime aTime1(2007, 10, 26);
     const t_aTime aTime2(2007,  4,  3);
 
@@ -348,6 +349,38 @@ void test_moon()
 
     ASSERT_AB(long double, Earth::apparentAngularMoonDiameter(t1) 
         / Earth::apparentAngularMoonDiameter(t2), 1.13, 0.01);
+    }
+
+
+    // Test optical librations, parallactic angle and rotation axis angle
+    // values gathered from http://www.jgiesen.de/moonlibration/index.htm
+    {
+    const t_aTime aTime(1992, 04, 12);
+    const t_julianDay t(jd(aTime));
+
+    t_longf l = 0.0, b = 0.0;
+    Moon::opticalLibrations(t, l, b);
+
+    ASSERT_AB(long double, l, -1.206, 0.001);
+    ASSERT_AB(long double, b, +4.194, 0.001);
+
+    ASSERT_AB(long double, Moon::parallacticAngle(aTime, 52.51, 13.41), 38.6, 0.5);
+    ASSERT_AB(long double, Moon::positionAngleOfAxis(t), 15.08, 0.2);
+    }
+
+    {
+    const t_aTime aTime(2040, 06, 20, 17, 16, 00);
+    const t_julianDay t(jd(aTime));
+
+    t_longf l = 0.0, b = 0.0;
+    Moon::opticalLibrations(t, l, b);
+
+    ASSERT_AB(long double, l, -7.09, 0.02);
+    ASSERT_AB(long double, b, -3.28, 0.02);
+
+    ASSERT_AB(long double, Moon::parallacticAngle(aTime, 12.51, 41.41), -7.4, 0.5);
+    ASSERT_AB(long double, Moon::positionAngleOfAxis(t), 18.3, 0.2);
+    }
 }
 
 

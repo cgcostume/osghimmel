@@ -32,7 +32,7 @@
 #include "sun.h"
 #include "earth2.h"
 #include "moon2.h"
-#include "sideraltime.h"
+#include "siderealtime.h"
 #include "mathmacros.h"
 
 #include <assert.h>

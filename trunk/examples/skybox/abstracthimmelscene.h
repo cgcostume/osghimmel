@@ -69,6 +69,7 @@ public:
     virtual const double setLongitude(const double longitude);
     virtual const double setAltitude(const double altitude);
 
+    virtual osgHimmel::AbstractHimmel *himmel() = 0;
 
     // TODO - TEMP: will be changed soon
     void hintCamera(osg::Camera *camera);
@@ -80,8 +81,6 @@ public:
 protected:
 
     AbstractHimmelScene(osg::Camera *camera);
-
-    virtual osgHimmel::AbstractHimmel *himmel() = 0;
 
     // AbstractPropertySupport Interface
 

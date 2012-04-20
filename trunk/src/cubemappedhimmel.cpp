@@ -104,7 +104,7 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
 //  +   glsl_f_blendNormalExt // using mix
 
     +   (m_fakeSun ? glsl_fakesun() : "")
-    
+
     +   PRAGMA_ONCE(main,
 
         "in vec4 m_ray;\n"

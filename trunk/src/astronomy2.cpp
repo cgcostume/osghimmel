@@ -33,7 +33,7 @@
 #include "sun2.h"
 #include "moon2.h"
 #include "stars.h"
-#include "sideraltime.h"
+#include "siderealtime.h"
 
 
 namespace osgHimmel
@@ -81,6 +81,31 @@ const osg::Vec3 Astronomy2::sunPosition(
     sunv.normalize();
 
     return sunv;
+}
+
+
+const osg::Matrix Astronomy2::moonOrientation(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{    
+    const t_julianDay t(jd(aTime));
+
+    float l, b;
+    Moon2::opticalLibrations(t, l, b);
+
+    const osg::Matrix libLat = osg::Matrix::rotate(_rad(b), -1, 0, 0);
+    const osg::Matrix libLon = osg::Matrix::rotate(_rad(l),  0, 1, 0);
+
+    const float a = _rad(Moon2::positionAngleOfAxis(t));
+    const float p = _rad(Moon2::parallacticAngle(aTime, latitude, longitude));
+
+    const osg::Matrix zenith = osg::Matrix::rotate(a - p, 0, 0, 1);
+
+    // finalOrientationWithLibrations
+    const osg::Matrix R(libLat * libLon * zenith);
+
+    return R;
 }
 
 

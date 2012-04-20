@@ -29,14 +29,24 @@
 
 #include "abstracthimmel.h"
 
+#include "mathmacros.h"
 #include "timef.h"
 
 #include <osg/Depth>
+#include <osg/NodeVisitor>
 #include <osgUtil/CullVisitor>
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
+#include <osg/Matrix>
 
 #include <assert.h>
+#include <stdio.h>
+
+
+#include <osg/BlendFunc>
+#include <osg/PositionAttitudeTransform>
+
+osg::PositionAttitudeTransform *pos;
 
 
 namespace osgHimmel
@@ -56,7 +66,7 @@ void AbstractHimmel::HimmelNodeCallback::operator()(
 
 
 AbstractHimmel::AbstractHimmel()
-:   osg::Transform()
+:   osg::MatrixTransform()
 ,   m_timef(NULL)
 ,   m_autoUpdateTime(false)
 
@@ -68,10 +78,41 @@ AbstractHimmel::AbstractHimmel()
 ,   m_heightHint(0u)
 
 ,   m_lastElapsed(0.0)
+
+,   m_referenceBoundingRadius(1.f)
 {
     setupNode(getOrCreateStateSet());
 
     setUpdateCallback(new HimmelNodeCallback);
+
+
+    //osg::Sphere* unitSphere = new osg::Sphere( osg::Vec3(0,0,0), 10.0);
+    //osg::ShapeDrawable* unitSphereDrawable = new osg::ShapeDrawable(unitSphere);
+
+    //osg::Sphere* unitSphere1 = new osg::Sphere( osg::Vec3(0,0,0), 10.0);
+    //osg::ShapeDrawable* unitSphereDrawable1 = new osg::ShapeDrawable(unitSphere1);
+
+
+    //pos = new osg::PositionAttitudeTransform();
+    //pos->setPosition(osg::Vec3(0.0,0,0));
+    //osg::Geode* unitSphereGeode = new osg::Geode();
+    //addChild(pos);
+
+    //unitSphereDrawable->setColor(osg::Vec4(0.0, 1.0, 0.0, 1.0));
+    //unitSphereDrawable1->setColor(osg::Vec4(1.0, 0.0, 0.0, 0.5));
+
+    //osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS, 0.0, 1.0);
+    //unitSphereDrawable1->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+    //osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //unitSphereDrawable1->getOrCreateStateSet()->setAttributeAndModes(blend, osg::StateAttribute::ON);
+
+    //pos->addChild(unitSphereGeode);
+    //unitSphereGeode->addDrawable(unitSphereDrawable);
+    //unitSphereGeode->addDrawable(unitSphereDrawable1);
+
+
+    setReferenceFrame(osg::Transform::ABSOLUTE_RF);
 };
 
 
@@ -80,26 +121,112 @@ AbstractHimmel::~AbstractHimmel()
 };
 
 
+void AbstractHimmel::setReferenceBoundingRadius(const float )
+{
+    //m_referenceBoundingRadius = _abs(radius);
+    //setMatrix(osg::Matrix::scale(m_referenceBoundingRadius, m_referenceBoundingRadius, m_referenceBoundingRadius));
+    
+    //osg::notify(osg::NOTICE) << m_referenceBoundingRadius << std::endl;
+}
+
+//int ffff = 0;
+void AbstractHimmel::traverse(osg::NodeVisitor &nv)
+{
+    osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(&nv);
+    if(!cv)
+        return;
+
+
+
+    //osg::Vec3 eye, center, up;
+    //cv->getCurrentCamera()->getViewMatrixAsLookAt(eye, center, up);
+
+    //const float n(cv->getCalculatedNearPlane());
+    //const float f(cv->getCalculatedFarPlane());
+
+    //center.normalize();
+
+    //   if(((ffff) % 100) == 0)
+    //   {
+    //    osg::notify (osg::NOTICE) << "traverse" << std::endl;
+    //   osg::notify (osg::NOTICE) << "center \t" << center.x() << " \t" << center.y() << " \t" << center.z() << std::endl;
+    //   osg::notify (osg::NOTICE) << "eye    \t" << eye.x() << " \t" << eye.y() << " \t" << eye.z() << std::endl;
+    //   osg::notify (osg::NOTICE) << "up     \t" << up.x() << " \t" << up.y() << " \t" << up.z() << std::endl;
+    //   osg::notify (osg::NOTICE) << "near/f \t" << n << " \t" << f << std::endl;
+    //   }
+
+
+    const osg::CullSettings::ComputeNearFarMode cnfm(cv->getCurrentCamera()->getComputeNearFarMode());
+    cv->getCurrentCamera()->setComputeNearFarMode(osg::Camera::DO_NOT_COMPUTE_NEAR_FAR);
+
+    osg::MatrixTransform::traverse(nv);
+
+    cv->getCurrentCamera()->setComputeNearFarMode(cnfm);
+}
+
+
+
+float x = 0.0;
 bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-    if(cv)
-    {
-        osg::Vec3 eyePointLocal = cv->getEyeLocal();
-        matrix.preMultTranslate(eyePointLocal);
-    }
+    if(!cv)
+        return false;
+
+    const osg::Vec3 t(cv->getEyePoint());
+    matrix.preMultTranslate(t);
+
+
+    //osg::Vec3 eye, center, up;
+    //cv->getCurrentCamera()->getViewMatrixAsLookAt(eye, center, up);
+
+    //const float n(cv->getCalculatedNearPlane());
+    //const float f(cv->getCalculatedFarPlane());
+
+    //center.normalize();
+//        osg::Vec3 i = eye - center * (f + n) * 0.5;
+//
+//  //      //const osg::Vec3 t( ->getEyePoint());
+//  //      //matrix.preMultTranslate(t);
+//  //      
+//  //      osg::Matrixd m = osg::Matrixd::inverse(
+//  //      cv->getCurrentCamera()->getInverseViewMatrix());
+//
+//  //      m.getLookAt(eye, center, up);
+//
+//  //          //m_recorder->record(rc::PathPoint(eye._v, center._v, up._v, fov));
+//
+//  ////      osg::Matrix m = matrix;
+//  //      //matrix.inverse(m);
+//  //      osg::Vec3 i = center - (eye - center) * 100.0;
+//
+//
+       //if(((ffff++) % 100) == 0)
+       //{
+       // osg::notify (osg::NOTICE) << "computeLocalToWorldMatrix" << std::endl;
+       //osg::notify (osg::NOTICE) << "center \t" << center.x() << " \t" << center.y() << " \t" << center.z() << std::endl;
+       //osg::notify (osg::NOTICE) << "eye    \t" << eye.x() << " \t" << eye.y() << " \t" << eye.z() << std::endl;
+       //osg::notify (osg::NOTICE) << "up     \t" << up.x() << " \t" << up.y() << " \t" << up.z() << std::endl;
+       //osg::notify (osg::NOTICE) << "near/f \t" << n << " \t" << f << std::endl;
+       //}
+////        m.getLookAt(eye, center, up, 10.0);
+//        //
+//        pos->setPosition(i);
+
     return true;
+//    return false;
 }
 
 
 bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-    if(cv)
-    {
-        osg::Vec3 eyePointLocal = cv->getEyeLocal();
-        matrix.preMultTranslate(-eyePointLocal);
-    }
+    if(!cv)
+        return false;
+
+    const osg::Vec3 t(cv->getEyePoint());
+    matrix.preMultTranslate(-t);
+
     return true;
 }
 
@@ -108,31 +235,9 @@ void AbstractHimmel::setupNode(osg::StateSet* stateSet)
 {
     setCullingActive(false);
 
-    addAntiCull();
-
     // Only draw at back plane.
     osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
-}
-
-
-void AbstractHimmel::addAntiCull()
-{
-    // Add a unit cube to this geode, to avoid culling of stars, moon, etc. 
-    // caused by automatic near far retrieval of osg. This geode should be 
-    // added prior to the atmosphere node, since all other nodes are drawn
-    // with blending enabled, and would make the cubes' points visible.
-
-    osg::ref_ptr<osg::Geode> antiCull = new osg::Geode();
-    addChild(antiCull);
-
-    // 2 * 2 ^ 0.5 -> should fit an rotating cube with radius 1
-    osg::Box *cube = new osg::Box(osg::Vec3(), 2.8284f); 
-
-    osg::ShapeDrawable *cubeDrawable = new osg::ShapeDrawable(cube);
-    cubeDrawable->setColor(osg::Vec4(0.f, 0.f, 0.f, 1.f));
-
-    antiCull->addDrawable(cubeDrawable);
 }
 
 

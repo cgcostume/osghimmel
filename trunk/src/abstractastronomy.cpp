@@ -86,6 +86,20 @@ const float AbstractAstronomy::getLongitude() const
 }
 
 
+const osg::Matrix AbstractAstronomy::getMoonOrientation() const
+{
+    return moonOrientation(getATime(), getLatitude(), getLongitude());
+}
+
+const osg::Matrix AbstractAstronomy::getMoonOrientation(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    return moonOrientation(aTime, latitude, longitude);
+}
+
+
 const bool AbstractAstronomy::setOverrideMoonPosition(const bool enabled)
 {
     if(enabled != m_overrideMoonPosition)

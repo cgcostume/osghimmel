@@ -62,7 +62,7 @@ set(LIB_SOURCES
     polarmappedhimmel.cpp
     himmel.cpp
     randommapgenerator.cpp
-    sideraltime.cpp
+    siderealtime.cpp
     spheremappedhimmel.cpp
     stars.cpp
     starsgeode.cpp
@@ -105,7 +105,7 @@ set(LIB_SOURCES
 	${HEADER_PATH}/pragmanote.h
     ${HEADER_PATH}/himmel.h
     ${HEADER_PATH}/randommapgenerator.h
-    ${HEADER_PATH}/sideraltime.h
+    ${HEADER_PATH}/siderealtime.h
     ${HEADER_PATH}/spheremappedhimmel.h
     ${HEADER_PATH}/stars.h
     ${HEADER_PATH}/starsgeode.h

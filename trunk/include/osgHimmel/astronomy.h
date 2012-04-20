@@ -58,6 +58,11 @@ protected:
     ,   const float latitude
     ,   const float longitude) const;
 
+    virtual const osg::Matrix moonOrientation(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
+
     virtual const float angularSunRadius(const t_julianDay t) const;
     virtual const float angularMoonRadius(const t_julianDay t) const;
 };
