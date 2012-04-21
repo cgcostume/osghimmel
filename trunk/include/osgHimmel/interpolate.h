@@ -37,22 +37,22 @@
 namespace osgHimmel
 {
 
-#define interpolate_linear(t)       (t)
+#define _linear(t)       (t)
 
-#define interpolate_smoothstep(t)   (t * t * (3 - 2 * t))
-#define interpolate_smoothstep2(t)  (interpolate_smoothstep(interpolate_smoothstep(t)))
-#define interpolate_smoothstep3(t)  (interpolate_smoothstep(interpolate_smoothstep2(t)))
+#define _smoothstep(t)   (t * t * (3 - 2 * t))
+#define _smoothstep2(t)  (_smoothstep(_smoothstep(t)))
+#define _smoothstep3(t)  (_smoothstep(_smoothstep2(t)))
 
-#define interpolate_smootherstep(t) (t * t * t * (t * (6 * t - 15) + 10))
+#define _smootherstep(t) (t * t * t * (t * (6 * t - 15) + 10))
 
-#define interpolate_squared(t)      (t * t)
-#define interpolate_invsquared(t)   (1 - (1 - t) * (1 - t))
+#define _squared(t)      (t * t)
+#define _invsquared(t)   (1 - (1 - t) * (1 - t))
 
-#define interpolate_cubed(t)        (t * t * t)
-#define interpolate_invcubed(t)     (1 - (1 - t) * (1 - t) * (1 - t))
+#define _cubed(t)        (t * t * t)
+#define _invcubed(t)     (1 - (1 - t) * (1 - t) * (1 - t))
 
-#define interpolate_sin(t)          (sin(t * 1.57079632679489661923))
-#define interpolate_invsin(t)       (1 - sin((1 - t) * 1.57079632679489661923))
+#define _sin(t)          (sin(t * 1.57079632679489661923))
+#define _invsin(t)       (1 - sin((1 - t) * 1.57079632679489661923))
 
 
 // Several interpolation methods in action: http://sol.gfxile.net/interpolation/
@@ -81,28 +81,28 @@ inline const T interpolate(
     switch(function)
     {
     case IM_SmoothStep:
-        return interpolate_smoothstep(t);
+        return _smoothstep(t);
     case IM_SmoothStep2:
-        return interpolate_smoothstep2(t);
+        return _smoothstep2(t);
     case IM_SmoothStep3:
-        return interpolate_smoothstep3(t);
+        return _smoothstep3(t);
     case IM_SmootherStep:
-        return interpolate_smootherstep(t);
+        return _smootherstep(t);
     case IM_Squared:
-        return interpolate_squared(t);
+        return _squared(t);
     case IM_InvSquared:
-        return interpolate_invsquared(t);
+        return _invsquared(t);
     case IM_Cubed:
-        return interpolate_cubed(t);
+        return _cubed(t);
     case IM_InvCubed:
-        return interpolate_invcubed(t);
+        return _invcubed(t);
     case IM_Sin:
-        return static_cast<T>(interpolate_sin(t));
+        return static_cast<T>(_sin(t));
     case IM_InvSin:
-        return static_cast<T>(interpolate_invsin(t));
+        return static_cast<T>(_invsin(t));
     default:
     case IM_Linear:
-        return interpolate_linear(t);
+        return _linear(t);
     }
 }
 

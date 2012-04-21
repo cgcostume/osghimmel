@@ -70,7 +70,10 @@ MoonGeode::MoonGeode(const char* cubeMapFilePath)
 ,   u_moonCube(NULL)
 ,   u_R(NULL)
 ,   u_sunShine(NULL)    // [0,1,2] = color; [3] = intensity
-,   u_earthShine(NULL)  // [0,1,2] = color; [3] = intensity
+,   u_earthShine(NULL)  // [0,1,2] = color;
+
+,   m_earthShineColor(defaultEarthShineColor())
+,   m_earthShineScale(defaultEarthShineIntensity())
 {
     setName("Moon");
 
@@ -94,10 +97,13 @@ MoonGeode::~MoonGeode()
 
 void MoonGeode::update(const Himmel &himmel)
 {
-    osg::Vec3 moonv = himmel.astro()->getMoonPosition();
+    const osg::Vec3 moonv = himmel.astro()->getMoonPosition();
     u_moon->set(osg::Vec4(moonv, himmel.astro()->getAngularMoonRadius() * m_scale));
 
     u_R->set(himmel.astro()->getMoonOrientation());
+
+    u_earthShine->set(m_earthShineColor 
+        * himmel.astro()->getEarthShineIntensity() * m_earthShineScale);
 }
 
 
@@ -117,7 +123,7 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
     stateSet->addUniform(u_sunShine);
 
     u_earthShine = new osg::Uniform("earthShine"
-        , osg::Vec4(defaultEarthShineColor(), defaultEarthShineIntensity()));
+        , osg::Vec3(osg::Vec3(0, 0, 0)));
     stateSet->addUniform(u_earthShine);
 }
 
@@ -256,24 +262,13 @@ const float MoonGeode::defaultSunShineIntensity()
 
 const osg::Vec3 MoonGeode::setEarthShineColor(const osg::Vec3 &color)
 {
-    osg::Vec4 earthShine;
-    u_earthShine->get(earthShine);
-
-    earthShine[0] = color[0];
-    earthShine[1] = color[1];
-    earthShine[2] = color[2];
-
-    u_earthShine->set(earthShine);
-
-    return getEarthShineColor();
+    m_earthShineColor = color;
+    return m_earthShineColor;
 }
 
 const osg::Vec3 MoonGeode::getEarthShineColor() const
 {
-    osg::Vec4 earthShine;
-    u_earthShine->get(earthShine);
-
-    return osg::Vec3(earthShine[0], earthShine[1], earthShine[2]);
+    return m_earthShineColor;
 }
 
 const osg::Vec3 MoonGeode::defaultEarthShineColor()
@@ -284,26 +279,18 @@ const osg::Vec3 MoonGeode::defaultEarthShineColor()
 
 const float MoonGeode::setEarthShineIntensity(const float intensity)
 {
-    osg::Vec4 earthShine;
-    u_earthShine->get(earthShine);
-
-    earthShine[3] = intensity;
-    u_earthShine->set(earthShine);
-
-    return getEarthShineIntensity();
+    m_earthShineScale = intensity;
+    return m_earthShineScale;
 }
 
 const float MoonGeode::getEarthShineIntensity() const
 {
-    osg::Vec4 earthShine;
-    u_earthShine->get(earthShine);
-
-    return earthShine[3];
+    return m_earthShineScale;
 }
 
 const float MoonGeode::defaultEarthShineIntensity()
 {
-    return 0.2f;
+    return 1.f;
 }
 
 
@@ -363,7 +350,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "uniform mat4 R;\n"
         "\n"
         "uniform vec4 sunShine;\n"   // rgb as color and w as intensity.
-        "uniform vec4 earthShine;\n" // rgb as color and w as intensity.
+        "uniform vec3 earthShine;\n" // rgb as color with premultiplied intensity and scale.
         "\n"
         "const float radius = 0.98;\n"
         "\n"
@@ -430,22 +417,14 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    if(dot_nl > 0.0)\n"
         "        F = 0.0;\n"
         "\n"
-        // Approximate earthshine intensity.
-        // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
-        // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
-        "    float op2 = (PI - acos(dot(-m, sun))) * 0.5; // opposite phase over 2\n"
-        "    float Eem = 0.19 * 0.5 * (1.0 - sin(op2) * tan(op2) * log(1.0 / tan(op2 * 0.5)));\n"
-        "\n"
-        // My approximation with non-perceivable difference.
-        //"    float op2 = dot(-m, s);
-        //"    float Eem = 0.1 * op2 * op2;
+
 
         // Fetch Albedo and apply orientation for correct "FrontFacing" with optical librations.
         "    vec3 stu = (vec4(x, y, z, 1.0) * R).xyz;\n"
         "    vec3 c = textureCube(moonCube, stu).xyz;\n"
         "\n"
         "    vec3 diffuse = vec3(0);\n"
-        "    diffuse += earthShine.w * earthShine.rgb * Eem;\n"
+        "    diffuse += earthShine;\n"
         "    diffuse += sunShine.w * sunShine.rgb * F;\n"
         "\n"
         "    diffuse *= c;\n"
@@ -454,7 +433,7 @@ const std::string MoonGeode::getFragmentShaderSource()
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
         "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
         "\n"
-        "    gl_FragColor = vec4(diffuse * 50, 1.0);\n"
+        "    gl_FragColor = vec4(diffuse, 1.0);\n"
         "}");
 
         // Debug.
