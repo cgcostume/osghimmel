@@ -178,6 +178,21 @@ const osg::Vec3 AbstractAstronomy::getSunPosition(
 }
 
 
+const float AbstractAstronomy::getEarthShineIntensity() const
+{
+    return earthShineIntensity(getATime(), getLatitude(), getLongitude());
+}
+
+
+const float AbstractAstronomy::getEarthShineIntensity(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    return earthShineIntensity(aTime, latitude, longitude);
+}
+
+
 const float AbstractAstronomy::getAngularSunRadius() const
 {
     return angularSunRadius(t());

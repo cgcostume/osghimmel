@@ -109,6 +109,24 @@ const osg::Matrix Astronomy::moonOrientation(
 }
 
 
+const float Astronomy::earthShineIntensity(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    const osg::Vec3 m = moonPosition(aTime, latitude, longitude);
+    const osg::Vec3 s = sunPosition(aTime, latitude, longitude);
+
+    // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
+    
+    const float ep  = (_PI - acos(s * (-m))) * 0.5;
+    const float Eem = 0.19 * 0.5 * (1.0 - sin(ep) * tan(ep) * log(1.0 / tan(ep * 0.5)));
+
+    return Eem;
+}
+
+
 const osg::Matrix Astronomy::equToLocalHorizonMatrix() const
 {
     const t_aTime aTime(getATime());

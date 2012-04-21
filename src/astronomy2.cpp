@@ -34,6 +34,7 @@
 #include "moon2.h"
 #include "stars.h"
 #include "siderealtime.h"
+#include "interpolate.h"
 
 
 namespace osgHimmel
@@ -106,6 +107,29 @@ const osg::Matrix Astronomy2::moonOrientation(
     const osg::Matrix R(libLat * libLon * zenith);
 
     return R;
+}
+
+
+const float Astronomy2::earthShineIntensity(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    const osg::Vec3 m = moonPosition(aTime, latitude, longitude);
+    const osg::Vec3 s = sunPosition(aTime, latitude, longitude);
+
+    // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
+    // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
+    
+    // My approximation with non-perceivable difference. (max error is ~2.6 %)
+    //"    float ep = acos(dot(-m, sun));\n"
+    //"    float Eem = 0.095 * smoothstep(0.0, PI, ep) - 0.01 * sin(ep);\n"
+    //"\n"
+
+    const float ep  = acos(s * (-m));
+    const float Eem = 0.1095 * _smoothstep(ep / _PI) - 0.01 * sin(ep);
+
+    return Eem;
 }
 
 

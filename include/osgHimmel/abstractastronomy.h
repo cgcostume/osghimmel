@@ -92,6 +92,11 @@ public:
     ,   const float latitude
     ,   const float longitude) const;
 
+    const float getEarthShineIntensity() const;
+    const float getEarthShineIntensity(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
 
     const float getAngularSunRadius() const;
     const float getAngularSunRadius(const t_aTime &aTime) const;
@@ -114,6 +119,11 @@ protected:
     ,   const float longitude) const = 0;
 
     virtual const osg::Matrix moonOrientation(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const = 0;
+
+    virtual const float earthShineIntensity(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const = 0;
