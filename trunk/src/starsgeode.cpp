@@ -97,7 +97,11 @@ void StarsGeode::update(const Himmel &himmel)
     const float fov = himmel.getCameraFovHint();
     const float height = himmel.getViewSizeHeightHint();
 
-    u_quadWidth->set(static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2));
+    float test = static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2);
+    test;
+
+    //u_quadWidth->set(static_cast<float>(tan(_rad(fov / 2)) / height * TWO_TIMES_SQRT2));
+    u_quadWidth->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
 
     u_R->set(himmel.astro()->equToLocalHorizonMatrix());
 }
@@ -250,7 +254,7 @@ const float StarsGeode::getGlareScale() const
 
 const float StarsGeode::defaultGlareScale()
 {
-    return 4.0f;
+    return 16.0f;
 }
 
 
@@ -310,7 +314,7 @@ const float StarsGeode::getApparentMagnitude() const
 
 const float StarsGeode::defaultApparentMagnitude() 
 {
-    return 4.0f;
+    return 4.5f;
 }
 
 
@@ -397,7 +401,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "out vec4 m_color;\n"
         "\n"
 
-        "const float minB = pow(2.512, -" + std::string(apparentMagLimit) + ") * 0.1;\n"
+        "const float minB = pow(2.512, -" + std::string(apparentMagLimit) + ") * 4e-5;\n"
         "\n"
         // ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
         // This is used only for the ratio, not for exact physical scale.
@@ -418,7 +422,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float vMag = gl_Color.w;\n"
         "\n"
         "    float estB = pow(2.512, apparentMagnitude - vMag);\n"
-        "    float scaledB = minB * estB / quadWidth;\n"
+        "    float scaledB = estB * minB / (quadWidth * quadWidth);\n"
         "\n"
         "    float i = mod(int(cmn[3]) ^ int(gl_Vertex.w), 251);\n"
         "    float s = pow(texture(noise1, i / 256.0).r , 8) / (scaledB * 0.05);\n"
@@ -473,9 +477,8 @@ const std::string StarsGeode::getGeometryShaderSource()
         "\n"
         "    m_c = vec4(m_color[0].rgb, scaledB);\n"
         "\n"
-        "    gl_TexCoord[0].z = (1.0 + sqrt(scaledB)) * max(1.0, glareScale);\n"
-        "\n"
-        "    float k = quadWidth * gl_TexCoord[0].z;\n"
+        "    gl_TexCoord[0].z = sqrt(scaledB) * max(1.0, glareScale);\n"
+        "    float k = sqrt(2) * quadWidth * gl_TexCoord[0].z;\n"
         "\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
         "    gl_TexCoord[0].xy = vec2(-1.0, -1.0);\n"
@@ -524,8 +527,8 @@ const std::string StarsGeode::getFragmentShaderSource()
         "\n"
         "    float l = length(vec2(x, y));\n"
         "\n"
-        "    float t = smoothstep(1.0, 0.0, l * s);\n"
-        "    float g = smoothstep(1.0, 0.0, pow(l, 0.125)) * glareIntensity;\n"
+        "    float t = smoothstep(1.0, 0.0, l * s * 0.5);\n"
+        "    float g = smoothstep(1.0, 0.0, pow(l, 0.0675)) * glareIntensity;\n"
         "\n"
         "    gl_FragColor = m_c * (t + g);\n"
         "}");
