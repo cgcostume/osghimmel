@@ -36,6 +36,7 @@
 #include "osgHimmel/himmel.h"
 #include "osgHimmel/atmospheregeode.h"
 #include "osgHimmel/moongeode.h"
+#include "osgHimmel/moonglaregeode.h"
 #include "osgHimmel/starsgeode.h"
 #include "osgHimmel/milkywaygeode.h"
 #include "osgHimmel/abstractastronomy.h"
@@ -202,6 +203,10 @@ void Scene_ProceduralHimmel::postInitialize()
         shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getVertexShader());
         shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getGeometryShader());
         shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getFragmentShader());
+
+        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getFragmentShader());
     }
 }
 

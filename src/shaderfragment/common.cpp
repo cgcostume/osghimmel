@@ -112,10 +112,11 @@ const std::string glsl_horizon()
 
         "float tAtm(vec3 ray)\n"
         "{\n"
-        "    vec3 x = vec3(0.0, 0.0, cmn[1] + cmn[0]);\n"
+        "    float r = cmn[1] + cmn[0];\n"
+        "    vec3 x = vec3(0.0, 0.0, r);\n"
+        "\n"
         "    vec3 v = normalize(ray);\n"
         "\n"
-        "    float r = length(x);\n"
         "    float mu = dot(x, v) / r;\n"
         "\n"
         "    return r * mu - sqrt(r * r * (mu * mu - 1.0) + cmn[1] * cmn[1]);\n"
@@ -123,6 +124,9 @@ const std::string glsl_horizon()
         "\n"
         "bool belowHorizon(vec3 ray)\n"
         "{\n"
+        "    if(ray.z > 0.0)\n"
+        "        return false;\n"
+        "\n"
         "   return tAtm(ray) < 0.0;\n"
         "}"));
 

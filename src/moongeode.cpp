@@ -37,15 +37,12 @@
 #include "shaderfragment/common.h"
 
 #include <osg/Geometry>
-#include <osg/BlendFunc>
-#include <osg/Depth>
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
-#include "moon.h"
-#include "earth.h"
-#include "siderealtime.h"
+#include <assert.h>
+
 
 namespace osgHimmel
 {
@@ -104,6 +101,20 @@ void MoonGeode::update(const Himmel &himmel)
 
     u_earthShine->set(m_earthShineColor 
         * himmel.astro()->getEarthShineIntensity() * m_earthShineScale);
+}
+
+
+void MoonGeode::addUniformsToVariousStateSate(osg::StateSet* stateSet)
+{
+    if(!stateSet)
+        return;
+
+    assert(u_moon);
+    stateSet->addUniform(u_moon);
+    assert(u_sunShine);
+    stateSet->addUniform(u_sunShine);
+    assert(u_earthShine);
+    stateSet->addUniform(u_earthShine); 
 }
 
 
@@ -378,8 +389,8 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         // Moon Tanget Space
         "    vec3 mn = (m_tangent * vec4(x, y, z, 1.0)).xyz;\n"
-        "    vec3 mt = mn.zyx;\n"
-        "    vec3 mb = mn.xzy;\n"
+        //"    vec3 mt = mn.zyx;\n"
+        //"    vec3 mb = mn.xzy;\n"
         "\n"
 //        // Texture Lookup direction -> "FrontFacing".
 //        "    vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * R).xyz;\n"

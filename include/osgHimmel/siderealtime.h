@@ -28,8 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SIDEREALTIME_H__
-#define __SIDEREALTIME_H__
+#ifndef __SIDERALTIME_H__
+#define __SIDERALTIME_H__
 
 #include "declspec.h"
 #include "typedefs.h"
@@ -45,4 +45,4 @@ OSGH_API const t_longf siderealTime2(const t_aTime &aTime);
 
 } // namespace osgHimmel
 
-#endif // __SIDEREALTIME_H__
+#endif // __SIDERALTIME_H__

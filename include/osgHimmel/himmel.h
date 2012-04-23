@@ -40,6 +40,7 @@
 #include "abstractastronomy.h"
 #include "atmospheregeode.h"
 #include "moongeode.h"
+#include "moonglaregeode.h"
 #include "starsgeode.h"
 #include "milkywaygeode.h"
 #include "cloudlayerhighgeode.h"
@@ -51,6 +52,7 @@ namespace osgHimmel
     class AbstractAstronomy;
     class AtmosphereGeode;
     class MoonGeode;
+    class MoonGlareGeode;
     class StarsGeode;
     class MilkyWayGeode;
     class CloudLayerHighGeode;
@@ -103,6 +105,11 @@ public:
         return m_moon;
     }
 
+    inline MoonGlareGeode *moonGlare() const
+    {
+        return m_moonGlare;
+    }
+
     inline StarsGeode *stars() const
     {
         return m_stars;
@@ -148,6 +155,7 @@ protected:
 
     osg::ref_ptr<AtmosphereGeode>     m_atmosphere;
     osg::ref_ptr<MoonGeode>           m_moon;
+    osg::ref_ptr<MoonGlareGeode>      m_moonGlare;
     osg::ref_ptr<StarsGeode>          m_stars;
     osg::ref_ptr<MilkyWayGeode>       m_milkyway;
     osg::ref_ptr<CloudLayerHighGeode> m_highLayer;

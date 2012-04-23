@@ -56,6 +56,7 @@ set(LIB_SOURCES
     moon.cpp
     moon2.cpp
     moongeode.cpp
+    moonglaregeode.cpp
     noise.cpp
     paraboloidmappedhimmel.cpp
     perlinmapgenerator.cpp
@@ -98,6 +99,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/moon.h
     ${HEADER_PATH}/moon2.h
     ${HEADER_PATH}/moongeode.h
+    ${HEADER_PATH}/moonglaregeode.h
     ${HEADER_PATH}/noise.h
     ${HEADER_PATH}/paraboloidmappedhimmel.h
     ${HEADER_PATH}/perlinmapgenerator.h

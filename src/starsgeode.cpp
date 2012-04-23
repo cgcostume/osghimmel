@@ -254,7 +254,7 @@ const float StarsGeode::getGlareScale() const
 
 const float StarsGeode::defaultGlareScale()
 {
-    return 16.0f;
+    return 64.0f;
 }
 
 
@@ -314,7 +314,7 @@ const float StarsGeode::getApparentMagnitude() const
 
 const float StarsGeode::defaultApparentMagnitude() 
 {
-    return 4.5f;
+    return 5.0f;
 }
 
 

@@ -36,6 +36,7 @@
 #include "himmelquad.h"
 #include "atmospheregeode.h"
 #include "moongeode.h"
+#include "moonglaregeode.h"
 #include "starsgeode.h"
 #include "milkywaygeode.h"
 #include "cloudlayerhighgeode.h"
@@ -59,7 +60,7 @@ Himmel *Himmel::create()
         new MilkyWayGeode("resources/milkyway?.png")
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
-    ,   NULL //new AtmosphereGeode()
+    ,   new AtmosphereGeode()
     ,   NULL // new CloudLayerHighGeode()
     ,   new Astronomy());
 }
@@ -75,6 +76,7 @@ Himmel::Himmel(
 :   AbstractHimmel()
 ,   m_milkyway(milkyWay)
 ,   m_moon(moon)
+,   m_moonGlare(NULL)
 ,   m_stars(stars)
 ,   m_atmosphere(atmosphere)
 ,   m_highLayer(highLayer)
@@ -103,7 +105,7 @@ Himmel::Himmel(
     int bin = 0;
     static const std::string binName("RenderBin");
 
-//    addAntiCull()->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+    addAntiCull()->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
     if(m_milkyway)
     {
@@ -119,6 +121,12 @@ Himmel::Himmel(
     {
         addChild(m_moon);
         m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+
+        m_moonGlare = new MoonGlareGeode;
+        addChild(m_moonGlare);
+        m_moonGlare->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+
+        m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
     }
     if(m_atmosphere)
     {
@@ -185,7 +193,10 @@ void Himmel::update()
         if(m_milkyway)
             m_milkyway->update(*this);
         if(m_moon)
+        {
             m_moon->update(*this);
+            m_moonGlare->update(*this);
+        }
         if(m_stars)
             m_stars->update(*this);
         if(m_atmosphere)
