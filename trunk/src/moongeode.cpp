@@ -190,6 +190,11 @@ void MoonGeode::setupTextures(
     stateSet->setTextureAttributeAndModes(0, tcm, osg::StateAttribute::ON);
 
     u_moonCube->set(0);
+
+    
+    // generate lunar eclipse 1d-texture
+
+
 }
 
 
@@ -444,11 +449,65 @@ const std::string MoonGeode::getFragmentShaderSource()
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
         "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
         "\n"
-        "    gl_FragColor = vec4(diffuse, 1.0);\n"
+
+        // lunar eclipse - raw version -> TODO: move to texture and CPU brightness function
+
+        "    float _e0 = 0.00451900239074503315565337058629;\n"
+        "    float _e1 = 4.65 * _e0;\n"
+        "    float _e2 = 2.65 * _e0;\n"
+        "\n"
+        
+        // scale to moon size in unitsphere if unit diameter is double earth moon distance
+        "    vec3  _a = mn * _e0 - m;\n"
+        "    float _d = length(cross(_a, sun));\n"
+        "\n"
+        "    vec3 le = vec3(1);\n"
+        "\n"
+        "    if(_d - _e1 < 0)\n"
+        "    {\n"
+        "        vec3 le0 = 0.600 * vec3(1.0, 1.0, 1.0);\n"
+        "        vec3 le1 = 1.800 * vec3(1.0, 1.0, 1.0);\n"
+        "        vec3 le2 = 0.077 * vec3(0.5, 0.8, 1.0);\n"
+        "        vec3 le3 = 0.050 * vec3(0.3, 0.4, 0.9);\n"
+        "\n"
+        "        float s2 = 0.08;\n"
+        "\n"
+        "        le = vec3(1)\n"
+        "           - le0 * min(1.0, smoothstep(_e1, _e2, _d))\n"
+        "           - le1 * min(0.2, smoothstep(_e2 * (1 + s2), _e2 * (1 - s2), _d));\n"
+        "\n"
+
+        // brightness from mean distance
+
+        "        vec3  _a2 = m * _e0 - m; // scale to moon size in unitsphere if unit diameter is double earth moon distance\n"
+        "        float _d2 = length(cross(_a2, sun));\n"
+        "\n"
+        "        float r_x = (1.825 - 0.5 * _d2 / _e0) / 1.825;\n"
+        "        float b = 1;\n"
+        "\n"
+        "        if(r_x > 0.0)\n"
+		"        {\n"
+        "            b = 1 + 28 * (3 * r_x * r_x - 2 * r_x * r_x * r_x);\n"
+        "\n"
+        "            if(_d - _e2 * 2 < 0)\n"
+        "            {\n"
+        "                le -= le2 * clamp(1 - _d / _e2, 0, 1);\n"
+        "                le += le3 * smoothstep(_e2 * (1 - s2 * 2), _e2 * (1 + s2), _d);\n"
+        "            }\n"
+        "        }\n"
+        "        le *= b;\n"
+        "    }\n"
+        "\n"
+
+        "    gl_FragColor = vec4(le * diffuse, 1.0);\n"
         "}");
 
-        // Debug.
+        // DEBUG: Show penumbar and umbra shadows
+        // "    vec3 f = vec3(1)\n"
+        // "        - vec3(0.33) * smoothstep(_e1 * (1.0 + 0.01), _e1 * (1.0 - 0.01), _d)\n"
+        // "        - vec3(0.33) * smoothstep(_e2 * (1.0 + 0.01), _e2 * (1.0 - 0.01), _d);\n"
 
+        // DEBUG:
         //    gl_FragColor = vec4(x * 0.5 + 0.5, y * 0.5 + 0.5, 0.0, 0.0);
         //    gl_FragColor = vec4(mn * 0.5 + 0.5, 1.0);
         //    gl_FragColor = vec4(n * 0.5 + 0.5, 1.0);
