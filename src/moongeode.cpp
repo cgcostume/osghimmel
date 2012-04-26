@@ -64,6 +64,7 @@ MoonGeode::MoonGeode(const char* cubeMapFilePath)
 ,   m_hquad(new HimmelQuad())
 
 ,   u_moon(NULL)
+,   u_moonr(NULL)
 ,   u_moonCube(NULL)
 ,   u_R(NULL)
 ,   u_sunShine(NULL)    // [0,1,2] = color; [3] = intensity
@@ -94,8 +95,11 @@ MoonGeode::~MoonGeode()
 
 void MoonGeode::update(const Himmel &himmel)
 {
-    const osg::Vec3 moonv = himmel.astro()->getMoonPosition();
+    const osg::Vec3 moonv = himmel.astro()->getMoonPosition(false);
     u_moon->set(osg::Vec4(moonv, himmel.astro()->getAngularMoonRadius() * m_scale));
+
+    const osg::Vec3 moonrv = himmel.astro()->getMoonPosition(true);
+    u_moonr->set(osg::Vec4(moonrv, moonv[3]));
 
     u_R->set(himmel.astro()->getMoonOrientation());
 
@@ -111,6 +115,8 @@ void MoonGeode::addUniformsToVariousStateSate(osg::StateSet* stateSet)
 
     assert(u_moon);
     stateSet->addUniform(u_moon);
+    assert(u_moonr);
+    stateSet->addUniform(u_moonr);
     assert(u_sunShine);
     stateSet->addUniform(u_sunShine);
     assert(u_earthShine);
@@ -122,6 +128,9 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
 {
     u_moon = new osg::Uniform("moon", osg::Vec4(0.0, 0.0, 1.0, 1.0)); // [3] = apparent angular radius (not diameter!)
     stateSet->addUniform(u_moon);
+
+    u_moonr = new osg::Uniform("moonr", osg::Vec4(0.0, 0.0, 1.0, 1.0)); // [3] = apparent angular radius (not diameter!)
+    stateSet->addUniform(u_moonr);
 
     u_moonCube = new osg::Uniform("moonCube", 0);
     stateSet->addUniform(u_moonCube);
@@ -321,6 +330,7 @@ const std::string MoonGeode::getVertexShaderSource()
         // moon.xyz is expected to be normalized and moon.a the moons
         // angular diameter in rad.
         "uniform vec4 moon;\n"
+        "uniform vec4 moonr;\n"
         "\n"
         "out mat4 m_tangent;\n"
         "out vec3 m_eye;\n"
@@ -329,7 +339,7 @@ const std::string MoonGeode::getVertexShaderSource()
         "\n"
         "void main(void)\n"
         "{\n"
-        "    vec3 m = moon.xyz;\n"
+        "    vec3 m = moonr.xyz;\n"
         "\n"
         //  tangent space of the unitsphere at m.
         "    vec3 u = normalize(cross(vec3(0, 0, 1), m));\n"

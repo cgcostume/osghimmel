@@ -132,25 +132,31 @@ const float Earth2::viewDistanceWithinAtmosphere(
 }
 
 
-const t_longf Earth2::meanRadius()
+const float Earth2::atmosphericRefraction(const float altitude)
+{
+    return Earth::atmosphericRefraction(altitude);
+}
+
+
+const float Earth2::meanRadius()
 {
     return Earth::meanRadius(); 
 }
 
 
-const t_longf Earth2::atmosphereThickness()
+const float Earth2::atmosphereThickness()
 {
     return Earth::atmosphereThickness();
 }
 
 
-const t_longf Earth2::atmosphereThicknessNonUniform()
+const float Earth2::atmosphereThicknessNonUniform()
 {
     return Earth::atmosphereThicknessNonUniform();
 }
 
 
-const t_longf Earth2::apparentMagnitudeLimit()
+const float Earth2::apparentMagnitudeLimit()
 {
     return Earth::apparentMagnitudeLimit();
 }

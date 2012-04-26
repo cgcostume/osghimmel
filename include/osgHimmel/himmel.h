@@ -147,6 +147,7 @@ protected:
 protected:
 
     osg::ref_ptr<osg::Uniform> u_sun;
+    osg::ref_ptr<osg::Uniform> u_sunr; // refraction corrected
     osg::ref_ptr<osg::Uniform> u_time;
     // height above mean sea level in km, mean earth radius in km
     osg::ref_ptr<osg::Uniform> u_common; 

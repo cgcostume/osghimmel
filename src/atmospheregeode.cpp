@@ -338,6 +338,7 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
     +   glsl_cmn_uniform()
     +   
         "uniform vec3 sun;\n"
+        "uniform vec3 sunr;\n"
 
     +   glsl_pseudo_rand()
     +   glsl_dither()
@@ -533,17 +534,17 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         //"    }\n"
         //"\n"
         "    vec3 attenuation;\n"
-        "    vec3 inscatterColor = inscatter(x, t, ray, sun, r, mu, attenuation);\n" // S[L]  - T(x, xs) S[l] | xs"
+        "    vec3 inscatterColor = inscatter(x, t, ray, sunr, r, mu, attenuation);\n" // S[L]  - T(x, xs) S[l] | xs"
         //"    vec3 groundColor = groundColor(x, t, ray, sun, r, mu, attenuation);\n"  // R[L0] + R[L*]
-        "    vec3 sunColor = sunColor(x, t, ray, sun, r, mu);\n" // L0
+        "    vec3 sunColor = sunColor(x, t, ray, sunr, r, mu);\n" // L0
         "\n"
 
             // l'heure bleue (blaue stunde des ozons)
 
             // gauss between -12° and +0° sun altitude (Civil & Nautical twilight) 
             // http://en.wikipedia.org/wiki/Twilight
-        "    float hb = t > 0.0 ? 0.0 : exp(-pow(sun.z, 2.0) * 166) + 0.03;\n"     // the +0.03 is for a slight blueish tint at night
-        "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(ray, sun) + 1.5) * hb;\n" // * mu (optional..)
+        "    float hb = t > 0.0 ? 0.0 : exp(-pow(sunr.z, 2.0) * 166) + 0.03;\n"     // the +0.03 is for a slight blueish tint at night
+        "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(ray, sunr) + 1.5) * hb;\n" // * mu (optional..)
         "\n"
         "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0)\n"
         "        + dither(4, int(cmn[3]));\n" // Eq (16)

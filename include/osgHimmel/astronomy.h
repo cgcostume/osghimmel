@@ -51,12 +51,14 @@ protected:
     virtual const osg::Vec3 moonPosition(
         const t_aTime &aTime
     ,   const float latitude
-    ,   const float longitude) const;
+    ,   const float longitude
+    ,   const bool refractionCorrected) const;
 
     virtual const osg::Vec3 sunPosition(
         const t_aTime &aTime
     ,   const float latitude
-    ,   const float longitude) const;
+    ,   const float longitude
+    ,   const bool refractionCorrected) const;
 
     virtual const osg::Matrix moonOrientation(
         const t_aTime &aTime

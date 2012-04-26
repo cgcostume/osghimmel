@@ -55,13 +55,13 @@ public:
     static const float trueObliquity(const t_julianDay t);
 
     static const float viewDistanceWithinAtmosphere(const float y);
-
-    static const t_longf meanRadius();
+    static const float atmosphericRefraction(const float altitude);
+    static const float meanRadius();
     
-    static const t_longf atmosphereThickness();
-    static const t_longf atmosphereThicknessNonUniform();
+    static const float atmosphereThickness();
+    static const float atmosphereThicknessNonUniform();
 
-    static const t_longf apparentMagnitudeLimit();
+    static const float apparentMagnitudeLimit();
 };
 
 } // namespace osgHimmel

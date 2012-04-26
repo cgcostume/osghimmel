@@ -122,20 +122,22 @@ const osg::Vec3 AbstractAstronomy::setMoonPosition(const osg::Vec3 &position)
     return m_moonPosition;
 }
 
-const osg::Vec3 AbstractAstronomy::getMoonPosition() const
+const osg::Vec3 AbstractAstronomy::getMoonPosition(
+    const bool refractionCorrected) const
 {
     if(m_overrideMoonPosition)
         return m_moonPosition;
 
-    return moonPosition(getATime(), getLatitude(), getLongitude());
+    return moonPosition(getATime(), getLatitude(), getLongitude(), refractionCorrected);
 }
 
 const osg::Vec3 AbstractAstronomy::getMoonPosition(
     const t_aTime &aTime
 ,   const float latitude
-,   const float longitude) const
+,   const float longitude
+,   const bool refractionCorrected) const
 {
-    return moonPosition(aTime, latitude, longitude);
+    return moonPosition(aTime, latitude, longitude, refractionCorrected);
 }
 
 
@@ -161,20 +163,22 @@ const osg::Vec3 AbstractAstronomy::setSunPosition(const osg::Vec3 &position)
     return m_sunPosition;
 }
 
-const osg::Vec3 AbstractAstronomy::getSunPosition() const
+const osg::Vec3 AbstractAstronomy::getSunPosition(
+    const bool refractionCorrected) const
 {
     if(m_overrideSunPosition)
         return m_sunPosition;
 
-    return sunPosition(getATime(), getLatitude(), getLongitude());
+    return sunPosition(getATime(), getLatitude(), getLongitude(), refractionCorrected);
 }
 
 const osg::Vec3 AbstractAstronomy::getSunPosition(
     const t_aTime &aTime
 ,   const float latitude
-,   const float longitude) const
+,   const float longitude
+,   const bool refractionCorrected) const
 {
-    return sunPosition(aTime, latitude, longitude);
+    return sunPosition(aTime, latitude, longitude, refractionCorrected);
 }
 
 
