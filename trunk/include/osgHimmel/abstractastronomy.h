@@ -76,21 +76,23 @@ public:
     const bool getOverrideMoonPosition() const;
 
     const osg::Vec3 setMoonPosition(const osg::Vec3 &position);
-    const osg::Vec3 getMoonPosition() const;
+    const osg::Vec3 getMoonPosition(const bool refractionCorrected) const;
     const osg::Vec3 getMoonPosition(
         const t_aTime &aTime
     ,   const float latitude
-    ,   const float longitude) const;
+    ,   const float longitude
+    ,   const bool refractionCorrected) const;
 
     const bool setOverrideSunPosition(const bool enabled); 
     const bool getOverrideSunPosition() const;
 
     const osg::Vec3 setSunPosition(const osg::Vec3 &position);
-    const osg::Vec3 getSunPosition() const;
+    const osg::Vec3 getSunPosition(const bool refractionCorrected) const;
     const osg::Vec3 getSunPosition(
         const t_aTime &aTime
     ,   const float latitude
-    ,   const float longitude) const;
+    ,   const float longitude
+    ,   const bool refractionCorrected) const;
 
     const float getEarthShineIntensity() const;
     const float getEarthShineIntensity(
@@ -111,12 +113,14 @@ protected:
     virtual const osg::Vec3 moonPosition(
         const t_aTime &aTime
     ,   const float latitude
-    ,   const float longitude) const = 0;
+    ,   const float longitude
+    ,   const bool refractionCorrected) const = 0;
 
     virtual const osg::Vec3 sunPosition(
         const t_aTime &aTime
     ,   const float latitude
-    ,   const float longitude) const = 0;
+    ,   const float longitude
+    ,   const bool refractionCorrected) const = 0;
 
     virtual const osg::Matrix moonOrientation(
         const t_aTime &aTime

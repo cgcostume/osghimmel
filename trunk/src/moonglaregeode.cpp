@@ -76,11 +76,10 @@ MoonGlareGeode::~MoonGlareGeode()
 
 void MoonGlareGeode::update(const Himmel &himmel)
 {
-    const osg::Vec3 moonv = himmel.astro()->getMoonPosition();
-    const osg::Vec3 sunv  = himmel.astro()->getSunPosition();
+    const osg::Vec3 moonv = himmel.astro()->getMoonPosition(false);
+    const osg::Vec3 sunv  = himmel.astro()->getSunPosition(false);
     
     u_phase->set(acos(moonv * sunv));
-
 }
 
 
@@ -168,6 +167,7 @@ const std::string MoonGlareGeode::getVertexShaderSource()
         // moon.xyz is expected to be normalized and moon.a the moons
         // angular diameter in rad.
         "uniform vec4 moon;\n"
+        "uniform vec4 moonr;\n"
         "\n"
         "uniform float scale;\n"
         "\n"
@@ -175,7 +175,7 @@ const std::string MoonGlareGeode::getVertexShaderSource()
         "\n"
         "void main(void)\n"
         "{\n"
-        "    vec3 m = moon.xyz;\n"
+        "    vec3 m = moonr.xyz;\n"
         "\n"
         "    vec3 u = normalize(cross(vec3(0, 0, 1), m));\n"
         "    vec3 v = normalize(cross(m, u));\n"

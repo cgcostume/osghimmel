@@ -83,6 +83,7 @@ Himmel::Himmel(
 ,   m_astronomy(astronomy)
 
 ,   u_sun(NULL)
+,   u_sunr(NULL)
 ,   u_time(NULL)
 ,   u_common(NULL)
 {
@@ -90,6 +91,9 @@ Himmel::Himmel(
 
     u_sun = new osg::Uniform("sun", osg::Vec3(0.0, 0.0, 0.0));
     getOrCreateStateSet()->addUniform(u_sun);
+    u_sunr = new osg::Uniform("sunr", osg::Vec3(0.0, 0.0, 0.0));
+    getOrCreateStateSet()->addUniform(u_sunr);
+
 
     u_time = new osg::Uniform("time", 0.f);
     getOrCreateStateSet()->addUniform(u_time);
@@ -185,8 +189,11 @@ void Himmel::update()
     {
         astro()->update(t_aTime::fromTimeF(*getTime()));
 
-        osg::Vec3 sunv = astro()->getSunPosition();
+        osg::Vec3 sunv = astro()->getSunPosition(false);
         u_sun->set(sunv);
+
+        osg::Vec3 sunrv = astro()->getSunPosition(true);
+        u_sunr->set(sunrv);
 
         u_time->set(static_cast<float>(getTime()->getf()));
 
@@ -230,7 +237,7 @@ const osg::Vec3 Himmel::getSunPosition() const
 
 const osg::Vec3 Himmel::getSunPosition(const t_aTime &aTime) const
 {
-    return astro()->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude());
+    return astro()->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude(), false);
 }
 
 

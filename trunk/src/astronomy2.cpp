@@ -60,9 +60,12 @@ const float Astronomy2::angularMoonRadius(const t_julianDay t) const
 const osg::Vec3 Astronomy2::moonPosition(
     const t_aTime &aTime
 ,   const float latitude
-,   const float longitude) const
+,   const float longitude
+,   const bool refractionCorrected) const
 {
     t_horf moon = Moon2::horizontalPosition(aTime, latitude, longitude);
+    if(refractionCorrected)
+        moon.altitude += Earth2::atmosphericRefraction(moon.altitude);
 
     osg::Vec3 moonv  = moon.toEuclidean();
     moonv.normalize();
@@ -74,9 +77,13 @@ const osg::Vec3 Astronomy2::moonPosition(
 const osg::Vec3 Astronomy2::sunPosition(
     const t_aTime &aTime
 ,   const float latitude
-,   const float longitude) const
+,   const float longitude
+,   const bool refractionCorrected) const
 {
     t_horf sun = Sun2::horizontalPosition(aTime, latitude, longitude);
+
+    if(refractionCorrected)
+        sun.altitude += Earth2::atmosphericRefraction(sun.altitude);
 
     osg::Vec3 sunv  = sun.toEuclidean();
     sunv.normalize();
@@ -115,8 +122,8 @@ const float Astronomy2::earthShineIntensity(
 ,   const float latitude
 ,   const float longitude) const
 {
-    const osg::Vec3 m = moonPosition(aTime, latitude, longitude);
-    const osg::Vec3 s = sunPosition(aTime, latitude, longitude);
+    const osg::Vec3 m = moonPosition(aTime, latitude, longitude, false);
+    const osg::Vec3 s = sunPosition(aTime, latitude, longitude, false);
 
     // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
