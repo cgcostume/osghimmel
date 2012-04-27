@@ -96,7 +96,9 @@ MoonGeode::~MoonGeode()
 void MoonGeode::update(const Himmel &himmel)
 {
     const osg::Vec3 moonv = himmel.astro()->getMoonPosition(false);
-    u_moon->set(osg::Vec4(moonv, himmel.astro()->getAngularMoonRadius() * m_scale));
+    const float moons = tan(himmel.astro()->getAngularMoonRadius() * m_scale);
+
+    u_moon->set(osg::Vec4(moonv, moons));
 
     const osg::Vec3 moonrv = himmel.astro()->getMoonPosition(true);
     u_moonr->set(osg::Vec4(moonrv, moonv[3]));
@@ -332,11 +334,11 @@ const std::string MoonGeode::getVertexShaderSource()
         "uniform vec4 moon;\n"
         "uniform vec4 moonr;\n"
         "\n"
-        "out mat4 m_tangent;\n"
+        "out mat3 m_tangent;\n"
         "out vec3 m_eye;\n"
         "\n"
-        "const float SQRT2 = 1.41421356237;\n"
-        "\n"
+        //"const float SQRT2 = 1.41421356237;\n"
+        //"\n"
         "void main(void)\n"
         "{\n"
         "    vec3 m = moonr.xyz;\n"
@@ -344,11 +346,12 @@ const std::string MoonGeode::getVertexShaderSource()
         //  tangent space of the unitsphere at m.
         "    vec3 u = normalize(cross(vec3(0, 0, 1), m));\n"
         "    vec3 v = normalize(cross(m, u));\n"
-        "    m_tangent = mat4(vec4(u, 0.0), vec4(v, 0.0), vec4(m, 0.0), vec4(vec3(0.0), 1.0));\n"
+        "    m_tangent = mat3(u, v, m);\n"
         "\n"
-        "    float mScale = tan(moon.a) * SQRT2;\n"
-        "\n"
-        "    m_eye = m - normalize(gl_Vertex.x * u + gl_Vertex.y * v) * mScale;\n"
+        //"    float mScale = tan(moon.a) * SQRT2;\n"
+        //"\n"
+        //"    m_eye = m - normalize(gl_Vertex.x * u + gl_Vertex.y * v) * mScale;\n"
+        "    m_eye = m - (gl_Vertex.x * u + gl_Vertex.y * v) * moon.a;\n"
         "\n"
         "    gl_TexCoord[0] = gl_Vertex;\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(m_eye, 1.0);\n"
@@ -379,9 +382,10 @@ const std::string MoonGeode::getFragmentShaderSource()
         "uniform vec3 earthShine;\n" // rgb as color with premultiplied intensity and scale.
         "\n"
         "const float radius = 0.98;\n"
+        "const float surface = 1.0;\n"
         "\n"
         "in vec3 m_eye;\n"
-        "in mat4 m_tangent;\n"
+        "in mat3 m_tangent;\n"
         "\n"
         "const float PI               = 3.1415926535897932;\n"
         "const float TWO_OVER_THREEPI = 0.2122065907891938;\n"
@@ -402,19 +406,22 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         "    float z = sqrt(zz);\n"
         "\n"
+
         // Moon Tanget Space
-        "    vec3 mn = (m_tangent * vec4(x, y, z, 1.0)).xyz;\n"
-        //"    vec3 mt = mn.zyx;\n"
-        //"    vec3 mb = mn.xzy;\n"
+        "    vec3 mn = m_tangent * vec3(x, y, z);\n"
+        "    vec3 mt = mn.zyx;\n"
+        "    vec3 mb = mn.xzy;\n"
         "\n"
-//        // Texture Lookup direction -> "FrontFacing".
-//        "    vec3 q = (vec4(mn.x, mn.y, mn.z, 1.0) * R).xyz;\n"
-//        "\n"
-//        "    vec4 c  = textureCube(moonCube, vec3(-q.x, q.y, -q.z));\n"
-//        "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"
-//        "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
-//        "\n"
-        "    vec3 m = moon.xyz;\n"
+
+        // Fetch Albedo and apply orientation for correct "FrontFacing" with optical librations.
+        "    vec3 stu = (vec4(x, y, z, 1.0) * R).xyz;\n"
+        "    vec4 c = textureCube(moonCube, stu);\n"
+        "\n"
+
+        // Apply normal map
+        "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"
+        "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
+        "    n = mix(mn, n, surface);\n"
         "\n"
         // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
 
@@ -422,8 +429,8 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    float p     = acos(cos_p);\n"
         "    float tan_p = tan(p);\n"
         "\n"
-        "    float dot_ne = dot(mn, eye);\n"
-        "    float dot_nl = dot(mn, sun);\n"
+        "    float dot_ne = dot(n, eye);\n"
+        "    float dot_nl = dot(n, sun);\n"
         "\n"
         "    float g = 0.6;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
         "    float t = 0.1;\n" // small amount of forward scattering
@@ -443,21 +450,20 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    if(dot_nl > 0.0)\n"
         "        F = 0.0;\n"
         "\n"
-
-
-        // Fetch Albedo and apply orientation for correct "FrontFacing" with optical librations.
-        "    vec3 stu = (vec4(x, y, z, 1.0) * R).xyz;\n"
-        "    vec3 c = textureCube(moonCube, stu).xyz;\n"
         "\n"
         "    vec3 diffuse = vec3(0);\n"
         "    diffuse += earthShine;\n"
         "    diffuse += sunShine.w * sunShine.rgb * F;\n"
         "\n"
-        "    diffuse *= c;\n"
+        "    diffuse *= c.a;\n"
         "    diffuse  = max(vec3(0.0), diffuse);\n"
         "\n"
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
         "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
+        "\n"
+        "\n"
+
+        "    vec3 m = moon.xyz;\n"
         "\n"
 
         // lunar eclipse - raw version -> TODO: move to texture and CPU brightness function
