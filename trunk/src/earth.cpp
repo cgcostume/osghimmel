@@ -281,6 +281,7 @@ const t_longf Earth::viewDistanceWithinAtmosphere(
 
 // Effect of refraction for true altitudes (AA.15.4).
 // G.G. Bennet, "The Calculation of the Astronomical Refraction in marine Navigation", 1982
+// and Porsteinn Saemundsson, "Sky and Telescope" 1982
 
 const t_longf Earth::atmosphericRefraction(const t_longf altitude)
 {
