@@ -134,7 +134,12 @@ const float Astronomy2::earthShineIntensity(
     //"\n"
 
     const float ep  = acos(s * (-m));
-    const float Eem = 0.1095 * _smoothstep(ep / _PI) - 0.01 * sin(ep);
+    //const float Eem = 0.1095 * _smoothstep(ep / _PI) - 0.01 * sin(ep);
+
+    const float ep2 = ep * ep;
+    const float ep3 = ep * ep2;
+
+    const float Eem = -0.0061 * ep3 + 0.0289 * ep2 - 0.0105 * sin(ep); // with solved smoothstep and bold factors
 
     return Eem;
 }

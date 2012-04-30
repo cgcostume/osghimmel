@@ -258,7 +258,7 @@ const osg::Vec3 MoonGeode::getSunShineColor() const
 
 const osg::Vec3 MoonGeode::defaultSunShineColor()
 {
-    return osg::Vec3(1.0, 0.96, 0.80);
+    return osg::Vec3(0.923, 0.786, 0.636);
 }
 
 
@@ -300,7 +300,8 @@ const osg::Vec3 MoonGeode::getEarthShineColor() const
 
 const osg::Vec3 MoonGeode::defaultEarthShineColor()
 {
-    return osg::Vec3(0.92, 0.96, 1.00);
+    //return osg::Vec3(0.92, 0.96, 1.00);
+    return osg::Vec3(0.88, 0.96, 1.00);
 }
 
 
@@ -442,7 +443,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         // Scattering.
         "    float _S = (sin(p) + (PI - p) * cos_p) / PI \n"
-        "        + t * (1.0 - cos_p) * (1.0 - cos_p);\n"
+        "        + t * (1.0 - cos_p * 0.5) * (1.0 - cos_p * 0.5);\n"
         "\n"
         // BRDF
         "    float F = TWO_OVER_THREEPI * _R * _S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
@@ -453,7 +454,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         "    vec3 diffuse = vec3(0);\n"
         "    diffuse += earthShine;\n"
-        "    diffuse += sunShine.w * sunShine.rgb * F;\n"
+        "    diffuse += F * sunShine.w;\n"
         "\n"
         "    diffuse *= c.a;\n"
         "    diffuse  = max(vec3(0.0), diffuse);\n"
@@ -515,7 +516,10 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    }\n"
         "\n"
 
-        "    gl_FragColor = vec4(le * diffuse, 1.0);\n"
+        "    diffuse *= le;\n"
+        "    diffuse *= sunShine.rgb;\n"
+
+        "    gl_FragColor = vec4(diffuse, 1.0);\n"
         "}");
 
         // DEBUG: Show penumbar and umbra shadows
