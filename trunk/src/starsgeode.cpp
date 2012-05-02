@@ -97,10 +97,6 @@ void StarsGeode::update(const Himmel &himmel)
     const float fov = himmel.getCameraFovHint();
     const float height = himmel.getViewSizeHeightHint();
 
-    float test = static_cast<float>(tan(_rad(fov) / height) * TWO_TIMES_SQRT2);
-    test;
-
-    //u_quadWidth->set(static_cast<float>(tan(_rad(fov / 2)) / height * TWO_TIMES_SQRT2));
     u_quadWidth->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
 
     u_R->set(himmel.astro()->equToLocalHorizonMatrix());
