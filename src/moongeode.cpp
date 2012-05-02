@@ -390,6 +390,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         "const float PI               = 3.1415926535897932;\n"
         "const float TWO_OVER_THREEPI = 0.2122065907891938;\n"
+        "const float TWO_OVER_PI      = 1.5707963267948966;\n"
         "\n"
         "void main(void)\n"
         "{\n"
@@ -426,56 +427,44 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
 
-        "    float cos_p = clamp(dot(eye, sun), 0.0, 1.0);\n"
-        "    float p     = acos(cos_p);\n"
+        "    float cos_p = clamp(dot(-eye, sun), 0.0, 1.0);\n"
+        "    float p     = abs(acos(cos_p));\n"
         "    float tan_p = tan(p);\n"
         "\n"
         "    float dot_ne = dot(n, eye);\n"
         "    float dot_nl = dot(n, sun);\n"
         "\n"
-        "    float g = 0.6;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
+        "    float g = 0.05;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
         "    float t = 0.1;\n" // small amount of forward scattering
         "\n"
-        // Retrodirective.
-        "    float _R = 2.0 - tan_p / (2.0 * g) \n"
-        "        * (1.0 - exp(-g / tan_p))     \n"
-        "        * (3.0 - exp(-g / tan_p));    \n"
+        // Retrodirective. - Formular (Hapke66.3)
+        "    float _s = step(TWO_OVER_PI, abs(p));\n"
+        "    float _B = (1 - _s) * 2.0 - tan_p / (2.0 * g)\n"
+        "             * (1.0 - exp(-g / tan_p))\n"
+        "             * (3.0 - exp(-g / tan_p)) + _s;\n"
         "\n"
         // Scattering.
-        "    float _S = (sin(p) + (PI - p) * cos_p) / PI \n"
+        "    float _S = (sin(p) + (PI - p) * cos_p) / PI\n"
         "        + t * (1.0 - cos_p * 0.5) * (1.0 - cos_p * 0.5);\n"
         "\n"
         // BRDF
-        "    float F = TWO_OVER_THREEPI * _R * _S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
+        "    float F = TWO_OVER_THREEPI * _B * _S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
         "\n"
         "    if(dot_nl > 0.0)\n"
         "        F = 0.0;\n"
         "\n"
-        "\n"
-        "    vec3 diffuse = vec3(0);\n"
-        "    diffuse += earthShine;\n"
-        "    diffuse += F * sunShine.w;\n"
-        "\n"
-        "    diffuse *= c.a;\n"
-        "    diffuse  = max(vec3(0.0), diffuse);\n"
-        "\n"
-            // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
-        "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
-        "\n"
-        "\n"
-
         "    vec3 m = moon.xyz;\n"
         "\n"
 
         // lunar eclipse - raw version -> TODO: move to texture and CPU brightness function
 
-        "    float _e0 = 0.00451900239074503315565337058629;\n"
+        "    float _e0 = 0.00451900239074503315565337058629;\n" // TODO: make const
         "    float _e1 = 4.65 * _e0;\n"
         "    float _e2 = 2.65 * _e0;\n"
         "\n"
         
         // scale to moon size in unitsphere if unit diameter is double earth moon distance
-        "    vec3  _a = mn * _e0 - m;\n"
+        "    vec3  _a = m - mn * _e0;\n"
         "    float _d = length(cross(_a, sun));\n"
         "\n"
         "    vec3 le = vec3(1);\n"
@@ -496,7 +485,7 @@ const std::string MoonGeode::getFragmentShaderSource()
 
         // brightness from mean distance
 
-        "        vec3  _a2 = m * _e0 - m; // scale to moon size in unitsphere if unit diameter is double earth moon distance\n"
+        "        vec3  _a2 = m - m * _e0; // scale to moon size in unitsphere if unit diameter is double earth moon distance\n"
         "        float _d2 = length(cross(_a2, sun));\n"
         "\n"
         "        float r_x = (1.825 - 0.5 * _d2 / _e0) / 1.825;\n"
@@ -504,7 +493,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         "        if(r_x > 0.0)\n"
 		"        {\n"
-        "            b = 1 + 28 * (3 * r_x * r_x - 2 * r_x * r_x * r_x);\n"
+        "            b = 1 + 14 * (3 * r_x * r_x - 2 * r_x * r_x * r_x);\n"
         "\n"
         "            if(_d - _e2 * 2 < 0)\n"
         "            {\n"
@@ -515,8 +504,20 @@ const std::string MoonGeode::getFragmentShaderSource()
         "        le *= b;\n"
         "    }\n"
         "\n"
-
-        "    diffuse *= le;\n"
+        "    float OS = 0.497 + 0.503 / (1 + 55 * p);\n"
+        "\n"
+        // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
+        "    float b = 3.8 / sqrt(1 + pow(sun.z + 1.05, 16)) + 0.2;\n"
+        "\n"
+        "    vec3 diffuse = vec3(0);\n"
+        "\n"
+        "    diffuse += earthShine;\n"
+        "    diffuse += F * sunShine.w * OS;\n"
+        "\n"
+        "    diffuse *= c.a;\n"
+        "    diffuse  = max(vec3(0.0), diffuse);\n"
+        "\n"
+        "    diffuse *= le / OS;\n"
         "    diffuse *= sunShine.rgb;\n"
 
         "    gl_FragColor = vec4(diffuse, 1.0);\n"
