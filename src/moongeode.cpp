@@ -423,7 +423,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         // Apply normal map
         "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"
         "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
-        "    n = mix(mn, n, surface);\n"
+        "    n = normalize(mix(mn, n, surface));\n"
         "\n"
         // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
 
@@ -448,7 +448,9 @@ const std::string MoonGeode::getFragmentShaderSource()
         "        + t * (1.0 - cos_p * 0.5) * (1.0 - cos_p * 0.5);\n"
         "\n"
         // BRDF
-        "    float F = TWO_OVER_THREEPI * _B * _S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
+        "    float F = 1.0;\n"
+        "    if(dot_ne > 0.1)\n"
+        "        F = TWO_OVER_THREEPI * _B * _S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
         "\n"
         "    if(dot_nl > 0.0)\n"
         "        F = 0.0;\n"
