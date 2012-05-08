@@ -52,11 +52,8 @@ QOsgViewer::~QOsgViewer()
 
 void QOsgViewer::initialize()
 {
-    setCameraManipulator(new osgGA::TrackballManipulator);
-
     m_timer.start(0);
 }
-
 
 void QOsgViewer::repaint()
 {

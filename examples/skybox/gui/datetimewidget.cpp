@@ -40,7 +40,6 @@
 
 #include <assert.h>
 
-
 using namespace osgHimmel;
 
 
@@ -307,7 +306,9 @@ void DateTimeWidget::me_timeout()
     m_timef.update();
 
     const int t = m_timef.getf() * (m_ui->timeSlider->maximum() - m_ui->timeSlider->minimum()) + m_ui->timeSlider->minimum();
+    m_ui->timeSlider->blockSignals(true);
     m_ui->timeSlider->setValue(t);
+    m_ui->timeSlider->blockSignals(false);    
 }
 
 

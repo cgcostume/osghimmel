@@ -71,6 +71,11 @@ namespace osg
     class Camera;
 }
 
+namespace osgGA
+{
+    class KeySwitchMatrixManipulator;
+}
+
 
 class MainWindow : public QMainWindow
 {
@@ -119,6 +124,12 @@ protected slots:
     void on_quitAction_triggered(bool);
     void on_aboutAction_triggered(bool);
 
+
+    void on_moonLockAction_triggered(bool checked);
+    void on_sunLockAction_triggered(bool checked);
+    void cameraLockChanged();
+
+
     void on_polarMappedHimmelAction_triggered(bool);
     void on_cubeMappedHimmelAction_triggered(bool);
     void on_paraboloidMappedHimmelAction_triggered(bool);
@@ -165,6 +176,8 @@ private:
     osg::Camera *m_camera;
 
     QOsgEventHandler *m_eventHandler;
+
+    osgGA::KeySwitchMatrixManipulator *m_keyswitchManipulator;
 };
 
 

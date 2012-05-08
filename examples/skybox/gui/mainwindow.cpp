@@ -55,6 +55,10 @@
 #include "osgHimmel/timef.h"
 #include "osgHimmel/abstracthimmel.h"
 
+// for camera-moon lock
+#include "osgHimmel/abstractastronomy.h"
+#include "osgHimmel/himmel.h"
+
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QSettings>
@@ -107,6 +111,8 @@ MainWindow::MainWindow(QWidget *parent)
 ,   m_glslEditorDockWidget(NULL)
 ,   m_propertyWidget(NULL)
 ,   m_propertyDockWidget(NULL)
+
+,   m_keyswitchManipulator(NULL)
 {
     m_ui->setupUi(this);
 
@@ -128,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent)
         , this, SLOT(hintViewSize(unsigned int, unsigned int)));
 
 
-//    on_proceduralHimmelAction_triggered(true);
+    on_proceduralHimmelAction_triggered(true);
 }
 
 
@@ -201,6 +207,8 @@ void MainWindow::initializeScene()
     m_camera = m_ui->centralWidget->getCamera();
     m_camera->setViewport(new osg::Viewport(
         0, 0, m_ui->centralWidget->width(), m_ui->centralWidget->height()));
+
+    m_ui->centralWidget->setCameraManipulator(NULL);
 
     setCameraFov(INITIAL_CAMERA_FOV);
 
@@ -280,6 +288,10 @@ void MainWindow::clearHimmel()
 
         m_root->removeChild(m_himmel);
         m_himmel = NULL;
+
+
+        m_ui->moonLockAction->setEnabled(false);
+        m_ui->sunLockAction->setEnabled(false);
     }
 }
 
@@ -287,17 +299,17 @@ void MainWindow::clearHimmel()
 void MainWindow::initializeManipulator(osgViewer::View *view)
 {
     // set up the camera manipulators.
-    osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
+    m_keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
 
-    keyswitchManipulator->addMatrixManipulator('1', "Terrain",   new osgGA::TerrainManipulator());
-    keyswitchManipulator->addMatrixManipulator('2', "Trackball", new osgGA::TrackballManipulator());
-    keyswitchManipulator->addMatrixManipulator('3', "Flight",    new osgGA::FlightManipulator());
-    keyswitchManipulator->addMatrixManipulator('4', "Drive",     new osgGA::DriveManipulator());
+    m_keyswitchManipulator->addMatrixManipulator('1', "Terrain",   new osgGA::TerrainManipulator());
+    m_keyswitchManipulator->addMatrixManipulator('2', "Trackball", new osgGA::TrackballManipulator());
+    m_keyswitchManipulator->addMatrixManipulator('3', "Flight",    new osgGA::FlightManipulator());
+    m_keyswitchManipulator->addMatrixManipulator('4', "Drive",     new osgGA::DriveManipulator());
 
-    m_ui->centralWidget->setCameraManipulator(keyswitchManipulator.get());
+    m_ui->centralWidget->setCameraManipulator(m_keyswitchManipulator);
 
-    m_ui->centralWidget->addEventHandler(new osgViewer::StatsHandler);
-    m_ui->centralWidget->addEventHandler(new osgViewer::ThreadingHandler);
+//    m_ui->centralWidget->addEventHandler(new osgViewer::StatsHandler);
+//    m_ui->centralWidget->addEventHandler(new osgViewer::ThreadingHandler);
 
     m_eventHandler = new QOsgEventHandler(INITIAL_CAMERA_FOV);
     connect(m_eventHandler, SIGNAL(fovChanged(float)), this, SLOT(setCameraFov(float)));
@@ -375,6 +387,50 @@ void MainWindow::changeEvent(QEvent *event)
 }
 
 
+void MainWindow::cameraLockChanged()
+{
+    Scene_ProceduralHimmel *p = dynamic_cast<Scene_ProceduralHimmel*>(m_himmel.get());
+    if(!p)
+        return;
+
+    CameraLock::e_Target target = CameraLock::T_None;
+
+    if(m_ui->moonLockAction->isChecked())
+        target = CameraLock::T_Moon;
+    else if(m_ui->sunLockAction->isChecked())
+        target = CameraLock::T_Sun;
+
+    m_ui->centralWidget->setCameraManipulator(target != CameraLock::T_None ? NULL : m_keyswitchManipulator);   
+
+    p->setCameraLockTarget(target);
+}
+
+
+void MainWindow::on_moonLockAction_triggered(bool checked)
+{
+    if(checked)
+    {
+        m_ui->sunLockAction->blockSignals(true);
+        m_ui->sunLockAction->setChecked(false);
+        m_ui->sunLockAction->blockSignals(false);
+    }
+    cameraLockChanged();
+}
+
+
+void MainWindow::on_sunLockAction_triggered(bool checked)
+{
+    if(checked)
+    {
+        m_ui->moonLockAction->blockSignals(true);
+        m_ui->moonLockAction->setChecked(false);
+        m_ui->moonLockAction->blockSignals(false);
+    }
+    cameraLockChanged();
+}
+
+
+
 void MainWindow::showEvent(QShowEvent *event)
 {
     QMainWindow::showEvent(event);
@@ -440,10 +496,15 @@ void MainWindow::on_proceduralHimmelAction_triggered(bool)
 {
     clearHimmel();
     m_himmel = new Scene_ProceduralHimmel(m_camera);
+
     himmelChanged();
 
     m_dateTimeWidget->setScene(m_himmel);
     m_ui->proceduralHimmelAction->setChecked(true);
+
+    m_ui->moonLockAction->setEnabled(true);
+    m_ui->sunLockAction->setEnabled(true);
+    cameraLockChanged();
 }
 
 

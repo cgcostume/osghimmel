@@ -392,6 +392,44 @@ const std::string MoonGeode::getFragmentShaderSource()
         "const float TWO_OVER_THREEPI = 0.2122065907891938;\n"
         "const float TWO_OVER_PI      = 1.5707963267948966;\n"
         "\n"
+
+        // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
+
+        "float brdf(float cos_r, float cos_i, float cos_p)\n"
+        "{\n"
+        // i between incident  (+sun) and surface
+        // r between reflected (-eye) and surface
+        // p as i + r
+
+        "    float g = 0.05;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
+        "    float t = 0.1;\n" // small amount of forward scattering
+        "\n"
+        "    float p = acos(cos_p);\n"
+        "    float p05 = abs(p) * 0.5;\n"
+        "\n"
+        "    float tan_p = tan(p);\n"
+        "\n"
+        // Retrodirective. - Formular (Hapke66.3)
+        "    float s = step(TWO_OVER_PI, p);\n"
+        "    float B = \n"
+        "        (1 - s) * (2.0 - tan_p / (2.0 * g) * (1.0 - exp(-g / tan_p)) * (3.0 - exp(-g / tan_p)))\n"
+        "        + (    s) * 1;\n"
+        "\n"
+        // Scattering
+        //    float S = (sin(p) + (PI - p) * cos_p) / PI
+        //        + t * (1.0 - cos_p * 0.5) * (1.0 - cos_p * 0.5);
+
+        // improved (Hapke66.12) term
+        "    float S = (1.0 - sin(p05) * tan(p05) * log(tan(TWO_OVER_PI - p05 * 0.5)))\n"
+        "            + t * (1.0 - cos_p) * (1.0 - cos_p);\n"
+        "\n"
+        // BRDF
+        "    float F = TWO_OVER_THREEPI * B * S * 1.0 / (1.0 + abs(cos_r / cos_i));\n"
+        "\n"
+        "return (1.0 - step(0, cos_i)) * F;\n"
+        "}\n"
+        "\n"
+
         "void main(void)\n"
         "{\n"
         "    float x = gl_TexCoord[0].x;\n"
@@ -406,56 +444,52 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    if(belowHorizon(eye))\n"
         "        discard;\n"
         "\n"
-        "    float z = sqrt(zz);\n"
+        "    vec3 v = vec3(x, y, sqrt(zz));\n"
         "\n"
 
-        // Moon Tanget Space
-        "    vec3 mn = m_tangent * vec3(x, y, z);\n"
-        "    vec3 mt = mn.zyx;\n"
-        "    vec3 mb = mn.xzy;\n"
+        // horizontal space
+        "    vec3 hn = m_tangent * v;\n"
         "\n"
 
-        // Fetch Albedo and apply orientation for correct "FrontFacing" with optical librations.
-        "    vec3 stu = (vec4(x, y, z, 1.0) * R).xyz;\n"
-        "    vec4 c = textureCube(moonCube, stu);\n"
+        // apply orientation for correct "FrontFacing" with optical librations in selenocentric space
+        "    vec3 sn = normalize((vec4(v, 1.0) * R).xyz);\n"
         "\n"
+        
+        // fetch albedo and normals
+        "    vec4 c  = textureCube(moonCube, sn);\n"
+        "    vec3 cn = vec3(c.r * 2 - 1, c.g * 2 - 1, c.b);\n"
+        "\n"
+        
+        // convert normals to selenocentric space
+        "    mat3 sm  = mat3(v.zxy, v.yzx, v);\n"
+        "    vec3 s_n = sm * cn;\n"
+        "\n"
+        
+        // convert normals to horizontal space
+        "    vec3 h_n = mix(hn, m_tangent * s_n, surface * 2);\n"
+        "\n"
+        
+        // brdf
+        "    float cos_p = dot(-eye, sun);\n"
+        "    float cos_i = dot( sun, h_n);\n"
+        "    float cos_r = dot(-eye, h_n);\n"
+        "\n"
+        "    float f = brdf(cos_r, cos_i, cos_p);\n"
+        "\n"
+        
+        // diffuse
+        "    vec3 diffuse = earthShine;\n"
+        "    diffuse += f * sunShine.w;\n"
+        "\n"
+        "    diffuse *= c.a;\n"
+        "    diffuse  = max(vec3(0.0), diffuse);\n"
+        "\n"
+        "    diffuse *= sunShine.rgb;\n"
+        "\n"
+        "    gl_FragColor = vec4(diffuse, 1.0);\n"
+        "}");
 
-        // Apply normal map
-        "    vec3 cn = (c.xyz) * 2.0 - 1.0;\n"
-        "    vec3 n = vec3(dot(cn, mt), dot(cn, mb), dot(cn, mn));\n"
-        "    n = normalize(mix(mn, n, surface));\n"
-        "\n"
-        // Hapke-Lommel-Seeliger approximation of the moons reflectance function.
-
-        "    float cos_p = clamp(dot(-eye, sun), 0.0, 1.0);\n"
-        "    float p     = abs(acos(cos_p));\n"
-        "    float tan_p = tan(p);\n"
-        "\n"
-        "    float dot_ne = dot(n, eye);\n"
-        "    float dot_nl = dot(n, sun);\n"
-        "\n"
-        "    float g = 0.05;\n" // surface densitiy parameter which determines the sharpness of the peak at the full Moon
-        "    float t = 0.1;\n" // small amount of forward scattering
-        "\n"
-        // Retrodirective. - Formular (Hapke66.3)
-        "    float _s = step(TWO_OVER_PI, abs(p));\n"
-        "    float _B = (1 - _s) * 2.0 - tan_p / (2.0 * g)\n"
-        "             * (1.0 - exp(-g / tan_p))\n"
-        "             * (3.0 - exp(-g / tan_p)) + _s;\n"
-        "\n"
-        // Scattering.
-        "    float _S = (sin(p) + (PI - p) * cos_p) / PI\n"
-        "        + t * (1.0 - cos_p * 0.5) * (1.0 - cos_p * 0.5);\n"
-        "\n"
-        // BRDF
-        "    float F = 1.0;\n"
-        "    if(dot_ne > 0.1)\n"
-        "        F = TWO_OVER_THREEPI * _B * _S * 1.0 / (1.0 + (-dot_ne) / dot_nl);\n"
-        "\n"
-        "    if(dot_nl > 0.0)\n"
-        "        F = 0.0;\n"
-        "\n"
-        "    vec3 m = moon.xyz;\n"
+/*        "    vec3 m = moon.xyz;\n"
         "\n"
 
         // lunar eclipse - raw version -> TODO: move to texture and CPU brightness function
@@ -536,6 +570,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         //    gl_FragColor = vec4(n * 0.5 + 0.5, 1.0);
         //    gl_FragColor = vec4(vec3(cd), 1.0);
         //    gl_FragColor = vec4(d * vec3(1.06, 1.06, 0.98), 1.0);
+        */
 }
 
 
