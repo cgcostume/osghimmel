@@ -61,7 +61,7 @@ Himmel *Himmel::create()
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
-    ,   NULL // new CloudLayerHighGeode()
+    ,   NULL//new CloudLayerHighGeode()
     ,   new Astronomy());
 }
 
@@ -126,11 +126,11 @@ Himmel::Himmel(
         addChild(m_moon);
         m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
-        m_moonGlare = new MoonGlareGeode;
-        addChild(m_moonGlare);
-        m_moonGlare->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+        //m_moonGlare = new MoonGlareGeode;
+        //addChild(m_moonGlare);
+        //m_moonGlare->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
-        m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
+        //m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
     }
     if(m_atmosphere)
     {
@@ -197,12 +197,23 @@ void Himmel::update()
 
         u_time->set(static_cast<float>(getTime()->getf()));
 
+
+        //if(m_moon)
+        //{
+        //    const osg::Vec3 moonrv = astro()->getMoonPosition(true);
+
+        //    m_cameraHint->setViewMatrix(osg::Matrix::lookAt(osg::Vec3(0.0, 0.0, 0.0)
+        //    ,   moonrv
+        //    ,   osg::Vec3(0.0, 0.0, 1.0))); 
+        //    //m_cameraHint->setViewMatrixAsLookAt();
+        //}
+
         if(m_milkyway)
             m_milkyway->update(*this);
         if(m_moon)
         {
             m_moon->update(*this);
-            m_moonGlare->update(*this);
+            //m_moonGlare->update(*this);
         }
         if(m_stars)
             m_stars->update(*this);

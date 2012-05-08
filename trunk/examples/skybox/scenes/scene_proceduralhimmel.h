@@ -39,6 +39,35 @@ namespace osgHimmel
 }
 
 
+class CameraLock : public osg::NodeCallback 
+{
+public:
+
+    enum e_Target
+    {
+        T_None
+    ,   T_Moon
+    ,   T_Sun
+    };
+
+public:
+
+    CameraLock(osgHimmel::Himmel *himmel, osg::Camera *camera);
+
+    virtual void operator()(
+        osg::Node *node
+    ,   osg::NodeVisitor *nv);
+
+    void setTarget(const e_Target target);
+
+protected:
+    osgHimmel::Himmel* m_himmel;
+    osg::Camera *m_camera;
+
+    e_Target m_target;
+};
+
+
 class Scene_ProceduralHimmel : public AbstractHimmelScene
 {
 public:
@@ -57,6 +86,8 @@ public:
     virtual const double setLongitude(const double longitude);
     virtual const double setAltitude(const double altitude);
 
+    void setCameraLockTarget(const CameraLock::e_Target target);
+
 protected:
 
     // from AbstractPropertySupport
@@ -69,6 +100,8 @@ protected:
 
 protected:
     osg::ref_ptr<osgHimmel::Himmel> m_himmel;
+
+    CameraLock *m_cameraLock;
 };
 
 

@@ -94,7 +94,45 @@ namespace
     const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (MilkyWay)"));
 }
 
+
 using namespace osgHimmel;
+
+
+
+CameraLock::CameraLock(Himmel *himmel, osg::Camera *camera)
+:   m_camera(camera)
+,   m_himmel(himmel)
+,   m_target(T_None)
+{
+}
+
+void CameraLock::operator()(
+    osg::Node *node
+,   osg::NodeVisitor *nv)
+{
+    traverse(node, nv);
+    
+    osg::Vec3 target(0.0, 0.0, 0.0);
+
+    switch(m_target)
+    {
+    case T_Moon:
+        target = m_himmel->astro()->getMoonPosition(true);
+        break;
+    case T_Sun:
+        target = m_himmel->astro()->getSunPosition(true);
+        break;
+    default:
+        return;
+    }
+    m_camera->setViewMatrix(osg::Matrix::lookAt(
+        osg::Vec3(0.0, 0.0, 0.0), target, osg::Vec3(0.0, 0.0, 1.0))); 
+}
+
+void CameraLock::setTarget(const CameraLock::e_Target target)
+{
+    m_target = target;
+}
 
 
 // TEMP
@@ -138,6 +176,7 @@ using namespace osgHimmel;
 Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
 :   AbstractHimmelScene(camera)
 ,   m_himmel(NULL)
+,   m_cameraLock(NULL)
 {
     initializeProperties();
 
@@ -160,12 +199,20 @@ Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
 
     lsource->setStateSetModes(*group->getOrCreateStateSet(), osg::StateAttribute::ON);
 
+    m_cameraLock = new CameraLock(m_himmel, camera);
+    m_himmel->addUpdateCallback(m_cameraLock);
 //    m_himmel->addUpdateCallback(new ns(light, m_himmel));
 }
 
 
 Scene_ProceduralHimmel::~Scene_ProceduralHimmel()
 {
+}
+
+
+void Scene_ProceduralHimmel::setCameraLockTarget(const CameraLock::e_Target target)
+{
+    m_cameraLock->setTarget(target);
 }
 
 
@@ -204,9 +251,9 @@ void Scene_ProceduralHimmel::postInitialize()
         shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getGeometryShader());
         shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getFragmentShader());
 
-        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getVertexShader());
-        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getGeometryShader());
-        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getFragmentShader());
+        //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getVertexShader());
+        //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getGeometryShader());
+        //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getFragmentShader());
     }
 }
 
