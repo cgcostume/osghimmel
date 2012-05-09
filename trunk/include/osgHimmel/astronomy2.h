@@ -44,8 +44,6 @@ public:
 
     Astronomy2();
 
-    virtual const osg::Matrix equToLocalHorizonMatrix() const;
-
 protected:
 
     virtual const osg::Vec3 moonPosition(
@@ -70,7 +68,17 @@ protected:
     ,   const float latitude
     ,   const float longitude) const;
 
+    virtual const osg::Matrix equToHorTransform(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const;
+
+    virtual const float sunDistance(const t_julianDay t) const;
     virtual const float angularSunRadius(const t_julianDay t) const;
+
+    virtual const float moonRadius() const;
+
+    virtual const float moonDistance(const t_julianDay t) const;
     virtual const float angularMoonRadius(const t_julianDay t) const;
 };
 

@@ -45,11 +45,27 @@ Astronomy2::Astronomy2()
 }
 
 
+const float Astronomy2::sunDistance(const t_julianDay t) const
+{
+    return Sun2::distance(t);
+}
+
 const float Astronomy2::angularSunRadius(const t_julianDay t) const
 {
     return Earth2::apparentAngularSunDiameter(t) * 0.5;
 }
 
+
+const float Astronomy2::moonRadius() const
+{
+    return Moon2::meanRadius();
+}
+
+
+const float Astronomy2::moonDistance(const t_julianDay t) const
+{
+    return Moon2::distance(t);
+}
 
 const float Astronomy2::angularMoonRadius(const t_julianDay t) const
 {
@@ -139,25 +155,22 @@ const float Astronomy2::earthShineIntensity(
     const float ep2 = ep * ep;
     const float ep3 = ep * ep2;
 
-    const float Eem = -0.0061 * ep3 + 0.0289 * ep2 - 0.0105 * sin(ep); // with solved smoothstep and bold factors
+    const float Eem = -0.0061 * ep3 + 0.0289 * ep2 - 0.0105 * sin(ep); // with solved smoothstep and bold factors, max error to hulst 3%
 
     return Eem;
 }
 
 
-const osg::Matrix Astronomy2::equToLocalHorizonMatrix() const
+const osg::Matrix Astronomy2::equToHorTransform(
+        const t_aTime &aTime
+    ,   const float latitude
+    ,   const float longitude) const
 {
-
-    const t_aTime aTime(getATime());
-
     const float s = siderealTime2(aTime);
 
-    const float la = getLatitude();
-    const float lo = getLongitude();
-
-    return osg::Matrix::scale                  (-1, 1, 1)
-        * osg::Matrix::rotate( _rad(la) - _PI_2, 1, 0, 0)
-        * osg::Matrix::rotate(-_rad(s + lo)    , 0, 0, 1);
+    return osg::Matrix::scale(-1, 1, 1)
+        * osg::Matrix::rotate( _rad(latitude) -  _PI_2, 1, 0, 0)
+        * osg::Matrix::rotate(-_rad(s + longitude)    , 0, 0, 1);
 }
 
 } // namespace osgHimmel

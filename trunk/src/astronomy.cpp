@@ -44,11 +44,27 @@ Astronomy::Astronomy()
 }
 
 
+const float Astronomy::sunDistance(const t_julianDay t) const
+{
+    return Sun::distance(t);
+}
+
 const float Astronomy::angularSunRadius(const t_julianDay t) const
 {
     return Earth::apparentAngularSunDiameter(t) * 0.5;
 }
 
+
+const float Astronomy::moonRadius() const
+{
+    return Moon::meanRadius();
+}
+
+
+const float Astronomy::moonDistance(const t_julianDay t) const
+{
+    return Moon::distance(t);
+}
 
 const float Astronomy::angularMoonRadius(const t_julianDay t) const
 {
@@ -133,18 +149,16 @@ const float Astronomy::earthShineIntensity(
 }
 
 
-const osg::Matrix Astronomy::equToLocalHorizonMatrix() const
+const osg::Matrix Astronomy::equToHorTransform(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
 {
-    const t_aTime aTime(getATime());
-
     const float s = siderealTime(aTime);
 
-    const float la = getLatitude();
-    const float lo = getLongitude();
-
-    return osg::Matrix::scale                  (-1, 1, 1)
-        * osg::Matrix::rotate( _rad(la) - _PI_2, 1, 0, 0)
-        * osg::Matrix::rotate(-_rad(s + lo)    , 0, 0, 1);
+    return osg::Matrix::scale(-1, 1, 1)
+        * osg::Matrix::rotate( _rad(latitude)  - _PI_2, 1, 0, 0)
+        * osg::Matrix::rotate(-_rad(s + longitude)    , 0, 0, 1);
 }
 
 } // namespace osgHimmel

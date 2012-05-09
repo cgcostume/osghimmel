@@ -39,21 +39,24 @@ namespace osgHimmel
 
 #define _linear(t)       (t)
 
-#define _smoothstep(t)   (t * t * (3 - 2 * t))
+#define _smoothstep(t)   ((t) * (t) * (3 - 2 * (t)))
 #define _smoothstep2(t)  (_smoothstep(_smoothstep(t)))
 #define _smoothstep3(t)  (_smoothstep(_smoothstep2(t)))
 
-#define _smootherstep(t) (t * t * t * (t * (6 * t - 15) + 10))
+#define _smootherstep(t) ((t) * (t) * (t) * ((t) * (6 * (t) - 15) + 10))
 
-#define _squared(t)      (t * t)
-#define _invsquared(t)   (1 - (1 - t) * (1 - t))
+#define _squared(t)      ((t) * (t))
+#define _invsquared(t)   (1 - (1 - (t)) * (1 - (t)))
 
-#define _cubed(t)        (t * t * t)
-#define _invcubed(t)     (1 - (1 - t) * (1 - t) * (1 - t))
+#define _cubed(t)        ((t) * (t) * (t))
+#define _invcubed(t)     (1 - (1 - (t)) * (1 - (t)) * (1 - (t)))
 
 #define _sin(t)          (sin(t * 1.57079632679489661923))
-#define _invsin(t)       (1 - sin((1 - t) * 1.57079632679489661923))
+#define _invsin(t)       (1 - sin((1 - (t)) * 1.57079632679489661923))
 
+
+#define _smoothstep_ext(t, l, r) \
+    ((t) < (l) ? 0 : (r) < (t) ? 1 : _smoothstep(((t) - (l)) / ((r) - (l))))
 
 // Several interpolation methods in action: http://sol.gfxile.net/interpolation/
 

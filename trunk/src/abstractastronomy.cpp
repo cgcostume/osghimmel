@@ -39,9 +39,6 @@ AbstractAstronomy::AbstractAstronomy()
 :
     m_latitude(0.f)
 ,   m_longitude(0.f)
-
-,   m_overrideMoonPosition(false)
-,   m_overrideSunPosition(false)
 {
 }
 
@@ -100,34 +97,9 @@ const osg::Matrix AbstractAstronomy::getMoonOrientation(
 }
 
 
-const bool AbstractAstronomy::setOverrideMoonPosition(const bool enabled)
-{
-    if(enabled != m_overrideMoonPosition)
-        m_overrideMoonPosition = enabled;
-
-    return getOverrideMoonPosition();
-}
-
-const bool AbstractAstronomy::getOverrideMoonPosition() const
-{
-    return m_overrideMoonPosition;
-}
-
-
-const osg::Vec3 AbstractAstronomy::setMoonPosition(const osg::Vec3 &position)
-{
-    if(position != m_moonPosition)
-        m_moonPosition = position;
-
-    return m_moonPosition;
-}
-
 const osg::Vec3 AbstractAstronomy::getMoonPosition(
     const bool refractionCorrected) const
 {
-    if(m_overrideMoonPosition)
-        return m_moonPosition;
-
     return moonPosition(getATime(), getLatitude(), getLongitude(), refractionCorrected);
 }
 
@@ -141,34 +113,9 @@ const osg::Vec3 AbstractAstronomy::getMoonPosition(
 }
 
 
-const bool AbstractAstronomy::setOverrideSunPosition(const bool enabled)
-{
-    if(enabled != m_overrideSunPosition)
-        m_overrideSunPosition = enabled;
-
-    return getOverrideSunPosition();
-}
-
-const bool AbstractAstronomy::getOverrideSunPosition() const
-{
-    return m_overrideSunPosition;
-}
-
-
-const osg::Vec3 AbstractAstronomy::setSunPosition(const osg::Vec3 &position)
-{
-    if(position != m_sunPosition)
-        m_sunPosition = position;
-
-    return m_sunPosition;
-}
-
 const osg::Vec3 AbstractAstronomy::getSunPosition(
     const bool refractionCorrected) const
 {
-    if(m_overrideSunPosition)
-        return m_sunPosition;
-
     return sunPosition(getATime(), getLatitude(), getLongitude(), refractionCorrected);
 }
 
@@ -187,13 +134,23 @@ const float AbstractAstronomy::getEarthShineIntensity() const
     return earthShineIntensity(getATime(), getLatitude(), getLongitude());
 }
 
-
 const float AbstractAstronomy::getEarthShineIntensity(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude) const
 {
     return earthShineIntensity(aTime, latitude, longitude);
+}
+
+
+const float AbstractAstronomy::getSunDistance() const
+{
+    return sunDistance(t());
+}
+
+const float AbstractAstronomy::getSunDistance(const t_aTime &aTime) const
+{
+    return sunDistance(jd(aTime));
 }
 
 
@@ -208,6 +165,23 @@ const float AbstractAstronomy::getAngularSunRadius(const t_aTime &aTime) const
 }
 
 
+const float AbstractAstronomy::getMoonDistance() const
+{
+    return moonDistance(t());
+}
+
+const float AbstractAstronomy::getMoonDistance(const t_aTime &aTime) const
+{
+    return moonDistance(jd(aTime));
+}
+
+
+const float AbstractAstronomy::getMoonRadius() const
+{
+    return moonRadius();
+}
+
+
 const float AbstractAstronomy::getAngularMoonRadius() const
 {
     return angularMoonRadius(t());
@@ -216,6 +190,20 @@ const float AbstractAstronomy::getAngularMoonRadius() const
 const float AbstractAstronomy::getAngularMoonRadius(const t_aTime &aTime) const
 {
     return angularMoonRadius(jd(aTime));
+}
+
+
+const osg::Matrix AbstractAstronomy::getEquToHorTransform() const
+{
+    return equToHorTransform(getATime(), getLatitude(), getLongitude());
+}
+ 
+const osg::Matrix AbstractAstronomy::getEquToHorTransform(
+    const t_aTime &aTime
+,   const float latitude
+,   const float longitude) const
+{
+    return equToHorTransform(aTime, latitude, longitude);
 }
 
 } // namespace osgHimmel
