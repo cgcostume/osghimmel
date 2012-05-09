@@ -99,7 +99,7 @@ void StarsGeode::update(const Himmel &himmel)
 
     u_quadWidth->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
 
-    u_R->set(himmel.astro()->equToLocalHorizonMatrix());
+    u_R->set(himmel.astro()->getEquToHorTransform());
 }
 
 

@@ -84,7 +84,13 @@ protected:
         osg::StateSet* stateSet
     ,   const char* cubeMapFilePath);
 
-    void setupShader  (osg::StateSet* stateSet);
+    void setupMoonTextureCube(
+        osg::StateSet* stateSet
+    ,   const char* cubeMapFilePath);
+
+    void setupEclipseTexture(osg::StateSet* stateSet);
+
+    void setupShader(osg::StateSet* stateSet);
 
     const std::string getVertexShaderSource();
     const std::string getFragmentShaderSource();
@@ -101,6 +107,10 @@ protected:
     osg::ref_ptr<osg::Uniform> u_moonr;
 
     osg::ref_ptr<osg::Uniform> u_moonCube;
+
+    osg::ref_ptr<osg::Uniform> u_eclCoeffs;
+    osg::ref_ptr<osg::Uniform> u_eclParams;
+
     osg::ref_ptr<osg::Uniform> u_R;
     osg::ref_ptr<osg::Uniform> u_sunShine;
     osg::ref_ptr<osg::Uniform> u_earthShine;

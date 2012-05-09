@@ -81,7 +81,7 @@ MilkyWayGeode::~MilkyWayGeode()
 
 void MilkyWayGeode::update(const Himmel &himmel)
 {
-    u_R->set(himmel.astro()->equToLocalHorizonMatrix());
+    u_R->set(himmel.astro()->getEquToHorTransform());
 }
 
 

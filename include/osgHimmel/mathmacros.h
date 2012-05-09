@@ -67,6 +67,12 @@ namespace osgHimmel
 #define _rad(deg) \
     ((deg) * _PI / 180.0L)
 
+#define _mi(a, b) \
+    ((a) < (b) ? (a) : (b))
+
+#define _ma(a, b) \
+    ((a) < (b) ? (b) : (a))
+
 // same as _hour
 // note: if h is negative use -_decimal(d, m, s) instead of _decimal(-d, m, s)
 #define _decimal(d, m, s) \

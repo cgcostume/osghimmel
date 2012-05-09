@@ -71,10 +71,6 @@ namespace
     const QString PROPERTY_MOON_SUNSHINE_INTENSITY  (TR("Sun Shine Intensity"));
     const QString PROPERTY_MOON_EARTHSHINE_COLOR    (TR("Earth Shine Color"));
     const QString PROPERTY_MOON_EARTHSHINE_INTENSITY(TR("Earth Shine Intensity"));
-    const QString PROPERTY_MOON_POSITION_OVERRIDE   (TR("Moon Position Override"));
-    const QString PROPERTY_MOON_POSITION_X          (TR("Moon Position X"));
-    const QString PROPERTY_MOON_POSITION_Y          (TR("Moon Position Y"));
-    const QString PROPERTY_MOON_POSITION_Z          (TR("Moon Position Z"));
 
     const QString GROUP_PROCEDURAL_STARS            (TR("Stars"));
 
@@ -284,10 +280,6 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*moonGroup, PROPERTY_MOON_SUNSHINE_INTENSITY, MoonGeode::defaultSunShineIntensity(), 0.0, 100.0, 0.25); 
     createProperty(*moonGroup, PROPERTY_MOON_EARTHSHINE_COLOR, toQColor(MoonGeode::defaultEarthShineColor())); 
     createProperty(*moonGroup, PROPERTY_MOON_EARTHSHINE_INTENSITY, MoonGeode::defaultEarthShineIntensity(), 0.0, 100.0, 0.25); 
-    createProperty(*moonGroup, PROPERTY_MOON_POSITION_OVERRIDE, false); 
-    createProperty(*moonGroup, PROPERTY_MOON_POSITION_X, 0.0, -1.0, 1.0, 0.01); 
-    createProperty(*moonGroup, PROPERTY_MOON_POSITION_Y, 0.0, -1.0, 1.0, 0.01); 
-    createProperty(*moonGroup, PROPERTY_MOON_POSITION_Z, 0.0, -1.0, 1.0, 0.01);   
 
     QtProperty *starsGroup = createGroup(GROUP_PROCEDURAL_STARS);
 
@@ -349,18 +341,6 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->moon()->setEarthShineColor(toVec3(colorValue(PROPERTY_MOON_EARTHSHINE_COLOR)));
     else if(PROPERTY_MOON_EARTHSHINE_INTENSITY == name)
         m_himmel->moon()->setEarthShineIntensity(doubleValue(PROPERTY_MOON_EARTHSHINE_INTENSITY));
-    else if(PROPERTY_MOON_POSITION_OVERRIDE == name)
-        m_himmel->astro()->setOverrideMoonPosition(boolValue(PROPERTY_MOON_POSITION_OVERRIDE));
-    else if(PROPERTY_MOON_POSITION_X == name || PROPERTY_MOON_POSITION_Y == name || PROPERTY_MOON_POSITION_Z == name)
-    {
-        osg::Vec3 vec;
-        vec[0] =  doubleValue(PROPERTY_MOON_POSITION_X);
-        vec[1] =  doubleValue(PROPERTY_MOON_POSITION_Y);
-        vec[2] =  doubleValue(PROPERTY_MOON_POSITION_Z);
-        vec.normalize();
-        m_himmel->astro()->setMoonPosition(vec);
-    }
-
 
     else if(PROPERTY_STARS_COLOR == name)
         m_himmel->stars()->setColor(toVec3(colorValue(PROPERTY_STARS_COLOR)));
