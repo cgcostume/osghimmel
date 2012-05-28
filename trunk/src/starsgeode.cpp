@@ -39,6 +39,7 @@
 #include "strutils.h"
 
 #include "shaderfragment/common.h"
+#include "shaderfragment/scattering.h"
 
 #include <osg/Geometry>
 #include <osg/Point>
@@ -66,7 +67,7 @@ StarsGeode::StarsGeode(const char* brightStarsFilePath)
 ,   m_fShader(new osg::Shader(osg::Shader::FRAGMENT))
 
 ,   u_R(NULL)
-,   u_quadWidth(NULL)
+,   u_q(NULL)
 ,   u_noise1(NULL)
 
 ,   u_color(NULL)
@@ -94,10 +95,12 @@ StarsGeode::~StarsGeode()
 
 void StarsGeode::update(const Himmel &himmel)
 {
+    // TODO: starmap and planets also require this ... - find better place
     const float fov = himmel.getCameraFovHint();
     const float height = himmel.getViewSizeHeightHint();
 
-    u_quadWidth->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
+    //u_q->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
+    u_q->set(static_cast<float>(sqrt(2.0) * 2.0 * tan(_rad(fov * 0.5)) / height));
 
     u_R->set(himmel.astro()->getEquToHorTransform());
 }
@@ -108,8 +111,8 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
     u_R = new osg::Uniform("R", osg::Matrix::identity());
     stateSet->addUniform(u_R);
 
-    u_quadWidth = new osg::Uniform("quadWidth", 0.0f);
-    stateSet->addUniform(u_quadWidth);
+    u_q = new osg::Uniform("q", 0.0f);
+    stateSet->addUniform(u_q);
 
     u_noise1 = new osg::Uniform("noise1", 0);
     stateSet->addUniform(u_noise1);
@@ -153,7 +156,8 @@ void StarsGeode::createAndAddDrawable(const char* brightStarsFilePath)
         osg::Vec3f vec = equ.toEuclidean();
         (*vAry)[i] = osg::Vec4(vec.x(), vec.y(), vec.z(), i);
 
-        (*cAry)[i] = osg::Vec4(stars[i].sRGB_R, stars[i].sRGB_G, stars[i].sRGB_B, stars[i].Vmag);
+        (*cAry)[i] = osg::Vec4(stars[i].sRGB_R, stars[i].sRGB_G, stars[i].sRGB_B, stars[i].Vmag + 0.4);
+        // the 0.4 accounts for magnitude decrease due to the earth's atmosphere
     }
       
     osg::ref_ptr<osg::Geometry> g = new osg::Geometry;
@@ -388,7 +392,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "uniform float scintillation;\n"
         "uniform float scattering;\n"
         "\n"
-        "uniform float quadWidth;\n"
+        "uniform float q;\n"
         "uniform float apparentMagnitude;\n"
         "\n"
         "uniform sampler1D noise1;\n"
@@ -418,7 +422,7 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float vMag = gl_Color.w;\n"
         "\n"
         "    float estB = pow(2.512, apparentMagnitude - vMag);\n"
-        "    float scaledB = estB * minB / (quadWidth * quadWidth);\n"
+        "    float scaledB = estB * minB / (q * q);\n"
         "\n"
         "    float i = mod(int(cmn[3]) ^ int(gl_Vertex.w), 251);\n"
         "    float s = pow(texture(noise1, i / 256.0).r , 8) / (scaledB * 0.05);\n"
@@ -446,13 +450,14 @@ const std::string StarsGeode::getGeometryShaderSource()
     return glsl_version_150() +
 
         glsl_geometry_ext()
+    +   glsl_scattering()
     
     +   PRAGMA_ONCE(main, 
 
         "layout (points) in;\n"
         "layout (triangle_Strip, max_vertices = 4) out;\n"
         "\n"
-        "uniform float quadWidth;\n"
+        "uniform float q;\n"
         "uniform float glareScale;\n"
         "\n"
         "in vec4 m_color[];\n"
@@ -474,7 +479,7 @@ const std::string StarsGeode::getGeometryShaderSource()
         "    m_c = vec4(m_color[0].rgb, scaledB);\n"
         "\n"
         "    gl_TexCoord[0].z = sqrt(scaledB) * max(1.0, glareScale);\n"
-        "    float k = sqrt(2) * quadWidth * gl_TexCoord[0].z;\n"
+        "    float k = q * gl_TexCoord[0].z;\n"
         "\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
         "    gl_TexCoord[0].xy = vec2(-1.0, -1.0);\n"
@@ -501,7 +506,7 @@ const std::string StarsGeode::getFragmentShaderSource()
         
     +   PRAGMA_ONCE(main,
 
-        "uniform float quadWidth;\n"
+        "uniform float q;\n"
         "uniform float glareIntensity;\n"
         "\n"
         "uniform vec3 sun;\n"

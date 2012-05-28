@@ -33,8 +33,10 @@
 #include "himmelquad.h"
 #include "abstractastronomy.h"
 #include "earth.h"
+#include "mathmacros.h"
 
 #include "shaderfragment/common.h"
+#include "shaderfragment/scattering.h"
 
 #include <osg/Geometry>
 #include <osg/TextureCubeMap>
@@ -55,8 +57,10 @@ MilkyWayGeode::MilkyWayGeode(const char* cubeMapFilePath)
 ,   m_hquad(new HimmelQuad())
 
 ,   u_R(NULL)
+,   u_q(NULL)
+
 ,   u_color(NULL) // [0,1,2] = color; [3] = intensity
-,   u_scaledB(NULL)
+,   u_deltaM(NULL)
 ,   u_scattering(NULL)
 ,   u_milkywayCube(NULL)
 
@@ -81,6 +85,13 @@ MilkyWayGeode::~MilkyWayGeode()
 
 void MilkyWayGeode::update(const Himmel &himmel)
 {
+    // TODO: starmap and planets also require this ... - find better place
+    const float fov = himmel.getCameraFovHint();
+    const float height = himmel.getViewSizeHeightHint();
+
+    //u_q->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
+    u_q->set(static_cast<float>(sqrt(2.0) * 2.0 * tan(_rad(fov * 0.5)) / height));
+
     u_R->set(himmel.astro()->getEquToHorTransform());
 }
 
@@ -95,11 +106,14 @@ void MilkyWayGeode::setupUniforms(osg::StateSet* stateSet)
     u_R = new osg::Uniform("R", osg::Matrix::identity());
     stateSet->addUniform(u_R);
 
+    u_q = new osg::Uniform("q", 0.0f);
+    stateSet->addUniform(u_q);
+
     u_color = new osg::Uniform("color", osg::Vec4(defaultColor(), defaultColorRatio()));
     stateSet->addUniform(u_color);
 
-    u_scaledB = new osg::Uniform("scaledB", 1.f);
-    stateSet->addUniform(u_scaledB);
+    u_deltaM = new osg::Uniform("deltaM", 1.f);
+    stateSet->addUniform(u_deltaM);
 
     setApparentMagnitude(defaultApparentMagnitude()); // This calls updateScaledB.
 
@@ -166,12 +180,9 @@ void MilkyWayGeode::updateScaledB()
     // Precompute brightness based on logarithmic scale. 
     // (Similar to starsgeode vertex shader.)
 
-    static const float minB = pow(2.512, static_cast<double>(-Earth::apparentMagnitudeLimit()));
+    const float deltaM = pow(2.512, m_apparentMagnitude - static_cast<double>(Earth::apparentMagnitudeLimit()));
 
-    float estB = pow(2.512, m_apparentMagnitude + 0.0);
-    float scaledB = minB * estB;
-
-    u_scaledB->set(scaledB);
+    u_deltaM->set(deltaM);
 }
 
 
@@ -298,22 +309,22 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
 
     +   glsl_cmn_uniform()
     +   glsl_horizon()
+    +   glsl_scattering()
 
     +   PRAGMA_ONCE(main,
 
         "uniform vec3 sun;\n"
         "\n"
         "uniform vec4 color;\n"
+        "uniform float q;\n"
         "\n"
-        "uniform float scaledB;\n"
+        "uniform float deltaM;\n"
         "uniform float scattering;\n"
         "\n"
         "uniform samplerCube milkywayCube;\n"
         "\n"
         "in vec4 m_eye;\n"
         "in vec4 m_ray;\n"
-        "\n"
-        "const vec3 lambda = vec3(0.058, 0.135, 0.331);\n"
         "\n"
         "void main(void)\n"
         "{\n"
@@ -324,16 +335,14 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "        discard;\n"
         "\n"
         "    vec4 fc = textureCube(milkywayCube, stu);\n"
+        "    fc *= 4e-2 / sqrt(q) * deltaM;\n"
         "\n"
-        "    float w1 = pow(1.0 - eye.z, 5.37) * scattering;\n"
-        "\n"
-        "    vec3 c = mix(fc.rgb, fc.rgb * color.rgb, color.w)\n"
-        "        * scaledB - w1 * (.125 + lambda);\n"
+        "    float omega = acos(eye.z);\n"
         "\n"
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
-        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
+        //"    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
         "\n"
-        "    gl_FragColor = vec4(c * b, 1.0);\n"
+        "    gl_FragColor = vec4(fc.rgb - scatt(omega), 1.0);\n"
         "}");
 }
 
