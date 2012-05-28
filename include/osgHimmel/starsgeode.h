@@ -107,7 +107,7 @@ protected:
     osg::Shader *m_fShader;
 
     osg::ref_ptr<osg::Uniform> u_R;
-    osg::ref_ptr<osg::Uniform> u_quadWidth;
+    osg::ref_ptr<osg::Uniform> u_q;
     osg::ref_ptr<osg::Uniform> u_noise1;
 
     osg::ref_ptr<osg::Uniform> u_color;

@@ -151,7 +151,9 @@ set(SHADER_FRAGMENTS
     shaderfragment/noise.h
     shaderfragment/noise.cpp
     shaderfragment/pseudo_rand.h
-    shaderfragment/pseudo_rand.cpp)
+    shaderfragment/pseudo_rand.cpp
+	shaderfragment/scattering.h
+    shaderfragment/scattering.cpp)
 
 source_group("" FILES ${LIB_SOURCES})    
 source_group("Shader Fragments" FILES ${SHADER_FRAGMENTS})

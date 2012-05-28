@@ -99,9 +99,10 @@ protected:
     float m_apparentMagnitude;
 
     osg::ref_ptr<osg::Uniform> u_R;
+    osg::ref_ptr<osg::Uniform> u_q;
     osg::ref_ptr<osg::Uniform> u_milkywayCube;
     osg::ref_ptr<osg::Uniform> u_color;
-    osg::ref_ptr<osg::Uniform> u_scaledB;
+    osg::ref_ptr<osg::Uniform> u_deltaM;
     osg::ref_ptr<osg::Uniform> u_scattering;
 
 

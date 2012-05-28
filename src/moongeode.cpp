@@ -36,6 +36,7 @@
 #include "interpolate.h"
 
 #include "shaderfragment/common.h"
+#include "shaderfragment/scattering.h"
 
 #include <osg/Geometry>
 #include <osg/TextureCubeMap>
@@ -478,6 +479,8 @@ const std::string MoonGeode::getFragmentShaderSource()
     +   glsl_cmn_uniform()
     +   glsl_horizon()
 
+    +   glsl_scattering()
+
     +   PRAGMA_ONCE(main,
 
         "uniform vec3 sun;\n"
@@ -543,6 +546,8 @@ const std::string MoonGeode::getFragmentShaderSource()
         // BRDF
         "    float F = TWO_OVER_THREEPI * B * S / (1.0 + cos_r / cos_i);\n"
         "\n"
+        "    if(cos_i > 0)\n"
+        "        return 0.0;\n"
         "    return (1.0 - step(0, cos_i)) * F;\n"
         "}\n"
         "\n"
@@ -629,6 +634,8 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         "    diffuse *= sunShine.rgb;\n"
         "    diffuse *= e;\n"
+        "\n"
+        "    diffuse -= scatt(acos(eye.z));\n"
         "\n"
         "    gl_FragColor = vec4(diffuse, 1.0);\n"
         "}");

@@ -154,11 +154,16 @@ const osg::Matrix Astronomy::equToHorTransform(
 ,   const float latitude
 ,   const float longitude) const
 {
+    const t_julianDay T(jCenturiesSinceSE(jd(aTime)));
     const float s = siderealTime(aTime);
 
     return osg::Matrix::scale(-1, 1, 1)
         * osg::Matrix::rotate( _rad(latitude)  - _PI_2, 1, 0, 0)
-        * osg::Matrix::rotate(-_rad(s + longitude)    , 0, 0, 1);
+        * osg::Matrix::rotate(-_rad(s + longitude)    , 0, 0, 1)
+        // precession as suggested in (Jensen et al. 2001)
+        * osg::Matrix::rotate( 0.01118 * T, 0, 0, 1)
+        * osg::Matrix::rotate(-0.00972 * T, 1, 0, 0)
+        * osg::Matrix::rotate( 0.01118 * T, 0, 0, 1);
 }
 
 } // namespace osgHimmel
