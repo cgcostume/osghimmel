@@ -75,7 +75,7 @@ StarsGeode::StarsGeode(const char* brightStarsFilePath)
 ,   u_glareScale(NULL)
 ,   u_apparentMagnitude(NULL)
 ,   u_scattering(NULL)
-,   u_scintillation(NULL)
+,   u_scintillations(NULL)
 {
     setName("Stars");
 
@@ -131,8 +131,8 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
     u_apparentMagnitude = new osg::Uniform("apparentMagnitude", defaultApparentMagnitude());
     stateSet->addUniform(u_apparentMagnitude);
 
-    u_scintillation = new osg::Uniform("scintillation", defaultScintillation());
-    stateSet->addUniform(u_scintillation);
+    u_scintillations = new osg::Uniform("scintillations", defaultScintillation());
+    stateSet->addUniform(u_scintillations);
 
     u_scattering = new osg::Uniform("scattering", defaultScattering());
     stateSet->addUniform(u_scattering);
@@ -254,27 +254,27 @@ const float StarsGeode::getGlareScale() const
 
 const float StarsGeode::defaultGlareScale()
 {
-    return 64.0f;
+    return 1.0f;
 }
 
 
 const float StarsGeode::setScintillation(const float scintillation)
 {
-    u_scintillation->set(scintillation);
+    u_scintillations->set(scintillation);
     return getScintillation();
 }
 
 const float StarsGeode::getScintillation() const
 {
     float scintillation;
-    u_scintillation->get(scintillation);
+    u_scintillations->get(scintillation);
 
     return scintillation;
 }
 
 const float StarsGeode::defaultScintillation()
 {
-    return 1.0f;
+    return 8.0f;
 }
 
 
@@ -294,7 +294,7 @@ const float StarsGeode::getScattering() const
 
 const float StarsGeode::defaultScattering()
 {
-    return 2.0f;
+    return 1.0f;
 }
 
 
@@ -314,7 +314,7 @@ const float StarsGeode::getApparentMagnitude() const
 
 const float StarsGeode::defaultApparentMagnitude() 
 {
-    return 5.0f;
+    return 4.0f;
 }
 
 
@@ -381,7 +381,8 @@ const std::string StarsGeode::getVertexShaderSource()
     return glsl_version_150()
 
     +   glsl_horizon()
-    
+    +   glsl_scattering()
+
     +   PRAGMA_ONCE(main,
 
         "uniform vec3 sun;\n"
@@ -389,8 +390,10 @@ const std::string StarsGeode::getVertexShaderSource()
         "uniform mat4 R;\n" // rgb and alpha for mix
         "uniform vec4 color;\n" // rgb and alpha for mix
         "\n"
-        "uniform float scintillation;\n"
         "uniform float scattering;\n"
+        "uniform float scintillations;\n"
+        "\n"
+        "uniform float glareScale;\n"
         "\n"
         "uniform float q;\n"
         "uniform float apparentMagnitude;\n"
@@ -398,14 +401,12 @@ const std::string StarsGeode::getVertexShaderSource()
         "uniform sampler1D noise1;\n"
         "\n"
 
-        "out vec4 m_color;\n"
+        "const float PI = 3.1415926535897932384626433832795;\n"
+        "const float _35OVER13PI = 0.85698815511020565414014334123662;\n"
         "\n"
 
-        "const float minB = pow(2.512, -" + std::string(apparentMagLimit) + ") * 4e-5;\n"
-        "\n"
-        // ("Efcient Rendering of Atmospheric Phenomena" - 2004 - Riley et al.)
-        // This is used only for the ratio, not for exact physical scale.
-        "const vec3 lambda = normalize(vec3(0.58, 1.35, 3.31));\n"
+        "out float v_k;\n"
+        "out vec3 v_color;\n"
         "\n"
 
         "void main(void)\n"
@@ -413,35 +414,48 @@ const std::string StarsGeode::getVertexShaderSource()
         "    vec4 v = gl_Vertex * R;\n"
         "    gl_Position = v;\n"
         "\n"
+        "    v_k = 0;\n"
+        "\n"
         "    if(belowHorizon(v.xyz))\n" // "discard" stars below horizon
-        "    {\n"
-        "        m_color = vec4(0.0);\n"
         "        return;\n"
-        "    }\n"
         "\n"
-        "    float vMag = gl_Color.w;\n"
+        "    float m = gl_Color.w;\n"
+        "    float m_a = apparentMagnitude;\n"
         "\n"
-        "    float estB = pow(2.512, apparentMagnitude - vMag);\n"
-        "    float scaledB = estB * minB / (q * q);\n"
+        "    float delta_m = pow(2.512, m_a - m);\n"
         "\n"
-        "    float i = mod(int(cmn[3]) ^ int(gl_Vertex.w), 251);\n"
-        "    float s = pow(texture(noise1, i / 256.0).r , 8) / (scaledB * 0.05);\n"
+        "    float i_t = delta_m * _35OVER13PI;\n"
+        "    i_t *= 4e-7 / (q * q);\n"
+        "    i_t = min(1.167, i_t);\n"
         "\n"
-        // Approximation of relative air mass (path length relative to that at the zenith at sea level).
-        // Also called optical path length: http://en.wikipedia.org/wiki/Air_mass_(astronomy).
-        // y = x^5.37 -> y is 39 times higher for x = 0 than for x = 1 which correlates the relative 
-        // air mass ratio from zenith to horizon.
-        "    float w1 = pow(1.0 - v.z, 5.37) * scattering;\n"
-        "    float w2 = min(1.0, (1.0 - v.z) * s * scintillation);\n"
+        "    if(i_t < 0.01)\n"
+        "        return;\n"
         "\n"
-        "    vec3 c = mix(gl_Color.rgb, color.rgb, color.a)\n"
-        "        - lambda * (w1 * 0.25 + w2);\n"
+        "    float theta = acos(v.z);\n"
         "\n"
-            // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
-        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
+        "    float r = mod(int(cmn[3]) ^ int(gl_Vertex.w), 251);\n"
+        "    float i_s = optical(theta) * scintillations;\n"
         "\n"
-        "    m_color = vec4(c, scaledB - w1) * b;\n"
+        "    float s = pow(texture(noise1, r / 256.0).r, 8) * i_s;\n"
+        "\n"
+        "    float i_g = pow(2.512, m_a - (m + 0.167)) - 1;\n"
+        "\n"
+
+            // scinitillations in intensity and glare
+        "    i_g -= s;\n"
+        "    i_t -= s;\n"
+        "\n"
+        "    v_color = mix(gl_Color.rgb, color.rgb, color.w);\n"
+        "    v_color -= scatt(theta) * scattering;\n"
+        "    v_color = max(vec3(0.0), v_color);\n"
+        "    v_color *= i_t;\n"
+        "    v_color -= lambda * s;\n"
+        "\n"
+        "    v_k = max(q, sqrt(i_g) * 2e-2 * glareScale);\n"
         "}");
+
+    // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
+    // "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
 }
 
 
@@ -458,28 +472,29 @@ const std::string StarsGeode::getGeometryShaderSource()
         "layout (triangle_Strip, max_vertices = 4) out;\n"
         "\n"
         "uniform float q;\n"
-        "uniform float glareScale;\n"
         "\n"
-        "in vec4 m_color[];\n"
-        "out vec4 m_c;\n"
+        "in float v_k[];\n"
+        "in vec3 v_color[];\n"
         "\n"
+        "out vec3 g_color;\n"
+        "\n"
+
         "void main()\n"
         "{\n"
-        "    vec3 p = normalize(gl_in[0].gl_Position.xyz);\n"
-        "\n"
-        "    vec3 u = cross(p, vec3(1));\n"
-        "    vec3 v = cross(u, p);\n"
-        "\n"
-        "    float scaledB = m_color[0].w;\n"
-        "\n"
-        // Ignore stars with less than 1% Brightness.
-        "    if(scaledB < 0.01)\n"
+        "    if(v_k[0] == 0)\n"
         "        return;\n"
         "\n"
-        "    m_c = vec4(m_color[0].rgb, scaledB);\n"
+        "    float k = v_k[0];\n"
         "\n"
-        "    gl_TexCoord[0].z = sqrt(scaledB) * max(1.0, glareScale);\n"
-        "    float k = q * gl_TexCoord[0].z;\n"
+        "    vec3 p = gl_in[0].gl_Position.xyz;\n"
+        "\n"
+        "    vec3 u = cross(p, vec3(0, 0, 1));\n"
+        "    vec3 v = cross(u, p);\n"
+        "\n"
+        // used to have const psf function appearance
+        "    gl_TexCoord[0].z = k / q;\n"
+        "\n"
+        "    g_color = v_color[0];\n"
         "\n"
         "    gl_Position = gl_ModelViewProjectionMatrix * vec4(p - normalize(-u -v) * k, 1.0);\n"
         "    gl_TexCoord[0].xy = vec2(-1.0, -1.0);\n"
@@ -511,27 +526,26 @@ const std::string StarsGeode::getFragmentShaderSource()
         "\n"
         "uniform vec3 sun;\n"
         "\n"
-        "in vec4 m_c;\n"
+        "in vec3 g_color;\n"
         "\n"
         "void main(void)\n"
         "{\n"
         "    float x = gl_TexCoord[0].x;\n"
         "    float y = gl_TexCoord[0].y;\n"
         "\n"
-        "    float radius = 0.98;\n"
-        "    float zz = (radius * radius - x * x - y * y);\n"
+        "    float zz = (1 - x * x - y * y);\n"
         "\n"
         "    if(zz < 0)\n"
         "        discard;\n"
         "\n"
-        "    float s =  gl_TexCoord[0].z;\n"
+        "    float k =  gl_TexCoord[0].z;\n"
         "\n"
         "    float l = length(vec2(x, y));\n"
         "\n"
-        "    float t = smoothstep(1.0, 0.0, l * s * 0.5);\n"
-        "    float g = smoothstep(1.0, 0.0, pow(l, 0.0675)) * glareIntensity;\n"
+        "    float t = 1 - smoothstep(0.0, 1.0, l * k);\n"
+        "    float g = 1 - pow(l, glareIntensity / 64.0);\n"
         "\n"
-        "    gl_FragColor = m_c * (t + g);\n"
+	    "    gl_FragColor = vec4((t > g ? t : g) * g_color, 1.0);\n"
         "}");
 }
 

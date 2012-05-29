@@ -115,7 +115,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_glareScale;
     osg::ref_ptr<osg::Uniform> u_apparentMagnitude;
     osg::ref_ptr<osg::Uniform> u_scattering;
-    osg::ref_ptr<osg::Uniform> u_scintillation;
+    osg::ref_ptr<osg::Uniform> u_scintillations;
 
     // TODO: replace with VMag intensity function of procedural himmel
     osg::ref_ptr<osg::Uniform> u_sun;

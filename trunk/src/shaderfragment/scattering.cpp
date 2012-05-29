@@ -49,7 +49,7 @@ const std::string glsl_scattering()
         "const vec3 lambda = vec3(0.52, 1.22, 2.98);\n"
         "\n"
 
-        "vec3 scatt(const float theta)\n"   // theta is the angle between ray and zenith ~ probably acos(ray.z)
+        "float optical(const float theta)\n"
         "{\n"
         "    float sin_theta = sin(theta);\n"
         "\n"
@@ -58,7 +58,14 @@ const std::string glsl_scattering()
         "    s /= sin_theta;\n"
         "    s /= cmn[2] - cmn[0];\n"
         "\n"
-        "    return lambda * s;\n"
+        "    return s;\n"
+        "}\n"
+        "\n"
+
+        // theta is the angle between ray and zenith ~ probably acos(ray.z)
+        "vec3 scatt(const float theta)\n"   
+        "{\n"
+        "    return lambda * optical(theta);\n"
         "}"));
 
     return source;
