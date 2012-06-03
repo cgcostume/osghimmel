@@ -43,7 +43,8 @@
 #include "moonglaregeode.h"
 #include "starsgeode.h"
 #include "milkywaygeode.h"
-#include "cloudlayerhighgeode.h"
+#include "highcloudlayergeode.h"
+#include "dubecloudlayergeode.h"
 
 #else // #ifdef OSGHIMMEL_EXPORTS
 
@@ -55,7 +56,8 @@ namespace osgHimmel
     class MoonGlareGeode;
     class StarsGeode;
     class MilkyWayGeode;
-    class CloudLayerHighGeode;
+    class HighCloudLayerGeode;
+    class DubeCloudLayerGeode;
 } // namespace osgHimmel
 
 #endif // #ifdef OSGHIMMEL_EXPORTS
@@ -76,7 +78,8 @@ public:
     ,   MoonGeode *moon
     ,   StarsGeode *stars
     ,   AtmosphereGeode *atmosphere
-    ,   CloudLayerHighGeode *highLayer
+    ,   HighCloudLayerGeode *highLayer
+    ,   DubeCloudLayerGeode *dubeLayer
     ,   AbstractAstronomy *astronomy);
 
     virtual ~Himmel();
@@ -126,6 +129,11 @@ public:
         return m_astronomy;
     }
 
+    inline DubeCloudLayerGeode *dubeLayer() const
+    {
+        return m_dubeLayer;
+    }
+
 
     const osg::Vec3 getSunPosition() const;
     const osg::Vec3 getSunPosition(const t_aTime &aTime) const;
@@ -159,7 +167,8 @@ protected:
     osg::ref_ptr<MoonGlareGeode>      m_moonGlare;
     osg::ref_ptr<StarsGeode>          m_stars;
     osg::ref_ptr<MilkyWayGeode>       m_milkyway;
-    osg::ref_ptr<CloudLayerHighGeode> m_highLayer;
+    osg::ref_ptr<HighCloudLayerGeode> m_highLayer;
+    osg::ref_ptr<DubeCloudLayerGeode> m_dubeLayer;
 };
 
 } // namespace osgHimmel

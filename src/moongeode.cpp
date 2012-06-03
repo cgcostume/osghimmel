@@ -150,8 +150,10 @@ void MoonGeode::update(const Himmel &himmel)
             const float t = Dm < (e1 + 1) ? Dm / (2.f + 2.f * e1) : 0.5 + (Dm - e1 - 1.f) / (2.f * (e2 - e1));
 
             // brightness scalar of the eclipse phenomena as function of the distance
-            B = 1.0 + 18 * (1.0 - _smoothstep_ext(t, 0.2, 0.44));
-        }
+            B = 1.0 + 29 * (1.0 - _smoothstep_ext(t, 0.2, 0.44));
+
+            std::cout << t << std::endl;
+        }        
     }
 
     // encode in uniform
@@ -277,8 +279,8 @@ void MoonGeode::setupEclipseTexture(osg::StateSet* stateSet)
 
     const osg::Vec3 le0 = osg::Vec3(1.0, 1.0, 1.0) * 0.900f;
     const osg::Vec3 le1 = osg::Vec3(1.0, 1.0, 1.0) * 0.088f;
-    const osg::Vec3 le2 = osg::Vec3(0.6, 0.8, 1.0) * 0.019f;
-    const osg::Vec3 le3 = osg::Vec3(0.4, 0.5, 1.0) * 0.040f;
+    const osg::Vec3 le2 = osg::Vec3(0.4, 0.7, 1.0) * 0.030f;
+    const osg::Vec3 le3 = osg::Vec3(0.3, 0.5, 1.0) * 0.040f;
 
     const float s_u = 0.05;
 
@@ -296,7 +298,7 @@ void MoonGeode::setupEclipseTexture(osg::StateSet* stateSet)
         // add reddish darkening towards umbral center from atmosphere scattering, linear scaling within the umbral distance of e1
         l -= le2 * (fs < 0.5 ? _clamp(0, 1, - 2.0 * fs + 1) : 0);
         // account for blue scattered light visible at the outer edge of the umbral shadow
-        l += le3 * (_smoothstep_ext(fs, 0.5 * (1 - 3 * s_u), 0.5 * (1 + s_u))) * (1 - _smoothstep_ext(fs, 0.5, 1.0));
+        l += le3 * (_smoothstep_ext(fs, 0.5 * (1 - 4 * s_u), 0.5 * (1 + s_u))) * (1 - _smoothstep_ext(fs, 0.5, 1.0));
 
         map[i + 0] = l[0] < 0 ? 0 : l[0];
         map[i + 1] = l[1] < 0 ? 0 : l[1];
@@ -609,7 +611,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         
         // convert normals to horizontal space
-        "    vec3 h_n = mix(hn, m_tangent * s_n, surface * 2);\n"
+        "    vec3 h_n = mix(hn, m_tangent * s_n, surface);\n"
         "\n"
         
         // brdf

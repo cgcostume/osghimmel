@@ -43,7 +43,7 @@ void replace(
 {
     // length of value for char buffer:
 
-    const int n = ceil(log10(static_cast<float>(value)));
+    const int n = __max(1, ceil(log10(static_cast<float>(value))));
     char *buffer = new char[n + 1];
 
     __itoa(value, buffer, n + 1);

@@ -42,11 +42,12 @@ set(LIB_SOURCES
     atmospheregeode.cpp
     atmosphereprecompute.cpp
     brightstars.cpp
-    cloudlayerhighgeode.cpp
     coords.cpp
     cubemappedhimmel.cpp
+    dubecloudlayergeode.cpp
     earth.cpp
     earth2.cpp
+    highcloudlayergeode.cpp
     milkywaygeode.cpp
     gaussianmapgenerator.cpp
     himmelenvmap.cpp
@@ -82,13 +83,15 @@ set(LIB_SOURCES
     ${HEADER_PATH}/atmospheregeode.h
     ${HEADER_PATH}/atmosphereprecompute.h
     ${HEADER_PATH}/brightstars.h
-    ${HEADER_PATH}/cloudlayerhighgeode.h
+    
     ${HEADER_PATH}/coords.h
     ${HEADER_PATH}/cubemappedhimmel.h
 	${HEADER_PATH}/declspec.h
+    ${HEADER_PATH}/dubecloudlayergeode.h
     ${HEADER_PATH}/earth.h
     ${HEADER_PATH}/earth2.h
     ${HEADER_PATH}/gaussianmapgenerator.h
+    ${HEADER_PATH}/highcloudlayergeode.h
     ${HEADER_PATH}/himmelenvmap.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/horizonband.h

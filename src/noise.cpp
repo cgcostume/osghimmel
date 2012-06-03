@@ -31,6 +31,7 @@
 #include "noise.h"
 
 #include "mathmacros.h"
+#include "interpolate.h"
 #include "strutils.h"
 
 #include "shaderfragment/noise.h"
@@ -38,6 +39,8 @@
 #include <osg/Vec2f>
 #include <osg/Vec3f>
 #include <osg/Vec4f>
+
+#include <assert.h>
 
 
 namespace osgHimmel
@@ -73,8 +76,13 @@ const float Noise::m_grad[16][3] =
 };
 
 
-Noise::Noise(const unsigned int size)
-:   m_size(size)
+Noise::Noise(
+    const unsigned int rank
+,   const float xOffset
+,   const float yOffset)
+:   m_size(1 << rank)
+,   m_xoff(xOffset)
+,   m_yoff(yOffset)
 {
 }
 
@@ -84,6 +92,16 @@ const unsigned int Noise::hash(
 ,   const unsigned int y) const
 {
     return m_perm[(m_perm[x & MAXPERMINDEX] + y) & MAXPERMINDEX];
+}
+
+
+const unsigned int Noise::hash(
+    const unsigned int x
+,   const unsigned int y
+,   const unsigned int r) const
+{
+    assert(1 << r <= PERMSIZE);
+    return m_perm[(m_perm[x & ((1 << r) - 1)] + y) & ((1 << r) - 1)];
 }
 
 
@@ -98,11 +116,36 @@ const osg::Vec2f Noise::grad2(
 }
 
 
+const osg::Vec2f Noise::grad2(
+    const unsigned int x
+,   const unsigned int y
+,   const unsigned int r) const
+{
+    const unsigned char p = hash(x, y, r);
+    return osg::Vec2f(
+        m_grad[p & 0xf][0]
+    ,   m_grad[p & 0xf][1]);
+}
+
+
 const osg::Vec3f Noise::grad3(
     const unsigned int x
 ,   const unsigned int y) const
 {
     const unsigned char p = hash(x, y);
+    return osg::Vec3f(
+        m_grad[p & 0xf][0]
+    ,   m_grad[p & 0xf][1]
+    ,   m_grad[p & 0xf][2]);
+}
+
+
+const osg::Vec3f Noise::grad3(
+    const unsigned int x
+,   const unsigned int y
+,   const unsigned int r) const
+{
+    const unsigned char p = hash(x, y, r);
     return osg::Vec3f(
         m_grad[p & 0xf][0]
     ,   m_grad[p & 0xf][1]
@@ -123,6 +166,20 @@ const osg::Vec4f Noise::grad3h(
 }
 
 
+const osg::Vec4f Noise::grad3h(
+    const unsigned int x
+,   const unsigned int y
+,   const unsigned int r) const
+{
+    const unsigned char p = hash(x, y, r);
+    return osg::Vec4f(
+        m_grad[p & 0xf][0]
+    ,   m_grad[p & 0xf][1]
+    ,   m_grad[p & 0xf][2]
+    ,   p);
+}
+
+
 void Noise::generatePermutationMap(unsigned char *dest) const
 {
     const unsigned int size2 = m_size * m_size;
@@ -130,11 +187,11 @@ void Noise::generatePermutationMap(unsigned char *dest) const
     if(size2 < 1) 
         return;
 
-    for(unsigned int x = 0; x < m_size; ++x)
-        for(unsigned int y = 0; y < m_size; ++y)
+    for(unsigned int s = 0; s < m_size; ++s)
+        for(unsigned int t = 0; t < m_size; ++t)
         {
-            const unsigned int o = 4 * (y * m_size + x);
-            osg::Vec4f  g(grad3h(x, y));
+            const unsigned int o = 4 * (t * m_size + s);
+            osg::Vec4f  g(grad3h(s + m_xoff, t + m_yoff));
             dest[o + 0] = static_cast<unsigned char>(g[0] + 1);
             dest[o + 1] = static_cast<unsigned char>(g[1] + 1);
             dest[o + 2] = static_cast<unsigned char>(g[2] + 1);
@@ -145,7 +202,7 @@ void Noise::generatePermutationMap(unsigned char *dest) const
 
 const float Noise::fade(const float t)
 {
-    return t * t * t * (t * (t * 6.f - 15.f) + 10.f);
+    return _smootherstep(t);
 }
 
 
@@ -197,20 +254,53 @@ const float Noise::noise2(
 }
 
 
-
-
-const char* Noise::fadeGlslSource()
+const float Noise::noise2(
+    float s
+,   float t
+,   const unsigned int r) const
 {
-    return glsl_fade().c_str();
+    s += m_xoff;
+    t += m_yoff;
+
+    s *= 1 << r;
+    t *= 1 << r;
+
+    const float is = floor(s);
+    const float it = floor(t);
+
+    const osg::Vec2f f(_frac(s), _frac(t));
+
+    // range [-1;+1]
+
+    const osg::Vec2f aa = grad2(is + 0, it + 0, r);
+    const osg::Vec2f ba = grad2(is + 1, it + 0, r);
+    const osg::Vec2f ab = grad2(is + 0, it + 1, r);
+    const osg::Vec2f bb = grad2(is + 1, it + 1, r);
+
+    const float daa = osg::Vec2f(aa[0], aa[1]) * (f                       );
+    const float dba = osg::Vec2f(ba[0], ba[1]) * (f - osg::Vec2f(1.f, 0.f));
+    const float dab = osg::Vec2f(ab[0], ab[1]) * (f - osg::Vec2f(0.f, 1.f));
+    const float dbb = osg::Vec2f(bb[0], bb[1]) * (f - osg::Vec2f(1.f, 1.f));
+
+    const osg::Vec2f i = mix(osg::Vec2f(daa, dab), osg::Vec2f(dba, dbb), fade(f[0]));
+
+    return mix(i[0], i[1], fade(f[1]));
 }
 
+// TODO - add tileable variant
 
-const char* Noise::noise2GlslSource(const unsigned int size)
-{
-    std::string glsl = glsl_noise2();
-    replace(glsl, "%SIZE%", static_cast<float>(size));
-
-    return glsl.c_str();
-}
+//const std::string Noise::fadeGlslSource()
+//{
+//    return glsl_fade();
+//}
+//
+//
+//const std::string Noise::noise2GlslSource(const unsigned int size)
+//{
+//    std::string glsl = glsl_noise2();
+//    replace(glsl, "%SIZE%", static_cast<float>(size));
+//
+//    return glsl;
+//}
 
 } // namespace osgHimmel
