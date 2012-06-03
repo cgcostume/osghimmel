@@ -28,57 +28,69 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __QOSGWIDGET_H__
-#define __QOSGWIDGET_H__
+#ifndef __HIGHCLOUDLAYERGEODE_H__
+#define __HIGHCLOUDLAYERGEODE_H__
 
-#include <QWidget>
-#include <QUrl>
+#include "declspec.h"
 
-#include <osgViewer/Viewer>
+#include <osg/Group>
 
 
-class QOsgWidget : public QWidget
+namespace osg
 {
-    Q_OBJECT
+    class Texture2D;
+}
 
+namespace osgHimmel
+{
+
+class Himmel;
+class HimmelQuad;
+
+
+class OSGH_API HighCloudLayerGeode : public osg::Group
+{
 public:
-    QOsgWidget(QWidget *parent = 0);
-    virtual ~QOsgWidget();
 
-    osgViewer::GraphicsWindow* getGraphicsWindow() 
-    { 
-        return m_gw.get(); 
-    }
-    const osgViewer::GraphicsWindow* getGraphicsWindow() const
-    {
-        return m_gw.get(); 
-    }
+    HighCloudLayerGeode();
+    virtual ~HighCloudLayerGeode();
 
-signals:
-    void widgetResized(
-        unsigned int width
-    ,   unsigned int height);
-
-    void mouseDrop(QList<QUrl> urlList);
+    void update(const Himmel &himmel);
 
 protected:
-    osg::ref_ptr<osgViewer::GraphicsWindow> m_gw;
+
+    void precompute();
+
+    void setupUniforms(osg::StateSet* stateSet);
+    void setupNode    (osg::StateSet* stateSet);
+    void setupTextures(osg::StateSet* stateSet);
+    void setupShader  (osg::StateSet* stateSet);
+
+    const std::string getVertexShaderSource();
+    const std::string getFragmentShaderSource();
 
 protected:
-    virtual void createContext();
 
-    virtual void destroyEvent(
-        bool destroyWindow
-    ,   bool destroySubWindows);
+    HimmelQuad *m_hquad;
 
-    virtual void closeEvent(QCloseEvent *event);
+    //osg::Texture2D *m_transmittance;
 
-    virtual void resizeEvent(QResizeEvent *event);
+    osg::Program *m_program;
+    osg::Shader *m_vShader;
+    osg::Shader *m_fShader;
 
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dragMoveEvent(QDragMoveEvent *event);
+    osg::ref_ptr<osg::Uniform> u_perm;
+    osg::ref_ptr<osg::Uniform> u_perlin;
 
-    virtual void dropEvent(QDropEvent *event);
+
+#ifdef OSGHIMMEL_EXPOSE_SHADERS
+public:
+    osg::Shader *getVertexShader();
+    osg::Shader *getGeometryShader();
+    osg::Shader *getFragmentShader();
+#endif // OSGHIMMEL_EXPOSE_SHADERS
 };
 
-#endif // __QOSGWIDGET_H__
+} // namespace osgHimmel
+
+#endif // __HIGHCLOUDLAYERGEODE_H__

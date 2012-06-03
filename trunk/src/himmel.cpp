@@ -39,7 +39,8 @@
 #include "moonglaregeode.h"
 #include "starsgeode.h"
 #include "milkywaygeode.h"
-#include "cloudlayerhighgeode.h"
+#include "highcloudlayergeode.h"
+#include "dubecloudlayergeode.h"
 
 #include <osg/ShapeDrawable>
 
@@ -58,11 +59,13 @@ Himmel *Himmel::create()
 
     return new Himmel(
         NULL //new MilkyWayGeode("resources/milkyway?.png")
-    ,   new MoonGeode("resources/moon?.png")
+    ,   NULL //new MoonGeode("resources/moon?.png")
     ,   NULL //new StarsGeode("resources/brightstars")
     ,   NULL //new AtmosphereGeode()
-    ,   NULL//new CloudLayerHighGeode()
-    ,   new Astronomy());
+    ,   NULL //new HighCloudLayerGeode()
+    ,   new DubeCloudLayerGeode()
+    ,   new Astronomy()
+    );
 }
 
 
@@ -71,7 +74,8 @@ Himmel::Himmel(
 ,   MoonGeode *moon
 ,   StarsGeode *stars
 ,   AtmosphereGeode *atmosphere
-,   CloudLayerHighGeode *highLayer
+,   HighCloudLayerGeode *highLayer
+,   DubeCloudLayerGeode *dubeLayer
 ,   AbstractAstronomy *astronomy)
 :   AbstractHimmel()
 ,   m_milkyway(milkyWay)
@@ -80,6 +84,7 @@ Himmel::Himmel(
 ,   m_stars(stars)
 ,   m_atmosphere(atmosphere)
 ,   m_highLayer(highLayer)
+,   m_dubeLayer(dubeLayer)
 ,   m_astronomy(astronomy)
 
 ,   u_sun(NULL)
@@ -137,10 +142,19 @@ Himmel::Himmel(
         addChild(m_atmosphere);
         m_atmosphere->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
+
+
+
     if(m_highLayer)
     {
         addChild(m_highLayer);
         m_highLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+    }
+
+    if(m_dubeLayer)
+    {
+        addChild(m_dubeLayer);
+        m_dubeLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
 };
 
@@ -198,16 +212,6 @@ void Himmel::update()
         u_time->set(static_cast<float>(getTime()->getf()));
 
 
-        //if(m_moon)
-        //{
-        //    const osg::Vec3 moonrv = astro()->getMoonPosition(true);
-
-        //    m_cameraHint->setViewMatrix(osg::Matrix::lookAt(osg::Vec3(0.0, 0.0, 0.0)
-        //    ,   moonrv
-        //    ,   osg::Vec3(0.0, 0.0, 1.0))); 
-        //    //m_cameraHint->setViewMatrixAsLookAt();
-        //}
-
         if(m_milkyway)
             m_milkyway->update(*this);
         if(m_moon)
@@ -221,6 +225,9 @@ void Himmel::update()
             m_atmosphere->update(*this);
         if(m_highLayer)
             m_highLayer->update(*this);
+
+        if(m_dubeLayer)
+            m_dubeLayer->update(*this);
 
         dirty(false);
     }

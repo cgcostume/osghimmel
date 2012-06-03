@@ -33,6 +33,8 @@
 
 #include "declspec.h"
 
+#include <string>
+
 namespace osg
 {
     class Vec2f;
@@ -54,38 +56,62 @@ namespace
 class OSGH_API Noise
 {
 public:
-    Noise(const unsigned int size = 256);
+    Noise(
+        const unsigned int rank = 8
+    ,   const float xOffset = 0
+    ,   const float yOffset = 0);
 
     void generatePermutationMap(unsigned char *dest) const;
 
-    static const float fade(const float t);
-    static const char* fadeGlslSource();
+//    static const std::string fadeGlslSource();
 
     const float noise2(
         const float s
     ,   const float t) const;
+    const float noise2(
+        const float s
+    ,   const float t
+    ,   const unsigned int r) const;
 
-    static const char* noise2GlslSource(
+    static const std::string noise2GlslSource(
         const unsigned int size = 256);
 
 protected:
 
+    static const float fade(const float t);
+
     const unsigned int hash(
         const unsigned int x
     ,   const unsigned int y) const;
+    const unsigned int hash(
+        const unsigned int x
+    ,   const unsigned int y
+    ,   const unsigned int r) const;
 
     const osg::Vec2f grad2(
         const unsigned int x
     ,   const unsigned int y) const;
+    const osg::Vec2f grad2(
+        const unsigned int x
+    ,   const unsigned int y
+    ,   const unsigned int r) const;
 
     const osg::Vec3f grad3(
         const unsigned int x
     ,   const unsigned int y) const;
+    const osg::Vec3f grad3(
+        const unsigned int x
+    ,   const unsigned int y
+    ,   const unsigned int r) const;
 
     const osg::Vec4f grad3h(
         const unsigned int x
     ,   const unsigned int y) const;
-    
+    const osg::Vec4f grad3h(
+        const unsigned int x
+    ,   const unsigned int y
+    ,   const unsigned int r) const;
+
 
     static const float mix(
         const float a
@@ -100,6 +126,9 @@ protected:
 private:
 
     /*const ?? throws warnings */ unsigned int m_size;
+
+    float m_xoff;
+    float m_yoff;
 
     static const unsigned char m_perm[PERMSIZE];
     static const float m_grad[16][3];

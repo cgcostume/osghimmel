@@ -28,8 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __CLOUDLAYERHIGHGEODE_H__
-#define __CLOUDLAYERHIGHGEODE_H__
+#ifndef __DUBECLOUDLAYERGEODE_H__
+#define __DUBECLOUDLAYERGEODE_H__
 
 #include "declspec.h"
 
@@ -38,7 +38,9 @@
 
 namespace osg
 {
+    class Image;
     class Texture2D;
+    class Texture3D;
 }
 
 namespace osgHimmel
@@ -48,18 +50,29 @@ class Himmel;
 class HimmelQuad;
 
 
-class OSGH_API highCloudLayerGeode : public osg::Group
+class OSGH_API DubeCloudLayerGeode : public osg::Group
 {
 public:
 
-    highCloudLayerGeode();
-    virtual ~highCloudLayerGeode();
+    DubeCloudLayerGeode();
+    virtual ~DubeCloudLayerGeode();
 
     void update(const Himmel &himmel);
 
 protected:
 
-    void precompute();
+    static osg::Group* createPreRenderedNoise(
+        const unsigned texSize
+    ,   osg::Texture2D *texture);
+
+    static osg::ref_ptr<osg::Image> DubeCloudLayerGeode::createNoiseSlice(
+        const unsigned int texSize
+    ,   const unsigned int octave);
+
+    static osg::Texture3D *createNoiseArray(
+        const unsigned int texSize 
+    ,   const unsigned int octave
+    ,   const unsigned int slices);
 
     void setupUniforms(osg::StateSet* stateSet);
     void setupNode    (osg::StateSet* stateSet);
@@ -72,16 +85,24 @@ protected:
 protected:
 
     HimmelQuad *m_hquad;
-
-    //osg::Texture2D *m_transmittance;
+    
+    osg::Texture2D *m_preNoise;
+    osg::Texture3D *m_noise[4];
 
     osg::Program *m_program;
     osg::Shader *m_vShader;
     osg::Shader *m_fShader;
 
-    osg::ref_ptr<osg::Uniform> u_perm;
-    osg::ref_ptr<osg::Uniform> u_perlin;
+    osg::ref_ptr<osg::Uniform> u_q;
+    osg::ref_ptr<osg::Uniform> u_preNoise;
 
+    osg::ref_ptr<osg::Uniform> u_time;
+
+    osg::ref_ptr<osg::Uniform> u_noise0;
+    osg::ref_ptr<osg::Uniform> u_noise1;
+    osg::ref_ptr<osg::Uniform> u_noise2;
+    osg::ref_ptr<osg::Uniform> u_noise3;
+    
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 public:
@@ -93,4 +114,4 @@ public:
 
 } // namespace osgHimmel
 
-#endif // __CLOUDLAYERHIGHGEODE_H__
+#endif // __DUBECLOUDLAYERGEODE_H__
