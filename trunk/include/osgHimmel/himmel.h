@@ -129,6 +129,11 @@ public:
         return m_astronomy;
     }
 
+    inline HighCloudLayerGeode *highLayer() const
+    {
+        return m_highLayer;
+    }
+
     inline DubeCloudLayerGeode *dubeLayer() const
     {
         return m_dubeLayer;

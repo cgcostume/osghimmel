@@ -60,11 +60,11 @@ Himmel *Himmel::create()
     return new Himmel(
         NULL //new MilkyWayGeode("resources/milkyway?.png")
     ,   NULL //new MoonGeode("resources/moon?.png")
-    ,   NULL //new StarsGeode("resources/brightstars")
+    ,   NULL // new StarsGeode("resources/brightstars")
     ,   NULL //new AtmosphereGeode()
     ,   NULL //new HighCloudLayerGeode()
-    ,   new DubeCloudLayerGeode()
-    ,   new Astronomy()
+    ,   NULL // new DubeCloudLayerGeode()
+    ,   NULL //new Astronomy()
     );
 }
 
@@ -192,9 +192,10 @@ Himmel::~Himmel()
     delete m_astronomy;
 };
 
-
 void Himmel::update()
 {
+    return;
+
     AbstractHimmel::update();
 
     updateSeed();
