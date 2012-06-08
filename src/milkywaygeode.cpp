@@ -254,7 +254,7 @@ const float MilkyWayGeode::getApparentMagnitude() const
 
 const float MilkyWayGeode::defaultApparentMagnitude() 
 {
-    return 4.0f;
+    return 8.0f;
 }
 
 

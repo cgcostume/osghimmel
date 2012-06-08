@@ -44,7 +44,10 @@
 #include <iostream>
 
 
-osgHimmel::TimeF *g_timef(new osgHimmel::TimeF(0.0L, 3600.0L));
+using namespace osgHimmel;
+
+
+TimeF *g_timef = NULL;
 
 const float g_fovBackup = 60.f;
 float g_fov = g_fovBackup;
@@ -198,8 +201,14 @@ int main(int argc, char* argv[])
     osg::ref_ptr<osg::Group> root  = new osg::Group();
     g_view->setSceneData(root.get());
 
-    osg::ref_ptr<osgHimmel::Himmel>  himmel = osgHimmel::Himmel::create();
+    osg::ref_ptr<Himmel>  himmel = Himmel::create();
+
+    g_timef = new TimeF(time_t(), 0, 3600.0L);
+
     himmel->assignTime(g_timef);
+    himmel->setCameraHint(cam);
+    himmel->setViewSizeHint(1280, 720);
+
 
     root->addChild(himmel);
 

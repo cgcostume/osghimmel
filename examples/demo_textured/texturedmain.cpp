@@ -27,14 +27,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "include/polarmappedhimmel.h"
-#include "include/cubemappedhimmel.h"
-#include "include/paraboloidmappedhimmel.h"
-#include "include/spheremappedhimmel.h"
-#include "include/horizonband.h"
-#include "include/himmelenvmap.h"
+#include "osgHimmel/polarmappedhimmel.h"
+#include "osgHimmel/cubemappedhimmel.h"
+#include "osgHimmel/paraboloidmappedhimmel.h"
+#include "osgHimmel/spheremappedhimmel.h"
+#include "osgHimmel/horizonband.h"
+#include "osgHimmel/himmelenvmap.h"
 
-#include "include/timef.h"
+#include "osgHimmel/timef.h"
 
 
 #include <osg/TextureCubeMap>
@@ -42,6 +42,10 @@
 
 #include <osgDB/ReadFile>
 #include <osgViewer/ViewerEventHandlers>
+
+
+using namespace osgHimmel;
+
 
 // utils
 
@@ -71,7 +75,7 @@ void loadCubeMapFromFiles(
 
 // scenes
 
-TimeF *g_timef(new TimeF(0.0L, 10.0L));
+TimeF *g_timef(new TimeF());
 
 
 osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
