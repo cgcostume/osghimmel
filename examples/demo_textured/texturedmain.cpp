@@ -677,7 +677,7 @@ int main(int argc, char* argv[])
     osg::ArgumentParser arguments(&argc, argv);
 
     arguments.getApplicationUsage()->setDescription(
-        arguments.getApplicationName() + " is the demo which demonstrates using of various texture mapped skies implemented in osghimmel");
+        arguments.getApplicationName() + " demonstrates the various texture mapped skies of osgHimmel");
 
     arguments.getApplicationUsage()->setCommandLineUsage(arguments.getApplicationName());
 

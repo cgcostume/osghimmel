@@ -70,7 +70,7 @@ HighCloudLayerGeode::HighCloudLayerGeode()
     setupNode(stateSet);
     setupUniforms(stateSet);
     setupShader(stateSet);
-    //setupTextures(stateSet);
+    setupTextures(stateSet);
 
     osg::Geode *geode = new osg::Geode;
     geode->addDrawable(m_hquad);
@@ -93,8 +93,8 @@ void HighCloudLayerGeode::setupNode(osg::StateSet* stateSet)
     osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);    
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 
-//    osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
-//    stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
+    osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+    stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
 
@@ -112,19 +112,19 @@ void HighCloudLayerGeode::setupShader(osg::StateSet* stateSet)
 
 
 
-void HighCloudLayerGeode::setupUniforms(osg::StateSet*)
+void HighCloudLayerGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    //u_perm = new osg::Uniform("perm", 0);
-    //stateSet->addUniform(u_perm);
+    u_perm = new osg::Uniform("perm", 0);
+    stateSet->addUniform(u_perm);
 
-    //u_perlin = new osg::Uniform("perlin", 1);
-    //stateSet->addUniform(u_perlin);
+    u_perlin = new osg::Uniform("perlin", 1);
+    stateSet->addUniform(u_perlin);
 }
 
 
-void HighCloudLayerGeode::setupTextures(osg::StateSet*)
+void HighCloudLayerGeode::setupTextures(osg::StateSet* stateSet)
 {
-    /*
+    
     unsigned int s(256);
     Noise n(s);
 
@@ -209,6 +209,8 @@ const std::string HighCloudLayerGeode::getVertexShaderSource()
 
 const std::string HighCloudLayerGeode::getFragmentShaderSource()
 {
+    Noise n;
+
     return glsl_version_150()
 
     +   glsl_cmn_uniform()
@@ -216,8 +218,8 @@ const std::string HighCloudLayerGeode::getFragmentShaderSource()
 
     +   glsl_cloud_layer_intersection()
 
-    //+   Noise::fadeGlslSource()
-    //+   Noise::noise2GlslSource(256u)
+    +   glsl_fade()
+    //+   n.noise2GlslSource()
 
     +   PRAGMA_ONCE(main,
 

@@ -73,8 +73,7 @@ public:
     ,   const float t
     ,   const unsigned int r) const;
 
-    static const std::string noise2GlslSource(
-        const unsigned int size = 256);
+//    const std::string noise2GlslSource();
 
 protected:
 

@@ -238,17 +238,12 @@ const float Noise::noise2(
 
     // range [-1;+1]
 
-    const osg::Vec2f aa = grad2(is + 0, it + 0);
-    const osg::Vec2f ba = grad2(is + 1, it + 0);
-    const osg::Vec2f ab = grad2(is + 0, it + 1);
-    const osg::Vec2f bb = grad2(is + 1, it + 1);
+    const float aa = grad2(is + 0, it + 0) * (f                       );
+    const float ba = grad2(is + 1, it + 0) * (f - osg::Vec2f(1.f, 0.f));
+    const float ab = grad2(is + 0, it + 1) * (f - osg::Vec2f(0.f, 1.f));
+    const float bb = grad2(is + 1, it + 1) * (f - osg::Vec2f(1.f, 1.f));
 
-    const float daa = osg::Vec2f(aa[0], aa[1]) * (f                       );
-    const float dba = osg::Vec2f(ba[0], ba[1]) * (f - osg::Vec2f(1.f, 0.f));
-    const float dab = osg::Vec2f(ab[0], ab[1]) * (f - osg::Vec2f(0.f, 1.f));
-    const float dbb = osg::Vec2f(bb[0], bb[1]) * (f - osg::Vec2f(1.f, 1.f));
-
-    const osg::Vec2f i = mix(osg::Vec2f(daa, dab), osg::Vec2f(dba, dbb), fade(f[0]));
+    const osg::Vec2f i = mix(osg::Vec2f(aa, ab), osg::Vec2f(ba, bb), fade(f[0]));
 
     return mix(i[0], i[1], fade(f[1]));
 }
@@ -272,17 +267,12 @@ const float Noise::noise2(
 
     // range [-1;+1]
 
-    const osg::Vec2f aa = grad2(is + 0, it + 0, r);
-    const osg::Vec2f ba = grad2(is + 1, it + 0, r);
-    const osg::Vec2f ab = grad2(is + 0, it + 1, r);
-    const osg::Vec2f bb = grad2(is + 1, it + 1, r);
+    const float aa = grad2(is + 0, it + 0, r) * (f                       );
+    const float ba = grad2(is + 1, it + 0, r) * (f - osg::Vec2f(1.f, 0.f));
+    const float ab = grad2(is + 0, it + 1, r) * (f - osg::Vec2f(0.f, 1.f));
+    const float bb = grad2(is + 1, it + 1, r) * (f - osg::Vec2f(1.f, 1.f));
 
-    const float daa = osg::Vec2f(aa[0], aa[1]) * (f                       );
-    const float dba = osg::Vec2f(ba[0], ba[1]) * (f - osg::Vec2f(1.f, 0.f));
-    const float dab = osg::Vec2f(ab[0], ab[1]) * (f - osg::Vec2f(0.f, 1.f));
-    const float dbb = osg::Vec2f(bb[0], bb[1]) * (f - osg::Vec2f(1.f, 1.f));
-
-    const osg::Vec2f i = mix(osg::Vec2f(daa, dab), osg::Vec2f(dba, dbb), fade(f[0]));
+    const osg::Vec2f i = mix(osg::Vec2f(aa, ab), osg::Vec2f(ba, bb), fade(f[0]));
 
     return mix(i[0], i[1], fade(f[1]));
 }
@@ -295,6 +285,7 @@ const float Noise::noise2(
 //}
 //
 //
+
 //const std::string Noise::noise2GlslSource(const unsigned int size)
 //{
 //    std::string glsl = glsl_noise2();

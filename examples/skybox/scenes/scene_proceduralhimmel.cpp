@@ -41,6 +41,7 @@
 #include "osgHimmel/milkywaygeode.h"
 #include "osgHimmel/abstractastronomy.h"
 #include "osgHimmel/dubecloudlayergeode.h"
+#include "osgHimmel/highcloudlayergeode.h"
 
 #include <osg/Light>
 #include <osg/LightSource>
@@ -251,6 +252,13 @@ void Scene_ProceduralHimmel::postInitialize()
         //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getVertexShader());
         //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getGeometryShader());
         //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getFragmentShader());
+    }
+
+        if(m_himmel->highLayer())
+    {
+        shaderModifier()->registerShader(m_himmel->highLayer()->getName(), m_himmel->highLayer()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->highLayer()->getName(), m_himmel->highLayer()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->highLayer()->getName(), m_himmel->highLayer()->getFragmentShader());
     }
 
     if(m_himmel->dubeLayer())
