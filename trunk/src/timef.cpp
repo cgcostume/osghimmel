@@ -150,8 +150,11 @@ const t_longf TimeF::setf(
     lcl.tm_min  = seconds % 3600 / 60;
     lcl.tm_sec  = seconds % 60;
 
-    m_time[0] = mktime(&lcl) - utcOffset();
-    m_time[2] = m_time[0];
+    time_t mt = mktime(&lcl);
+    if(mt == -1)
+        m_time[0] = m_time[2] = 0;
+    else
+        m_time[0] = m_time[2] = mktime(&lcl) - utcOffset();
 
     reset(forceUpdate);
 

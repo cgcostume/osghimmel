@@ -40,8 +40,8 @@ namespace osgHimmel
 
 s_AstronomicalTime::s_AstronomicalTime()
 :   year(0)
-,   month(0)
-,   day(0)
+,   month(1)
+,   day(1)
 ,   hour(0)
 ,   minute(0)
 ,   second(0)
@@ -101,6 +101,11 @@ const s_AstronomicalTime s_AstronomicalTime::fromTimeT(
     struct tm lcl;
     localtime_s(&lcl, &time);
 #endif // __GNUC__
+
+    time_t mt = mktime(&lcl);
+
+    if(mt == -1)
+        return s_AstronomicalTime();
 
     return s_AstronomicalTime(
         static_cast<short>(lcl.tm_year + 1900)
