@@ -283,13 +283,12 @@ const float Noise::noise2(
 //{
 //    return glsl_fade();
 //}
-//
-//
 
-//const std::string Noise::noise2GlslSource(const unsigned int size)
+
+//const std::string Noise::noise2GlslSource()
 //{
 //    std::string glsl = glsl_noise2();
-//    replace(glsl, "%SIZE%", static_cast<float>(size));
+//    replace(glsl, "%SIZE%", static_cast<float>(m_size));
 //
 //    return glsl;
 //}

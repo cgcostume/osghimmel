@@ -58,9 +58,9 @@ Himmel *Himmel::create()
     // e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
 
     return new Himmel(
-        new MilkyWayGeode("resources/skymap?.png")
-    ,   new MoonGeode("resources/moon?.png")
-    ,   NULL // new StarsGeode("resources/brightstars")
+        NULL //new MilkyWayGeode("resources/skymap?.png")
+    ,   NULL //new MoonGeode("resources/moon?.png")
+    ,   NULL //new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
     ,   NULL //new HighCloudLayerGeode()
     ,   NULL // new DubeCloudLayerGeode()
@@ -191,6 +191,7 @@ Himmel::~Himmel()
 {
     delete m_astronomy;
 };
+
 
 void Himmel::update()
 {
