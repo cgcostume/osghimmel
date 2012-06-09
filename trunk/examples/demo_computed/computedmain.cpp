@@ -48,11 +48,13 @@ using namespace osgHimmel;
 
 
 TimeF *g_timef = NULL;
+osg::ref_ptr<Himmel> g_himmel = NULL;
 
 const float g_fovBackup = 60.f;
 float g_fov = g_fovBackup;
 
 osgViewer::View *g_view = NULL;
+
 
 
 void initializeManipulators(osgViewer::View &view)
@@ -64,7 +66,7 @@ void initializeManipulators(osgViewer::View &view)
     keyswitchManipulator->addMatrixManipulator('3', "Flight",    new osgGA::FlightManipulator());
     keyswitchManipulator->addMatrixManipulator('4', "Drive",     new osgGA::DriveManipulator());
 
-    view.setCameraManipulator(keyswitchManipulator.get());
+    view.setCameraManipulator(keyswitchManipulator);
 }
 
 
@@ -77,12 +79,16 @@ void fovChanged()
 
 class KeyboardEventHandler : public osgGA::GUIEventHandler
 {
+
 public:
+
     KeyboardEventHandler()
     {
     }
 
-    virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &)
+    virtual bool handle(
+        const osgGA::GUIEventAdapter &ea
+    ,   osgGA::GUIActionAdapter &)
     {
         switch(ea.getEventType())
         {
@@ -104,7 +110,6 @@ public:
                 else if(ea.getKey() == 's' || ea.getKey() == 'S')
                 {
                     g_timef->stop();
-                    g_timef->setSecondsPerCycle(60.f);
                 }
                 else if(ea.getKey() == 'p' || ea.getKey() == 'P')
                 {
@@ -115,12 +120,12 @@ public:
                 }
                 else if(ea.getKey() == '-')
                 {
-                    g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() + 1);
+                    g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() * 1.04f);
                 }
                 else if(ea.getKey() == '+')
                 {
-                    if(g_timef->getSecondsPerCycle() - 1 > 0.f)
-                        g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() - 1);
+                    if(g_timef->getSecondsPerCycle() * 0.96 > 0.001f)
+                        g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() * 0.96f);
                 }
             }
             break;
@@ -167,9 +172,7 @@ int main(int argc, char* argv[])
         arguments.getApplicationName() + " demonstrates the procedural sky of osgHimmel");
 
     arguments.getApplicationUsage()->setCommandLineUsage(arguments.getApplicationName());
-
     arguments.getApplicationUsage()->addCommandLineOption("-h or --help", "Display this information.");
-    //arguments.getApplicationUsage()->addCommandLineOption("--polar", "Start with a himmel using polar mapped textures.");
 
     osgViewer::Viewer viewer(arguments);
 
@@ -179,20 +182,19 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    //osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
-    //osg::notify(osg::NOTICE) << "Use [space] to cycle mapping techniques." << std::endl;
-    //osg::notify(osg::NOTICE) << "Use [p] to pause/unpause time." << std::endl;
-    //osg::notify(osg::NOTICE) << "Use [r] or [s] to reset or stop the time." << std::endl;
-    //osg::notify(osg::NOTICE) << "Use [+] and [-] to increase/decrease seconds per cycle." << std::endl;
-    //osg::notify(osg::NOTICE) << "Use [mouse wheel] to change field of view." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [p] to pause/unpause time." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [r] or [s] to reset or stop the time." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [+] and [-] to increase/decrease seconds per cycle." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [mouse wheel] to change field of view." << std::endl;
 
-    //while(arguments.read("--polar")) 
-    //    g_demo = D_PolarMappedHimmel;
 
-       
+    const unsigned int resx = 1280;
+    const unsigned int resy =  720;
+
     g_view = dynamic_cast<osgViewer::View*>(&viewer);
 
-    viewer.setUpViewInWindow(128, 128, 1280, 720); 
+    viewer.setUpViewInWindow(128, 128, resx, resy); 
     initializeManipulators(viewer);
 
     osg::Camera *cam = g_view->getCamera();
@@ -201,16 +203,23 @@ int main(int argc, char* argv[])
     osg::ref_ptr<osg::Group> root  = new osg::Group();
     g_view->setSceneData(root.get());
 
-    osg::ref_ptr<Himmel>  himmel = Himmel::create();
+    g_himmel = Himmel::create();
 
-    g_timef = new TimeF(time_t(), 0, 3600.0L);
+    // berlin
+    g_himmel->setAltitude(0.043);
+    g_himmel->setLatitude(52.5491);
+    g_himmel->setLongitude(13.3611);
 
-    himmel->assignTime(g_timef);
-    himmel->setCameraHint(cam);
-    himmel->setViewSizeHint(1280, 720);
+
+    g_timef = new TimeF(time(NULL), 0, 3600.0L);
+    g_timef->start();
+
+    g_himmel->assignTime(g_timef);
+    g_himmel->setCameraHint(cam);
+    g_himmel->setViewSizeHint(resx, resy);
 
 
-    root->addChild(himmel);
+    root->addChild(g_himmel);
 
 
     viewer.addEventHandler(new KeyboardEventHandler);
