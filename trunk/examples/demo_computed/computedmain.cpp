@@ -28,8 +28,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 
+#include "osgHimmel/abstractastronomy.h"
 #include "osgHimmel/himmel.h"
 #include "osgHimmel/timef.h"
+
+#include <osgDB/ReadFile>
 
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -42,7 +45,11 @@
 #include <osgGA/TerrainManipulator>
 
 #include <iostream>
+#include <assert.h>
 
+
+#include <osg/Matrix>
+#include <osg/MatrixTransform>
 
 using namespace osgHimmel;
 
@@ -99,17 +106,10 @@ public:
 
         case(osgGA::GUIEventAdapter::KEYDOWN):
             {
-                if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Space)
-                {
-                }
-                else if(ea.getKey() == 'r' || ea.getKey() == 'R')
+                if(ea.getKey() == 'r' || ea.getKey() == 'R')
                 {
                     g_timef->reset();
                     g_timef->setSecondsPerCycle(60.f);
-                }
-                else if(ea.getKey() == 's' || ea.getKey() == 'S')
-                {
-                    g_timef->stop();
                 }
                 else if(ea.getKey() == 'p' || ea.getKey() == 'P')
                 {
@@ -120,12 +120,12 @@ public:
                 }
                 else if(ea.getKey() == '-')
                 {
-                    g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() * 1.04f);
+                    g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() * 1.08f);
                 }
                 else if(ea.getKey() == '+')
                 {
                     if(g_timef->getSecondsPerCycle() * 0.96 > 0.001f)
-                        g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() * 0.96f);
+                        g_timef->setSecondsPerCycle(g_timef->getSecondsPerCycle() * 0.92f);
                 }
             }
             break;
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 
     osg::notify(osg::NOTICE) << "Use [1] to [4] to select camera manipulator." << std::endl;
     osg::notify(osg::NOTICE) << "Use [p] to pause/unpause time." << std::endl;
-    osg::notify(osg::NOTICE) << "Use [r] or [s] to reset or stop the time." << std::endl;
+    osg::notify(osg::NOTICE) << "Use [r] to reset the time." << std::endl;
     osg::notify(osg::NOTICE) << "Use [+] and [-] to increase/decrease seconds per cycle." << std::endl;
     osg::notify(osg::NOTICE) << "Use [mouse wheel] to change field of view." << std::endl;
 
@@ -195,34 +195,63 @@ int main(int argc, char* argv[])
     g_view = dynamic_cast<osgViewer::View*>(&viewer);
 
     viewer.setUpViewInWindow(128, 128, resx, resy); 
+    viewer.addEventHandler(new KeyboardEventHandler);
     initializeManipulators(viewer);
 
-    osg::Camera *cam = g_view->getCamera();
     fovChanged();
+
 
     osg::ref_ptr<osg::Group> root  = new osg::Group();
     g_view->setSceneData(root.get());
 
     g_himmel = Himmel::create();
 
+    //g_timef = new TimeF(time(NULL), 0, 3600.0L);
+
+    t_aTime t(2011, 6, 15, 20, 0, 0);
+    
+
+    //g_timef = new TimeF(time(NULL) - 20000, 0, 3600.0L);
+    g_timef = new TimeF(t.toTime_t(), 0, 3600.0L);
+
+    g_timef->start();
+
+    g_himmel->assignTime(g_timef);
+    g_himmel->setCameraHint(g_view->getCamera());
+    g_himmel->setViewSizeHint(resx, resy);
+    
+
     // berlin
     g_himmel->setAltitude(0.043);
     g_himmel->setLatitude(52.5491);
     g_himmel->setLongitude(13.3611);
 
+    
+    osg::MatrixTransform *b = new osg::MatrixTransform();
+    b->setMatrix(osg::Matrix::scale(10, 10, 10));
 
-    g_timef = new TimeF(time(NULL), 0, 3600.0L);
-    g_timef->start();
-
-    g_himmel->assignTime(g_timef);
-    g_himmel->setCameraHint(cam);
-    g_himmel->setViewSizeHint(resx, resy);
-
-
-    root->addChild(g_himmel);
+    b->addChild(g_himmel);
+    root->addChild(b);
 
 
-    viewer.addEventHandler(new KeyboardEventHandler);
+
+    osg::Group *meshes = new osg::Group();
+   
+    
+    //osg::MatrixTransform *m = new osg::MatrixTransform();
+    //m->setMatrix(osg::Matrix::translate(osg::Vec3(0.0, 0.0, -100.0)));
+
+    //m->addChild(meshes);
+    //root->addChild(m);
+
+    //meshes->addChild(osgDB::readNodeFile("resources/HPI-Grundriss_v10.3ds"));
+    //meshes->addChild(osgDB::readNodeFile("resources/levels/_urban-level-01-big-3ds.3ds"));
+    //meshes->addChild(osgDB::readNodeFile("resources/levels/_urban-level-02-medium-3ds.3ds"));
+    //meshes->addChild(osgDB::readNodeFile("resources/levels/_urban-level-03-simple-3ds.3ds"));
+/*    root->addChild(osgDB::readNodeFile("resources/Hot_Air_Balloon.3ds"));
+    */
+
+
 
     return viewer.run();
 }

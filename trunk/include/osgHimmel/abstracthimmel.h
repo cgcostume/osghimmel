@@ -61,6 +61,10 @@ public:
     AbstractHimmel();
     virtual ~AbstractHimmel();
 
+    // Called by the HimmelUpdateCallback. Call this first when inherited!
+    virtual void update();
+
+
     // (Initialize is automatically called at least on first update)
     void initialize();
 
@@ -112,9 +116,6 @@ public:
 protected:
 
     void setupNode(osg::StateSet* stateSet);
-
-    // Called by the HimmelUpdateCallback. Call this first when inherited!
-    virtual void update();
 
     virtual void postInitialize() { };
 

@@ -48,7 +48,7 @@ set(LIB_SOURCES
     earth.cpp
     earth2.cpp
     highcloudlayergeode.cpp
-    milkywaygeode.cpp
+    starmapgeode.cpp
     gaussianmapgenerator.cpp
     himmelenvmap.cpp
     himmelquad.cpp
@@ -98,7 +98,7 @@ set(LIB_SOURCES
 	${HEADER_PATH}/interpolate.h
     ${HEADER_PATH}/julianday.h
     ${HEADER_PATH}/mathmacros.h
-    ${HEADER_PATH}/milkywaygeode.h
+    ${HEADER_PATH}/starmapgeode.h
     ${HEADER_PATH}/moon.h
     ${HEADER_PATH}/moon2.h
     ${HEADER_PATH}/moongeode.h

@@ -28,8 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __MILKYWAYGEODE_H__
-#define __MILKYWAYGEODE_H__
+#ifndef __STARMAPGEODE_H__
+#define __STARMAPGEODE_H__
 
 #include "declspec.h"
 
@@ -43,16 +43,16 @@ class Himmel;
 class HimmelQuad;
 
 
-class OSGH_API MilkyWayGeode : public osg::Geode
+class OSGH_API StarMapGeode : public osg::Geode
 {
 public:
 
     // cubeMapFilePath should contain a questionmark '?' that is replaced
     // by cubemap extensions '_px', '_nx', '_py', etc. 
-    // e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
+    // e.g. "resources/starmap?.png" points to "resources/starmap_px.png" etc.
 
-    MilkyWayGeode(const char* cubeMapFilePath);
-    virtual ~MilkyWayGeode();
+    StarMapGeode(const char* cubeMapFilePath);
+    virtual ~StarMapGeode();
 
     void update(const Himmel &himmel);
 
@@ -100,7 +100,7 @@ protected:
 
     osg::ref_ptr<osg::Uniform> u_R;
     osg::ref_ptr<osg::Uniform> u_q;
-    osg::ref_ptr<osg::Uniform> u_milkywayCube;
+    osg::ref_ptr<osg::Uniform> u_starmapCube;
     osg::ref_ptr<osg::Uniform> u_color;
     osg::ref_ptr<osg::Uniform> u_deltaM;
     osg::ref_ptr<osg::Uniform> u_scattering;
@@ -116,4 +116,4 @@ public:
 
 } // namespace osgHimmel
 
-#endif // __MILKYWAYGEODE_H__
+#endif // __STARMAPGEODE_H__

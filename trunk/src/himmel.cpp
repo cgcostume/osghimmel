@@ -38,7 +38,7 @@
 #include "moongeode.h"
 #include "moonglaregeode.h"
 #include "starsgeode.h"
-#include "milkywaygeode.h"
+#include "starmapgeode.h"
 #include "highcloudlayergeode.h"
 #include "dubecloudlayergeode.h"
 
@@ -55,22 +55,22 @@ Himmel *Himmel::create()
 {
     // cubeMapFilePaths should contain a questionmark '?' that is replaced
     // by cubemap extensions '_px', '_nx', '_py', etc. 
-    // e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
+    // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
     return new Himmel(
-        NULL //new MilkyWayGeode("resources/skymap?.png")
-    ,   NULL //new MoonGeode("resources/moon?.png")
-    ,   NULL //new StarsGeode("resources/brightstars")
+        new StarMapGeode("resources/starmap?.png")
+    ,   new MoonGeode("resources/moon?.png")
+    ,   new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
-    ,   NULL //new HighCloudLayerGeode()
-    ,   NULL // new DubeCloudLayerGeode()
+    ,   new HighCloudLayerGeode()
+    ,   NULL //new DubeCloudLayerGeode()
     ,   new Astronomy()
     );
 }
 
 
 Himmel::Himmel(
-    MilkyWayGeode *milkyWay
+    StarMapGeode *milkyWay
 ,   MoonGeode *moon
 ,   StarsGeode *stars
 ,   AtmosphereGeode *atmosphere
@@ -78,7 +78,7 @@ Himmel::Himmel(
 ,   DubeCloudLayerGeode *dubeLayer
 ,   AbstractAstronomy *astronomy)
 :   AbstractHimmel()
-,   m_milkyway(milkyWay)
+,   m_starmap(milkyWay)
 ,   m_moon(moon)
 ,   m_moonGlare(NULL)
 ,   m_stars(stars)
@@ -116,10 +116,10 @@ Himmel::Himmel(
 
     addAntiCull()->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
-    if(m_milkyway)
+    if(m_starmap)
     {
-        addChild(m_milkyway);
-        m_milkyway->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+        addChild(m_starmap);
+        m_starmap->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
     if(m_stars)
     {
@@ -131,11 +131,11 @@ Himmel::Himmel(
         addChild(m_moon);
         m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
-        //m_moonGlare = new MoonGlareGeode;
-        //addChild(m_moonGlare);
-        //m_moonGlare->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+        m_moonGlare = new MoonGlareGeode;
+        addChild(m_moonGlare);
+        m_moonGlare->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
-        //m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
+        m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
     }
     if(m_atmosphere)
     {
@@ -212,12 +212,12 @@ void Himmel::update()
         u_time->set(static_cast<float>(getTime()->getf()));
 
 
-        if(m_milkyway)
-            m_milkyway->update(*this);
+        if(m_starmap)
+            m_starmap->update(*this);
         if(m_moon)
         {
             m_moon->update(*this);
-            //m_moonGlare->update(*this);
+            m_moonGlare->update(*this);
         }
         if(m_stars)
             m_stars->update(*this);

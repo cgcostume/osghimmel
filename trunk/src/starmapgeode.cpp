@@ -27,7 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "milkywaygeode.h"
+#include "starmapgeode.h"
 
 #include "himmel.h"
 #include "himmelquad.h"
@@ -47,7 +47,7 @@
 namespace osgHimmel
 {
 
-MilkyWayGeode::MilkyWayGeode(const char* cubeMapFilePath)
+StarMapGeode::StarMapGeode(const char* cubeMapFilePath)
 :   osg::Geode()
 
 ,   m_program(new osg::Program)
@@ -62,10 +62,10 @@ MilkyWayGeode::MilkyWayGeode(const char* cubeMapFilePath)
 ,   u_color(NULL) // [0,1,2] = color; [3] = intensity
 ,   u_deltaM(NULL)
 ,   u_scattering(NULL)
-,   u_milkywayCube(NULL)
+,   u_starmapCube(NULL)
 
 {
-    setName("MilkyWay");
+    setName("StarMap");
 
     osg::StateSet* stateSet = getOrCreateStateSet();
 
@@ -78,12 +78,12 @@ MilkyWayGeode::MilkyWayGeode(const char* cubeMapFilePath)
 };
 
 
-MilkyWayGeode::~MilkyWayGeode()
+StarMapGeode::~StarMapGeode()
 {
 };
 
 
-void MilkyWayGeode::update(const Himmel &himmel)
+void StarMapGeode::update(const Himmel &himmel)
 {
     // TODO: starmap and planets also require this ... - find better place
     const float fov = himmel.getCameraFovHint();
@@ -96,12 +96,12 @@ void MilkyWayGeode::update(const Himmel &himmel)
 }
 
 
-void MilkyWayGeode::setupNode(osg::StateSet*)
+void StarMapGeode::setupNode(osg::StateSet*)
 {
 }
 
 
-void MilkyWayGeode::setupUniforms(osg::StateSet* stateSet)
+void StarMapGeode::setupUniforms(osg::StateSet* stateSet)
 {
     u_R = new osg::Uniform("R", osg::Matrix::identity());
     stateSet->addUniform(u_R);
@@ -121,12 +121,12 @@ void MilkyWayGeode::setupUniforms(osg::StateSet* stateSet)
     stateSet->addUniform(u_scattering);
 
 
-    u_milkywayCube = new osg::Uniform("milkywayCube", 0);
-    stateSet->addUniform(u_milkywayCube);
+    u_starmapCube = new osg::Uniform("starmapCube", 0);
+    stateSet->addUniform(u_starmapCube);
 }
 
 
-void MilkyWayGeode::setupShader(osg::StateSet* stateSet)
+void StarMapGeode::setupShader(osg::StateSet* stateSet)
 {
     m_vShader->setShaderSource(getVertexShaderSource());
     m_fShader->setShaderSource(getFragmentShaderSource());
@@ -138,7 +138,7 @@ void MilkyWayGeode::setupShader(osg::StateSet* stateSet)
 }
 
 
-void MilkyWayGeode::setupTextures(
+void StarMapGeode::setupTextures(
     osg::StateSet* stateSet
 ,   const char* cubeMapFilePath)
 {   
@@ -171,11 +171,11 @@ void MilkyWayGeode::setupTextures(
 
     stateSet->setTextureAttributeAndModes(0, tcm, osg::StateAttribute::ON);
 
-    u_milkywayCube->set(0);
+    u_starmapCube->set(0);
 }
 
 
-void MilkyWayGeode::updateScaledB()
+void StarMapGeode::updateScaledB()
 {
     // Precompute brightness based on logarithmic scale. 
     // (Similar to starsgeode vertex shader.)
@@ -186,7 +186,7 @@ void MilkyWayGeode::updateScaledB()
 }
 
 
-const osg::Vec3 MilkyWayGeode::setColor(const osg::Vec3 &color)
+const osg::Vec3 StarMapGeode::setColor(const osg::Vec3 &color)
 {
     osg::Vec4 temp;
     u_color->get(temp);
@@ -200,7 +200,7 @@ const osg::Vec3 MilkyWayGeode::setColor(const osg::Vec3 &color)
     return getColor();
 }
 
-const osg::Vec3 MilkyWayGeode::getColor() const
+const osg::Vec3 StarMapGeode::getColor() const
 {
     osg::Vec4 color;
     u_color->get(color);
@@ -208,13 +208,13 @@ const osg::Vec3 MilkyWayGeode::getColor() const
     return osg::Vec3(color[0], color[1], color[2]);
 }
 
-const osg::Vec3 MilkyWayGeode::defaultColor()
+const osg::Vec3 StarMapGeode::defaultColor()
 {
     return osg::Vec3(0.66, 0.78, 1.00);
 }
 
 
-const float MilkyWayGeode::setColorRatio(const float ratio)
+const float StarMapGeode::setColorRatio(const float ratio)
 {
     osg::Vec4 color;
     u_color->get(color);
@@ -225,7 +225,7 @@ const float MilkyWayGeode::setColorRatio(const float ratio)
     return getColorRatio();
 }
 
-const float MilkyWayGeode::getColorRatio() const
+const float StarMapGeode::getColorRatio() const
 {
     osg::Vec4 color;
     u_color->get(color);
@@ -233,13 +233,13 @@ const float MilkyWayGeode::getColorRatio() const
     return color[3];
 }
 
-const float MilkyWayGeode::defaultColorRatio()
+const float StarMapGeode::defaultColorRatio()
 {
     return 0.33f;
 }
 
 
-const float MilkyWayGeode::setApparentMagnitude(const float vMag)
+const float StarMapGeode::setApparentMagnitude(const float vMag)
 {
     m_apparentMagnitude = vMag;
     updateScaledB();
@@ -247,24 +247,24 @@ const float MilkyWayGeode::setApparentMagnitude(const float vMag)
     return getApparentMagnitude();
 }
 
-const float MilkyWayGeode::getApparentMagnitude() const
+const float StarMapGeode::getApparentMagnitude() const
 {
     return m_apparentMagnitude;
 }
 
-const float MilkyWayGeode::defaultApparentMagnitude() 
+const float StarMapGeode::defaultApparentMagnitude() 
 {
-    return 8.0f;
+    return 4.0f;
 }
 
 
-const float MilkyWayGeode::setScattering(const float scattering)
+const float StarMapGeode::setScattering(const float scattering)
 {
     u_scattering->set(scattering);
     return getScattering();
 }
 
-const float MilkyWayGeode::getScattering() const
+const float StarMapGeode::getScattering() const
 {
     float scattering;
     u_scattering->get(scattering);
@@ -272,7 +272,7 @@ const float MilkyWayGeode::getScattering() const
     return scattering;
 }
 
-const float MilkyWayGeode::defaultScattering()
+const float StarMapGeode::defaultScattering()
 {
     return 2.0f;
 }
@@ -280,7 +280,7 @@ const float MilkyWayGeode::defaultScattering()
 
 
 
-const std::string MilkyWayGeode::getVertexShaderSource()
+const std::string StarMapGeode::getVertexShaderSource()
 {
     return glsl_version_150()
 
@@ -303,7 +303,7 @@ const std::string MilkyWayGeode::getVertexShaderSource()
 }
 
 
-const std::string MilkyWayGeode::getFragmentShaderSource()
+const std::string StarMapGeode::getFragmentShaderSource()
 {
     return glsl_version_150()
 
@@ -321,7 +321,7 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "uniform float deltaM;\n"
         "uniform float scattering;\n"
         "\n"
-        "uniform samplerCube milkywayCube;\n"
+        "uniform samplerCube starmapCube;\n"
         "\n"
         "in vec4 m_eye;\n"
         "in vec4 m_ray;\n"
@@ -334,8 +334,8 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
         "    if(belowHorizon(eye))\n"
         "        discard;\n"
         "\n"
-        "    vec4 fc = textureCube(milkywayCube, stu);\n"
-        "    fc *= 4e-2 / sqrt(q) * deltaM;\n"
+        "    vec4 fc = textureCube(starmapCube, stu);\n"
+        "    fc *= 3e-2 / sqrt(q) * deltaM;\n"
         "\n"
         "    float omega = acos(eye.z);\n"
         "\n"
@@ -351,15 +351,15 @@ const std::string MilkyWayGeode::getFragmentShaderSource()
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 
-osg::Shader *MilkyWayGeode::getVertexShader()
+osg::Shader *StarMapGeode::getVertexShader()
 {
     return m_vShader;
 }
-osg::Shader *MilkyWayGeode::getGeometryShader()
+osg::Shader *StarMapGeode::getGeometryShader()
 {
     return NULL;
 }
-osg::Shader *MilkyWayGeode::getFragmentShader()
+osg::Shader *StarMapGeode::getFragmentShader()
 {
     return m_fShader;
 }

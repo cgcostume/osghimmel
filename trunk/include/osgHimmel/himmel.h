@@ -42,7 +42,7 @@
 #include "moongeode.h"
 #include "moonglaregeode.h"
 #include "starsgeode.h"
-#include "milkywaygeode.h"
+#include "starmapgeode.h"
 #include "highcloudlayergeode.h"
 #include "dubecloudlayergeode.h"
 
@@ -55,7 +55,7 @@ namespace osgHimmel
     class MoonGeode;
     class MoonGlareGeode;
     class StarsGeode;
-    class MilkyWayGeode;
+    class StarMapGeode;
     class HighCloudLayerGeode;
     class DubeCloudLayerGeode;
 } // namespace osgHimmel
@@ -74,7 +74,7 @@ public:
 public:
 
     Himmel(
-        MilkyWayGeode *milkyWay
+        StarMapGeode *milkyWay
     ,   MoonGeode *moon
     ,   StarsGeode *stars
     ,   AtmosphereGeode *atmosphere
@@ -83,6 +83,9 @@ public:
     ,   AbstractAstronomy *astronomy);
 
     virtual ~Himmel();
+
+    virtual void update();
+
 
     static osg::Uniform *cmnUniform();
 
@@ -118,11 +121,10 @@ public:
         return m_stars;
     }
 
-    inline MilkyWayGeode *milkyway() const
+    inline StarMapGeode *starmap() const
     {
-        return m_milkyway;
+        return m_starmap;
     }
-
 
     inline AbstractAstronomy *astro() const
     {
@@ -145,14 +147,13 @@ public:
 
 protected:
 
-    virtual void update();
     void updateSeed();
 
     // Workaround avoiding culling by osgs' automated near far 
     // retrieval. This fixes culling of stars and moon when no 
     // further scene geometry is available.
     // Six black quads will be drawn. This adds a black 
-    // background that is used if no milkyway is given. This is
+    // background that is used if no starmap is given. This is
     // required since other geodes are rendered with blending 
     // enabled.
     osg::Geode *addAntiCull();
@@ -171,7 +172,7 @@ protected:
     osg::ref_ptr<MoonGeode>           m_moon;
     osg::ref_ptr<MoonGlareGeode>      m_moonGlare;
     osg::ref_ptr<StarsGeode>          m_stars;
-    osg::ref_ptr<MilkyWayGeode>       m_milkyway;
+    osg::ref_ptr<StarMapGeode>        m_starmap;
     osg::ref_ptr<HighCloudLayerGeode> m_highLayer;
     osg::ref_ptr<DubeCloudLayerGeode> m_dubeLayer;
 };
