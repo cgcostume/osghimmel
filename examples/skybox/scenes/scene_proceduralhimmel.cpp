@@ -38,7 +38,7 @@
 #include "osgHimmel/moongeode.h"
 #include "osgHimmel/moonglaregeode.h"
 #include "osgHimmel/starsgeode.h"
-#include "osgHimmel/milkywaygeode.h"
+#include "osgHimmel/starmapgeode.h"
 #include "osgHimmel/abstractastronomy.h"
 #include "osgHimmel/dubecloudlayergeode.h"
 #include "osgHimmel/highcloudlayergeode.h"
@@ -84,17 +84,16 @@ namespace
     const QString PROPERTY_STARS_SCATTERING         (TR("Scattering (Stars)"));
     const QString PROPERTY_STARS_SCINTILLATION      (TR("Scintillation"));
 
-    const QString GROUP_PROCEDURAL_MILKYWAY         (TR("MilkyWay"));
+    const QString GROUP_PROCEDURAL_MILKYWAY         (TR("StarMap"));
 
-    const QString PROPERTY_MILKYWAY_COLOR           (TR("Color (MilkyWay)"));
-    const QString PROPERTY_MILKYWAY_COLOR_RATIO     (TR("Color Ratio (MilkyWay)"));
-    const QString PROPERTY_MILKYWAY_APPARENT_MAG    (TR("Apparent Magnitude (MilkyWay)"));
-    const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (MilkyWay)"));
+    const QString PROPERTY_MILKYWAY_COLOR           (TR("Color (StarMap)"));
+    const QString PROPERTY_MILKYWAY_COLOR_RATIO     (TR("Color Ratio (StarMap)"));
+    const QString PROPERTY_MILKYWAY_APPARENT_MAG    (TR("Apparent Magnitude (StarMap)"));
+    const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (StarMap)"));
 }
 
 
 using namespace osgHimmel;
-
 
 
 CameraLock::CameraLock(Himmel *himmel, osg::Camera *camera)
@@ -222,11 +221,11 @@ AbstractHimmel *Scene_ProceduralHimmel::himmel()
 
 void Scene_ProceduralHimmel::postInitialize()
 {
-    if(m_himmel->milkyway())
+    if(m_himmel->starmap())
     {
-        shaderModifier()->registerShader(m_himmel->milkyway()->getName(), m_himmel->milkyway()->getVertexShader());
-        shaderModifier()->registerShader(m_himmel->milkyway()->getName(), m_himmel->milkyway()->getGeometryShader());
-        shaderModifier()->registerShader(m_himmel->milkyway()->getName(), m_himmel->milkyway()->getFragmentShader());
+        shaderModifier()->registerShader(m_himmel->starmap()->getName(), m_himmel->starmap()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->starmap()->getName(), m_himmel->starmap()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->starmap()->getName(), m_himmel->starmap()->getFragmentShader());
     }
 
     if(m_himmel->stars())
@@ -249,9 +248,9 @@ void Scene_ProceduralHimmel::postInitialize()
         shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getGeometryShader());
         shaderModifier()->registerShader(m_himmel->moon()->getName(), m_himmel->moon()->getFragmentShader());
 
-        //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getVertexShader());
-        //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getGeometryShader());
-        //shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getFragmentShader());
+        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getVertexShader());
+        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getGeometryShader());
+        shaderModifier()->registerShader(m_himmel->moonGlare()->getName(), m_himmel->moonGlare()->getFragmentShader());
     }
 
         if(m_himmel->highLayer())
@@ -308,12 +307,12 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*starsGroup, PROPERTY_STARS_APPARENT_MAG, StarsGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
 
 
-    QtProperty *milkywayGroup = createGroup(GROUP_PROCEDURAL_MILKYWAY);
+    QtProperty *starmapGroup = createGroup(GROUP_PROCEDURAL_MILKYWAY);
 
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR, toQColor(MilkyWayGeode::defaultColor())); 
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_COLOR_RATIO, MilkyWayGeode::defaultColorRatio(), 0.0, 10.0, 0.25); 
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_APPARENT_MAG, MilkyWayGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
-    createProperty(*milkywayGroup, PROPERTY_MILKYWAY_SCATTERING, MilkyWayGeode::defaultScattering(), 0.0, 100.0, 0.1);
+    createProperty(*starmapGroup, PROPERTY_MILKYWAY_COLOR, toQColor(StarMapGeode::defaultColor())); 
+    createProperty(*starmapGroup, PROPERTY_MILKYWAY_COLOR_RATIO, StarMapGeode::defaultColorRatio(), 0.0, 10.0, 0.25); 
+    createProperty(*starmapGroup, PROPERTY_MILKYWAY_APPARENT_MAG, StarMapGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
+    createProperty(*starmapGroup, PROPERTY_MILKYWAY_SCATTERING, StarMapGeode::defaultScattering(), 0.0, 100.0, 0.1);
 }
 
 
@@ -375,13 +374,13 @@ void Scene_ProceduralHimmel::propertyChanged(
 
 
     else if(PROPERTY_MILKYWAY_COLOR == name)
-        m_himmel->milkyway()->setColor(toVec3(colorValue(PROPERTY_MILKYWAY_COLOR)));
+        m_himmel->starmap()->setColor(toVec3(colorValue(PROPERTY_MILKYWAY_COLOR)));
     else if(PROPERTY_MILKYWAY_COLOR_RATIO == name)
-        m_himmel->milkyway()->setColorRatio(doubleValue(PROPERTY_MILKYWAY_COLOR_RATIO));
+        m_himmel->starmap()->setColorRatio(doubleValue(PROPERTY_MILKYWAY_COLOR_RATIO));
     else if(PROPERTY_MILKYWAY_APPARENT_MAG == name)
-        m_himmel->milkyway()->setApparentMagnitude(doubleValue(PROPERTY_MILKYWAY_APPARENT_MAG));
+        m_himmel->starmap()->setApparentMagnitude(doubleValue(PROPERTY_MILKYWAY_APPARENT_MAG));
     else if(PROPERTY_MILKYWAY_SCATTERING == name)
-        m_himmel->milkyway()->setScattering(doubleValue(PROPERTY_MILKYWAY_SCATTERING));
+        m_himmel->starmap()->setScattering(doubleValue(PROPERTY_MILKYWAY_SCATTERING));
 }
 
 

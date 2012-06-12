@@ -274,7 +274,7 @@ const float StarsGeode::getScintillation() const
 
 const float StarsGeode::defaultScintillation()
 {
-    return 8.0f;
+    return 20.0f;
 }
 
 
@@ -294,7 +294,7 @@ const float StarsGeode::getScattering() const
 
 const float StarsGeode::defaultScattering()
 {
-    return 1.0f;
+    return 6.0f;
 }
 
 
@@ -366,7 +366,7 @@ const float StarsGeode::getColorRatio() const
 
 const float StarsGeode::defaultColorRatio()
 {
-    return 0.5f;
+    return 0.66f;
 }
 
 
@@ -425,34 +425,34 @@ const std::string StarsGeode::getVertexShaderSource()
         "    float delta_m = pow(2.512, m_a - m);\n"
         "\n"
         "    float i_t = delta_m * _35OVER13PI;\n"
-        "    i_t *= 4e-7 / (q * q);\n"
-        "    i_t = min(1.167, i_t);\n"
+        "\n"
+        "    i_t *= 4e-7 / (q * q);  // resolution correlated \n"
+        "    i_t = min(1.167, i_t);	// volume of smoothstep (V_T)\n"
         "\n"
         "    if(i_t < 0.01)\n"
         "        return;\n"
         "\n"
+        "    float i_g = pow(2.512, m_a - (m + 0.167)) - 1;\n"
+        "    vec3 v_t = vec3(i_t);\n"
+        "\n"
         "    float theta = acos(v.z);\n"
+        "    float o_theta = optical(theta);\n"
+        "\n"
+        "    float sca = o_theta * scattering;\n"
         "\n"
         "    float r = mod(int(cmn[3]) ^ int(gl_Vertex.w), 251);\n"
-        "    float i_s = optical(theta) * scintillations;\n"
+        "    float sci = pow(texture(noise1, r / 256.0).r, 8);\n"
+        "    sci *= o_theta * scintillations;\n"
         "\n"
-        "    float s = pow(texture(noise1, r / 256.0).r, 8) * i_s;\n"
-        "\n"
-        "    float i_g = pow(2.512, m_a - (m + 0.167)) - 1;\n"
-        "\n"
-
-            // scinitillations in intensity and glare
-        "    i_g -= s;\n"
-        "    i_t -= s;\n"
+        "    i_g -= sca + sci;\n"
+        "    v_t -= (1 + normalize(lambda)) * sca + sci;\n"
         "\n"
         "    v_color = mix(gl_Color.rgb, color.rgb, color.w);\n"
-        "    v_color -= scatt(theta) * scattering;\n"
-        "    v_color = max(vec3(0.0), v_color);\n"
-        "    v_color *= i_t;\n"
-        "    v_color -= lambda * s;\n"
+        "    v_color *= v_t;\n"
         "\n"
+        "    v_color = max(vec3(0.0), v_color);\n"
         "    v_k = max(q, sqrt(i_g) * 2e-2 * glareScale);\n"
-        "}");
+        "}\n");
 
     // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
     // "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"

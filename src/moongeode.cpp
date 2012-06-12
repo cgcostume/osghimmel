@@ -151,8 +151,6 @@ void MoonGeode::update(const Himmel &himmel)
 
             // brightness scalar of the eclipse phenomena as function of the distance
             B = 1.0 + 29 * (1.0 - _smoothstep_ext(t, 0.2, 0.44));
-
-            std::cout << t << std::endl;
         }        
     }
 
@@ -344,7 +342,7 @@ const float MoonGeode::getScale() const
 
 const float MoonGeode::defaultScale()
 {
-    return 40.f;
+    return 3.f;
 }
 
 
@@ -397,7 +395,7 @@ const float MoonGeode::getSunShineIntensity() const
 
 const float MoonGeode::defaultSunShineIntensity()
 {
-    return 24.f;
+    return 64.f;
 }
 
 

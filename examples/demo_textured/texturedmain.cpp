@@ -51,7 +51,7 @@ using namespace osgHimmel;
 
 // cubeMapFilePaths should contain a questionmark '?' that is replaced
 // by cubemap extensions '_px', '_nx', '_py', etc. 
-// e.g. "resources/milkyway?.png" points to "resources/milkyway_px.png" etc.
+// e.g. "resources/starmap?.png" points to "resources/starmap_px.png" etc.
 
 void loadCubeMapFromFiles(
     const std::string cubeMapFilePath
