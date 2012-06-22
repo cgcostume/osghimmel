@@ -149,9 +149,10 @@ osg::Group* DubeCloudLayerGeode::createPreRenderedNoise(
 
             "void main()"
             "{"
-            "   vec2 uv = gl_FragCoord.xy / 1024;"
+            "   vec2 uv = gl_FragCoord.xy / 2048;"
             "   float n = 0;"
             
+            //"   float t = time * 3600.0 * 0.25;"
             "   float t = time * 3600.0 * 0.25;"
             
             "   float speed = 0.1;"
@@ -162,8 +163,8 @@ osg::Group* DubeCloudLayerGeode::createPreRenderedNoise(
             "   n += 0.25000 * texture3D(noise2, vec3(uv     + m * 0.14, t * 0.04)).r;"
             "   n += 0.12500 * texture3D(noise3, vec3(uv     + m * 0.12, t * 0.08)).r;"
             "   n += 0.06750 * texture3D(noise3, vec3(uv * 2 + m * 0.10, t * 0.16)).r;"
-            //"   n += 0.03125 * texture3D(noise3, vec3(uv * 4 + m * 0.08, t * 0.32)).r;"
-            //"   n += 0.03125 * texture3D(noise3, vec3(uv * 8 + m * 0.08, t * 0.32)).r;"
+            "   n += 0.03125 * texture3D(noise3, vec3(uv * 4 + m * 0.08, t * 0.32)).r;"
+            "   n += 0.03125 * texture3D(noise3, vec3(uv * 8 + m * 0.08, t * 0.32)).r;"
             "   n *= 0.68;" // inverse sum 1/i^2 with i = 1 to 6
             
          //  "   float cover = 0.2;"
@@ -281,8 +282,7 @@ void DubeCloudLayerGeode::setupNode(osg::StateSet* stateSet)
     osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL, 1.0, 1.0);    
     stateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
     
-    osg::BlendFunc *blend  = new osg::BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    //osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
+    osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA);
     stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
@@ -323,7 +323,7 @@ void DubeCloudLayerGeode::setupTextures(osg::StateSet* stateSet)
 
     m_preNoise = new osg::Texture2D;
 
-    osg::Group *preNoise(createPreRenderedNoise(1024, m_preNoise));
+    osg::Group *preNoise(createPreRenderedNoise(2048, m_preNoise));
     osg::StateSet *pnStateSet(preNoise->getOrCreateStateSet());
 
     // precompute tilable permutations

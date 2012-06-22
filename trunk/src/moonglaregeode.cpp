@@ -221,8 +221,10 @@ const std::string MoonGlareGeode::getFragmentShaderSource()
         "        discard;\n"
         "\n"
         "    float l = 1 - pow(length(vec2(x, y)) + 0.02, 0.25);\n"
+            // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
+        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.05, 32));\n"
         "\n"
-        "    gl_FragColor = vec4(l * (phase * sunShine.rgb) + l * earthShine , 1.0) * intensity;\n"
+        "    gl_FragColor = vec4(l * (phase * sunShine.rgb) + l * earthShine , 1.0) * intensity * b;\n"
         "}");
 }
 

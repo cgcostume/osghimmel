@@ -127,7 +127,7 @@ void QOsgWidget::createContext()
     traits->doubleBuffer = true;
     traits->sharedContext = 0;
     traits->sampleBuffers = 1; //ds->getMultiSamples();
-    traits->samples = 16;    // TODO: make adjustable
+    traits->samples = 0;    // TODO: make adjustable
 
     traits->setInheritedWindowPixelFormat = true;
 
