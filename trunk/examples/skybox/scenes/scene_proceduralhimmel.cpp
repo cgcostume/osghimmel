@@ -90,6 +90,26 @@ namespace
     const QString PROPERTY_MILKYWAY_COLOR_RATIO     (TR("Color Ratio (StarMap)"));
     const QString PROPERTY_MILKYWAY_APPARENT_MAG    (TR("Apparent Magnitude (StarMap)"));
     const QString PROPERTY_MILKYWAY_SCATTERING      (TR("Scattering (StarMap)"));
+
+    const QString GROUP_PROCEDURAL_CLOUDS1          (TR("HighCloudLayer1"));
+
+    const QString PROPERTY_CLOUDS1_ALTITUDE         (TR("Altitude (km)"));
+    const QString PROPERTY_CLOUDS1_CHANGE           (TR("Change"));
+    const QString PROPERTY_CLOUDS1_SCALE            (TR("Scale"));
+    const QString PROPERTY_CLOUDS1_COVERAGE         (TR("Coverage"));
+    const QString PROPERTY_CLOUDS1_SHARPNESS        (TR("Sharpness"));
+    const QString PROPERTY_CLOUDS1_WINDX            (TR("Wind-X"));
+    const QString PROPERTY_CLOUDS1_WINDY            (TR("Wind-Y")); 
+
+    const QString GROUP_PROCEDURAL_CLOUDS2          (TR("HighCloudLayer1"));
+
+    const QString PROPERTY_CLOUDS2_ALTITUDE         (TR("Altitude (km)"));
+    const QString PROPERTY_CLOUDS2_CHANGE           (TR("Change"));
+    const QString PROPERTY_CLOUDS2_SCALE            (TR("Scale"));
+    const QString PROPERTY_CLOUDS2_COVERAGE         (TR("Coverage"));
+    const QString PROPERTY_CLOUDS2_SHARPNESS        (TR("Sharpness"));
+    const QString PROPERTY_CLOUDS2_WINDX            (TR("Wind-X"));
+    const QString PROPERTY_CLOUDS2_WINDY            (TR("Wind-Y"));
 }
 
 
@@ -313,6 +333,17 @@ void Scene_ProceduralHimmel::registerProperties()
     createProperty(*starmapGroup, PROPERTY_MILKYWAY_COLOR_RATIO, StarMapGeode::defaultColorRatio(), 0.0, 10.0, 0.25); 
     createProperty(*starmapGroup, PROPERTY_MILKYWAY_APPARENT_MAG, StarMapGeode::defaultApparentMagnitude(), -32.0, 32.0, 0.1);
     createProperty(*starmapGroup, PROPERTY_MILKYWAY_SCATTERING, StarMapGeode::defaultScattering(), 0.0, 100.0, 0.1);
+
+
+    QtProperty *clouds1Group = createGroup(GROUP_PROCEDURAL_CLOUDS1);
+
+    createProperty(*clouds1Group, PROPERTY_CLOUDS1_ALTITUDE, HighCloudLayerGeode::defaultAltitude(), 1.f, 16.f, 0.1f); 
+    createProperty(*clouds1Group, PROPERTY_CLOUDS1_CHANGE, HighCloudLayerGeode::defaultChange(), 0.f, 1.f, 0.02f); 
+    createProperty(*clouds1Group, PROPERTY_CLOUDS1_SCALE, HighCloudLayerGeode::defaultScale(), 1.f, 1024.f, 16.f); 
+    createProperty(*clouds1Group, PROPERTY_CLOUDS1_COVERAGE, 0.f, 0.f, 1.f, 0.02f); 
+    createProperty(*clouds1Group, PROPERTY_CLOUDS1_SHARPNESS, 1.f, 0.f, 2.f, 0.01f); 
+    createProperty(*clouds1Group, PROPERTY_CLOUDS1_WINDX, 0.f, -8.f, 8.f, 0.02f); 
+    createProperty(*clouds1Group, PROPERTY_CLOUDS1_WINDY, 0.f, -8.f, 8.f, 0.02f); 
 }
 
 
@@ -321,6 +352,8 @@ void Scene_ProceduralHimmel::propertyChanged(
 ,   const QString &name)
 {
 
+    if(m_himmel->atmosphere())
+    {
          if(PROPERTY_ATM_SUNSCALE == name)
         m_himmel->atmosphere()->setSunScale(doubleValue(PROPERTY_ATM_SUNSCALE));
     else if(PROPERTY_ATM_EXPOSURE == name)
@@ -344,9 +377,11 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->atmosphere()->setScatteringMie(doubleValue(PROPERTY_ATM_BETAM) * 1e-3); 
     else if(PROPERTY_ATM_MIEG == name)
         m_himmel->atmosphere()->setPhaseG(doubleValue(PROPERTY_ATM_MIEG)); 
+    }
 
-
-    else if(PROPERTY_MOON_SCALE == name)
+    if(m_himmel->moon())
+    {
+         if(PROPERTY_MOON_SCALE == name)
         m_himmel->moon()->setScale(doubleValue(PROPERTY_MOON_SCALE));
     else if(PROPERTY_MOON_SUNSHINE_COLOR == name)
         m_himmel->moon()->setSunShineColor(toVec3(colorValue(PROPERTY_MOON_SUNSHINE_COLOR)));
@@ -356,8 +391,12 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->moon()->setEarthShineColor(toVec3(colorValue(PROPERTY_MOON_EARTHSHINE_COLOR)));
     else if(PROPERTY_MOON_EARTHSHINE_INTENSITY == name)
         m_himmel->moon()->setEarthShineIntensity(doubleValue(PROPERTY_MOON_EARTHSHINE_INTENSITY));
+    }
 
-    else if(PROPERTY_STARS_COLOR == name)
+
+    if(m_himmel->stars())
+    {
+         if(PROPERTY_STARS_COLOR == name)
         m_himmel->stars()->setColor(toVec3(colorValue(PROPERTY_STARS_COLOR)));
     else if(PROPERTY_STARS_COLOR_RATIO == name)
         m_himmel->stars()->setColorRatio(doubleValue(PROPERTY_STARS_COLOR_RATIO));
@@ -371,9 +410,12 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->stars()->setScintillation(doubleValue(PROPERTY_STARS_SCINTILLATION));
     else if(PROPERTY_STARS_APPARENT_MAG == name)
         m_himmel->stars()->setApparentMagnitude(doubleValue(PROPERTY_STARS_APPARENT_MAG));
+    }
 
 
-    else if(PROPERTY_MILKYWAY_COLOR == name)
+    if(m_himmel->starmap())
+    {
+         if(PROPERTY_MILKYWAY_COLOR == name)
         m_himmel->starmap()->setColor(toVec3(colorValue(PROPERTY_MILKYWAY_COLOR)));
     else if(PROPERTY_MILKYWAY_COLOR_RATIO == name)
         m_himmel->starmap()->setColorRatio(doubleValue(PROPERTY_MILKYWAY_COLOR_RATIO));
@@ -381,6 +423,47 @@ void Scene_ProceduralHimmel::propertyChanged(
         m_himmel->starmap()->setApparentMagnitude(doubleValue(PROPERTY_MILKYWAY_APPARENT_MAG));
     else if(PROPERTY_MILKYWAY_SCATTERING == name)
         m_himmel->starmap()->setScattering(doubleValue(PROPERTY_MILKYWAY_SCATTERING));
+    }
+
+
+    if(m_himmel->highLayer())
+    {
+         if(PROPERTY_CLOUDS1_ALTITUDE == name)
+        m_himmel->highLayer()->setAltitude(doubleValue(PROPERTY_CLOUDS1_ALTITUDE));
+    else if(PROPERTY_CLOUDS1_CHANGE == name)
+        m_himmel->highLayer()->setChange(doubleValue(PROPERTY_CLOUDS1_CHANGE));
+    else if(PROPERTY_CLOUDS1_SCALE == name)
+        m_himmel->highLayer()->setScale(doubleValue(PROPERTY_CLOUDS1_SCALE));
+    else if(PROPERTY_CLOUDS1_COVERAGE == name)
+        m_himmel->highLayer()->setCoverage(doubleValue(PROPERTY_CLOUDS1_COVERAGE));
+    else if(PROPERTY_CLOUDS1_SHARPNESS == name)
+        m_himmel->highLayer()->setSharpness(doubleValue(PROPERTY_CLOUDS1_SHARPNESS));
+
+    else if(PROPERTY_CLOUDS1_WINDX == name
+        ||  PROPERTY_CLOUDS1_WINDY == name)
+        m_himmel->highLayer()->setWind(osg::Vec2(
+            doubleValue(PROPERTY_CLOUDS1_WINDX), doubleValue(PROPERTY_CLOUDS1_WINDY)));
+    }
+
+
+    if(m_himmel->dubeLayer())
+    {
+         if(PROPERTY_CLOUDS2_ALTITUDE == name)
+        m_himmel->dubeLayer()->setAltitude(doubleValue(PROPERTY_CLOUDS2_ALTITUDE));
+    else if(PROPERTY_CLOUDS2_CHANGE == name)
+        m_himmel->dubeLayer()->setChange(doubleValue(PROPERTY_CLOUDS2_CHANGE));
+    else if(PROPERTY_CLOUDS2_SCALE == name)
+        m_himmel->dubeLayer()->setScale(doubleValue(PROPERTY_CLOUDS2_SCALE));
+    else if(PROPERTY_CLOUDS2_COVERAGE == name)
+        m_himmel->dubeLayer()->setCoverage(doubleValue(PROPERTY_CLOUDS2_COVERAGE));
+    else if(PROPERTY_CLOUDS2_SHARPNESS == name)
+        m_himmel->dubeLayer()->setSharpness(doubleValue(PROPERTY_CLOUDS2_SHARPNESS));
+
+    else if(PROPERTY_CLOUDS2_WINDX == name
+        ||  PROPERTY_CLOUDS2_WINDY == name)
+        m_himmel->dubeLayer()->setWind(osg::Vec2(
+            doubleValue(PROPERTY_CLOUDS2_WINDX), doubleValue(PROPERTY_CLOUDS2_WINDY)));
+    }
 }
 
 

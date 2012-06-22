@@ -32,6 +32,7 @@
 #define __DUBECLOUDLAYERGEODE_H__
 
 #include "declspec.h"
+#include "highcloudlayergeode.h"
 
 #include <osg/Group>
 
@@ -50,7 +51,7 @@ class Himmel;
 class HimmelQuad;
 
 
-class OSGH_API DubeCloudLayerGeode : public osg::Group
+class OSGH_API DubeCloudLayerGeode : public HighCloudLayerGeode
 {
 public:
 
@@ -61,48 +62,14 @@ public:
 
 protected:
 
-    static osg::Group* createPreRenderedNoise(
-        const unsigned texSize
-    ,   osg::Texture2D *texture);
+    virtual void setupUniforms(osg::StateSet* stateSet);
 
-    static osg::ref_ptr<osg::Image> DubeCloudLayerGeode::createNoiseSlice(
-        const unsigned int texSize
-    ,   const unsigned int octave);
-
-    static osg::Texture3D *createNoiseArray(
-        const unsigned int texSize 
-    ,   const unsigned int octave
-    ,   const unsigned int slices);
-
-    void setupUniforms(osg::StateSet* stateSet);
-    void setupNode    (osg::StateSet* stateSet);
-    void setupTextures(osg::StateSet* stateSet);
-    void setupShader  (osg::StateSet* stateSet);
-
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
+    virtual const std::string getFragmentShaderSource();
 
 protected:
 
-    HimmelQuad *m_hquad;
-    
-    osg::Texture2D *m_preNoise;
-    osg::Texture3D *m_noise[4];
 
-    osg::Program *m_program;
-    osg::Shader *m_vShader;
-    osg::Shader *m_fShader;
-
-    osg::ref_ptr<osg::Uniform> u_q;
-    osg::ref_ptr<osg::Uniform> u_preNoise;
-
-    osg::ref_ptr<osg::Uniform> u_time;
-
-    osg::ref_ptr<osg::Uniform> u_noise0;
-    osg::ref_ptr<osg::Uniform> u_noise1;
-    osg::ref_ptr<osg::Uniform> u_noise2;
-    osg::ref_ptr<osg::Uniform> u_noise3;
-    
+//    osg::ref_ptr<osg::Uniform> u_noise0;
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 public:
