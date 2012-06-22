@@ -277,7 +277,7 @@ void MoonGeode::setupEclipseTexture(osg::StateSet* stateSet)
 
     const osg::Vec3 le0 = osg::Vec3(1.0, 1.0, 1.0) * 0.900f;
     const osg::Vec3 le1 = osg::Vec3(1.0, 1.0, 1.0) * 0.088f;
-    const osg::Vec3 le2 = osg::Vec3(0.4, 0.7, 1.0) * 0.030f;
+    const osg::Vec3 le2 = osg::Vec3(0.4, 0.7, 1.0) * 0.023f;
     const osg::Vec3 le3 = osg::Vec3(0.3, 0.5, 1.0) * 0.040f;
 
     const float s_u = 0.05;
@@ -395,7 +395,7 @@ const float MoonGeode::getSunShineIntensity() const
 
 const float MoonGeode::defaultSunShineIntensity()
 {
-    return 64.f;
+    return 32.f;
 }
 
 
@@ -430,7 +430,7 @@ const float MoonGeode::getEarthShineIntensity() const
 
 const float MoonGeode::defaultEarthShineIntensity()
 {
-    return 2.0f;
+    return 1.0f;
 }
 
 
@@ -625,9 +625,13 @@ const std::string MoonGeode::getFragmentShaderSource()
 	    "       , eclParams[0], eclParams[1], eclParams[2], eclParams[3]);\n"
         "\n"
         
+            // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
+        "    float b = 0.5 / sqrt(1 + pow(sun.z + 1.05, 32)) + 0.5;\n"
+        "\n"
+
         // diffuse
         "    vec3 diffuse = earthShine;\n"
-        "    diffuse += f * sunShine.w;\n"
+        "    diffuse += f * sunShine.w * b;\n"
         "\n"
         "    diffuse *= c.a;\n"
         "    diffuse  = max(vec3(0.0), diffuse);\n"
@@ -635,7 +639,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    diffuse *= sunShine.rgb;\n"
         "    diffuse *= e;\n"
         "\n"
-        "    diffuse -= scatt(acos(eye.z));\n"
+        "    diffuse *= (1 - 2 * scatt(acos(eye.z)));\n"
         "\n"
         "    gl_FragColor = vec4(diffuse, 1.0);\n"
         "}");

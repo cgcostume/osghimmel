@@ -429,6 +429,10 @@ const std::string StarsGeode::getVertexShaderSource()
         "    i_t *= 4e-7 / (q * q);  // resolution correlated \n"
         "    i_t = min(1.167, i_t);	// volume of smoothstep (V_T)\n"
         "\n"
+            // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
+        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.14, 32));\n"
+        "    i_t *= b;\n"
+        "\n"        
         "    if(i_t < 0.01)\n"
         "        return;\n"
         "\n"

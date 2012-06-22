@@ -164,6 +164,103 @@ public:
 };
 
 
+#include <osg/TexMat>
+#include <osg/TexGenNode>
+#include <osg/Material>
+
+osg::Node *createReflector()
+{
+    osg::Node *node = osgDB::readNodeFile("D:/temp/monster.3ds");
+    //osg::Node *node = osgDB::readNodeFile("D:/p/osghimmel/exchange/movie-döllner/New folder/terrain-tile.3ds");
+    
+
+    if(!node)
+    {
+        osg::notify(osg::WARN) << "Mesh \"resources/knot.obj\" not found." << std::endl;
+        return NULL;
+    }
+
+    osg::ref_ptr<osg::Material> m = new osg::Material;
+    m->setColorMode(osg::Material::DIFFUSE);
+    m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
+
+    node->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
+
+    return node;
+}
+
+class TexMatCullCallback : public osg::NodeCallback
+{
+    public:
+    
+        TexMatCullCallback(osg::TexMat *texmat)
+        :   m_texmat(texmat)
+        {
+        }
+       
+        virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
+        {
+            traverse(node, nv);
+
+            osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
+            if(cv)
+            {
+                const osg::Quat quat = cv->getModelViewMatrix()->getRotate();
+                m_texmat->setMatrix(osg::Matrix::rotate(quat.inverse()));
+            }
+        }
+        
+    protected:
+        osg::ref_ptr<osg::TexMat> m_texmat;
+};
+
+
+#include "osgHimmel/himmelenvmap.h"
+
+#include <osg/TextureCubeMap>
+#include <osg/Texture2D>
+
+osg::Group *createScene(
+    osg::Node *scene
+,   osg::Node *reflector)
+{
+    const unsigned int unit = 0;
+
+    // create the texgen node to project the tex coords onto the subgraph:
+    osg::TexGenNode* texgenNode = new osg::TexGenNode;
+
+    texgenNode->getTexGen()->setMode(osg::TexGen::REFLECTION_MAP);
+    texgenNode->setTextureUnit(unit);
+
+    texgenNode->addChild(reflector);
+
+
+    HimmelEnvMap *envMap = new HimmelEnvMap(512);
+    envMap->addChild(scene);
+
+
+    osg::Group *group = new osg::Group();
+    group->addChild(envMap);
+    group->addChild(texgenNode);
+
+    osg::StateSet* stateset = reflector->getOrCreateStateSet();
+    stateset->setTextureAttributeAndModes(unit, envMap->cubeMap(), osg::StateAttribute::ON);
+    stateset->setTextureMode(unit, GL_TEXTURE_GEN_S, osg::StateAttribute::ON);
+    stateset->setTextureMode(unit, GL_TEXTURE_GEN_T, osg::StateAttribute::ON);
+    stateset->setTextureMode(unit, GL_TEXTURE_GEN_R, osg::StateAttribute::ON);
+    stateset->setTextureMode(unit, GL_TEXTURE_GEN_Q, osg::StateAttribute::ON);
+
+    osg::TexMat* texmat = new osg::TexMat;
+    stateset->setTextureAttributeAndModes(unit, texmat, osg::StateAttribute::ON);
+        
+    reflector->setCullCallback(new TexMatCullCallback(texmat));
+
+
+    return group;
+}
+
+
+
 int main(int argc, char* argv[])
 {
     osg::ArgumentParser arguments(&argc, argv);
@@ -231,13 +328,25 @@ int main(int argc, char* argv[])
     b->setMatrix(osg::Matrix::scale(10, 10, 10));
 
     b->addChild(g_himmel);
-    root->addChild(b);
+    //root->addChild(b);
 
 
 
-    osg::Group *meshes = new osg::Group();
+    osg::Node *reflector(createReflector());
+    if(reflector)
+    {
+        osg::ref_ptr<osg::Group> scene = createScene(b, reflector);
+        root->addChild(scene.get());
+    }
+    else
+        root->addChild(b);
+
+
+
+//    osg::Group *meshes = new osg::Group();
    
     
+
     //osg::MatrixTransform *m = new osg::MatrixTransform();
     //m->setMatrix(osg::Matrix::translate(osg::Vec3(0.0, 0.0, -100.0)));
 

@@ -337,12 +337,12 @@ const std::string StarMapGeode::getFragmentShaderSource()
         "    vec4 fc = textureCube(starmapCube, stu);\n"
         "    fc *= 3e-2 / sqrt(q) * deltaM;\n"
         "\n"
-        "    float omega = acos(eye.z);\n"
+        "    float omega = acos(eye.z * 0.9998);\n"
         "\n"
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
-        //"    float b = 1.0 / sqrt(1 + pow(sun.z + 1.3, 16));\n"
+        "    float b = 1.0 / sqrt(1 + pow(sun.z + 1.14, 32));\n"
         "\n"
-        "    gl_FragColor = vec4(fc.rgb - scatt(omega), 1.0);\n"
+        "    gl_FragColor = vec4(b * (fc.rgb - scatt(omega)), 1.0);\n"
         "}");
 }
 

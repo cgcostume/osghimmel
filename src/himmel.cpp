@@ -58,12 +58,12 @@ Himmel *Himmel::create()
     // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
     return new Himmel(
-        new StarMapGeode("resources/starmap?.png")
-    ,   new MoonGeode("resources/moon?.png")
-    ,   new StarsGeode("resources/brightstars")
+        NULL //new StarMapGeode("resources/starmap?.png")
+    ,   NULL //new MoonGeode("resources/moon?.png")
+    ,   NULL //new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
-    ,   new HighCloudLayerGeode()
-    ,   NULL //new DubeCloudLayerGeode()
+    ,   NULL //new HighCloudLayerGeode()
+    ,   new DubeCloudLayerGeode()
     ,   new Astronomy()
     );
 }
@@ -131,11 +131,11 @@ Himmel::Himmel(
         addChild(m_moon);
         m_moon->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
-        m_moonGlare = new MoonGlareGeode;
-        addChild(m_moonGlare);
-        m_moonGlare->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
+        //m_moonGlare = new MoonGlareGeode;
+        //addChild(m_moonGlare);
+        //m_moonGlare->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
 
-        m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
+        //m_moon->addUniformsToVariousStateSate(m_moonGlare->getOrCreateStateSet());
     }
     if(m_atmosphere)
     {
@@ -217,7 +217,7 @@ void Himmel::update()
         if(m_moon)
         {
             m_moon->update(*this);
-            m_moonGlare->update(*this);
+            //m_moonGlare->update(*this);
         }
         if(m_stars)
             m_stars->update(*this);

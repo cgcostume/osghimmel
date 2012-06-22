@@ -197,7 +197,7 @@ const float AtmosphereGeode::getSunScale() const
 
 const float AtmosphereGeode::defaultSunScale()
 {
-    return 2.f;
+    return 3.f;
 }
 
 
@@ -546,8 +546,8 @@ const std::string AtmosphereGeode::getFragmentShaderSource()
         "    float hb = t > 0.0 ? 0.0 : exp(-pow(sunr.z, 2.0) * 166) + 0.03;\n"     // the +0.03 is for a slight blueish tint at night
         "    vec3 bluehour = lheurebleue.w * lheurebleue.rgb * (dot(ray, sunr) + 1.5) * hb;\n" // * mu (optional..)
         "\n"
-        "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0)\n"
-        "        + dither(4, int(cmn[3]));\n" // Eq (16)
+        "    gl_FragColor = vec4(HDR(bluehour + sunColor /*+ groundColor*/ + inscatterColor), 1.0);\n"
+        //"        + dither(4, int(cmn[3]));\n" // Eq (16)
         "}";
 }
 
