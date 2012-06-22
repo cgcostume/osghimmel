@@ -42,7 +42,7 @@ namespace osgHimmel
 // (http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection) and
 // (http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter1.htm)
 
-const std::string glsl_cloud_layer_intersection()
+const std::string glsl_cloud_layer_intersection_or_discard()
 {
     static const std::string source(
 
@@ -70,6 +70,59 @@ const std::string glsl_cloud_layer_intersection()
         "    B = sqrt(B);\n"
         "\n"
         "    return (-b + B) * 0.5 / a;\n"
+        "}"));
+
+    return source;
+};
+
+
+const std::string glsl_cloud_layer_intersection()
+{
+    static const std::string source(
+
+        PRAGMA_ONCE(layerIntersection,
+
+        "bool layerIntersection(\n"
+        "    const vec3 d\n"
+        ",   const vec3 o\n"
+        ",   const float altitude\n"
+        ",   out float t)\n"
+        "{\n"
+        "    float r = cmn[1] + altitude;\n"
+        "\n"
+            // for now, ignore if altitude is above cloud layer
+        "    if(o.z > r) \n"
+        "        return false;\n"
+        "\n"
+        "    float a = dot(d, d);\n"
+        "    float b = 2 * dot(d, o);\n"
+        "    float c = dot(o, o) - r * r;\n"
+        "\n"
+        "    float B = b * b - 4 * a * c;\n"
+        "    B = sqrt(B);\n"
+        "\n"
+        "    float q;\n"
+        "\n"
+        "    if(b < 0)\n"
+        "        q = (-b - B) * 0.5;\n"
+        "    else\n"
+        "        q = (-b + B) * 0.5;\n"
+        "\n"
+        "    float t0 = q / a;\n"
+        "    float t1 = c / q;\n"
+        "\n"
+        "    if(t0 > t1)\n"
+        "    {\n"
+        "        q  = t0;\n"
+        "        t0 = t1;\n"
+        "        t1 = q ;\n"
+        "    }\n"
+        "\n"
+        "    if(t1 < 0)\n"
+        "        return false;\n"
+        "\n"
+        "    t = t0 < 0 ? t1 : t0;\n"
+        "    return true;\n"
         "}"));
 
     return source;

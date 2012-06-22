@@ -38,7 +38,9 @@
 
 namespace osg
 {
+    class Image;
     class Texture2D;
+    class Texture3D;
 }
 
 namespace osgHimmel
@@ -48,40 +50,98 @@ class Himmel;
 class HimmelQuad;
 
 
+/*
+alt    9,30
+change 0,02
+scale 64,00
+cover  0,40
+sharp  0,32
+windx -0,01
+windy -0,02
+*/
+
 class OSGH_API HighCloudLayerGeode : public osg::Group
 {
 public:
 
-    HighCloudLayerGeode();
+    HighCloudLayerGeode(const int texSize = 8192);
     virtual ~HighCloudLayerGeode();
 
     void update(const Himmel &himmel);
 
+    const float setCoverage(const float coverage);
+    const float getCoverage() const;
+
+    const float setSharpness(const float sharpness);
+    const float getSharpness() const;
+
+    const float setAltitude(const float altitude);
+    const float getAltitude() const;
+    static const float defaultAltitude();
+
+    const float setScale(const float scale);
+    const float getScale() const;
+    static const float defaultScale();
+
+    const float setChange(const float change);
+    const float getChange() const;
+    static const float defaultChange();
+
+    const osg::Vec2 setWind(const osg::Vec2 &wind);
+    const osg::Vec2 getWind() const;
+
 protected:
 
-    void precompute();
+    static osg::Group* createPreRenderedNoise(
+        const unsigned texSize
+    ,   osg::Texture2D *texture);
 
-    void setupUniforms(osg::StateSet* stateSet);
-    void setupNode    (osg::StateSet* stateSet);
-    void setupTextures(osg::StateSet* stateSet);
-    void setupShader  (osg::StateSet* stateSet);
+    static osg::ref_ptr<osg::Image> createNoiseSlice(
+        const unsigned int texSize
+    ,   const unsigned int octave);
 
-    const std::string getVertexShaderSource();
-    const std::string getFragmentShaderSource();
+    static osg::Texture3D *createNoiseArray(
+        const unsigned int texSize 
+    ,   const unsigned int octave
+    ,   const unsigned int slices);
+
+    virtual void setupUniforms(osg::StateSet* stateSet);
+    virtual void setupNode    (osg::StateSet* stateSet);
+    virtual void setupTextures(osg::StateSet* stateSet);
+    virtual void setupShader  (osg::StateSet* stateSet);
+
+    virtual const std::string getVertexShaderSource();
+    virtual const std::string getFragmentShaderSource();
 
 protected:
 
     HimmelQuad *m_hquad;
-
-    //osg::Texture2D *m_transmittance;
+    
+    osg::Texture2D *m_preNoise;
+    osg::Texture3D *m_noise[4];
+        
+    int m_noiseSize;
 
     osg::Program *m_program;
     osg::Shader *m_vShader;
     osg::Shader *m_fShader;
 
-    osg::ref_ptr<osg::Uniform> u_perm;
-    osg::ref_ptr<osg::Uniform> u_perlin;
+    osg::ref_ptr<osg::Uniform> u_q;
+    osg::ref_ptr<osg::Uniform> u_preNoise;
 
+    osg::ref_ptr<osg::Uniform> u_time;
+
+    osg::ref_ptr<osg::Uniform> u_noise0;
+    osg::ref_ptr<osg::Uniform> u_noise1;
+    osg::ref_ptr<osg::Uniform> u_noise2;
+    osg::ref_ptr<osg::Uniform> u_noise3;
+    
+    osg::ref_ptr<osg::Uniform> u_coverage;
+    osg::ref_ptr<osg::Uniform> u_sharpness;
+    osg::ref_ptr<osg::Uniform> u_change;
+    osg::ref_ptr<osg::Uniform> u_wind;
+    osg::ref_ptr<osg::Uniform> u_altitude;
+    osg::ref_ptr<osg::Uniform> u_scale;
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 public:

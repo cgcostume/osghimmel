@@ -62,7 +62,7 @@ Himmel *Himmel::create()
     ,   NULL //new MoonGeode("resources/moon?.png")
     ,   NULL //new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
-    ,   NULL //new HighCloudLayerGeode()
+    ,   NULL//new HighCloudLayerGeode()
     ,   new DubeCloudLayerGeode()
     ,   new Astronomy()
     );
