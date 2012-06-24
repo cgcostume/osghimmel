@@ -32,7 +32,6 @@
 #define __DUBECLOUDLAYERGEODE_H__
 
 #include "declspec.h"
-#include "highcloudlayergeode.h"
 
 #include <osg/Group>
 
@@ -51,25 +50,95 @@ class Himmel;
 class HimmelQuad;
 
 
-class OSGH_API DubeCloudLayerGeode : public HighCloudLayerGeode
+class OSGH_API DubeCloudLayerGeode : public osg::Group
 {
 public:
 
-    DubeCloudLayerGeode();
+    DubeCloudLayerGeode(const int texSize = 4096);
     virtual ~DubeCloudLayerGeode();
 
     void update(const Himmel &himmel);
 
+
+
+    const float setCoverage(const float coverage);
+    const float getCoverage() const;
+
+    const float setSharpness(const float sharpness);
+    const float getSharpness() const;
+
+    const float setAltitude(const float altitude);
+    const float getAltitude() const;
+    static const float defaultAltitude();
+
+    const osg::Vec2 setScale(const osg::Vec2 &scale);
+    const osg::Vec2 getScale() const;
+    static const osg::Vec2 defaultScale();
+
+    const float setChange(const float change);
+    const float getChange() const;
+    static const float defaultChange();
+
+    const float setThickness(const float thickness);
+    const float getThickness() const;
+
+    const float setOffset(const float offset);
+    const float getOffset() const;
+
+    const osg::Vec3 setBottomColor(const osg::Vec3 &color);
+    const osg::Vec3 getBottomColor() const;
+
+    const osg::Vec3 setTopColor(const osg::Vec3 &color);
+    const osg::Vec3 getTopColor() const;
+
+    const osg::Vec2 setWind(const osg::Vec2 &wind);
+    const osg::Vec2 getWind() const;
+
 protected:
 
     virtual void setupUniforms(osg::StateSet* stateSet);
+    virtual void setupNode    (osg::StateSet* stateSet);
+    virtual void setupTextures(osg::StateSet* stateSet);
+    virtual void setupShader  (osg::StateSet* stateSet);
 
+    virtual const std::string getVertexShaderSource();
     virtual const std::string getFragmentShaderSource();
 
 protected:
 
+    HimmelQuad *m_hquad;
+    
+    osg::Texture2D *m_preNoise;
+    osg::Texture3D *m_noise[4];
+        
+    int m_noiseSize;
 
-//    osg::ref_ptr<osg::Uniform> u_noise0;
+    osg::Program *m_program;
+    osg::Shader *m_vShader;
+    osg::Shader *m_fShader;
+
+    osg::ref_ptr<osg::Uniform> u_q;
+    osg::ref_ptr<osg::Uniform> u_clouds;
+    osg::ref_ptr<osg::Uniform> u_noise;
+
+    osg::ref_ptr<osg::Uniform> u_time;
+
+    osg::ref_ptr<osg::Uniform> u_noise0;
+    osg::ref_ptr<osg::Uniform> u_noise1;
+    osg::ref_ptr<osg::Uniform> u_noise2;
+    osg::ref_ptr<osg::Uniform> u_noise3;
+    
+    osg::ref_ptr<osg::Uniform> u_coverage;
+    osg::ref_ptr<osg::Uniform> u_sharpness;
+    osg::ref_ptr<osg::Uniform> u_change;
+    osg::ref_ptr<osg::Uniform> u_wind;
+    osg::ref_ptr<osg::Uniform> u_altitude;
+    osg::ref_ptr<osg::Uniform> u_scale;
+    osg::ref_ptr<osg::Uniform> u_bcolor;
+    osg::ref_ptr<osg::Uniform> u_tcolor;
+    osg::ref_ptr<osg::Uniform> u_offset;
+    osg::ref_ptr<osg::Uniform> u_thickness;
+
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS
 public:

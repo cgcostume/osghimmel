@@ -64,7 +64,7 @@ class OSGH_API HighCloudLayerGeode : public osg::Group
 {
 public:
 
-    HighCloudLayerGeode(const int texSize = 8192);
+    HighCloudLayerGeode(const int texSize = 4096);
     virtual ~HighCloudLayerGeode();
 
     void update(const Himmel &himmel);
@@ -79,9 +79,9 @@ public:
     const float getAltitude() const;
     static const float defaultAltitude();
 
-    const float setScale(const float scale);
-    const float getScale() const;
-    static const float defaultScale();
+    const osg::Vec2 setScale(const osg::Vec2 &scale);
+    const osg::Vec2 getScale() const;
+    static const osg::Vec2 defaultScale();
 
     const float setChange(const float change);
     const float getChange() const;
@@ -90,7 +90,10 @@ public:
     const osg::Vec2 setWind(const osg::Vec2 &wind);
     const osg::Vec2 getWind() const;
 
-protected:
+    const osg::Vec3 setColor(const osg::Vec3 &color);
+    const osg::Vec3 getColor() const;
+
+public:
 
     static osg::Group* createPreRenderedNoise(
         const unsigned texSize
@@ -104,6 +107,8 @@ protected:
         const unsigned int texSize 
     ,   const unsigned int octave
     ,   const unsigned int slices);
+
+protected:
 
     virtual void setupUniforms(osg::StateSet* stateSet);
     virtual void setupNode    (osg::StateSet* stateSet);
@@ -140,6 +145,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_sharpness;
     osg::ref_ptr<osg::Uniform> u_change;
     osg::ref_ptr<osg::Uniform> u_wind;
+    osg::ref_ptr<osg::Uniform> u_color;
     osg::ref_ptr<osg::Uniform> u_altitude;
     osg::ref_ptr<osg::Uniform> u_scale;
 

@@ -77,6 +77,7 @@ HighCloudLayerGeode::HighCloudLayerGeode(const int texSize)
 ,   u_wind(NULL)
 ,   u_altitude(NULL)
 ,   u_scale(NULL)
+,   u_color(NULL)
 {
     setName("HighCloudLayer");
 
@@ -176,12 +177,14 @@ osg::Group* HighCloudLayerGeode::createPreRenderedNoise(
         "   n += 0.50000 * texture3D(noise1, vec3(uv     + m * 0.16, t * 0.02)).r;\n"
         "   n += 0.25000 * texture3D(noise2, vec3(uv     + m * 0.14, t * 0.04)).r;\n"
         "   n += 0.12500 * texture3D(noise3, vec3(uv     + m * 0.12, t * 0.08)).r;\n"
-        "   n += 0.06750 * texture3D(noise0, vec3(uv * 2 + m * 0.10, t * 0.16)).r;\n"
-        "   n += 0.06125 * texture3D(noise1, vec3(uv * 4 + m * 0.08, t * 0.32)).r;\n"
-        "   n += 0.06125 * texture3D(noise2, vec3(uv * 8 + m * 0.06, t * 0.64)).r;\n"
-        "   n *= 0.50;\n"
+        "   n += 0.06750 * texture3D(noise3, vec3(uv * 2 + m * 0.10, t * 0.16)).r;\n"
+        "   n += 0.06125 * texture3D(noise3, vec3(uv * 4 + m * 0.08, t * 0.32)).r;\n"
+//        "   n += 0.06125 * texture3D(noise2, vec3(uv * 8 + m * 0.06, t * 0.64)).r;\n"
+        "   n *= 0.76;\n"
         "\n"
-        "   n = max(n - coverage, 0);\n"
+        "   n = n - 1 + coverage;\n"
+        "   n /= coverage;\n"
+        "   n = max(0.0, n);\n"
         "   n = pow(n, sharpness);\n"
         "\n"
         "   gl_FragColor = vec4(n);\n"
@@ -336,6 +339,9 @@ void HighCloudLayerGeode::setupUniforms(osg::StateSet *stateSet)
     u_wind = new osg::Uniform("wind", osg::Vec2(0.f, 0.f));
     stateSet->addUniform(u_wind);
 
+    u_color = new osg::Uniform("color", osg::Vec3(1.f, 1.f, 1.f));
+    stateSet->addUniform(u_color);
+
     u_altitude = new osg::Uniform("altitude", defaultAltitude());
     stateSet->addUniform(u_altitude);
 
@@ -444,23 +450,23 @@ const float HighCloudLayerGeode::getCoverage() const
 }
 
 
-const float HighCloudLayerGeode::setScale(const float scale)
+const osg::Vec2 HighCloudLayerGeode::setScale(const osg::Vec2 &scale)
 {
     u_scale->set(scale);
     return getScale();
 }
 
-const float HighCloudLayerGeode::getScale() const
+const osg::Vec2 HighCloudLayerGeode::getScale() const
 {
-    float scale;
+    osg::Vec2 scale;
     u_scale->get(scale);
 
     return scale;
 }
 
-const float HighCloudLayerGeode::defaultScale()
+const osg::Vec2 HighCloudLayerGeode::defaultScale()
 {
-    return 32.f;
+    return osg::Vec2(32.f, 32.f);
 }
 
 
@@ -499,6 +505,21 @@ const osg::Vec2 HighCloudLayerGeode::getWind() const
 }
 
 
+const osg::Vec3 HighCloudLayerGeode::setColor(const osg::Vec3 &color)
+{
+    u_color->set(color);
+    return getColor();
+}
+
+const osg::Vec3 HighCloudLayerGeode::getColor() const
+{
+    osg::Vec3 color;
+    u_color->get(color);
+
+    return color;
+}
+
+
 const std::string HighCloudLayerGeode::getVertexShaderSource()
 {
     return glsl_version_150()
@@ -534,7 +555,8 @@ const std::string HighCloudLayerGeode::getFragmentShaderSource()
         "uniform sampler2D preNoise;\n"
         "\n"
         "uniform float altitude;\n"
-        "uniform float scale;\n"
+        "uniform vec2 scale;\n"
+        "uniform vec3 color;\n"
         "\n"
         "uniform vec3 sunr;\n"
         "\n"
@@ -571,7 +593,7 @@ const std::string HighCloudLayerGeode::getFragmentShaderSource()
         "    layerIntersection(eye, o, altitude, t);\n"
         "    float n = T(o + t * eye);\n"
         "\n"
-        "    gl_FragColor = vec4(vec3(n), n);\n"
+        "    gl_FragColor = vec4(color, n);\n"
         "}");
 }
 

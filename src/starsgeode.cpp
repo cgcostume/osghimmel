@@ -76,6 +76,7 @@ StarsGeode::StarsGeode(const char* brightStarsFilePath)
 ,   u_apparentMagnitude(NULL)
 ,   u_scattering(NULL)
 ,   u_scintillations(NULL)
+,   u_scale(NULL)
 {
     setName("Stars");
 
@@ -136,6 +137,9 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 
     u_scattering = new osg::Uniform("scattering", defaultScattering());
     stateSet->addUniform(u_scattering);
+
+    u_scale = new osg::Uniform("scale", 1.f);
+    stateSet->addUniform(u_scale);
 }
 
 
@@ -370,6 +374,20 @@ const float StarsGeode::defaultColorRatio()
 }
 
 
+const float StarsGeode::setScale(const float scale)
+{
+    u_scale->set(scale);
+    return getScale();
+}
+
+const float StarsGeode::getScale() const
+{
+    float scale;
+    u_scale->get(scale);
+
+    return scale;
+}
+
 
 
 const std::string StarsGeode::getVertexShaderSource()
@@ -526,6 +544,7 @@ const std::string StarsGeode::getFragmentShaderSource()
     +   PRAGMA_ONCE(main,
 
         "uniform float q;\n"
+        "uniform float scale;\n"
         "uniform float glareIntensity;\n"
         "\n"
         "uniform vec3 sun;\n"
@@ -546,7 +565,7 @@ const std::string StarsGeode::getFragmentShaderSource()
         "\n"
         "    float l = length(vec2(x, y));\n"
         "\n"
-        "    float t = 1 - smoothstep(0.0, 1.0, l * k);\n"
+        "    float t = 1 - smoothstep(0.0, 1.0, l * k / scale);\n"
         "    float g = 1 - pow(l, glareIntensity / 64.0);\n"
         "\n"
 	    "    gl_FragColor = vec4((t > g ? t : g) * g_color, 1.0);\n"
