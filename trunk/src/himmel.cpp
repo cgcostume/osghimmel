@@ -58,11 +58,11 @@ Himmel *Himmel::create()
     // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
     return new Himmel(
-        NULL //new StarMapGeode("resources/starmap?.png")
-    ,   NULL //new MoonGeode("resources/moon?.png")
-    ,   NULL //new StarsGeode("resources/brightstars")
+        new StarMapGeode("resources/starmap?.png")
+    ,   new MoonGeode("resources/moon?.png")
+    ,   new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
-    ,   NULL//new HighCloudLayerGeode()
+    ,   new HighCloudLayerGeode()
     ,   new DubeCloudLayerGeode()
     ,   new Astronomy()
     );

@@ -80,6 +80,8 @@ public:
     const float getScattering() const;
     static const float defaultScattering();
 
+    const float setScale(const float scale);
+    const float getScale() const;
 
 protected:
 
@@ -116,6 +118,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_apparentMagnitude;
     osg::ref_ptr<osg::Uniform> u_scattering;
     osg::ref_ptr<osg::Uniform> u_scintillations;
+    osg::ref_ptr<osg::Uniform> u_scale;    
 
     // TODO: replace with VMag intensity function of procedural himmel
     osg::ref_ptr<osg::Uniform> u_sun;
