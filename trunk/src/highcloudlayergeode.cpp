@@ -178,7 +178,7 @@ osg::Group* HighCloudLayerGeode::createPreRenderedNoise(
         "   n += 0.25000 * texture3D(noise2, vec3(uv     + m * 0.14, t * 0.04)).r;\n"
         "   n += 0.12500 * texture3D(noise3, vec3(uv     + m * 0.12, t * 0.08)).r;\n"
         "   n += 0.06750 * texture3D(noise3, vec3(uv * 2 + m * 0.10, t * 0.16)).r;\n"
-        "   n += 0.06125 * texture3D(noise3, vec3(uv * 4 + m * 0.08, t * 0.32)).r;\n"
+        //"   n += 0.06125 * texture3D(noise3, vec3(uv * 4 + m * 0.08, t * 0.32)).r;\n"
 //        "   n += 0.06125 * texture3D(noise2, vec3(uv * 8 + m * 0.06, t * 0.64)).r;\n"
         "   n *= 0.76;\n"
         "\n"

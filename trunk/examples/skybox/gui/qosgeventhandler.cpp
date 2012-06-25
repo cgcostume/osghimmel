@@ -46,6 +46,23 @@ bool QOsgEventHandler::handle(
 
     switch(ea.getEventType())
     {
+
+  case(osgGA::GUIEventAdapter::KEYDOWN):
+            {
+                if(ea.getKey() == '-'
+                || ea.getKey() == '+')
+                {
+                    const float f = 1.00f
+                        + (ea.getKey() == '+' ? +0.004f : -0.004f);
+
+                    if(m_fov * f >= 1.f && m_fov * f <= 179.f)
+                        m_fov *= f;
+
+                    emit fovChanged(m_fov);
+                }
+            }
+            break;
+
     case(osgGA::GUIEventAdapter::SCROLL):
         {
             const float f = 1.00f

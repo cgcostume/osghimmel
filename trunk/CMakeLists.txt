@@ -87,7 +87,8 @@ find_package(OpenSceneGraph REQUIRED
     osgViewer 
     osgUtil 
     osgDB 
-    osgGA)
+    osgGA
+	osgText)
 
 string(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
 
