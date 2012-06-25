@@ -54,7 +54,7 @@ class OSGH_API DubeCloudLayerGeode : public osg::Group
 {
 public:
 
-    DubeCloudLayerGeode(const int texSize = 4096);
+    DubeCloudLayerGeode(const int texSize = 2048);
     virtual ~DubeCloudLayerGeode();
 
     void update(const Himmel &himmel);

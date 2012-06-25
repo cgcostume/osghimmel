@@ -64,7 +64,7 @@ class OSGH_API HighCloudLayerGeode : public osg::Group
 {
 public:
 
-    HighCloudLayerGeode(const int texSize = 4096);
+    HighCloudLayerGeode(const int texSize = 2048);
     virtual ~HighCloudLayerGeode();
 
     void update(const Himmel &himmel);
