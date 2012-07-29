@@ -51,7 +51,10 @@ namespace osgHimmel
 class OSGH_API CubeMappedHimmel : public AbstractMappedHimmel
 {
 public:
-    CubeMappedHimmel(const bool fakeSun = false);
+    CubeMappedHimmel(
+        const bool fakeSun = false
+    ,   const bool cubify = false);
+
     virtual ~CubeMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
@@ -71,6 +74,9 @@ protected:
 
     typedef std::map<GLubyte, osg::ref_ptr<osg::TextureCubeMap> > t_tcmById;
     t_tcmById m_tcmsById;
+
+    // this overcomes the texel per samplingfield-angle issue of cube mapping - see cpp for more details.
+    const bool m_cubify;
 };
 
 } // namespace osgHimmel

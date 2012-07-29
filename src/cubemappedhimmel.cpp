@@ -40,8 +40,10 @@ namespace osgHimmel
 {
 
 CubeMappedHimmel::CubeMappedHimmel(
-    const bool fakeSun)
+    const bool fakeSun
+,   const bool cubify)
 :   AbstractMappedHimmel(fakeSun)
+,   m_cubify(cubify)
 {
     setName("CubeMappedHimmel");
 };
@@ -105,6 +107,43 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
 
     +   (m_fakeSun ? glsl_fakesun() : "")
 
+        // This is based on the math presented on: http://petrocket.blogspot.de/2010/04/sphere-to-cube-mapping.html
+        // It maps a sphere to a cube and can be used to overcome the texel per samplingfield-angle issue of cube mapping.
+
+    +   (!m_cubify ? "" :
+
+        PRAGMA_ONCE(sphere2cube,
+
+        "const float isqrt2 = 0.70710676908493042;\n"
+        "\n"
+        "vec3 cubify(const in vec3 s)\n"
+        "{\n"
+        "	 float xx2 = s.x * s.x * 2.0;\n"
+        "	 float yy2 = s.y * s.y * 2.0;\n"
+        "\n"
+        "    vec2 v = vec2(xx2 - yy2, yy2 - xx2);\n"
+        "\n"
+        "    float ii = v.y - 3.0;\n"
+        "    ii *= ii;\n"
+        "\n"
+        "    float isqrt = -sqrt(ii - 12.0 * xx2) + 3.0;\n"
+        "\n"
+        "    v  = sqrt(v + isqrt);\n"
+        "    v *= isqrt2;\n"
+        "\n"
+        "    return sign(s) * vec3(v, 1.0);\n"
+        "}\n"
+        "\n"
+        "vec3 sphere2cube(const in vec3 sphere)\n"
+        "{\n"
+        "    vec3 f = abs(sphere);\n"
+        "\n"
+        "    bool a = f.y >= f.x && f.y >= f.z;\n"
+        "    bool b = f.x >= f.z;\n"
+        "\n"
+        "    return a ? cubify(sphere.xzy).xzy : b ? cubify(sphere.yzx).zxy : cubify(sphere);\n"
+        "}"))
+
     +   PRAGMA_ONCE(main,
 
         "in vec4 m_ray;\n"
@@ -121,7 +160,8 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
         "void main(void)\n"
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
-        "\n"
+    +   (m_cubify ? "    stu = sphere2cube(stu);\n" : "")
+    +   "\n"
         "    vec4 fc = mix(\n"
         "        textureCube(back, stu), textureCube(src, stu), srcAlpha);\n"
         "\n"
