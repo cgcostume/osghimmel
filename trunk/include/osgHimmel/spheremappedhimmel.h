@@ -52,27 +52,14 @@ namespace osgHimmel
 class OSGH_API SphereMappedHimmel : public AbstractMappedHimmel
 {
 public:
-
-    enum e_MappingMode
-    {
-        MM_TowardsNegY
-    ,   MM_TowardsPosZ
-    };
-
-public:
     SphereMappedHimmel(
-        const e_MappingMode &mappingMode
+        const osg::Vec3 &center = osg::Vec3(0.0, 0.0, 1.0)
     ,   const bool fakeSun = false);
 
     virtual ~SphereMappedHimmel();
 
     // Use this helper to work with pre-configured textures.
     osg::Texture2D* getOrCreateTexture2D(const GLint textureUnit);
-
-    inline const e_MappingMode getMappingMode() const
-    {
-        return m_mappingMode;
-    }
 
 protected:
 
@@ -83,6 +70,7 @@ protected:
 
     // AbstractHimmel interface
 
+    virtual const std::string getVertexShaderSource();
     virtual const std::string getFragmentShaderSource();
 
 protected:
@@ -90,7 +78,7 @@ protected:
     typedef std::map<GLint, osg::ref_ptr<osg::Texture2D> > t_tex2DById;
     t_tex2DById m_tex2DsById;
 
-    e_MappingMode m_mappingMode;
+    osg::ref_ptr<osg::Uniform> u_transform;
 };
 
 } // namespace osgHimmel

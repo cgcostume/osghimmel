@@ -40,12 +40,18 @@ namespace osgHimmel
 {
 
 SphereMappedHimmel::SphereMappedHimmel(
-    const e_MappingMode &mappingMode
+    const osg::Vec3 &center
 ,   const bool fakeSun)
 :   AbstractMappedHimmel(fakeSun)
-,   m_mappingMode(mappingMode)
+,   u_transform(NULL)
 {
     setName("SphereMappedHimmel");
+
+    osg::Vec3 c(center);
+    c.normalize();
+
+    u_transform = new osg::Uniform("transform", osg::Matrix::rotate(osg::Vec3(0.0, 0.0, 1.0),  c));
+    getOrCreateStateSet()->addUniform(u_transform);
 };
 
 
@@ -96,6 +102,31 @@ osg::StateAttribute *SphereMappedHimmel::getTextureAttribute(const GLint texture
 
 
 
+const std::string SphereMappedHimmel::getVertexShaderSource()
+{
+    return glsl_version_150()
+    
+    +   glsl_quadRetrieveRay()
+    +   glsl_quadTransform()
+
+    +   PRAGMA_ONCE(main,
+
+        "uniform mat4 razInverse;\n"
+        "uniform mat4 transform;\n"
+        "\n"
+        "out vec4 m_ray;\n"
+        "out vec4 m_razInvariant;\n"
+        "\n"
+        "void main(void)\n"
+        "{\n"
+        "    m_ray = transform * quadRetrieveRay();\n"
+        "    m_razInvariant = m_ray * razInverse;\n"
+        "\n"
+        "    quadTransform();\n"
+        "}");
+}
+
+
 
 const std::string SphereMappedHimmel::getFragmentShaderSource()
 {
@@ -122,13 +153,10 @@ const std::string SphereMappedHimmel::getFragmentShaderSource()
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-    +   (getMappingMode() == MM_TowardsPosZ ?
-        // MM_TowardsPosZ
-        "    float m = 2.0 * sqrt(stu.x * stu.x + stu.y * stu.y + (stu.z + 1.0) * (stu.z + 1.0));\n"
-        "    vec2 uv = vec2(-stu.x / m + 0.5, stu.y / m + 0.5);\n"
-        // MM_TowardsNegY
-    :   "    float m = 2.0 * sqrt(stu.x * stu.x + stu.z * stu.z + (-stu.y + 1.0) * (-stu.y + 1.0));\n"
-        "    vec2 uv = vec2(-stu.x / m + 0.5, stu.z / m + 0.5);\n")
+        "    float yy = (1.0 - stu.y);\n"
+        "    yy *= yy;\n"
+        "    float m = 0.5 / sqrt(stu.x * stu.x + stu.z * stu.z + yy);\n"
+        "    vec2 uv = vec2(-stu.x, stu.z) * m + 0.5;\n"
     +   "\n"
         "    vec4 fc = mix(\n"
         "        texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"

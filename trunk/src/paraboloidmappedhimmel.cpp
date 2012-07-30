@@ -119,10 +119,13 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
 
     +   glsl_blendNormalExt()
     
-    +   (m_fakeSun ? glsl_fakesun() : "")
-    +   (m_withHBand ? glsl_hband() : "")
+    +   glsl_fakesun()
+    +   glsl_hband() 
 
     +   PRAGMA_ONCE(main,
+
+        ENABLE_IF(hBand, m_hBand)
+        ENABLE_IF(fakeSun, m_fakeSun)
 
         "in vec4 m_ray;\n"
         "\n"
@@ -135,20 +138,58 @@ const std::string ParaboloidMappedHimmel::getFragmentShaderSource()
         "\n"
         // Color Retrieval
 
+
+        // TODO: encapsulate
+        IF_ENABLED(hBand,
+
+        "uniform vec3 hbandParams;\n"
+        "uniform vec4 hbandBackground;\n"
+        "uniform vec4 hbandColor;")
+
+        // TODO: encapsulate
+        IF_ENABLED(fakeSun,
+
+        "uniform mat4 razInverse;\n"
+        "uniform vec3 sun;\n"
+        "uniform vec4 sunCoeffs;\n"
+        "uniform float sunScale;")
+
+
         "void main(void)\n"
         "{\n"
         "    vec3 stu = normalize(m_ray.xyz);\n"
         "\n"
-        "    float m = 2.0 * (1.0 + stu.z);\n"
-        "    vec2 uv = vec2(stu.x / m + 0.5, stu.y / m + 0.5);\n"
+        "    float m = 0.5 / (1.0 + stu.z);\n"
+        "    vec2 uv = vec2(stu.x, stu.y) * m + 0.5;\n"
         "\n"
         "    vec4 fc = mix(texture2D(back, uv), texture2D(src, uv), srcAlpha);\n"
-    +   (m_fakeSun ? "    fc += fakeSun(fc.a);\n" : "")
-    +   "\n"
-    +   (m_withHBand ? "" : "    if(stu.z < 0.0) discard;\n")
-    +
+
+        IF_ELSE_ENABLED(hBand, "", "    if(stu.z < 0.0) discard;\n")
+
         "\n"
-        "    gl_FragColor = " + (m_withHBand ? "hband(stu.z, fc)" : "fc") + ";\n"
+
+        IF_ENABLED(fakeSun,
+
+        "    fc += fakeSun(\n"
+        "        normalize(m_razInvariant.xyz)\n"
+        "    ,   sun\n"
+        "    ,   sunCoeffs\n"
+        "    ,   sunScale\n"
+        "    ,   fc.a);")
+
+        IF_ELSE_ENABLED(hBand,
+
+        "    gl_FragColor = hband(\n"
+        "        stu.z\n"
+        "    ,   hbandParams[0]\n"
+        "    ,   hbandParams[1]\n"
+        "    ,   hbandParams[2]\n"
+        "    ,   hbandColor\n"
+        "    ,   hbandBackground\n"
+        "    ,   fc);"
+        ,
+        "    gl_FragColor = fc;")
+
         "}");
 }
 
