@@ -129,13 +129,10 @@ void AbstractMappedHimmel::update()
     if(u_sun)
     {
         t_equd equ;
-        equ.declination = _deg(sin(t * _PI2)) + 40;
-        equ.right_ascension = 70;//_deg(cos(t * _PI2 - _PI));
+        // TODO: fix this
+        equ.declination = _deg(t * _PI_2);
+        equ.right_ascension = _deg(t * _PI2 - _PI);
 
-        //t_hord hor = equ.toHorizontal(0, 80.0, 0);
-        //t_hord hor; 
-        //hor.altitude = 20;
-        //hor.azimuth = 45 + (t * 180);
         u_sun->set(equ.toEuclidean());
     }
 
