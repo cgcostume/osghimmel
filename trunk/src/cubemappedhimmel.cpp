@@ -114,7 +114,7 @@ const std::string CubeMappedHimmel::getFragmentShaderSource()
 
         PRAGMA_ONCE(sphere2cube,
 
-        "const float isqrt2 = 0.70710676908493042;\n"
+        "const float isqrt2 = 0.70710678118654752440084436210485;\n"
         "\n"
         "vec3 cubify(const in vec3 s)\n"
         "{\n"

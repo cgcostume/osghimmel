@@ -50,12 +50,12 @@ const std::string glsl_hband()
         ",   const vec4 background\n"
         ",   vec4 fc /* fragment color */)\n"
         "{\n"
-        "    if(z < offset)\n"
-        "        fc = background;\n"
+        "    fc = mix(fc, background, step(z, offset));\n"
         "\n"
-        "    float b = abs((z - offset) / scale) - width;\n"
+        "    float b = abs(z - offset) / scale;\n"
+        "    b = smoothstep(width, 1.0, b);\n"
         "\n"
-        "    return blend_normal(color, fc, smoothstep(0.0, 1.0, b));\n"
+        "    return blend_normal(color, fc, b);\n"
         "}"));
 
     return source;
