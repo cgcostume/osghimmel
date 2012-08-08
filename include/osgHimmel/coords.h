@@ -273,8 +273,8 @@ const s_EquatorialCoords<T> s_EclipticalCoords<T>::toEquatorial(const T obliquit
 template<typename T>
 const s_EquatorialCoords<T> s_HorizontalCoords<T>::toEquatorial(
     const t_julianDay siderealTime /* θ_0 */
-,   const T observersLatitude  /* Φ   */
-,   const T observersLongitude /* L   */) const
+,   const T observersLatitude      /* Φ   */
+,   const T observersLongitude     /* L   */) const
 {
     s_EquatorialCoords<T> equ;
 

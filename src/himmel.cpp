@@ -70,12 +70,12 @@ Himmel *Himmel::create()
     );
 }
 
-osg::Geode *deb_geode;
+/*osg::Geode *deb_geode;
 osgText::Text *deb_time;
 osgText::Text *deb_geo;
 osg::Projection* deb_hudp;
 osg::MatrixTransform* deb_hudt;
-
+*/
 
 Himmel::Himmel(
     StarMapGeode *milkyWay
@@ -165,7 +165,7 @@ Himmel::Himmel(
         m_dubeLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
 
-
+    /*
     deb_geode = new osg::Geode;
     deb_time = new osgText::Text;
     deb_geo = new osgText::Text;
@@ -194,6 +194,7 @@ Himmel::Himmel(
     deb_geo->setFont("neo.ttf");
     deb_geo->setAxisAlignment(osgText::Text::SCREEN);
     deb_geo->setPosition(osg::Vec3(64, 32, 0));
+    */
 };
 
 
@@ -251,20 +252,20 @@ void Himmel::update()
         u_time->set(static_cast<float>(getTime()->getf()));
 
 
-        osg::Vec4 deb_col = sunrv.z() < 0.35 ? osg::Vec4(255, 255, 255, 0.33) : osg::Vec4(0, 0, 0, 0.33);
-        //osg::Vec4 deb_col = sunrv.z() < 0.4 ? osg::Vec4(255, 255, 255, 0.33) : osg::Vec4(0, 0, 0, 0.33);
-        deb_time->setColor(deb_col);
-        deb_geo->setColor(deb_col);
+        //osg::Vec4 deb_col = sunrv.z() < 0.35 ? osg::Vec4(255, 255, 255, 0.33) : osg::Vec4(0, 0, 0, 0.33);
+        ////osg::Vec4 deb_col = sunrv.z() < 0.4 ? osg::Vec4(255, 255, 255, 0.33) : osg::Vec4(0, 0, 0, 0.33);
+        //deb_time->setColor(deb_col);
+        //deb_geo->setColor(deb_col);
 
 
-        char deb1[64];
-        sprintf(deb1, "%04i-%02i-%02i %02i:%02i UTC\0", atime.year, atime.month, atime.day, atime.hour, atime.minute);
+        //char deb1[64];
+        //sprintf(deb1, "%04i-%02i-%02i %02i:%02i UTC\0", atime.year, atime.month, atime.day, atime.hour, atime.minute);
 
-        char deb2[64];
-        sprintf(deb2, "lat %03.2f°; lon %03.2f°; alt %01.3fkm\0", astro()->getLatitude(), astro()->getLongitude(), getAltitude());
+        //char deb2[64];
+        //sprintf(deb2, "lat %03.2f°; lon %03.2f°; alt %01.3fkm\0", astro()->getLatitude(), astro()->getLongitude(), getAltitude());
 
-        deb_time->setText(deb1);
-        deb_geo->setText(deb2);
+        //deb_time->setText(deb1);
+        //deb_geo->setText(deb2);
 
 
 
