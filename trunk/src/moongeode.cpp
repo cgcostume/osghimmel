@@ -72,6 +72,7 @@ MoonGeode::MoonGeode(const char* cubeMapFilePath)
 ,   u_moonCube(NULL)
 
 ,   u_R(NULL)
+,   u_q(NULL)
 
 ,   u_sunShine(NULL)    // [0,1,2] = color; [3] = intensity
 ,   u_earthShine(NULL)  // [0,1,2] = color;
@@ -120,11 +121,22 @@ void MoonGeode::update(const Himmel &himmel)
         * himmel.astro()->getEarthShineIntensity() * m_earthShineScale);
 
 
+    // TODO: starmap and planets  and stars also require / use this ... - find better place 
+    // issue 11..
+    const float fov = himmel.getCameraFovHint();
+    const float height = himmel.getViewSizeHeightHint();
+
+
+    //u_q->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
+    u_q->set(static_cast<float>(tan(_rad(fov * 0.5)) / (height * 0.5)));
+
+
     // approximate umbra and penumbra size in moon radii
 
     float e0 = 0, e1 = 0, e2 = 0;
 
     float B = 0.f; // 0 hints that eclipse is not happening
+
     // This allows skipping of the 1d eclipse texture look-up 
     // as well as all other eclipse related calcs.
 
@@ -191,6 +203,9 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
 
     u_eclParams = new osg::Uniform("eclParams", osg::Vec4(0.f, 0.f, 0.f, -1.f));
     stateSet->addUniform(u_eclParams);
+
+    u_q = new osg::Uniform("q", 0.0f);
+    stateSet->addUniform(u_q);
 
     u_R = new osg::Uniform("R", osg::Matrixd());
     stateSet->addUniform(u_R);
@@ -494,6 +509,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "uniform sampler1D eclCoeffs;\n"
         "uniform vec4 eclParams;\n"
         "\n"
+        "uniform float q;\n"
         "uniform mat4 R;\n"
         "\n"
         "uniform vec4 sunShine;\n"   // rgb as color and w as intensity.
@@ -578,8 +594,9 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    float y = gl_TexCoord[0].y;\n"
         "\n"
 
-        "    float zz = radius * radius - x * x - y * y;\n"
-        "    if(zz < 1.0 - radius)\n"
+        "    float zz = 1.0 - x * x - y * y;\n"
+        "    float w  = smoothstep(0.0, q * 256, zz);\n" // fov and size indepentent antialiasing 
+        "    if(w < 0.0)\n"
         "        discard;\n"
         "\n"
         "    vec3 eye = normalize(m_eye.xyz);\n"
@@ -641,7 +658,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         "    diffuse *= (1 - 2 * scatt(acos(eye.z)));\n"
         "\n"
-        "    gl_FragColor = vec4(diffuse, 1.0);\n"
+        "    gl_FragColor = w * vec4(diffuse, 1.0);\n"
         "}");
 }
 

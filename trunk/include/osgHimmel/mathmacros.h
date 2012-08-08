@@ -74,7 +74,7 @@ namespace osgHimmel
     ((a) < (b) ? (b) : (a))
 
 // same as _hour
-// note: if h is negative use -_decimal(d, m, s) instead of _decimal(-d, m, s)
+// note: if d is negative use -_decimal(d, m, s) instead of _decimal(-d, m, s)
 #define _decimal(d, m, s) \
     ((d) + ((m) + (s) / 60.0L) / 60.0L)
 

@@ -112,6 +112,7 @@ protected:
     osg::ref_ptr<osg::Uniform> u_eclParams;
 
     osg::ref_ptr<osg::Uniform> u_R;
+    osg::ref_ptr<osg::Uniform> u_q;
     osg::ref_ptr<osg::Uniform> u_sunShine;
     osg::ref_ptr<osg::Uniform> u_earthShine;
 
