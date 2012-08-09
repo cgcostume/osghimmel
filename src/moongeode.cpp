@@ -357,7 +357,7 @@ const float MoonGeode::getScale() const
 
 const float MoonGeode::defaultScale()
 {
-    return 3.f;
+    return 2.f;
 }
 
 
@@ -410,7 +410,7 @@ const float MoonGeode::getSunShineIntensity() const
 
 const float MoonGeode::defaultSunShineIntensity()
 {
-    return 32.f;
+    return 128.f;
 }
 
 
@@ -643,7 +643,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
         
             // Day-Twilight-Night-Intensity Mapping (Butterworth-Filter)
-        "    float b = 0.5 / sqrt(1 + pow(sun.z + 1.05, 32)) + 0.5;\n"
+        "    float b = 0.5 / sqrt(1 + pow(sun.z + 1.05, 32)) + 0.33;\n"
         "\n"
 
         // diffuse
