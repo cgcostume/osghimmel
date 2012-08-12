@@ -197,7 +197,7 @@ const float AtmosphereGeode::getSunScale() const
 
 const float AtmosphereGeode::defaultSunScale()
 {
-    return 3.f;
+    return 2.f;
 }
 
 

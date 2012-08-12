@@ -44,6 +44,8 @@
 #include <osg/Image>
 #include <osg/Texture1D>
 #include <osgDB/ReadFile>
+#include <osg/BlendFunc>
+
 
 #include <assert.h>
 
@@ -220,8 +222,10 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
 }
 
 
-void MoonGeode::setupNode(osg::StateSet* )
+void MoonGeode::setupNode(osg::StateSet* stateSet)
 {
+    osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
 }
 
 
@@ -596,7 +600,7 @@ const std::string MoonGeode::getFragmentShaderSource()
 
         "    float zz = 1.0 - x * x - y * y;\n"
         "    float w  = smoothstep(0.0, q * 256, zz);\n" // fov and size indepentent antialiasing 
-        "    if(w < 0.0)\n"
+        "    if(w <= 0.0)\n"
         "        discard;\n"
         "\n"
         "    vec3 eye = normalize(m_eye.xyz);\n"
@@ -656,7 +660,8 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    diffuse *= sunShine.rgb;\n"
         "    diffuse *= e;\n"
         "\n"
-        "    diffuse *= (1 - 2 * scatt(acos(eye.z)));\n"
+        // TODO: make scattering coeff 4 as uniform...
+        "    diffuse *= (1 - 4 * scatt(acos(eye.z)));\n"
         "\n"
         "    gl_FragColor = w * vec4(diffuse, 1.0);\n"
         "}");
