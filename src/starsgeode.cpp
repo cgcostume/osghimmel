@@ -101,7 +101,7 @@ void StarsGeode::update(const Himmel &himmel)
     const float height = himmel.getViewSizeHeightHint();
 
     //u_q->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
-    u_q->set(static_cast<float>(sqrt(2.0) * 2.0 * tan(_rad(fov * 0.5)) / height));
+    u_q->set(static_cast<float>(4.0 * tan(_rad(fov * 0.5)) / height));
 
     u_R->set(himmel.astro()->getEquToHorTransform());
 }
@@ -458,16 +458,14 @@ const std::string StarsGeode::getVertexShaderSource()
         "    vec3 v_t = vec3(i_t);\n"
         "\n"
         "    float theta = acos(v.z);\n"
-        "    float o_theta = optical(theta);\n"
-        "\n"
-        "    float sca = o_theta * scattering;\n"
         "\n"
         "    float r = mod(int(cmn[3]) ^ int(gl_Vertex.w), 251);\n"
-        "    float sci = pow(texture(noise1, r / 256.0).r, 8);\n"
-        "    sci *= o_theta * scintillations;\n"
+        "    float sci = 0.02 / texture(noise1, r / 256.0).r;\n"
         "\n"
-        "    i_g -= sca + sci;\n"
-        "    v_t -= (1 + normalize(lambda)) * sca + sci;\n"
+        "    vec3 E_ext = scatt(theta);\n"
+        "    E_ext *= (scattering + scintillations * sci);\n"
+        "\n"
+        "    v_t -= E_ext;\n"
         "\n"
         "    v_color = mix(gl_Color.rgb, color.rgb, color.w);\n"
         "    v_color *= v_t;\n"
