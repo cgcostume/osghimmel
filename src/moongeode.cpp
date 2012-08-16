@@ -127,9 +127,7 @@ void MoonGeode::update(const Himmel &himmel)
     // issue 11..
     const float fov = himmel.getCameraFovHint();
     const float height = himmel.getViewSizeHeightHint();
-
-
-    //u_q->set(static_cast<float>(tan(_rad(fov / 2)) / (height * 0.5)));
+ 
     u_q->set(static_cast<float>(tan(_rad(fov * 0.5)) / (height * 0.5)));
 
 
@@ -599,7 +597,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "\n"
 
         "    float zz = 1.0 - x * x - y * y;\n"
-        "    float w  = smoothstep(0.0, q * 256, zz);\n" // fov and size indepentent antialiasing 
+        "    float w  = smoothstep(0.0, 2.828 * q / moon.a, zz);\n" // fov and size indepentent antialiasing 
         "    if(w <= 0.0)\n"
         "        discard;\n"
         "\n"
