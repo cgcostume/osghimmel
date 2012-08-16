@@ -185,7 +185,7 @@ osg::Group* HighCloudLayerGeode::createPreRenderedNoise(
         "   n = n - 1 + coverage;\n"
         "   n /= coverage;\n"
         "   n = max(0.0, n);\n"
-        "   n = pow(n, sharpness);\n"
+        "   n = pow(n, 1.0 - sharpness);\n"
         "\n"
         "   gl_FragColor = vec4(n);\n"
         "}");

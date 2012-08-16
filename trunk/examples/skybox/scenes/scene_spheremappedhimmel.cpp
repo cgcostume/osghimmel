@@ -56,7 +56,7 @@ Scene_SphereMappedHimmel::Scene_SphereMappedHimmel(osg::Camera *camera)
 {
     initializeProperties();
 
-    m_himmel = new SphereMappedHimmel(SphereMappedHimmel::MM_TowardsNegY);
+    m_himmel = new SphereMappedHimmel();
 
     m_himmel->setTransitionDuration(0.05f);
 
