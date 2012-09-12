@@ -298,7 +298,7 @@ const float StarsGeode::getScattering() const
 
 const float StarsGeode::defaultScattering()
 {
-    return 6.0f;
+    return 4.0f;
 }
 
 
@@ -318,7 +318,7 @@ const float StarsGeode::getApparentMagnitude() const
 
 const float StarsGeode::defaultApparentMagnitude() 
 {
-    return 4.0f;
+    return 7.0f;
 }
 
 

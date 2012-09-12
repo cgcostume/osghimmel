@@ -28,10 +28,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#ifndef __SCENE_PROCEDURALHIMMEL_H__
-#define __SCENE_PROCEDURALHIMMEL_H__
+#ifndef __HIMMELOVERLAY_H__
+#define __HIMMELOVERLAY_H__
 
-#include "abstracthimmelscene.h"
+#include <osg/Projection>
+#include <osg/MatrixTransform>
+
+#include <osgText/Text>
+
 
 namespace osgHimmel
 {
@@ -39,72 +43,38 @@ namespace osgHimmel
 }
 
 
-class CameraLock : public osg::NodeCallback 
+class HimmelOverlay : public osg::Projection
 {
 public:
 
-    enum e_Target
-    {
-        T_None
-    ,   T_Moon
-    ,   T_Sun
-    };
+    HimmelOverlay(
+        const std::string &font // "neo.ttf"
+    ,   const int width  = 640
+    ,   const int height = 480);
 
-public:
+    virtual ~HimmelOverlay();
 
-    CameraLock(osgHimmel::Himmel *himmel, osg::Camera *camera);
+    void assignHimmel(osgHimmel::Himmel *himmel);
 
-    virtual void operator()(
-        osg::Node *node
-    ,   osg::NodeVisitor *nv);
+    void hide();
+    void show();
 
-    void setTarget(const e_Target target);
+    void setSize(
+        const int width
+    ,   const int height);
+
+    void update();
 
 protected:
-    osgHimmel::Himmel* m_himmel;
-    osg::Camera *m_camera;
 
-    e_Target m_target;
+    osgHimmel::Himmel *m_himmel;
+
+    osg::ref_ptr<osg::MatrixTransform> m_transform;
+
+    osg::ref_ptr<osg::Geode> m_geode;
+
+    osg::ref_ptr<osgText::Text> m_text_time;
+    osg::ref_ptr<osgText::Text> m_text_geo;
 };
 
-
-class Scene_ProceduralHimmel : public AbstractHimmelScene
-{
-public:
-    Scene_ProceduralHimmel(
-        osg::Camera *camera
-    ,   const bool withClouds);
-
-    virtual ~Scene_ProceduralHimmel();
-
-    virtual osgHimmel::AbstractHimmel *himmel();
-
-    virtual const bool hasLocationSupport() const 
-    {
-        return true;
-    }
-
-    virtual const double setLatitude(const double latitude);
-    virtual const double setLongitude(const double longitude);
-    virtual const double setAltitude(const double altitude);
-
-    void setCameraLockTarget(const CameraLock::e_Target target);
-
-protected:
-
-    // from AbstractPropertySupport
-    virtual void registerProperties();
-    virtual void propertyChanged(
-        QtProperty *p
-    ,   const QString &name);
-
-    virtual void postInitialize();
-
-protected:
-    osg::ref_ptr<osgHimmel::Himmel> m_himmel;
-
-    CameraLock *m_cameraLock;
-};
-
-
-#endif // __SCENE_PROCEDURALHIMMEL_H__
+#endif // __HIMMELOVERLAY_H__

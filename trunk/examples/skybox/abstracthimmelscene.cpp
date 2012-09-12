@@ -128,7 +128,6 @@ const double AbstractHimmelScene::setAltitude(const double altitude)
 }
 
 
-
 // TODO: change this - seems ugly. Works as workaround for now...
 
 void AbstractHimmelScene::hintCamera(osg::Camera *camera)

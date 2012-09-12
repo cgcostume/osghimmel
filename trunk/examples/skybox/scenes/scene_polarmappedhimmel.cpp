@@ -76,7 +76,7 @@ Scene_PolarMappedHimmel::Scene_PolarMappedHimmel(osg::Camera *camera)
 
     m_himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     m_himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_2.jpg"));
-    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_3.jpg"));
+    m_himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_2.jpg"));
     m_himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
 
     m_himmel->pushTextureUnit(0, 0.0f);

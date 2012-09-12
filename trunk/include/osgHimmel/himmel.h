@@ -69,7 +69,8 @@ namespace osgHimmel
 class OSGH_API Himmel : public AbstractHimmel
 {
 public:
-    static Himmel *create();
+    static Himmel *createWithoutClouds();
+    static Himmel *createWithClouds();
 
 public:
 

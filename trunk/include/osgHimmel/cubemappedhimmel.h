@@ -60,6 +60,9 @@ public:
     // Use this helper to work with pre-configured textures.
     osg::TextureCubeMap *getOrCreateTextureCubeMap(const GLint textureUnit);
 
+    void setCubify(const bool cubify);  
+    const bool isCubified() const;
+
 protected:
 
     // AbstractMappedHimmel interface
@@ -76,7 +79,7 @@ protected:
     t_tcmById m_tcmsById;
 
     // this overcomes the texel per samplingfield-angle issue of cube mapping - see cpp for more details.
-    const bool m_cubify;
+    bool m_cubify;
 };
 
 } // namespace osgHimmel

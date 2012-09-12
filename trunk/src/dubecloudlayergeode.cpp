@@ -152,10 +152,10 @@ void DubeCloudLayerGeode::setupUniforms(osg::StateSet *stateSet)
     u_time = new osg::Uniform("time", 0.f);
     stateSet->addUniform(u_time);
 
-    u_coverage = new osg::Uniform("coverage", 0.f);
+    u_coverage = new osg::Uniform("coverage", 0.2f);
     stateSet->addUniform(u_coverage);
 
-    u_sharpness = new osg::Uniform("sharpness", 1.f);
+    u_sharpness = new osg::Uniform("sharpness", 0.3f);
     stateSet->addUniform(u_sharpness);
 
     u_change = new osg::Uniform("change", defaultChange());
@@ -170,7 +170,7 @@ void DubeCloudLayerGeode::setupUniforms(osg::StateSet *stateSet)
     u_scale = new osg::Uniform("scale", defaultScale());
     stateSet->addUniform(u_scale);
 
-    u_thickness = new osg::Uniform("thickness", 1.f);
+    u_thickness = new osg::Uniform("thickness", 3.f);
     stateSet->addUniform(u_thickness);
 
     u_offset = new osg::Uniform("offset", -.5f);
@@ -252,7 +252,7 @@ const float DubeCloudLayerGeode::getAltitude() const
 
 const float DubeCloudLayerGeode::defaultAltitude()
 {
-    return 8.f;
+    return 2.f;
 }
 
 

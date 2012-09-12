@@ -412,7 +412,7 @@ const float MoonGeode::getSunShineIntensity() const
 
 const float MoonGeode::defaultSunShineIntensity()
 {
-    return 128.f;
+    return 56.f;
 }
 
 
@@ -543,7 +543,7 @@ const std::string MoonGeode::getFragmentShaderSource()
         "    float t = 0.1;\n" // small amount of forward scattering
         "\n"
         // The following two params have various fixes applied
-        "    float p = cos_p < 1 ? acos(cos_p) : 0;\n"
+        "    float p = cos_p < 1.0 ? acos(cos_p) : 0.0;\n"
         "    float p05 = abs(p + step(0, -p) * 0.000001) * 0.5;\n"
         "\n"
         "    float tan_p = tan(p);\n"
