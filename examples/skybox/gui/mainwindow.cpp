@@ -42,6 +42,7 @@
 #include "qosgeventhandler.h"
 #include "qosgviewer.h"
 #include "propertywidget.h"
+#include "himmeloverlay.h"
 
 #include "scenes/scene_polarmappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
@@ -111,6 +112,8 @@ MainWindow::MainWindow(QWidget *parent)
 ,   m_glslEditorDockWidget(NULL)
 ,   m_propertyWidget(NULL)
 ,   m_propertyDockWidget(NULL)
+
+,   m_himmelOverlay(NULL)
 
 ,   m_keyswitchManipulator(NULL)
 {
@@ -274,11 +277,20 @@ void MainWindow::hintViewSize(
 {
     if(m_himmel)
         m_himmel->hintViewSize(width, height);
+
+    if(m_himmelOverlay)
+        m_himmelOverlay->setSize(width, height);
 }
 
 
 void MainWindow::clearHimmel()
 {
+    if(m_himmelOverlay)
+    {
+        m_himmel->removeChild(m_himmelOverlay);
+        m_himmelOverlay = NULL;
+    }
+
     if(m_himmel)
     {
         m_glslEditor->assign(NULL);
@@ -286,9 +298,9 @@ void MainWindow::clearHimmel()
         m_root->removeChild(m_himmel);
         m_himmel = NULL;
 
-
         m_ui->moonLockAction->setEnabled(false);
         m_ui->sunLockAction->setEnabled(false);
+        m_ui->textOverlayAction->setEnabled(false);
     }
 }
 
@@ -427,6 +439,15 @@ void MainWindow::on_sunLockAction_triggered(bool checked)
 }
 
 
+void MainWindow::on_textOverlayAction_triggered(bool checked)
+{
+    if(!m_himmelOverlay)
+        return;
+
+    checked ? m_himmelOverlay->show() : m_himmelOverlay->hide();
+}
+
+
 
 void MainWindow::showEvent(QShowEvent *event)
 {
@@ -491,17 +512,41 @@ void MainWindow::on_sphereMappedHimmelAction_triggered(bool)
 
 void MainWindow::on_proceduralHimmelAction_triggered(bool)
 {
+    createProceduralHimmel(false);
+}
+
+
+void MainWindow::on_proceduralHimmelWithCloudsAction_triggered(bool)
+{
+    createProceduralHimmel(true);
+}
+
+
+void MainWindow::createProceduralHimmel(const bool withClouds)
+{
     clearHimmel();
-    m_himmel = new Scene_ProceduralHimmel(m_camera);
+    m_himmel = new Scene_ProceduralHimmel(m_camera, withClouds);
 
     himmelChanged();
+
+    Himmel *himmel = dynamic_cast<Himmel*>(m_himmel->himmel());
+    assert(himmel);
+
+    m_himmelOverlay = new HimmelOverlay("neo.ttf", m_ui->centralWidget->width(), m_ui->centralWidget->height());
+    m_himmelOverlay->assignHimmel(himmel);
+
+    himmel->addChild(m_himmelOverlay.get());
 
     m_dateTimeWidget->setScene(m_himmel);
     m_ui->proceduralHimmelAction->setChecked(true);
 
     m_ui->moonLockAction->setEnabled(true);
     m_ui->sunLockAction->setEnabled(true);
+    m_ui->textOverlayAction->setEnabled(true);
     cameraLockChanged();
+
+    if(!m_ui->textOverlayAction->isChecked())
+        m_himmelOverlay->hide();
 }
 
 
@@ -599,4 +644,7 @@ void MainWindow::me_timeout()
     lt.setUtcOffset(aTime.utcOffset);
 
     m_dateTimeLabel->setText(lt.toString(Qt::ISODate));
+
+    if(m_himmelOverlay)
+        m_himmelOverlay->update();
 }

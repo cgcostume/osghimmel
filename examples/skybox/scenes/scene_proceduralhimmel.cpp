@@ -129,6 +129,7 @@ CameraLock::CameraLock(Himmel *himmel, osg::Camera *camera)
 ,   m_himmel(himmel)
 ,   m_target(T_None)
 {
+    m_camera->setUpdateCallback(this);
 }
 
 void CameraLock::operator()(
@@ -160,73 +161,19 @@ void CameraLock::setTarget(const CameraLock::e_Target target)
 }
 
 
-// TEMP
-//
-//#include <osg/NodeCallback>
-//#include <osgUtil/CullVisitor>
-//
-//#include <math.h>
-//
-//class ns : public osg::NodeCallback
-//{
-//    public:
-//    
-//        ns(osg::Light *light, Himmel *himmel)
-//        :   m_ligth(light)
-//        ,   m_himmel(himmel)
-//        {
-//        }
-//       
-//        virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
-//        {
-//            traverse(node, nv);
-//            
-//            osg::Vec3 p = m_himmel->getSunPosition();
-//
-//            float t1 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.1, 32)) + 0.05;
-//            float t2 = 1.0 / sqrt(1.0 + pow(-p.z() + 1.2, 16));
-//
-//            p *= 10000;
-//            m_ligth->setPosition(osg::Vec4(p.x(), p.y(), p.z(), 1.0));
-//            //m_ligth->setDiffuse(osg::Vec4(1.0, 1.0, 1.0, 1.0));
-//            m_ligth->setDiffuse(osg::Vec4(1.0 * t2, 0.95 * t2, 0.9 * t2, 1.0));
-//        }
-//
-//protected:
-//    osg::Light *m_ligth;
-//    Himmel* m_himmel;
-//};
-
-
-Scene_ProceduralHimmel::Scene_ProceduralHimmel(osg::Camera *camera)
+Scene_ProceduralHimmel::Scene_ProceduralHimmel(
+    osg::Camera *camera
+,   const bool withClouds)
 :   AbstractHimmelScene(camera)
 ,   m_himmel(NULL)
 ,   m_cameraLock(NULL)
 {
     initializeProperties();
 
-    m_himmel = Himmel::create();
+    m_himmel = withClouds ? Himmel::createWithClouds() : Himmel::createWithoutClouds();
     addChild(m_himmel);
-  
-   
-    // TEMP
-
-    osg::Group *group = new osg::Group();
-
-    osg::Light *light(new osg::Light);
-    osg::LightSource *lsource(new osg::LightSource);
-
-    lsource->setLight(light);
-    addChild(group);
-    group->addChild(lsource);
-
-    lsource->setLocalStateSetModes(osg::StateAttribute::ON);
-
-    lsource->setStateSetModes(*group->getOrCreateStateSet(), osg::StateAttribute::ON);
 
     m_cameraLock = new CameraLock(m_himmel, camera);
-    m_himmel->addUpdateCallback(m_cameraLock);
-//    m_himmel->addUpdateCallback(new ns(light, m_himmel));
 }
 
 

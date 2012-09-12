@@ -155,7 +155,8 @@ osg::ref_ptr<AbstractHimmel> createParaboloidMappedDemo()
 
 osg::ref_ptr<AbstractHimmel> createSphereMappedDemo()
 {
-    osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel(SphereMappedHimmel::MM_TowardsNegY);
+    osg::ref_ptr<SphereMappedHimmel> himmel = new SphereMappedHimmel();
+    himmel->setRazDirection(AbstractMappedHimmel::RD_NorthEastSouthWest);
 
     himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.05f);

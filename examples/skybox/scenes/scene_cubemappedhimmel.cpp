@@ -45,6 +45,7 @@ namespace
     const QString GROUP_CUBEMAPPED (TR("Cube Mapped"));
 
     const QString PROPERTY_RAZSPEED(TR("RAZ Speed"));
+    const QString PROPERTY_CUBIFY(TR("Cubify Mapping"));
 }
 
 using namespace osgHimmel;
@@ -61,10 +62,10 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
     m_himmel->setTransitionDuration(0.05f);
 
 
-    std::string name[] = { "4", "6", "9", "17", "19" };
-    osg::TextureCubeMap *tcm[5];
+    std::string name[] = { "0", "1", "2", "3" };
+    osg::TextureCubeMap *tcm[4];
 
-    const int n = 5;
+    const int n = 4;
     for(int i = 0; i < n; ++i)
     {
         tcm[i] = m_himmel->getOrCreateTextureCubeMap(i);
@@ -76,7 +77,7 @@ Scene_CubeMappedHimmel::Scene_CubeMappedHimmel(osg::Camera *camera)
         tcm[i]->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_pz.jpg"));
         tcm[i]->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile("resources/cube_gen_" + name[i] + "_nz.jpg"));
 
-      m_himmel->pushTextureUnit(i, (i * 1.f) / (n * 1.f));
+        m_himmel->pushTextureUnit(i, (i * 1.f) / (n * 1.f));
     }
 
     addChild(m_himmel);
@@ -109,6 +110,7 @@ void Scene_CubeMappedHimmel::registerProperties()
     QtProperty *cubeGroup = createGroup(GROUP_CUBEMAPPED);
 
     createProperty(*cubeGroup, PROPERTY_RAZSPEED, 0.0, -99999.0, 99999.0, 10.0); 
+    createProperty(*cubeGroup, PROPERTY_CUBIFY, false);
 }
 
 
@@ -123,5 +125,9 @@ void Scene_CubeMappedHimmel::propertyChanged(
         m_himmel->setSecondsPerRAZ(secondsPerRAZ);
         m_himmel->setRazDirection(secondsPerRAZ < 0 ? 
             AbstractMappedHimmel::RD_NorthEastSouthWest : AbstractMappedHimmel::RD_NorthWestSouthEast);
+    }
+    else if(PROPERTY_CUBIFY == name)
+    {
+        m_himmel->setCubify(!m_himmel->isCubified());
     }
 }

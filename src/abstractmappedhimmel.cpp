@@ -44,6 +44,8 @@
 #include <limits>
 
 
+#pragma NOTE("detach sun stuff to sun composite")
+
 namespace 
 {
     const GLint BACK_TEXTURE_INDEX(0);
@@ -122,7 +124,7 @@ void AbstractMappedHimmel::update()
         u_razInverse->set(osg::Matrix::inverse(m_razTransform->getMatrix()));
 
 
-#pragma NOTE("Interface for FakeSun required")
+#pragma NOTE("interface for FakeSun required")
 
     const float t(timef());
 
@@ -222,6 +224,13 @@ void AbstractMappedHimmel::postInitialize()
 {
     makeVertexShader();
     makeFragmentShader();
+}
+
+
+void AbstractMappedHimmel::reassignShader()
+{
+    makeVertexShader();
+    makeFragmentShader();    
 }
 
 

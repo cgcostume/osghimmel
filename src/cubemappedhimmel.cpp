@@ -97,6 +97,22 @@ osg::StateAttribute *CubeMappedHimmel::getTextureAttribute(const GLint textureUn
 }
 
 
+void CubeMappedHimmel::setCubify(const bool cubify)
+{
+    if(cubify == m_cubify)
+        return;
+
+    m_cubify = cubify;
+    reassignShader();
+}
+
+
+const bool CubeMappedHimmel::isCubified() const
+{
+    return m_cubify;
+}
+
+
 
 
 const std::string CubeMappedHimmel::getFragmentShaderSource()

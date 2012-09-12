@@ -43,8 +43,6 @@
 #include "dubecloudlayergeode.h"
 
 #include <osg/ShapeDrawable>
-#include <osgText/Text>
-#include <osg/Projection>
 
 #include <stdlib.h>
 #include <assert.h>
@@ -53,14 +51,14 @@
 namespace osgHimmel
 {
 
-Himmel *Himmel::create()
+Himmel *Himmel::createWithoutClouds()
 {
     // cubeMapFilePaths should contain a questionmark '?' that is replaced
     // by cubemap extensions '_px', '_nx', '_py', etc. 
     // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
 
     return new Himmel(
-        new StarMapGeode("resources/starmap?.png")
+        new StarMapGeode("resources/skymap?.png")
     ,   new MoonGeode("resources/moon?.png")
     ,   new StarsGeode("resources/brightstars")
     ,   new AtmosphereGeode()
@@ -70,12 +68,24 @@ Himmel *Himmel::create()
     );
 }
 
-/*osg::Geode *deb_geode;
-osgText::Text *deb_time;
-osgText::Text *deb_geo;
-osg::Projection* deb_hudp;
-osg::MatrixTransform* deb_hudt;
-*/
+
+Himmel *Himmel::createWithClouds()
+{
+    // cubeMapFilePaths should contain a questionmark '?' that is replaced
+    // by cubemap extensions '_px', '_nx', '_py', etc. 
+    // e.g. "resources/starmap?.png" points to "resources/milkyway_px.png" etc.
+
+    return new Himmel(
+        new StarMapGeode("resources/skymap?.png")
+    ,   new MoonGeode("resources/moon?.png")
+    ,   new StarsGeode("resources/brightstars")
+    ,   new AtmosphereGeode()
+    ,   new HighCloudLayerGeode()
+    ,   new DubeCloudLayerGeode()
+    ,   new Astronomy()
+    );
+}
+
 
 Himmel::Himmel(
     StarMapGeode *milkyWay
@@ -164,37 +174,6 @@ Himmel::Himmel(
         addChild(m_dubeLayer);
         m_dubeLayer->getOrCreateStateSet()->setRenderBinDetails(bin++, binName);
     }
-
-    /*
-    deb_geode = new osg::Geode;
-    deb_time = new osgText::Text;
-    deb_geo = new osgText::Text;
-
-    deb_hudp = new osg::Projection;
-    deb_hudt = new osg::MatrixTransform;
-
-    deb_hudp->setMatrix(osg::Matrix::ortho2D(0, 1280, 0, 720));
-    deb_hudt->setMatrix(osg::Matrix::identity());
-
-    deb_hudt->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-
-    addChild(deb_hudp);
-    deb_hudp->addChild(deb_hudt);
-    deb_hudt->addChild(deb_geode);
-    deb_geode->addDrawable(deb_time);
-    deb_geode->addDrawable(deb_geo);
-
-
-    deb_time->setCharacterSize(44);
-    deb_time->setFont("neo.ttf");
-    deb_time->setAxisAlignment(osgText::Text::SCREEN);
-    deb_time->setPosition(osg::Vec3(64, 64, 0));
-
-    deb_geo->setCharacterSize(22);
-    deb_geo->setFont("neo.ttf");
-    deb_geo->setAxisAlignment(osgText::Text::SCREEN);
-    deb_geo->setPosition(osg::Vec3(64, 32, 0));
-    */
 };
 
 
@@ -250,24 +229,6 @@ void Himmel::update()
         u_sunr->set(sunrv);
 
         u_time->set(static_cast<float>(getTime()->getf()));
-
-
-        //osg::Vec4 deb_col = sunrv.z() < 0.35 ? osg::Vec4(255, 255, 255, 0.33) : osg::Vec4(0, 0, 0, 0.33);
-        ////osg::Vec4 deb_col = sunrv.z() < 0.4 ? osg::Vec4(255, 255, 255, 0.33) : osg::Vec4(0, 0, 0, 0.33);
-        //deb_time->setColor(deb_col);
-        //deb_geo->setColor(deb_col);
-
-
-        //char deb1[64];
-        //sprintf(deb1, "%04i-%02i-%02i %02i:%02i UTC\0", atime.year, atime.month, atime.day, atime.hour, atime.minute);
-
-        //char deb2[64];
-        //sprintf(deb2, "lat %03.2f°; lon %03.2f°; alt %01.3fkm\0", astro()->getLatitude(), astro()->getLongitude(), getAltitude());
-
-        //deb_time->setText(deb1);
-        //deb_geo->setText(deb2);
-
-
 
         if(m_starmap)
             m_starmap->update(*this);

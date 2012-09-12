@@ -76,6 +76,8 @@ namespace osgGA
     class KeySwitchMatrixManipulator;
 }
 
+class HimmelOverlay;
+
 
 class MainWindow : public QMainWindow
 {
@@ -129,6 +131,8 @@ protected slots:
     void on_sunLockAction_triggered(bool checked);
     void cameraLockChanged();
 
+    void on_textOverlayAction_triggered(bool checked);
+
 
     void on_polarMappedHimmelAction_triggered(bool);
     void on_cubeMappedHimmelAction_triggered(bool);
@@ -136,6 +140,8 @@ protected slots:
     void on_sphereMappedHimmelAction_triggered(bool);
     
     void on_proceduralHimmelAction_triggered(bool);
+    void on_proceduralHimmelWithCloudsAction_triggered(bool);
+    void createProceduralHimmel(const bool withClouds);
 
     void on_insert3DObjectFromFileAction_triggered(bool);
     void on_clearSceneAction_triggered(bool);
@@ -178,6 +184,10 @@ private:
     QOsgEventHandler *m_eventHandler;
 
     osgGA::KeySwitchMatrixManipulator *m_keyswitchManipulator;
+
+    // Text Overlay
+
+    osg::ref_ptr<HimmelOverlay> m_himmelOverlay;
 };
 
 

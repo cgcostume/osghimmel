@@ -254,7 +254,7 @@ const float StarMapGeode::getApparentMagnitude() const
 
 const float StarMapGeode::defaultApparentMagnitude() 
 {
-    return 4.0f;
+    return 6.0f;
 }
 
 

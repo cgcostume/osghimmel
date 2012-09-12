@@ -85,33 +85,6 @@ AbstractHimmel::AbstractHimmel()
 
     setUpdateCallback(new HimmelNodeCallback);
 
-
-    //osg::Sphere* unitSphere = new osg::Sphere( osg::Vec3(0,0,0), 10.0);
-    //osg::ShapeDrawable* unitSphereDrawable = new osg::ShapeDrawable(unitSphere);
-
-    //osg::Sphere* unitSphere1 = new osg::Sphere( osg::Vec3(0,0,0), 10.0);
-    //osg::ShapeDrawable* unitSphereDrawable1 = new osg::ShapeDrawable(unitSphere1);
-
-
-    //pos = new osg::PositionAttitudeTransform();
-    //pos->setPosition(osg::Vec3(0.0,0,0));
-    //osg::Geode* unitSphereGeode = new osg::Geode();
-    //addChild(pos);
-
-    //unitSphereDrawable->setColor(osg::Vec4(0.0, 1.0, 0.0, 1.0));
-    //unitSphereDrawable1->setColor(osg::Vec4(1.0, 0.0, 0.0, 0.5));
-
-    //osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS, 0.0, 1.0);
-    //unitSphereDrawable1->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
-
-    //osg::BlendFunc *blend  = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE);
-    //unitSphereDrawable1->getOrCreateStateSet()->setAttributeAndModes(blend, osg::StateAttribute::ON);
-
-    //pos->addChild(unitSphereGeode);
-    //unitSphereGeode->addDrawable(unitSphereDrawable);
-    //unitSphereGeode->addDrawable(unitSphereDrawable1);
-
-
     setReferenceFrame(osg::Transform::ABSOLUTE_RF);
 };
 
@@ -129,32 +102,12 @@ void AbstractHimmel::setReferenceBoundingRadius(const float )
     //osg::notify(osg::NOTICE) << m_referenceBoundingRadius << std::endl;
 }
 
-//int ffff = 0;
+
 void AbstractHimmel::traverse(osg::NodeVisitor &nv)
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(&nv);
     if(!cv)
         return;
-
-
-
-    //osg::Vec3 eye, center, up;
-    //cv->getCurrentCamera()->getViewMatrixAsLookAt(eye, center, up);
-
-    //const float n(cv->getCalculatedNearPlane());
-    //const float f(cv->getCalculatedFarPlane());
-
-    //center.normalize();
-
-    //   if(((ffff) % 100) == 0)
-    //   {
-    //    osg::notify (osg::NOTICE) << "traverse" << std::endl;
-    //   osg::notify (osg::NOTICE) << "center \t" << center.x() << " \t" << center.y() << " \t" << center.z() << std::endl;
-    //   osg::notify (osg::NOTICE) << "eye    \t" << eye.x() << " \t" << eye.y() << " \t" << eye.z() << std::endl;
-    //   osg::notify (osg::NOTICE) << "up     \t" << up.x() << " \t" << up.y() << " \t" << up.z() << std::endl;
-    //   osg::notify (osg::NOTICE) << "near/f \t" << n << " \t" << f << std::endl;
-    //   }
-
 
     const osg::CullSettings::ComputeNearFarMode cnfm(cv->getCurrentCamera()->getComputeNearFarMode());
     cv->getCurrentCamera()->setComputeNearFarMode(osg::Camera::DO_NOT_COMPUTE_NEAR_FAR);
@@ -165,8 +118,6 @@ void AbstractHimmel::traverse(osg::NodeVisitor &nv)
 }
 
 
-
-float x = 0.0;
 bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
@@ -176,45 +127,7 @@ bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVis
     const osg::Vec3 t(cv->getEyePoint());
     matrix.preMultTranslate(t);
 
-
-    //osg::Vec3 eye, center, up;
-    //cv->getCurrentCamera()->getViewMatrixAsLookAt(eye, center, up);
-
-    //const float n(cv->getCalculatedNearPlane());
-    //const float f(cv->getCalculatedFarPlane());
-
-    //center.normalize();
-//        osg::Vec3 i = eye - center * (f + n) * 0.5;
-//
-//  //      //const osg::Vec3 t( ->getEyePoint());
-//  //      //matrix.preMultTranslate(t);
-//  //      
-//  //      osg::Matrixd m = osg::Matrixd::inverse(
-//  //      cv->getCurrentCamera()->getInverseViewMatrix());
-//
-//  //      m.getLookAt(eye, center, up);
-//
-//  //          //m_recorder->record(rc::PathPoint(eye._v, center._v, up._v, fov));
-//
-//  ////      osg::Matrix m = matrix;
-//  //      //matrix.inverse(m);
-//  //      osg::Vec3 i = center - (eye - center) * 100.0;
-//
-//
-       //if(((ffff++) % 100) == 0)
-       //{
-       // osg::notify (osg::NOTICE) << "computeLocalToWorldMatrix" << std::endl;
-       //osg::notify (osg::NOTICE) << "center \t" << center.x() << " \t" << center.y() << " \t" << center.z() << std::endl;
-       //osg::notify (osg::NOTICE) << "eye    \t" << eye.x() << " \t" << eye.y() << " \t" << eye.z() << std::endl;
-       //osg::notify (osg::NOTICE) << "up     \t" << up.x() << " \t" << up.y() << " \t" << up.z() << std::endl;
-       //osg::notify (osg::NOTICE) << "near/f \t" << n << " \t" << f << std::endl;
-       //}
-////        m.getLookAt(eye, center, up, 10.0);
-//        //
-//        pos->setPosition(i);
-
     return true;
-//    return false;
 }
 
 

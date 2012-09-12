@@ -327,10 +327,10 @@ void HighCloudLayerGeode::setupUniforms(osg::StateSet *stateSet)
     u_time = new osg::Uniform("time", 0.f);
     stateSet->addUniform(u_time);
 
-    u_coverage = new osg::Uniform("coverage", 0.f);
+    u_coverage = new osg::Uniform("coverage", 0.2f);
     stateSet->addUniform(u_coverage);
 
-    u_sharpness = new osg::Uniform("sharpness", 1.f);
+    u_sharpness = new osg::Uniform("sharpness", 0.5f);
     stateSet->addUniform(u_sharpness);
 
     u_change = new osg::Uniform("change", defaultChange());

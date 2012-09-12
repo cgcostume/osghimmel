@@ -101,8 +101,6 @@ public:
     const e_RazDirection getRazDirection() const;
 
 
-#pragma NOTE("todo - detach sun stuff to sun composite")
-
     const float setSunScale(const float scale);
     const float getSunScale() const;
 
@@ -136,6 +134,8 @@ protected:
 
     void makeFragmentShader();
     void unmakeFragmentShader();
+
+    void reassignShader();
 
     // abstract interface
 

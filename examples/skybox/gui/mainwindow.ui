@@ -6,15 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>761</height>
+    <width>901</width>
+    <height>697</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>1280</width>
-    <height>761</height>
-   </size>
   </property>
   <widget class="QOsgViewer" name="centralWidget">
    <property name="mouseTracking">
@@ -37,7 +31,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
+     <width>901</width>
      <height>21</height>
     </rect>
    </property>
@@ -54,6 +48,7 @@
     <addaction name="sphereMappedHimmelAction"/>
     <addaction name="separator"/>
     <addaction name="proceduralHimmelAction"/>
+    <addaction name="proceduralHimmelWithCloudsAction"/>
     <addaction name="separator"/>
     <addaction name="insert3DObjectFromFileAction"/>
     <addaction name="clearSceneAction"/>
@@ -72,6 +67,8 @@
     </property>
     <addaction name="moonLockAction"/>
     <addaction name="sunLockAction"/>
+    <addaction name="separator"/>
+    <addaction name="textOverlayAction"/>
    </widget>
    <addaction name="canvasMenu"/>
    <addaction name="menu_Debug"/>
@@ -376,6 +373,22 @@
    </property>
    <property name="shortcut">
     <string>Shift+S</string>
+   </property>
+  </action>
+  <action name="textOverlayAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Show Text Overlay</string>
+   </property>
+  </action>
+  <action name="proceduralHimmelWithCloudsAction">
+   <property name="text">
+    <string>Procedural Himmel with Clouds</string>
    </property>
   </action>
  </widget>
