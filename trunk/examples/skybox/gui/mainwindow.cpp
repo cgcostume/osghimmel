@@ -42,7 +42,6 @@
 #include "qosgeventhandler.h"
 #include "qosgviewer.h"
 #include "propertywidget.h"
-#include "himmeloverlay.h"
 
 #include "scenes/scene_polarmappedhimmel.h"
 #include "scenes/scene_cubemappedhimmel.h"
@@ -52,6 +51,7 @@
 
 #include "utils/import.h"
 
+#include "osgHimmel/himmeloverlay.h"
 #include "osgHimmel/atime.h"
 #include "osgHimmel/timef.h"
 #include "osgHimmel/abstracthimmel.h"

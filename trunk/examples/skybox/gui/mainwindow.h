@@ -58,6 +58,7 @@ class AbstractHimmelScene;
 namespace osgHimmel
 {
     class TimeF;
+    class HimmelOverlay;
 }
 
 namespace osgViewer 
@@ -75,8 +76,6 @@ namespace osgGA
 {
     class KeySwitchMatrixManipulator;
 }
-
-class HimmelOverlay;
 
 
 class MainWindow : public QMainWindow
@@ -187,7 +186,7 @@ private:
 
     // Text Overlay
 
-    osg::ref_ptr<HimmelOverlay> m_himmelOverlay;
+    osg::ref_ptr<osgHimmel::HimmelOverlay> m_himmelOverlay;
 };
 
 

@@ -115,8 +115,6 @@ set(SKYBOX_SOURCES
     gui/glsltextedit.cpp
     gui/glslhighlighter.h
     gui/glslhighlighter.cpp
-    gui/himmeloverlay.h
-    gui/himmeloverlay.cpp
     gui/linenumberarea.h
     gui/linenumberarea.cpp
     gui/logoutputlabel.h

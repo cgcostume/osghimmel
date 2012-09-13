@@ -29,19 +29,19 @@
 
 #include "himmeloverlay.h"
 
-#include "osgHimmel/atime.h"
-#include "osgHimmel/julianday.h"
-#include "osgHimmel/timef.h"
-#include "osgHimmel/abstracthimmel.h"
-#include "osgHimmel/himmel.h"
-#include "osgHimmel/astronomy.h"
+#include "atime.h"
+#include "julianday.h"
+#include "timef.h"
+#include "abstracthimmel.h"
+#include "himmel.h"
+#include "astronomy.h"
 
 #include <osg/Vec3>
 
 #include <assert.h>
 
-using namespace osgHimmel;
-
+namespace osgHimmel
+{
 
 HimmelOverlay::HimmelOverlay(
     const std::string &font
@@ -70,12 +70,12 @@ HimmelOverlay::HimmelOverlay(
     m_geode->addDrawable(m_text_geo);
 
     m_text_time->setCharacterSize(44);
-    m_text_time->setFont();
+    m_text_time->setFont(font);
     m_text_time->setAxisAlignment(osgText::Text::SCREEN);
     m_text_time->setPosition(osg::Vec3(64, 64, 0));
 
     m_text_geo->setCharacterSize(22);
-    m_text_geo->setFont();
+    m_text_geo->setFont(font);
     m_text_geo->setAxisAlignment(osgText::Text::SCREEN);
     m_text_geo->setPosition(osg::Vec3(64, 32, 0));
 }
@@ -136,3 +136,5 @@ void HimmelOverlay::assignHimmel(Himmel *himmel)
 {
     m_himmel = himmel;
 }
+
+} // namespace osgHimmel

@@ -31,6 +31,8 @@
 #ifndef __HIMMELOVERLAY_H__
 #define __HIMMELOVERLAY_H__
 
+#include "declspec.h"
+
 #include <osg/Projection>
 #include <osg/MatrixTransform>
 
@@ -39,16 +41,16 @@
 
 namespace osgHimmel
 {
-    class Himmel;
-}
+
+class Himmel;
 
 
-class HimmelOverlay : public osg::Projection
+class OSGH_API HimmelOverlay : public osg::Projection
 {
 public:
 
     HimmelOverlay(
-        const std::string &font // "neo.ttf"
+        const std::string &font
     ,   const int width  = 640
     ,   const int height = 480);
 
@@ -76,5 +78,7 @@ protected:
     osg::ref_ptr<osgText::Text> m_text_time;
     osg::ref_ptr<osgText::Text> m_text_geo;
 };
+
+}
 
 #endif // __HIMMELOVERLAY_H__

@@ -51,6 +51,7 @@ set(LIB_SOURCES
     starmapgeode.cpp
     gaussianmapgenerator.cpp
     himmelenvmap.cpp
+    himmeloverlay.cpp
     himmelquad.cpp
     horizonband.cpp
     julianday.cpp
@@ -93,6 +94,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/gaussianmapgenerator.h
     ${HEADER_PATH}/highcloudlayergeode.h
     ${HEADER_PATH}/himmelenvmap.h
+    ${HEADER_PATH}/himmeloverlay.h
     ${HEADER_PATH}/himmelquad.h
     ${HEADER_PATH}/horizonband.h
 	${HEADER_PATH}/interpolate.h
