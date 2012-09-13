@@ -168,26 +168,6 @@ public:
 #include <osg/TexGenNode>
 #include <osg/Material>
 
-osg::Node *createReflector()
-{
-    osg::Node *node = osgDB::readNodeFile("D:/temp/monster.3ds");
-    //osg::Node *node = osgDB::readNodeFile("D:/p/osghimmel/exchange/movie-döllner/New folder/terrain-tile.3ds");
-    
-
-    if(!node)
-    {
-        osg::notify(osg::WARN) << "Mesh \"resources/knot.obj\" not found." << std::endl;
-        return NULL;
-    }
-
-    osg::ref_ptr<osg::Material> m = new osg::Material;
-    m->setColorMode(osg::Material::DIFFUSE);
-    m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
-
-    node->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
-
-    return node;
-}
 
 class TexMatCullCallback : public osg::NodeCallback
 {
@@ -253,8 +233,6 @@ osg::Group *createScene(
     osg::TexMat* texmat = new osg::TexMat;
     stateset->setTextureAttributeAndModes(unit, texmat, osg::StateAttribute::ON);
         
-    reflector->setCullCallback(new TexMatCullCallback(texmat));
-
 
     return group;
 }
@@ -301,16 +279,9 @@ int main(int argc, char* argv[])
     osg::ref_ptr<osg::Group> root  = new osg::Group();
     g_view->setSceneData(root.get());
 
-    g_himmel = Himmel::create();
+    g_himmel = Himmel::createWithoutClouds();
 
-    //g_timef = new TimeF(time(NULL), 0, 3600.0L);
-
-    t_aTime t(2011, 6, 15, 20, 0, 0);
-    
-
-    //g_timef = new TimeF(time(NULL) - 20000, 0, 3600.0L);
-    g_timef = new TimeF(t.toTime_t(), 0, 3600.0L);
-
+    g_timef = new TimeF(time(NULL), - 3600.0L * 2.0L, 3600.0L);
     g_timef->start();
 
     g_himmel->assignTime(g_timef);
@@ -318,49 +289,11 @@ int main(int argc, char* argv[])
     g_himmel->setViewSizeHint(resx, resy);
     
 
-    // berlin
     g_himmel->setAltitude(0.043);
     g_himmel->setLatitude(52.5491);
     g_himmel->setLongitude(13.3611);
 
-    
-    osg::MatrixTransform *b = new osg::MatrixTransform();
-    b->setMatrix(osg::Matrix::scale(10, 10, 10));
-
-    b->addChild(g_himmel);
-    //root->addChild(b);
-
-
-
-    osg::Node *reflector(createReflector());
-    if(reflector)
-    {
-        osg::ref_ptr<osg::Group> scene = createScene(b, reflector);
-        root->addChild(scene.get());
-    }
-    else
-        root->addChild(b);
-
-
-
-//    osg::Group *meshes = new osg::Group();
-   
-    
-
-    //osg::MatrixTransform *m = new osg::MatrixTransform();
-    //m->setMatrix(osg::Matrix::translate(osg::Vec3(0.0, 0.0, -100.0)));
-
-    //m->addChild(meshes);
-    //root->addChild(m);
-
-    //meshes->addChild(osgDB::readNodeFile("resources/HPI-Grundriss_v10.3ds"));
-    //meshes->addChild(osgDB::readNodeFile("resources/levels/_urban-level-01-big-3ds.3ds"));
-    //meshes->addChild(osgDB::readNodeFile("resources/levels/_urban-level-02-medium-3ds.3ds"));
-    //meshes->addChild(osgDB::readNodeFile("resources/levels/_urban-level-03-simple-3ds.3ds"));
-/*    root->addChild(osgDB::readNodeFile("resources/Hot_Air_Balloon.3ds"));
-    */
-
-
+    root->addChild(g_himmel);
 
     return viewer.run();
 }
