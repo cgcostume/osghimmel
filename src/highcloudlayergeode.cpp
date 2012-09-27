@@ -51,6 +51,7 @@
 
 #include <assert.h>
 #include "strutils.h"
+#include <cstdlib>
 
 
 namespace osgHimmel

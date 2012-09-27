@@ -79,7 +79,7 @@ void MoonGlareGeode::update(const Himmel &himmel)
     const osg::Vec3 moonv = himmel.astro()->getMoonPosition(false);
     const osg::Vec3 sunv  = himmel.astro()->getSunPosition(false);
     
-    u_phase->set(acos(moonv * sunv));
+    u_phase->set(static_cast<float>(acos(moonv * sunv)));
 }
 
 
