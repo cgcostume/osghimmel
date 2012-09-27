@@ -29,6 +29,8 @@
 
 #include "strutils.h"
 
+#include "mathmacros.h"
+
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -43,7 +45,7 @@ void replace(
 {
     // length of value for char buffer:
 
-    const int n = __max(1, ceil(log10(static_cast<float>(value))));
+    const int n = _ma(1, ceil(log10(static_cast<float>(value))));
     char *buffer = new char[n + 1];
 
     __itoa(value, buffer, n + 1);

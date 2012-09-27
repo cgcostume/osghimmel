@@ -39,6 +39,7 @@
 #include <osg/Vec3>
 
 #include <assert.h>
+#include <cstdio>
 
 namespace osgHimmel
 {
