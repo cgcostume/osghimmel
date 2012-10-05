@@ -60,6 +60,7 @@ set(LIB_SOURCES
     moongeode.cpp
     moonglaregeode.cpp
     noise.cpp
+    osgposter.cpp
     paraboloidmappedhimmel.cpp
     perlinmapgenerator.cpp
     polarmappedhimmel.cpp
@@ -106,6 +107,7 @@ set(LIB_SOURCES
     ${HEADER_PATH}/moongeode.h
     ${HEADER_PATH}/moonglaregeode.h
     ${HEADER_PATH}/noise.h
+    ${HEADER_PATH}/osgposter.h
     ${HEADER_PATH}/paraboloidmappedhimmel.h
     ${HEADER_PATH}/perlinmapgenerator.h
     ${HEADER_PATH}/polarmappedhimmel.h
