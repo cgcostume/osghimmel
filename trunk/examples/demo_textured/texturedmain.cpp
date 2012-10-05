@@ -33,6 +33,7 @@
 #include "osgHimmel/spheremappedhimmel.h"
 #include "osgHimmel/horizonband.h"
 #include "osgHimmel/himmelenvmap.h"
+#include "osgHimmel/osgposter.h"
 
 #include "osgHimmel/timef.h"
 
@@ -42,6 +43,7 @@
 
 #include <osgDB/ReadFile>
 #include <osgViewer/ViewerEventHandlers>
+#include <osgDB/WriteFile>
 
 
 using namespace osgHimmel;
@@ -93,17 +95,17 @@ osg::ref_ptr<AbstractHimmel> createPolarMappedDemo()
     himmel->setRazDirection(AbstractMappedHimmel::RD_NorthWestSouthEast);
 
     himmel->getOrCreateTexture2D(0)->setImage(osgDB::readImageFile("resources/polar_half_art_0.jpg"));
-    himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
+    /*himmel->getOrCreateTexture2D(1)->setImage(osgDB::readImageFile("resources/polar_half_art_1.jpg"));
     himmel->getOrCreateTexture2D(2)->setImage(osgDB::readImageFile("resources/polar_half_gen_2.jpg"));
     himmel->getOrCreateTexture2D(3)->setImage(osgDB::readImageFile("resources/polar_half_pho_1.jpg"));
     himmel->getOrCreateTexture2D(4)->setImage(osgDB::readImageFile("resources/polar_half_pho_7.jpg"));
-
+*/
     himmel->pushTextureUnit(0, 0.0f);
-    himmel->pushTextureUnit(1, 0.33f);
+    /*himmel->pushTextureUnit(1, 0.33f);
     himmel->pushTextureUnit(2, 0.66f);
     himmel->pushTextureUnit(3, 0.6f);
     himmel->pushTextureUnit(4, 0.8f);
-
+*/
     return himmel;
 }
 
@@ -428,7 +430,6 @@ osg::Group *createScene(
         
     reflector->setCullCallback(new TexMatCullCallback(texmat));
 
-
     return group;
 }
 
@@ -744,42 +745,68 @@ int main(int argc, char* argv[])
 
     g_root  = new osg::Group();
     g_view->setSceneData(g_root.get());
-
-
+    
     osg::ref_ptr<osg::Group> himmel = createHimmelScene();
 
-    osg::Node *reflector(createReflector());
-    if(reflector)
-    {
-        osg::ref_ptr<osg::Group> scene = createScene(
-            himmel.get(), reflector);
+    //osg::Node *reflector(createReflector());
+    osg::ref_ptr<osg::Group> scene = himmel;
 
-        g_root->addChild(scene.get());
-    }
-    else
-        g_root->addChild(himmel.get());
+    //if(reflector)
+    //{
+    //    scene = createScene(
+    //        himmel.get(), reflector);
+    //}
 
+    g_root->addChild(scene.get());
 
-        osg::Group *group = new osg::Group();
-
-
-  osg::Light *light(new osg::Light);
-    osg::LightSource *lsource(new osg::LightSource);
-
-    lsource->setLight(light);
-    g_root->addChild(lsource);
-    group->addChild(lsource);
-
-    lsource->setLocalStateSetModes(osg::StateAttribute::ON);
-
-    lsource->setStateSetModes(*group->getOrCreateStateSet(), osg::StateAttribute::ON);
-
- 
-    g_root->addChild(group);
 
     activateDemo(D_PolarMappedHimmel);
 
     viewer.addEventHandler(new KeyboardEventHandler);
 
-    return viewer.run();
+
+
+
+    // 
+    int tileWidth = 512, tileHeight = 512;
+    int posterWidth = 1024, posterHeight = 1024;
+    int numCameras = 2;
+    std::string posterName = "poster.bmp", extName = "bmp";
+    osg::Vec4 bgColor(0.2f, 0.2f, 0.6f, 1.0f);
+    
+ 
+    // Create cameras for rendering tiles offscreen. FrameBuffer is recommended because it requires less memory.
+    osg::ref_ptr<osg::Group> cameraRoot = new osg::Group;
+    for ( int i=0; i<numCameras; ++i )
+    {
+        osg::ref_ptr<osg::Camera> camera = new osg::Camera();
+        camera->setClearColor(bgColor);
+        camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        camera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+        camera->setRenderOrder(osg::Camera::PRE_RENDER);
+        camera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER);
+        camera->setViewport( 0, 0, tileWidth, tileHeight );
+        
+        camera->addChild(scene);
+        cameraRoot->addChild(camera.get());
+    }
+    g_root->addChild(cameraRoot.get());
+
+    // Set the printing handler
+    PrintPosterHandler* handler = new PrintPosterHandler;
+    handler->setTileSize( tileWidth, tileHeight );
+    handler->setSize( posterWidth, posterHeight );
+    handler->setCameraRoot( cameraRoot.get() );
+    
+    osg::ref_ptr<osg::Image> posterImage = 0;
+
+
+    viewer.addEventHandler(handler);
+    viewer.setUpViewInWindow( 64, 64, 512, 512);
+    
+    viewer.run();
+
+
+    return 0;
+
 }
