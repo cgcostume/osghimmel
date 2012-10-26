@@ -72,7 +72,7 @@ const float Astronomy::angularMoonRadius(const t_julianDay t) const
 }
 
 
-const osg::Vec3 Astronomy::moonPosition(
+const osg::Vec3f Astronomy::moonPosition(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude
@@ -82,14 +82,14 @@ const osg::Vec3 Astronomy::moonPosition(
     if(refractionCorrected)
         moon.altitude += Earth::atmosphericRefraction(moon.altitude);
 
-    osg::Vec3 moonv  = moon.toEuclidean();
+    osg::Vec3f moonv  = moon.toEuclidean();
     moonv.normalize();
 
     return moonv;
 }
 
 
-const osg::Vec3 Astronomy::sunPosition(
+const osg::Vec3f Astronomy::sunPosition(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude
@@ -99,14 +99,14 @@ const osg::Vec3 Astronomy::sunPosition(
     if(refractionCorrected)
         sun.altitude += Earth::atmosphericRefraction(sun.altitude);
 
-    osg::Vec3 sunv  = sun.toEuclidean();
+    osg::Vec3f sunv  = sun.toEuclidean();
     sunv.normalize();
 
     return sunv;
 }
 
 
-const osg::Matrix Astronomy::moonOrientation(
+const osg::Matrixf Astronomy::moonOrientation(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude) const
@@ -116,16 +116,16 @@ const osg::Matrix Astronomy::moonOrientation(
     t_longf l, b;
     Moon::opticalLibrations(t, l, b);
 
-    const osg::Matrix libLat = osg::Matrix::rotate(_rad(b), -1, 0, 0);
-    const osg::Matrix libLon = osg::Matrix::rotate(_rad(l),  0, 1, 0);
+    const osg::Matrixf libLat = osg::Matrix::rotate(_rad(b), -1, 0, 0);
+    const osg::Matrixf libLon = osg::Matrix::rotate(_rad(l),  0, 1, 0);
 
     const float a = _rad(Moon::positionAngleOfAxis(t));
     const float p = _rad(Moon::parallacticAngle(aTime, latitude, longitude));
 
-    const osg::Matrix zenith = osg::Matrix::rotate(p - a, 0, 0, 1);
+    const osg::Matrixf zenith = osg::Matrix::rotate(p - a, 0, 0, 1);
 
     // finalOrientationWithLibrations
-    const osg::Matrix R(libLat * libLon * zenith);
+    const osg::Matrixf R(libLat * libLon * zenith);
 
     return R;
 }
@@ -149,7 +149,7 @@ const float Astronomy::earthShineIntensity(
 }
 
 
-const osg::Matrix Astronomy::equToHorTransform(
+const osg::Matrixf Astronomy::equToHorTransform(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude) const
@@ -157,13 +157,13 @@ const osg::Matrix Astronomy::equToHorTransform(
     const t_julianDay T(jCenturiesSinceSE(jd(aTime)));
     const float s = siderealTime(aTime);
 
-    return osg::Matrix::scale(-1, 1, 1)
-        * osg::Matrix::rotate( _rad(latitude)  - _PI_2, 1, 0, 0)
-        * osg::Matrix::rotate(-_rad(s + longitude)    , 0, 0, 1)
+    return osg::Matrixf::scale(-1, 1, 1)
+        * osg::Matrixf::rotate( _rad(latitude)  - _PI_2, 1, 0, 0)
+        * osg::Matrixf::rotate(-_rad(s + longitude)    , 0, 0, 1)
         // precession as suggested in (Jensen et al. 2001)
-        * osg::Matrix::rotate( 0.01118 * T, 0, 0, 1)
-        * osg::Matrix::rotate(-0.00972 * T, 1, 0, 0)
-        * osg::Matrix::rotate( 0.01118 * T, 0, 0, 1);
+        * osg::Matrixf::rotate( 0.01118 * T, 0, 0, 1)
+        * osg::Matrixf::rotate(-0.00972 * T, 1, 0, 0)
+        * osg::Matrixf::rotate( 0.01118 * T, 0, 0, 1);
 }
 
 } // namespace osgHimmel

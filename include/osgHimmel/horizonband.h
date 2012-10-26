@@ -69,16 +69,16 @@ public:
     const float getOffset() const;
     static const float defaultOffset();
 
-    const osg::Vec4 setColor(const osg::Vec4 &color);
-    const osg::Vec4 getColor() const;
-    static const osg::Vec4 defaultColor();
+    const osg::Vec4f setColor(const osg::Vec4f &color);
+    const osg::Vec4f getColor() const;
+    static const osg::Vec4f defaultColor();
 
-    const osg::Vec4 setBottomColor(const osg::Vec4 &color);
-    const osg::Vec4 getBottomColor() const;
-    static const osg::Vec4 defaultBottomColor();
+    const osg::Vec4f setBottomColor(const osg::Vec4f &color);
+    const osg::Vec4f getBottomColor() const;
+    static const osg::Vec4f defaultBottomColor();
 
 protected:
-    const osg::Vec3 getParams() const;
+    const osg::Vec3f getParams() const;
 
 protected:
 

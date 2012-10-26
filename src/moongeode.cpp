@@ -107,15 +107,15 @@ MoonGeode::~MoonGeode()
 
 void MoonGeode::update(const Himmel &himmel)
 {
-    const osg::Vec3 moonv = himmel.astro()->getMoonPosition(false);
-    const osg::Vec3 sunv = himmel.astro()->getSunPosition(false);
+    const osg::Vec3f moonv = himmel.astro()->getMoonPosition(false);
+    const osg::Vec3f sunv = himmel.astro()->getSunPosition(false);
 
     const float moons = tan(himmel.astro()->getAngularMoonRadius() * m_scale);
 
-    u_moon->set(osg::Vec4(moonv, moons));
+    u_moon->set(osg::Vec4f(moonv, moons));
 
-    const osg::Vec3 moonrv = himmel.astro()->getMoonPosition(true);
-    u_moonr->set(osg::Vec4(moonrv, moonv[3]));
+    const osg::Vec3f moonrv = himmel.astro()->getMoonPosition(true);
+    u_moonr->set(osg::Vec4f(moonrv, moonv[3]));
 
     u_R->set(himmel.astro()->getMoonOrientation());
 
@@ -167,7 +167,7 @@ void MoonGeode::update(const Himmel &himmel)
     }
 
     // encode in uniform
-    u_eclParams->set(osg::Vec4(e0, e1, e2, B));
+    u_eclParams->set(osg::Vec4f(e0, e1, e2, B));
 }
 
 
@@ -189,10 +189,10 @@ void MoonGeode::addUniformsToVariousStateSate(osg::StateSet* stateSet)
 
 void MoonGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    u_moon = new osg::Uniform("moon", osg::Vec4(0.f, 0.f, 1.f, 1.f)); // [3] = apparent angular radius (not diameter!)
+    u_moon = new osg::Uniform("moon", osg::Vec4f(0.f, 0.f, 1.f, 1.f)); // [3] = apparent angular radius (not diameter!)
     stateSet->addUniform(u_moon);
 
-    u_moonr = new osg::Uniform("moonr", osg::Vec4(0.f, 0.f, 1.f, 1.f)); // [3] = apparent angular radius (not diameter!)
+    u_moonr = new osg::Uniform("moonr", osg::Vec4f(0.f, 0.f, 1.f, 1.f)); // [3] = apparent angular radius (not diameter!)
     stateSet->addUniform(u_moonr);
 
     u_moonCube = new osg::Uniform("moonCube", 0);
@@ -201,21 +201,21 @@ void MoonGeode::setupUniforms(osg::StateSet* stateSet)
     u_eclCoeffs = new osg::Uniform("eclCoeffs", 1);
     stateSet->addUniform(u_eclCoeffs);
 
-    u_eclParams = new osg::Uniform("eclParams", osg::Vec4(0.f, 0.f, 0.f, -1.f));
+    u_eclParams = new osg::Uniform("eclParams", osg::Vec4f(0.f, 0.f, 0.f, -1.f));
     stateSet->addUniform(u_eclParams);
 
     u_q = new osg::Uniform("q", 0.0f);
     stateSet->addUniform(u_q);
 
-    u_R = new osg::Uniform("R", osg::Matrixd());
+    u_R = new osg::Uniform("R", osg::Matrixf());
     stateSet->addUniform(u_R);
 
     u_sunShine = new osg::Uniform("sunShine"
-        , osg::Vec4(defaultSunShineColor(), defaultSunShineIntensity()));
+        , osg::Vec4f(defaultSunShineColor(), defaultSunShineIntensity()));
     stateSet->addUniform(u_sunShine);
 
     u_earthShine = new osg::Uniform("earthShine"
-        , osg::Vec3(osg::Vec3(0, 0, 0)));
+        , osg::Vec3f(osg::Vec3f(0, 0, 0)));
     stateSet->addUniform(u_earthShine);
 }
 
@@ -264,19 +264,29 @@ void MoonGeode::setupMoonTextureCube(
     tcm->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
     tcm->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 
-    std::string px = cubeMapFilePath; px.replace(px.find("?"), 1, "_px");
-    std::string nx = cubeMapFilePath; nx.replace(nx.find("?"), 1, "_nx");
-    std::string py = cubeMapFilePath; py.replace(py.find("?"), 1, "_py");
-    std::string ny = cubeMapFilePath; ny.replace(ny.find("?"), 1, "_ny");
-    std::string pz = cubeMapFilePath; pz.replace(pz.find("?"), 1, "_pz");
-    std::string nz = cubeMapFilePath; nz.replace(nz.find("?"), 1, "_nz");
+    static const std::string fpExts[6] = { "_px", "_nx", "_py", "_ny", "_pz", "_nz" };
+    static const unsigned int cmFace[6] = { 
+        osg::TextureCubeMap::POSITIVE_X
+    ,   osg::TextureCubeMap::NEGATIVE_X
+    ,   osg::TextureCubeMap::POSITIVE_Y
+    ,   osg::TextureCubeMap::NEGATIVE_Y
+    ,   osg::TextureCubeMap::POSITIVE_Z
+    ,   osg::TextureCubeMap::NEGATIVE_Z };
 
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile(px));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile(nx));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile(py));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile(ny));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile(pz));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile(nz));
+    for(int i = 0; i < 6; ++i)
+    {
+        std::string fp = cubeMapFilePath; 
+        fp.replace(fp.find("?"), 1, fpExts[i]);
+
+        osg::Image *img = osgDB::readImageFile(fp);
+
+        if(!img)
+            std::cout << "Image could not be laoded: " << fp << std::endl;
+        if(img && !img->valid())
+            std::cout << "Image is invalud: " << fp << std::endl;
+
+        tcm->setImage(cmFace[i], img);
+    }
 
     stateSet->setTextureAttributeAndModes(0, tcm, osg::StateAttribute::ON);
 
@@ -292,10 +302,10 @@ void MoonGeode::setupEclipseTexture(osg::StateSet* stateSet)
 
     float *map = new float[sizeS * 3];
 
-    const osg::Vec3 le0 = osg::Vec3(1.0, 1.0, 1.0) * 0.900f;
-    const osg::Vec3 le1 = osg::Vec3(1.0, 1.0, 1.0) * 0.088f;
-    const osg::Vec3 le2 = osg::Vec3(0.4, 0.7, 1.0) * 0.023f;
-    const osg::Vec3 le3 = osg::Vec3(0.3, 0.5, 1.0) * 0.040f;
+    const osg::Vec3f le0 = osg::Vec3f(1.0, 1.0, 1.0) * 0.900f;
+    const osg::Vec3f le1 = osg::Vec3f(1.0, 1.0, 1.0) * 0.088f;
+    const osg::Vec3f le2 = osg::Vec3f(0.4, 0.7, 1.0) * 0.023f;
+    const osg::Vec3f le3 = osg::Vec3f(0.3, 0.5, 1.0) * 0.040f;
 
     const float s_u = 0.05;
 
@@ -304,7 +314,7 @@ void MoonGeode::setupEclipseTexture(osg::StateSet* stateSet)
         const float fs = static_cast<float>(s) / sizeS;
         const unsigned int i = s * 3;
 
-        osg::Vec3 l = osg::Vec3(1, 1, 1);
+        osg::Vec3f l = osg::Vec3f(1, 1, 1);
 
         // remove the penumbral soft shadow from the moons coloring
         l -= le0 * (1.0 - _clamp(0.0, 1.0, 2 * fs - 1));
@@ -341,7 +351,7 @@ void MoonGeode::setupEclipseTexture(osg::StateSet* stateSet)
 
 const float MoonGeode::setScale(const float scale)
 {
-    osg::Vec4 temp;
+    osg::Vec4f temp;
     u_moon->get(temp);
 
     temp[3] = temp[3] / m_scale * scale;
@@ -363,9 +373,9 @@ const float MoonGeode::defaultScale()
 }
 
 
-const osg::Vec3 MoonGeode::setSunShineColor(const osg::Vec3 &color)
+const osg::Vec3f MoonGeode::setSunShineColor(const osg::Vec3f &color)
 {
-    osg::Vec4 sunShine;
+    osg::Vec4f sunShine;
     u_sunShine->get(sunShine);
 
     sunShine[0] = color[0];
@@ -377,23 +387,23 @@ const osg::Vec3 MoonGeode::setSunShineColor(const osg::Vec3 &color)
     return getSunShineColor();
 }
 
-const osg::Vec3 MoonGeode::getSunShineColor() const
+const osg::Vec3f MoonGeode::getSunShineColor() const
 {
-    osg::Vec4 sunShine;
+    osg::Vec4f sunShine;
     u_sunShine->get(sunShine);
 
-    return osg::Vec3(sunShine[0], sunShine[1], sunShine[2]);
+    return osg::Vec3f(sunShine[0], sunShine[1], sunShine[2]);
 }
 
-const osg::Vec3 MoonGeode::defaultSunShineColor()
+const osg::Vec3f MoonGeode::defaultSunShineColor()
 {
-    return osg::Vec3(0.923, 0.786, 0.636);
+    return osg::Vec3f(0.923, 0.786, 0.636);
 }
 
 
 const float MoonGeode::setSunShineIntensity(const float intensity)
 {
-    osg::Vec4 sunShine;
+    osg::Vec4f sunShine;
     u_sunShine->get(sunShine);
 
     sunShine[3] = intensity;
@@ -404,7 +414,7 @@ const float MoonGeode::setSunShineIntensity(const float intensity)
 
 const float MoonGeode::getSunShineIntensity() const
 {
-    osg::Vec4 sunShine;
+    osg::Vec4f sunShine;
     u_sunShine->get(sunShine);
 
     return sunShine[3];
@@ -416,21 +426,21 @@ const float MoonGeode::defaultSunShineIntensity()
 }
 
 
-const osg::Vec3 MoonGeode::setEarthShineColor(const osg::Vec3 &color)
+const osg::Vec3f MoonGeode::setEarthShineColor(const osg::Vec3f &color)
 {
     m_earthShineColor = color;
     return m_earthShineColor;
 }
 
-const osg::Vec3 MoonGeode::getEarthShineColor() const
+const osg::Vec3f MoonGeode::getEarthShineColor() const
 {
     return m_earthShineColor;
 }
 
-const osg::Vec3 MoonGeode::defaultEarthShineColor()
+const osg::Vec3f MoonGeode::defaultEarthShineColor()
 {
-    //return osg::Vec3(0.92, 0.96, 1.00);
-    return osg::Vec3(0.88, 0.96, 1.00);
+    //return osg::Vec3f(0.92, 0.96, 1.00);
+    return osg::Vec3f(0.88, 0.96, 1.00);
 }
 
 

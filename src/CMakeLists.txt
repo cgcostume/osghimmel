@@ -179,7 +179,7 @@ if(MSVC)
 
 	set_target_properties(osgHimmel
 		PROPERTIES
-		COMPILE_FLAGS "/W4 /WX /fp:fast /Ot /GS-"
+		COMPILE_FLAGS "/W4 /WX /fp:fast /Ot /MP /GS-"
 		LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt"
 		PREFIX "osg${OSG_SOVERSION}-"
 		DEBUG_POSTFIX "d${DEBUG_POSTFIX}")

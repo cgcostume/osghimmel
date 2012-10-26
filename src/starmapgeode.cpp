@@ -103,13 +103,13 @@ void StarMapGeode::setupNode(osg::StateSet*)
 
 void StarMapGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    u_R = new osg::Uniform("R", osg::Matrix::identity());
+    u_R = new osg::Uniform("R", osg::Matrixf::identity());
     stateSet->addUniform(u_R);
 
     u_q = new osg::Uniform("q", 0.0f);
     stateSet->addUniform(u_q);
 
-    u_color = new osg::Uniform("color", osg::Vec4(defaultColor(), defaultColorRatio()));
+    u_color = new osg::Uniform("color", osg::Vec4f(defaultColor(), defaultColorRatio()));
     stateSet->addUniform(u_color);
 
     u_deltaM = new osg::Uniform("deltaM", 1.f);
@@ -155,19 +155,29 @@ void StarMapGeode::setupTextures(
     tcm->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
     tcm->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 
-    std::string px = cubeMapFilePath; px.replace(px.find("?"), 1, "_px");
-    std::string nx = cubeMapFilePath; nx.replace(nx.find("?"), 1, "_nx");
-    std::string py = cubeMapFilePath; py.replace(py.find("?"), 1, "_py");
-    std::string ny = cubeMapFilePath; ny.replace(ny.find("?"), 1, "_ny");
-    std::string pz = cubeMapFilePath; pz.replace(pz.find("?"), 1, "_pz");
-    std::string nz = cubeMapFilePath; nz.replace(nz.find("?"), 1, "_nz");
+   static const std::string fpExts[6] = { "_px", "_nx", "_py", "_ny", "_pz", "_nz" };
+    static const unsigned int cmFace[6] = { 
+        osg::TextureCubeMap::POSITIVE_X
+    ,   osg::TextureCubeMap::NEGATIVE_X
+    ,   osg::TextureCubeMap::POSITIVE_Y
+    ,   osg::TextureCubeMap::NEGATIVE_Y
+    ,   osg::TextureCubeMap::POSITIVE_Z
+    ,   osg::TextureCubeMap::NEGATIVE_Z };
 
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_X, osgDB::readImageFile(px));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_X, osgDB::readImageFile(nx));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Y, osgDB::readImageFile(py));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Y, osgDB::readImageFile(ny));
-    tcm->setImage(osg::TextureCubeMap::POSITIVE_Z, osgDB::readImageFile(pz));
-    tcm->setImage(osg::TextureCubeMap::NEGATIVE_Z, osgDB::readImageFile(nz));
+    for(int i = 0; i < 6; ++i)
+    {
+        std::string fp = cubeMapFilePath; 
+        fp.replace(fp.find("?"), 1, fpExts[i]);
+
+        osg::Image *img = osgDB::readImageFile(fp);
+
+        if(!img)
+            std::cout << "Image could not be laoded: " << fp << std::endl;
+        if(img && !img->valid())
+            std::cout << "Image is invalud: " << fp << std::endl;
+
+        tcm->setImage(cmFace[i], img);
+    }
 
     stateSet->setTextureAttributeAndModes(0, tcm, osg::StateAttribute::ON);
 
@@ -186,9 +196,9 @@ void StarMapGeode::updateScaledB()
 }
 
 
-const osg::Vec3 StarMapGeode::setColor(const osg::Vec3 &color)
+const osg::Vec3f StarMapGeode::setColor(const osg::Vec3f &color)
 {
-    osg::Vec4 temp;
+    osg::Vec4f temp;
     u_color->get(temp);
 
     temp[0] = color[0];
@@ -200,23 +210,23 @@ const osg::Vec3 StarMapGeode::setColor(const osg::Vec3 &color)
     return getColor();
 }
 
-const osg::Vec3 StarMapGeode::getColor() const
+const osg::Vec3f StarMapGeode::getColor() const
 {
-    osg::Vec4 color;
+    osg::Vec4f color;
     u_color->get(color);
 
-    return osg::Vec3(color[0], color[1], color[2]);
+    return osg::Vec3f(color[0], color[1], color[2]);
 }
 
-const osg::Vec3 StarMapGeode::defaultColor()
+const osg::Vec3f StarMapGeode::defaultColor()
 {
-    return osg::Vec3(0.66, 0.78, 1.00);
+    return osg::Vec3f(0.66, 0.78, 1.00);
 }
 
 
 const float StarMapGeode::setColorRatio(const float ratio)
 {
-    osg::Vec4 color;
+    osg::Vec4f color;
     u_color->get(color);
 
     color[3] = ratio;
@@ -227,7 +237,7 @@ const float StarMapGeode::setColorRatio(const float ratio)
 
 const float StarMapGeode::getColorRatio() const
 {
-    osg::Vec4 color;
+    osg::Vec4f color;
     u_color->get(color);
 
     return color[3];

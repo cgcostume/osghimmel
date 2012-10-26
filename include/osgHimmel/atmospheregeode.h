@@ -68,9 +68,9 @@ public:
     const float getExposure() const;
     static const float defaultExposure();
 
-    const osg::Vec3 setLHeureBleueColor(const osg::Vec3 &color);
-    const osg::Vec3 getLHeureBleueColor() const;
-    static const osg::Vec3 defaultLHeureBleueColor();
+    const osg::Vec3f setLHeureBleueColor(const osg::Vec3f &color);
+    const osg::Vec3f getLHeureBleueColor() const;
+    static const osg::Vec3f defaultLHeureBleueColor();
     
     const float setLHeureBleueIntensity(const float intensity);
     const float getLHeureBleueIntensity() const;
@@ -79,7 +79,7 @@ public:
 
     void setAverageGroundReflectance(const float reflectance); // [0;1]
     void setThicknessRayleigh(const float thickness); 
-    void setScatteringRayleigh(const osg::Vec3 &coefficients); 
+    void setScatteringRayleigh(const osg::Vec3f &coefficients); 
     void setThicknessMie(const float thickness); 
     void setScatteringMie(const float coefficient); 
     void setPhaseG(const float g);  // [-1;+1]

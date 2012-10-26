@@ -73,7 +73,7 @@ const float Astronomy2::angularMoonRadius(const t_julianDay t) const
 }
 
 
-const osg::Vec3 Astronomy2::moonPosition(
+const osg::Vec3f Astronomy2::moonPosition(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude
@@ -83,7 +83,7 @@ const osg::Vec3 Astronomy2::moonPosition(
     if(refractionCorrected)
         moon.altitude += Earth2::atmosphericRefraction(moon.altitude);
 
-    osg::Vec3 moonv  = moon.toEuclidean();
+    osg::Vec3f moonv  = moon.toEuclidean();
     moonv.normalize();
 
     return moonv;
@@ -108,7 +108,7 @@ const osg::Vec3 Astronomy2::sunPosition(
 }
 
 
-const osg::Matrix Astronomy2::moonOrientation(
+const osg::Matrixf Astronomy2::moonOrientation(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude) const
@@ -118,16 +118,16 @@ const osg::Matrix Astronomy2::moonOrientation(
     float l, b;
     Moon2::opticalLibrations(t, l, b);
 
-    const osg::Matrix libLat = osg::Matrix::rotate(_rad(b), -1, 0, 0);
-    const osg::Matrix libLon = osg::Matrix::rotate(_rad(l),  0, 1, 0);
+    const osg::Matrixf libLat = osg::Matrix::rotate(_rad(b), -1, 0, 0);
+    const osg::Matrixf libLon = osg::Matrix::rotate(_rad(l),  0, 1, 0);
 
     const float a = _rad(Moon2::positionAngleOfAxis(t));
     const float p = _rad(Moon2::parallacticAngle(aTime, latitude, longitude));
 
-    const osg::Matrix zenith = osg::Matrix::rotate(a - p, 0, 0, 1);
+    const osg::Matrixf zenith = osg::Matrix::rotate(a - p, 0, 0, 1);
 
     // finalOrientationWithLibrations
-    const osg::Matrix R(libLat * libLon * zenith);
+    const osg::Matrixf R(libLat * libLon * zenith);
 
     return R;
 }
@@ -161,16 +161,16 @@ const float Astronomy2::earthShineIntensity(
 }
 
 
-const osg::Matrix Astronomy2::equToHorTransform(
+const osg::Matrixf Astronomy2::equToHorTransform(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const
 {
     const float s = siderealTime2(aTime);
 
-    return osg::Matrix::scale(-1, 1, 1)
-        * osg::Matrix::rotate( _rad(latitude) -  _PI_2, 1, 0, 0)
-        * osg::Matrix::rotate(-_rad(s + longitude)    , 0, 0, 1);
+    return osg::Matrixf::scale(-1, 1, 1)
+        * osg::Matrixf::rotate( _rad(latitude) -  _PI_2, 1, 0, 0)
+        * osg::Matrixf::rotate(-_rad(s + longitude)    , 0, 0, 1);
 }
 
 } // namespace osgHimmel

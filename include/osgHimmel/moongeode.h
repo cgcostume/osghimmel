@@ -59,17 +59,17 @@ public:
     const float getScale() const;
     static const float defaultScale();
 
-    const osg::Vec3 setSunShineColor(const osg::Vec3 &color);
-    const osg::Vec3 getSunShineColor() const;
-    static const osg::Vec3 defaultSunShineColor();
+    const osg::Vec3f setSunShineColor(const osg::Vec3f &color);
+    const osg::Vec3f getSunShineColor() const;
+    static const osg::Vec3f defaultSunShineColor();
 
     const float setSunShineIntensity(const float intensity);
     const float getSunShineIntensity() const;
     static const float defaultSunShineIntensity();
 
-    const osg::Vec3 setEarthShineColor(const osg::Vec3 &color);
-    const osg::Vec3 getEarthShineColor() const;
-    static const osg::Vec3 defaultEarthShineColor();
+    const osg::Vec3f setEarthShineColor(const osg::Vec3f &color);
+    const osg::Vec3f getEarthShineColor() const;
+    static const osg::Vec3f defaultEarthShineColor();
 
     const float setEarthShineIntensity(const float intensity);
     const float getEarthShineIntensity() const;

@@ -145,7 +145,7 @@ void AtmosphereGeode::setupUniforms(osg::StateSet* stateSet)
 
     const osg::Vec3f hb(defaultLHeureBleueColor());
 
-    u_lheurebleue = new osg::Uniform("lheurebleue", osg::Vec4(hb[0], hb[1], hb[2], defaultLHeureBleueIntensity()));
+    u_lheurebleue = new osg::Uniform("lheurebleue", osg::Vec4f(hb[0], hb[1], hb[2], defaultLHeureBleueIntensity()));
     stateSet->addUniform(u_lheurebleue);
     
 }
@@ -220,9 +220,9 @@ const float AtmosphereGeode::defaultExposure()
 }
 
 
-const osg::Vec3 AtmosphereGeode::setLHeureBleueColor(const osg::Vec3 &color)
+const osg::Vec3f AtmosphereGeode::setLHeureBleueColor(const osg::Vec3f &color)
 {
-    osg::Vec4 temp;
+    osg::Vec4f temp;
     u_lheurebleue->get(temp);
 
     temp[0] = color[0];
@@ -234,22 +234,22 @@ const osg::Vec3 AtmosphereGeode::setLHeureBleueColor(const osg::Vec3 &color)
     return getLHeureBleueColor();
 }
 
-const osg::Vec3 AtmosphereGeode::getLHeureBleueColor() const
+const osg::Vec3f AtmosphereGeode::getLHeureBleueColor() const
 {
-    osg::Vec4 temp;
+    osg::Vec4f temp;
     u_lheurebleue->get(temp);
-    return osg::Vec3(temp[0], temp[1], temp[2]);
+    return osg::Vec3f(temp[0], temp[1], temp[2]);
 }
 
-const osg::Vec3 AtmosphereGeode::defaultLHeureBleueColor()
+const osg::Vec3f AtmosphereGeode::defaultLHeureBleueColor()
 {
-    return osg::Vec3(0.08, 0.3, 1.0);
+    return osg::Vec3f(0.08, 0.3, 1.0);
 }
 
 
 const float AtmosphereGeode::setLHeureBleueIntensity(const float intensity)
 {
-    osg::Vec4 temp;
+    osg::Vec4f temp;
     u_lheurebleue->get(temp);
 
     temp[3] = intensity;
@@ -260,7 +260,7 @@ const float AtmosphereGeode::setLHeureBleueIntensity(const float intensity)
 
 const float AtmosphereGeode::getLHeureBleueIntensity() const
 {
-    osg::Vec4 temp;
+    osg::Vec4f temp;
     u_lheurebleue->get(temp);
     return temp[3];
 }
@@ -282,7 +282,7 @@ void AtmosphereGeode::setThicknessRayleigh(const float thickness)
     m_precompute->dirty();
 }
 
-void AtmosphereGeode::setScatteringRayleigh(const osg::Vec3 &coefficients)
+void AtmosphereGeode::setScatteringRayleigh(const osg::Vec3f &coefficients)
 {
     m_precompute->getModelConfig().betaR = coefficients;
     m_precompute->dirty();

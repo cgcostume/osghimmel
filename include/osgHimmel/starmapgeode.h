@@ -60,9 +60,9 @@ public:
     const float getColorRatio() const;
     static const float defaultColorRatio();
 
-    const osg::Vec3 setColor(const osg::Vec3 &color);
-    const osg::Vec3 getColor() const;
-    static const osg::Vec3 defaultColor();
+    const osg::Vec3f setColor(const osg::Vec3f &color);
+    const osg::Vec3f getColor() const;
+    static const osg::Vec3f defaultColor();
 
     const float setApparentMagnitude(const float vMag);
     const float getApparentMagnitude() const;
