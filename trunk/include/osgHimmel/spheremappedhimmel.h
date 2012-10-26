@@ -53,7 +53,7 @@ class OSGH_API SphereMappedHimmel : public AbstractMappedHimmel
 {
 public:
     SphereMappedHimmel(
-        const osg::Vec3 &center = osg::Vec3(0.0, 0.0, 1.0)
+        const osg::Vec3f &center = osg::Vec3f(0.0, 0.0, 1.0)
     ,   const bool fakeSun = false);
 
     virtual ~SphereMappedHimmel();

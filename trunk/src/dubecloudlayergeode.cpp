@@ -161,7 +161,7 @@ void DubeCloudLayerGeode::setupUniforms(osg::StateSet *stateSet)
     u_change = new osg::Uniform("change", defaultChange());
     stateSet->addUniform(u_change);
 
-    u_wind = new osg::Uniform("wind", osg::Vec2(0.f, 0.f));
+    u_wind = new osg::Uniform("wind", osg::Vec2f(0.f, 0.f));
     stateSet->addUniform(u_wind);
 
     u_altitude = new osg::Uniform("altitude", defaultAltitude());
@@ -176,10 +176,10 @@ void DubeCloudLayerGeode::setupUniforms(osg::StateSet *stateSet)
     u_offset = new osg::Uniform("offset", -.5f);
     stateSet->addUniform(u_offset);
 
-    u_bcolor = new osg::Uniform("bcolor", osg::Vec3(1.f, 1.f, 1.f));
+    u_bcolor = new osg::Uniform("bcolor", osg::Vec3f(1.f, 1.f, 1.f));
     stateSet->addUniform(u_bcolor);
 
-    u_tcolor = new osg::Uniform("tcolor", osg::Vec3(1.f, 1.f, 1.f));
+    u_tcolor = new osg::Uniform("tcolor", osg::Vec3f(1.f, 1.f, 1.f));
     stateSet->addUniform(u_tcolor);
 
 
@@ -286,23 +286,23 @@ const float DubeCloudLayerGeode::getCoverage() const
 }
 
 
-const osg::Vec2 DubeCloudLayerGeode::setScale(const osg::Vec2 &scale)
+const osg::Vec2f DubeCloudLayerGeode::setScale(const osg::Vec2f &scale)
 {
     u_scale->set(scale);
     return getScale();
 }
 
-const osg::Vec2 DubeCloudLayerGeode::getScale() const
+const osg::Vec2f DubeCloudLayerGeode::getScale() const
 {
-    osg::Vec2 scale;
+    osg::Vec2f scale;
     u_scale->get(scale);
 
     return scale;
 }
 
-const osg::Vec2 DubeCloudLayerGeode::defaultScale()
+const osg::Vec2f DubeCloudLayerGeode::defaultScale()
 {
-    return osg::Vec2(128.f, 128.f);
+    return osg::Vec2f(128.f, 128.f);
 }
 
 
@@ -326,45 +326,45 @@ const float DubeCloudLayerGeode::defaultChange()
 }
 
 
-const osg::Vec2 DubeCloudLayerGeode::setWind(const osg::Vec2 &wind)
+const osg::Vec2f DubeCloudLayerGeode::setWind(const osg::Vec2f &wind)
 {
     u_wind->set(wind);
     return getWind();
 }
 
-const osg::Vec2 DubeCloudLayerGeode::getWind() const
+const osg::Vec2f DubeCloudLayerGeode::getWind() const
 {
-    osg::Vec2 wind;
+    osg::Vec2f wind;
     u_wind->get(wind);
 
     return wind;
 }
 
 
-const osg::Vec3 DubeCloudLayerGeode::setBottomColor(const osg::Vec3 &color)
+const osg::Vec3f DubeCloudLayerGeode::setBottomColor(const osg::Vec3f &color)
 {
     u_bcolor->set(color);
     return getBottomColor();
 }
 
-const osg::Vec3 DubeCloudLayerGeode::getBottomColor() const
+const osg::Vec3f DubeCloudLayerGeode::getBottomColor() const
 {
-    osg::Vec3 color;
+    osg::Vec3f color;
     u_bcolor->get(color);
 
     return color;
 }
 
 
-const osg::Vec3 DubeCloudLayerGeode::setTopColor(const osg::Vec3 &color)
+const osg::Vec3f DubeCloudLayerGeode::setTopColor(const osg::Vec3f &color)
 {
     u_tcolor->set(color);
     return getTopColor();
 }
 
-const osg::Vec3 DubeCloudLayerGeode::getTopColor() const
+const osg::Vec3f DubeCloudLayerGeode::getTopColor() const
 {
-    osg::Vec3 color;
+    osg::Vec3f color;
     u_tcolor->get(color);
 
     return color;

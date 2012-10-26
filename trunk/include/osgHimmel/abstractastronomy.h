@@ -65,21 +65,21 @@ public:
     const float getLongitude() const;
 
 
-    const osg::Matrix getMoonOrientation() const;
-    const osg::Matrix getMoonOrientation(
+    const osg::Matrixf getMoonOrientation() const;
+    const osg::Matrixf getMoonOrientation(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const;
 
-    const osg::Vec3 getMoonPosition(const bool refractionCorrected) const;
-    const osg::Vec3 getMoonPosition(
+    const osg::Vec3f getMoonPosition(const bool refractionCorrected) const;
+    const osg::Vec3f getMoonPosition(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude
     ,   const bool refractionCorrected) const;
 
-    const osg::Vec3 getSunPosition(const bool refractionCorrected) const;
-    const osg::Vec3 getSunPosition(
+    const osg::Vec3f getSunPosition(const bool refractionCorrected) const;
+    const osg::Vec3f getSunPosition(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude
@@ -105,8 +105,8 @@ public:
     const float getAngularMoonRadius() const;
     const float getAngularMoonRadius(const t_aTime &aTime) const;
 
-    const osg::Matrix getEquToHorTransform() const;
-    const osg::Matrix getEquToHorTransform(
+    const osg::Matrixf getEquToHorTransform() const;
+    const osg::Matrixf getEquToHorTransform(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const;
@@ -114,19 +114,19 @@ public:
 
 protected:
 
-    virtual const osg::Vec3 moonPosition(
+    virtual const osg::Vec3f moonPosition(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude
     ,   const bool refractionCorrected) const = 0;
 
-    virtual const osg::Vec3 sunPosition(
+    virtual const osg::Vec3f sunPosition(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude
     ,   const bool refractionCorrected) const = 0;
 
-    virtual const osg::Matrix moonOrientation(
+    virtual const osg::Matrixf moonOrientation(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const = 0;
@@ -143,7 +143,7 @@ protected:
     virtual const float moonDistance(const t_julianDay t) const = 0;
     virtual const float angularMoonRadius(const t_julianDay t) const = 0;
 
-    virtual const osg::Matrix equToHorTransform(
+    virtual const osg::Matrixf equToHorTransform(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const = 0;

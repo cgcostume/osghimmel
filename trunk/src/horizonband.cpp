@@ -52,7 +52,7 @@ void HorizonBand::initialize(osg::StateSet *stateSet)
         return;
 
     u_params = new osg::Uniform("hbandParams", 
-        osg::Vec3(defaultScale(), defaultWidth(), defaultOffset()));
+        osg::Vec3f(defaultScale(), defaultWidth(), defaultOffset()));
 
     u_color       = new osg::Uniform("hbandColor", defaultColor());
     u_bottomColor = new osg::Uniform("hbandBackground", defaultBottomColor());
@@ -63,9 +63,9 @@ void HorizonBand::initialize(osg::StateSet *stateSet)
 };
 
 
-const osg::Vec3 HorizonBand::getParams() const
+const osg::Vec3f HorizonBand::getParams() const
 {
-    osg::Vec3 params;
+    osg::Vec3f params;
     u_params->get(params);
 
     return params;
@@ -74,7 +74,7 @@ const osg::Vec3 HorizonBand::getParams() const
 
 const float HorizonBand::setScale(const float scale)
 {
-    osg::Vec3 params = getParams();
+    osg::Vec3f params = getParams();
     params[0] = scale;
 
     u_params->set(params);
@@ -83,7 +83,7 @@ const float HorizonBand::setScale(const float scale)
 
 const float HorizonBand::getScale() const
 {
-    osg::Vec3 params = getParams();
+    osg::Vec3f params = getParams();
     return params[0];
 }
 const float HorizonBand::defaultScale()
@@ -94,7 +94,7 @@ const float HorizonBand::defaultScale()
 
 const float HorizonBand::setWidth(const float thickness)
 {
-    osg::Vec3 params = getParams();
+    osg::Vec3f params = getParams();
     params[1] = thickness;
 
     u_params->set(params);
@@ -103,7 +103,7 @@ const float HorizonBand::setWidth(const float thickness)
 
 const float HorizonBand::getWidth() const
 {
-    osg::Vec3 params = getParams();
+    osg::Vec3f params = getParams();
     return params[1];
 }
 const float HorizonBand::defaultWidth()
@@ -114,7 +114,7 @@ const float HorizonBand::defaultWidth()
 
 const float HorizonBand::setOffset(const float offset)
 {
-    osg::Vec3 params = getParams();
+    osg::Vec3f params = getParams();
     params[2] = offset;
 
     u_params->set(params);
@@ -123,7 +123,7 @@ const float HorizonBand::setOffset(const float offset)
 
 const float HorizonBand::getOffset() const
 {
-    osg::Vec3 params = getParams();
+    osg::Vec3f params = getParams();
     return params[2];
 }
 const float HorizonBand::defaultOffset()
@@ -132,41 +132,41 @@ const float HorizonBand::defaultOffset()
 }
 
 
-const osg::Vec4 HorizonBand::setColor(const osg::Vec4 &color)
+const osg::Vec4f HorizonBand::setColor(const osg::Vec4f &color)
 {
     u_color->set(color);
     return getColor();
 }
 
-const osg::Vec4 HorizonBand::getColor() const
+const osg::Vec4f HorizonBand::getColor() const
 {
-    osg::Vec4 color;
+    osg::Vec4f color;
     u_color->get(color);
 
     return color;
 }
-const osg::Vec4 HorizonBand::defaultColor()
+const osg::Vec4f HorizonBand::defaultColor()
 {
-    return osg::Vec4(0.25f, 0.25f, 0.25f, 1.f);
+    return osg::Vec4f(0.25f, 0.25f, 0.25f, 1.f);
 }
 
 
-const osg::Vec4 HorizonBand::setBottomColor(const osg::Vec4 &color)
+const osg::Vec4f HorizonBand::setBottomColor(const osg::Vec4f &color)
 {
     u_bottomColor->set(color);
     return getBottomColor();
 }
 
-const osg::Vec4 HorizonBand::getBottomColor() const
+const osg::Vec4f HorizonBand::getBottomColor() const
 {
-    osg::Vec4 bottomColor;
+    osg::Vec4f bottomColor;
     u_bottomColor->get(bottomColor);
 
     return bottomColor;
 }
-const osg::Vec4 HorizonBand::defaultBottomColor()
+const osg::Vec4f HorizonBand::defaultBottomColor()
 {
-    return osg::Vec4(0.08f, 0.08f, 0.08f, 1.f);
+    return osg::Vec4f(0.08f, 0.08f, 0.08f, 1.f);
 }
 
 } // namespace osgHimmel

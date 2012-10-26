@@ -56,9 +56,9 @@ public:
     const float getApparentMagnitude() const;
     static const float defaultApparentMagnitude();
 
-    const osg::Vec3 setColor(const osg::Vec3 color);
-    const osg::Vec3 getColor() const;
-    static const osg::Vec3 defaultColor();
+    const osg::Vec3f setColor(const osg::Vec3f color);
+    const osg::Vec3f getColor() const;
+    static const osg::Vec3f defaultColor();
 
     const float setColorRatio(const float ratio);
     const float getColorRatio() const;

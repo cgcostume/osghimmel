@@ -79,19 +79,19 @@ public:
     const float getAltitude() const;
     static const float defaultAltitude();
 
-    const osg::Vec2 setScale(const osg::Vec2 &scale);
-    const osg::Vec2 getScale() const;
-    static const osg::Vec2 defaultScale();
+    const osg::Vec2f setScale(const osg::Vec2f &scale);
+    const osg::Vec2f getScale() const;
+    static const osg::Vec2f defaultScale();
 
     const float setChange(const float change);
     const float getChange() const;
     static const float defaultChange();
 
-    const osg::Vec2 setWind(const osg::Vec2 &wind);
-    const osg::Vec2 getWind() const;
+    const osg::Vec2f setWind(const osg::Vec2f &wind);
+    const osg::Vec2f getWind() const;
 
-    const osg::Vec3 setColor(const osg::Vec3 &color);
-    const osg::Vec3 getColor() const;
+    const osg::Vec3f setColor(const osg::Vec3f &color);
+    const osg::Vec3f getColor() const;
 
 public:
 

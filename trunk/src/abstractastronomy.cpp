@@ -83,12 +83,12 @@ const float AbstractAstronomy::getLongitude() const
 }
 
 
-const osg::Matrix AbstractAstronomy::getMoonOrientation() const
+const osg::Matrixf AbstractAstronomy::getMoonOrientation() const
 {
     return moonOrientation(getATime(), getLatitude(), getLongitude());
 }
 
-const osg::Matrix AbstractAstronomy::getMoonOrientation(
+const osg::Matrixf AbstractAstronomy::getMoonOrientation(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude) const
@@ -97,13 +97,13 @@ const osg::Matrix AbstractAstronomy::getMoonOrientation(
 }
 
 
-const osg::Vec3 AbstractAstronomy::getMoonPosition(
+const osg::Vec3f AbstractAstronomy::getMoonPosition(
     const bool refractionCorrected) const
 {
     return moonPosition(getATime(), getLatitude(), getLongitude(), refractionCorrected);
 }
 
-const osg::Vec3 AbstractAstronomy::getMoonPosition(
+const osg::Vec3f AbstractAstronomy::getMoonPosition(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude
@@ -113,13 +113,13 @@ const osg::Vec3 AbstractAstronomy::getMoonPosition(
 }
 
 
-const osg::Vec3 AbstractAstronomy::getSunPosition(
+const osg::Vec3f AbstractAstronomy::getSunPosition(
     const bool refractionCorrected) const
 {
     return sunPosition(getATime(), getLatitude(), getLongitude(), refractionCorrected);
 }
 
-const osg::Vec3 AbstractAstronomy::getSunPosition(
+const osg::Vec3f AbstractAstronomy::getSunPosition(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude
@@ -193,12 +193,12 @@ const float AbstractAstronomy::getAngularMoonRadius(const t_aTime &aTime) const
 }
 
 
-const osg::Matrix AbstractAstronomy::getEquToHorTransform() const
+const osg::Matrixf AbstractAstronomy::getEquToHorTransform() const
 {
     return equToHorTransform(getATime(), getLatitude(), getLongitude());
 }
  
-const osg::Matrix AbstractAstronomy::getEquToHorTransform(
+const osg::Matrixf AbstractAstronomy::getEquToHorTransform(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude) const

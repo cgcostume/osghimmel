@@ -46,19 +46,19 @@ public:
 
 protected:
 
-    virtual const osg::Vec3 moonPosition(
+    virtual const osg::Vec3f moonPosition(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude
     ,   const bool refractionCorrected) const;
 
-    virtual const osg::Vec3 sunPosition(
+    virtual const osg::Vec3f sunPosition(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude
     ,   const bool refractionCorrected) const;
 
-    virtual const osg::Matrix moonOrientation(
+    virtual const osg::Matrixf moonOrientation(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const;
@@ -68,7 +68,7 @@ protected:
     ,   const float latitude
     ,   const float longitude) const;
 
-    virtual const osg::Matrix equToHorTransform(
+    virtual const osg::Matrixf equToHorTransform(
         const t_aTime &aTime
     ,   const float latitude
     ,   const float longitude) const;

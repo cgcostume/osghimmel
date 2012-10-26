@@ -71,9 +71,9 @@ public:
     const float getAltitude() const;
     static const float defaultAltitude();
 
-    const osg::Vec2 setScale(const osg::Vec2 &scale);
-    const osg::Vec2 getScale() const;
-    static const osg::Vec2 defaultScale();
+    const osg::Vec2f setScale(const osg::Vec2f &scale);
+    const osg::Vec2f getScale() const;
+    static const osg::Vec2f defaultScale();
 
     const float setChange(const float change);
     const float getChange() const;
@@ -85,14 +85,14 @@ public:
     const float setOffset(const float offset);
     const float getOffset() const;
 
-    const osg::Vec3 setBottomColor(const osg::Vec3 &color);
-    const osg::Vec3 getBottomColor() const;
+    const osg::Vec3f setBottomColor(const osg::Vec3f &color);
+    const osg::Vec3f getBottomColor() const;
 
-    const osg::Vec3 setTopColor(const osg::Vec3 &color);
-    const osg::Vec3 getTopColor() const;
+    const osg::Vec3f setTopColor(const osg::Vec3f &color);
+    const osg::Vec3f getTopColor() const;
 
-    const osg::Vec2 setWind(const osg::Vec2 &wind);
-    const osg::Vec2 getWind() const;
+    const osg::Vec2f setWind(const osg::Vec2f &wind);
+    const osg::Vec2f getWind() const;
 
 protected:
 

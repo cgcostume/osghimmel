@@ -109,7 +109,7 @@ void StarsGeode::update(const Himmel &himmel)
 
 void StarsGeode::setupUniforms(osg::StateSet* stateSet)
 {
-    u_R = new osg::Uniform("R", osg::Matrix::identity());
+    u_R = new osg::Uniform("R", osg::Matrixf::identity());
     stateSet->addUniform(u_R);
 
     u_q = new osg::Uniform("q", 0.0f);
@@ -119,7 +119,7 @@ void StarsGeode::setupUniforms(osg::StateSet* stateSet)
     stateSet->addUniform(u_noise1);
 
 
-    u_color = new osg::Uniform("color", osg::Vec4(defaultColor(), defaultColorRatio()));
+    u_color = new osg::Uniform("color", osg::Vec4f(defaultColor(), defaultColorRatio()));
     stateSet->addUniform(u_color);
 
 
@@ -158,9 +158,9 @@ void StarsGeode::createAndAddDrawable(const char* brightStarsFilePath)
         equ.declination = stars[i].DE;
 
         osg::Vec3f vec = equ.toEuclidean();
-        (*vAry)[i] = osg::Vec4(vec.x(), vec.y(), vec.z(), i);
+        (*vAry)[i] = osg::Vec4f(vec.x(), vec.y(), vec.z(), i);
 
-        (*cAry)[i] = osg::Vec4(stars[i].sRGB_R, stars[i].sRGB_G, stars[i].sRGB_B, stars[i].Vmag + 0.4);
+        (*cAry)[i] = osg::Vec4f(stars[i].sRGB_R, stars[i].sRGB_G, stars[i].sRGB_B, stars[i].Vmag + 0.4);
         // the 0.4 accounts for magnitude decrease due to the earth's atmosphere
     }
       
@@ -322,9 +322,9 @@ const float StarsGeode::defaultApparentMagnitude()
 }
 
 
-const osg::Vec3 StarsGeode::setColor(const osg::Vec3 color)
+const osg::Vec3f StarsGeode::setColor(const osg::Vec3f color)
 {
-    osg::Vec4 colorAndRatio;
+    osg::Vec4f colorAndRatio;
     u_color->get(colorAndRatio);
     
     colorAndRatio[0] = color[0];
@@ -335,23 +335,23 @@ const osg::Vec3 StarsGeode::setColor(const osg::Vec3 color)
     return getColor();
 }
 
-const osg::Vec3 StarsGeode::getColor() const
+const osg::Vec3f StarsGeode::getColor() const
 {
-    osg::Vec4 colorAndRatio;
+    osg::Vec4f colorAndRatio;
     u_color->get(colorAndRatio);
 
-    return osg::Vec3(colorAndRatio[0], colorAndRatio[1], colorAndRatio[2]);
+    return osg::Vec3f(colorAndRatio[0], colorAndRatio[1], colorAndRatio[2]);
 }
 
-const osg::Vec3 StarsGeode::defaultColor()
+const osg::Vec3f StarsGeode::defaultColor()
 {
-    return osg::Vec3(0.66, 0.78, 1.00);
+    return osg::Vec3f(0.66, 0.78, 1.00);
 }
 
 
 const float StarsGeode::setColorRatio(const float ratio)
 {
-    osg::Vec4 colorAndRatio;
+    osg::Vec4f colorAndRatio;
     u_color->get(colorAndRatio);
     
     colorAndRatio[3] = ratio;
@@ -362,7 +362,7 @@ const float StarsGeode::setColorRatio(const float ratio)
 
 const float StarsGeode::getColorRatio() const
 {
-    osg::Vec4 colorAndRatio;
+    osg::Vec4f colorAndRatio;
     u_color->get(colorAndRatio);
 
     return colorAndRatio[3];

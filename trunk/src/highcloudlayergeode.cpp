@@ -132,7 +132,7 @@ osg::Group* HighCloudLayerGeode::createPreRenderedNoise(
 
     osg::Camera* camera = new osg::Camera;
 
-    camera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    camera->setClearColor(osg::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
     camera->setProjectionMatrixAsFrustum(-1, 1,-1, 1, 0.01, 2.00);
 
     camera->setViewport(0, 0, texSize, texSize);
@@ -337,10 +337,10 @@ void HighCloudLayerGeode::setupUniforms(osg::StateSet *stateSet)
     u_change = new osg::Uniform("change", defaultChange());
     stateSet->addUniform(u_change);
 
-    u_wind = new osg::Uniform("wind", osg::Vec2(0.f, 0.f));
+    u_wind = new osg::Uniform("wind", osg::Vec2f(0.f, 0.f));
     stateSet->addUniform(u_wind);
 
-    u_color = new osg::Uniform("color", osg::Vec3(1.f, 1.f, 1.f));
+    u_color = new osg::Uniform("color", osg::Vec3f(1.f, 1.f, 1.f));
     stateSet->addUniform(u_color);
 
     u_altitude = new osg::Uniform("altitude", defaultAltitude());
@@ -451,23 +451,23 @@ const float HighCloudLayerGeode::getCoverage() const
 }
 
 
-const osg::Vec2 HighCloudLayerGeode::setScale(const osg::Vec2 &scale)
+const osg::Vec2f HighCloudLayerGeode::setScale(const osg::Vec2f &scale)
 {
     u_scale->set(scale);
     return getScale();
 }
 
-const osg::Vec2 HighCloudLayerGeode::getScale() const
+const osg::Vec2f HighCloudLayerGeode::getScale() const
 {
-    osg::Vec2 scale;
+    osg::Vec2f scale;
     u_scale->get(scale);
 
     return scale;
 }
 
-const osg::Vec2 HighCloudLayerGeode::defaultScale()
+const osg::Vec2f HighCloudLayerGeode::defaultScale()
 {
-    return osg::Vec2(32.f, 32.f);
+    return osg::Vec2f(32.f, 32.f);
 }
 
 
@@ -491,30 +491,30 @@ const float HighCloudLayerGeode::defaultChange()
 }
 
 
-const osg::Vec2 HighCloudLayerGeode::setWind(const osg::Vec2 &wind)
+const osg::Vec2f HighCloudLayerGeode::setWind(const osg::Vec2f &wind)
 {
     u_wind->set(wind);
     return getWind();
 }
 
-const osg::Vec2 HighCloudLayerGeode::getWind() const
+const osg::Vec2f HighCloudLayerGeode::getWind() const
 {
-    osg::Vec2 wind;
+    osg::Vec2f wind;
     u_wind->get(wind);
 
     return wind;
 }
 
 
-const osg::Vec3 HighCloudLayerGeode::setColor(const osg::Vec3 &color)
+const osg::Vec3f HighCloudLayerGeode::setColor(const osg::Vec3f &color)
 {
     u_color->set(color);
     return getColor();
 }
 
-const osg::Vec3 HighCloudLayerGeode::getColor() const
+const osg::Vec3f HighCloudLayerGeode::getColor() const
 {
-    osg::Vec3 color;
+    osg::Vec3f color;
     u_color->get(color);
 
     return color;

@@ -40,17 +40,17 @@ namespace osgHimmel
 {
 
 SphereMappedHimmel::SphereMappedHimmel(
-    const osg::Vec3 &center
+    const osg::Vec3f &center
 ,   const bool fakeSun)
 :   AbstractMappedHimmel(fakeSun)
 ,   u_transform(NULL)
 {
     setName("SphereMappedHimmel");
 
-    osg::Vec3 c(center);
+    osg::Vec3f c(center);
     c.normalize();
 
-    u_transform = new osg::Uniform("transform", osg::Matrix::rotate(osg::Vec3(0.0, 0.0, 1.0),  c));
+    u_transform = new osg::Uniform("transform", osg::Matrixf::rotate(osg::Vec3f(0.0, 0.0, 1.0),  c));
     getOrCreateStateSet()->addUniform(u_transform);
 };
 
