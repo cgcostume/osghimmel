@@ -95,10 +95,10 @@ public:
     // From osg::Transform:
 
     // Get the transformation matrix which moves from local coords to world coords.
-    virtual bool computeLocalToWorldMatrix(osg::Matrixf& matrix, osg::NodeVisitor* nv) const;
+    virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const;
 
     // Get the transformation matrix which moves from world coords to local coords.
-    virtual bool computeWorldToLocalMatrix(osg::Matrixf& matrix, osg::NodeVisitor* nv) const;
+    virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const;
 
 
     void dirty(const bool enable = true);
