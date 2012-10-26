@@ -117,11 +117,11 @@ void AbstractMappedHimmel::update()
 
     const float razd(m_razDirection == RD_NorthWestSouthEast ? 1.f : -1.f);
     m_razTransform->setMatrix(
-        osg::Matrix::rotate(razd * m_razTimef->getf(true) * osg::PI * 2.f
-    ,   osg::Vec3(0.f, 0.f, 1.f)));
+        osg::Matrixf::rotate(razd * m_razTimef->getf(true) * osg::PI * 2.f
+    ,   osg::Vec3f(0.f, 0.f, 1.f)));
 
     if(u_razInverse)
-        u_razInverse->set(osg::Matrix::inverse(m_razTransform->getMatrix()));
+        u_razInverse->set(osg::Matrixf::inverse(m_razTransform->getMatrix()));
 
 
 #pragma NOTE("interface for FakeSun required")
@@ -205,9 +205,9 @@ void AbstractMappedHimmel::setupUniforms(osg::StateSet *stateSet)
 
     if(m_fakeSun)
     {
-        u_razInverse = new osg::Uniform("razInverse", osg::Matrix());
+        u_razInverse = new osg::Uniform("razInverse", osg::Matrixf());
 
-        u_sun       = new osg::Uniform("sun", osg::Vec3(1.0, 0.0, 1.0));
+        u_sun       = new osg::Uniform("sun", osg::Vec3f(1.0, 0.0, 1.0));
         u_sunCoeffs = new osg::Uniform("sunCoeffs", defaultSunCoeffs());
         u_sunScale  = new osg::Uniform("sunScale", 1.f);
 
@@ -316,22 +316,22 @@ const float AbstractMappedHimmel::getSunScale() const
 }
 
 
-const osg::Vec4 AbstractMappedHimmel::setSunCoeffs(const osg::Vec4 &coeffs)
+const osg::Vec4f AbstractMappedHimmel::setSunCoeffs(const osg::Vec4f &coeffs)
 {
     u_sunCoeffs->set(coeffs);
     return getSunCoeffs();
 }
 
-const osg::Vec4 AbstractMappedHimmel::getSunCoeffs() const
+const osg::Vec4f AbstractMappedHimmel::getSunCoeffs() const
 {
-    osg::Vec4 coeffs;
+    osg::Vec4f coeffs;
     u_sunCoeffs->get(coeffs);
 
     return coeffs;
 }
-const osg::Vec4 AbstractMappedHimmel::defaultSunCoeffs()
+const osg::Vec4f AbstractMappedHimmel::defaultSunCoeffs()
 {
-    return osg::Vec4(0.63, 0.58, 0.49, 1.0);
+    return osg::Vec4f(0.63, 0.58, 0.49, 1.0);
 }
 
 

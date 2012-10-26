@@ -189,8 +189,8 @@ void PrintPosterHandler::bindCameraToImage(
     m_tiles[t_position(row, col)] = image.get();
 
     // calculate projection matrix offset of each tile
-    osg::Matrix offsetMatrix = osg::Matrix::scale(m_tileColumns, m_tileRows, 1.0) 
-        * osg::Matrix::translate(m_tileColumns - 1 - 2 * col, m_tileRows - 1 - 2 * row, 0.0);
+    osg::Matrixf offsetMatrix = osg::Matrixf::scale(m_tileColumns, m_tileRows, 1.0) 
+        * osg::Matrixf::translate(m_tileColumns - 1 - 2 * col, m_tileRows - 1 - 2 * row, 0.0);
         
     camera->setViewMatrix(m_currentViewMatrix);
     camera->setProjectionMatrix(m_currentProjectionMatrix * offsetMatrix);
@@ -351,7 +351,7 @@ void PrintPosterHandler::setTileSize(
     m_tileSize.set(w, h);
 }
 
-const osg::Vec2& PrintPosterHandler::getTileSize() const 
+const osg::Vec2f& PrintPosterHandler::getTileSize() const 
 { 
     return m_tileSize; 
 }

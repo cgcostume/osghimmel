@@ -47,25 +47,25 @@ public:
     {
         traverse(node, nv);
 
-        const osg::Vec3 position = node->getBound().center();
+        const osg::Vec3f position = node->getBound().center();
 
-        typedef std::pair<osg::Vec3, osg::Vec3> t_planeBase;
+        typedef std::pair<osg::Vec3f, osg::Vec3f> t_planeBase;
         const t_planeBase pb[6] =
         {
-            t_planeBase(osg::Vec3( 1, 0, 0), osg::Vec3( 0,-1, 0))
-        ,   t_planeBase(osg::Vec3(-1, 0, 0), osg::Vec3( 0,-1, 0))
-        ,   t_planeBase(osg::Vec3( 0, 1, 0), osg::Vec3( 0, 0, 1))
-        ,   t_planeBase(osg::Vec3( 0,-1, 0), osg::Vec3( 0, 0,-1))
-        ,   t_planeBase(osg::Vec3( 0, 0, 1), osg::Vec3( 0,-1, 0))
-        ,   t_planeBase(osg::Vec3( 0, 0,-1), osg::Vec3( 0,-1, 0)) 
+            t_planeBase(osg::Vec3f( 1, 0, 0), osg::Vec3f( 0,-1, 0))
+        ,   t_planeBase(osg::Vec3f(-1, 0, 0), osg::Vec3f( 0,-1, 0))
+        ,   t_planeBase(osg::Vec3f( 0, 1, 0), osg::Vec3f( 0, 0, 1))
+        ,   t_planeBase(osg::Vec3f( 0,-1, 0), osg::Vec3f( 0, 0,-1))
+        ,   t_planeBase(osg::Vec3f( 0, 0, 1), osg::Vec3f( 0,-1, 0))
+        ,   t_planeBase(osg::Vec3f( 0, 0,-1), osg::Vec3f( 0,-1, 0)) 
         };
 
         for(unsigned int i = 0;  i < 6 && i < m_cameras.size(); ++i)
         {
-            osg::Matrix localOffset;
+            osg::Matrixf localOffset;
             localOffset.makeLookAt(position, position + pb[i].first, pb[i].second);
 
-            osg::Matrix viewMatrix = node->getWorldMatrices().front() * localOffset;
+            osg::Matrixf viewMatrix = node->getWorldMatrices().front() * localOffset;
 
             m_cameras[i]->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
             m_cameras[i]->setProjectionMatrixAsFrustum(-1.0, 1.0, -1.0, 1.0, 1.0, node->getBound().radius());

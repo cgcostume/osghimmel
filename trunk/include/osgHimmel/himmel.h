@@ -143,8 +143,8 @@ public:
     }
 
 
-    const osg::Vec3 getSunPosition() const;
-    const osg::Vec3 getSunPosition(const t_aTime &aTime) const;
+    const osg::Vec3f getSunPosition() const;
+    const osg::Vec3f getSunPosition(const t_aTime &aTime) const;
 
 protected:
 

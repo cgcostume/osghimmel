@@ -90,7 +90,7 @@ const osg::Vec3f Astronomy2::moonPosition(
 }
 
 
-const osg::Vec3 Astronomy2::sunPosition(
+const osg::Vec3f Astronomy2::sunPosition(
     const t_aTime &aTime
 ,   const float latitude
 ,   const float longitude
@@ -101,7 +101,7 @@ const osg::Vec3 Astronomy2::sunPosition(
     if(refractionCorrected)
         sun.altitude += Earth2::atmosphericRefraction(sun.altitude);
 
-    osg::Vec3 sunv  = sun.toEuclidean();
+    osg::Vec3f sunv  = sun.toEuclidean();
     sunv.normalize();
 
     return sunv;
@@ -118,13 +118,13 @@ const osg::Matrixf Astronomy2::moonOrientation(
     float l, b;
     Moon2::opticalLibrations(t, l, b);
 
-    const osg::Matrixf libLat = osg::Matrix::rotate(_rad(b), -1, 0, 0);
-    const osg::Matrixf libLon = osg::Matrix::rotate(_rad(l),  0, 1, 0);
+    const osg::Matrixf libLat = osg::Matrixf::rotate(_rad(b), -1, 0, 0);
+    const osg::Matrixf libLon = osg::Matrixf::rotate(_rad(l),  0, 1, 0);
 
     const float a = _rad(Moon2::positionAngleOfAxis(t));
     const float p = _rad(Moon2::parallacticAngle(aTime, latitude, longitude));
 
-    const osg::Matrixf zenith = osg::Matrix::rotate(a - p, 0, 0, 1);
+    const osg::Matrixf zenith = osg::Matrixf::rotate(a - p, 0, 0, 1);
 
     // finalOrientationWithLibrations
     const osg::Matrixf R(libLat * libLon * zenith);
@@ -138,8 +138,8 @@ const float Astronomy2::earthShineIntensity(
 ,   const float latitude
 ,   const float longitude) const
 {
-    const osg::Vec3 m = moonPosition(aTime, latitude, longitude, false);
-    const osg::Vec3 s = sunPosition(aTime, latitude, longitude, false);
+    const osg::Vec3f m = moonPosition(aTime, latitude, longitude, false);
+    const osg::Vec3f s = sunPosition(aTime, latitude, longitude, false);
 
     // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity
