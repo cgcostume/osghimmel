@@ -247,7 +247,7 @@ const osg::Vec3f s_EquatorialCoords<T>::toEuclidean() const
     const T y(r * cos(_rad(right_ascension)) * cosd);
     const T z(r * sin(_rad(declination)));
 
-    return osg::Vec3(x, y, z);
+    return osg::Vec3f(x, y, z);
 }
 
 
@@ -304,7 +304,7 @@ const osg::Vec3f s_HorizontalCoords<T>::toEuclidean() const
     const T y(cos(_rad(azimuth)) * cosa);
     const T z(sin(_rad(altitude)));
 
-    return osg::Vec3(x, y, z);
+    return osg::Vec3f(x, y, z);
 }
 
 } // namespace osgHimmel

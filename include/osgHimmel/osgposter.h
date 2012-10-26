@@ -86,7 +86,7 @@ public:
     void setTileSize(
         const int w
     ,   const int h);
-    const osg::Vec2& getTileSize() const;
+    const osg::Vec2f& getTileSize() const;
 
 
     void setCameraRoot(osg::Group* root); 
@@ -126,7 +126,7 @@ protected:
 
     bool m_outputTiles;
 
-    osg::Vec2 m_tileSize;
+    osg::Vec2f m_tileSize;
 
     int m_tileRows;
     int m_tileColumns;

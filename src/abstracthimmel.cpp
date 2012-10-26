@@ -97,7 +97,7 @@ AbstractHimmel::~AbstractHimmel()
 void AbstractHimmel::setReferenceBoundingRadius(const float )
 {
     //m_referenceBoundingRadius = _abs(radius);
-    //setMatrix(osg::Matrix::scale(m_referenceBoundingRadius, m_referenceBoundingRadius, m_referenceBoundingRadius));
+    //setMatrix(osg::Matrixf::scale(m_referenceBoundingRadius, m_referenceBoundingRadius, m_referenceBoundingRadius));
     
     //osg::notify(osg::NOTICE) << m_referenceBoundingRadius << std::endl;
 }
@@ -118,26 +118,26 @@ void AbstractHimmel::traverse(osg::NodeVisitor &nv)
 }
 
 
-bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
+bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrixf& matrix, osg::NodeVisitor* nv) const
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
     if(!cv)
         return false;
 
-    const osg::Vec3 t(cv->getEyePoint());
+    const osg::Vec3f t(cv->getEyePoint());
     matrix.preMultTranslate(t);
 
     return true;
 }
 
 
-bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
+bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrixf& matrix, osg::NodeVisitor* nv) const
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
     if(!cv)
         return false;
 
-    const osg::Vec3 t(cv->getEyePoint());
+    const osg::Vec3f t(cv->getEyePoint());
     matrix.preMultTranslate(-t);
 
     return true;

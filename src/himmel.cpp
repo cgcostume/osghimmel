@@ -112,9 +112,9 @@ Himmel::Himmel(
 {
     assert(m_astronomy);
 
-    u_sun = new osg::Uniform("sun", osg::Vec3(0.0, 0.0, 0.0));
+    u_sun = new osg::Uniform("sun", osg::Vec3f(0.0, 0.0, 0.0));
     getOrCreateStateSet()->addUniform(u_sun);
-    u_sunr = new osg::Uniform("sunr", osg::Vec3(0.0, 0.0, 0.0));
+    u_sunr = new osg::Uniform("sunr", osg::Vec3f(0.0, 0.0, 0.0));
     getOrCreateStateSet()->addUniform(u_sunr);
 
 
@@ -187,10 +187,10 @@ osg::Geode *Himmel::addAntiCull()
     addChild(antiCull);
 
     // 2 * 2 ^ 0.5 -> should fit an rotating cube with radius 1
-    osg::Box *cube = new osg::Box(osg::Vec3(), 2.8284f); 
+    osg::Box *cube = new osg::Box(osg::Vec3f(), 2.8284f); 
 
     osg::ShapeDrawable *cubeDrawable = new osg::ShapeDrawable(cube);
-    cubeDrawable->setColor(osg::Vec4(0.f, 0.f, 0.f, 1.f));
+    cubeDrawable->setColor(osg::Vec4f(0.f, 0.f, 0.f, 1.f));
 
     antiCull->addDrawable(cubeDrawable);
 
@@ -200,7 +200,7 @@ osg::Geode *Himmel::addAntiCull()
 
 osg::Uniform *Himmel::cmnUniform()
 {
-    return new osg::Uniform("cmn", osg::Vec4(defaultAltitude()
+    return new osg::Uniform("cmn", osg::Vec4f(defaultAltitude()
         , Earth::meanRadius(), Earth::meanRadius() + Earth::atmosphereThicknessNonUniform(), 0));
 }
 
@@ -222,10 +222,10 @@ void Himmel::update()
         const t_aTime atime = t_aTime::fromTimeF(*getTime());
         astro()->update(atime);
 
-        osg::Vec3 sunv = astro()->getSunPosition(false);
+        osg::Vec3f sunv = astro()->getSunPosition(false);
         u_sun->set(sunv);
 
-        osg::Vec3 sunrv = astro()->getSunPosition(true);
+        osg::Vec3f sunrv = astro()->getSunPosition(true);
         u_sunr->set(sunrv);
 
         u_time->set(static_cast<float>(getTime()->getf()));
@@ -254,7 +254,7 @@ void Himmel::update()
 
 void Himmel::updateSeed()
 {
-    osg::Vec4 temp; 
+    osg::Vec4f temp; 
     u_common->get(temp);
 
     temp[3] = rand();
@@ -262,16 +262,16 @@ void Himmel::updateSeed()
 }
 
 
-const osg::Vec3 Himmel::getSunPosition() const
+const osg::Vec3f Himmel::getSunPosition() const
 {
-    osg::Vec3 sunv;
+    osg::Vec3f sunv;
     u_sun->get(sunv);
 
     return sunv;
 }
 
 
-const osg::Vec3 Himmel::getSunPosition(const t_aTime &aTime) const
+const osg::Vec3f Himmel::getSunPosition(const t_aTime &aTime) const
 {
     return astro()->getSunPosition(aTime, m_astronomy->getLatitude(), m_astronomy->getLongitude(), false);
 }
@@ -309,7 +309,7 @@ const float Himmel::getLongitude() const
 
 const float Himmel::setAltitude(const float altitude)
 {
-    osg::Vec4 temp; 
+    osg::Vec4f temp; 
     u_common->get(temp);
 
     // Clamp altitude into non uniform atmosphere. (min alt is 1m)
@@ -321,7 +321,7 @@ const float Himmel::setAltitude(const float altitude)
 
 const float Himmel::getAltitude() const
 {
-    osg::Vec4 temp; 
+    osg::Vec4f temp; 
     u_common->get(temp);
 
     return temp[0];

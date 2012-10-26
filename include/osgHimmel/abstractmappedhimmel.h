@@ -104,9 +104,9 @@ public:
     const float setSunScale(const float scale);
     const float getSunScale() const;
 
-    const osg::Vec4 setSunCoeffs(const osg::Vec4 &coeffs);
-    const osg::Vec4 getSunCoeffs() const;
-    static const osg::Vec4 defaultSunCoeffs();
+    const osg::Vec4f setSunCoeffs(const osg::Vec4f &coeffs);
+    const osg::Vec4f getSunCoeffs() const;
+    static const osg::Vec4f defaultSunCoeffs();
 
 
 protected:

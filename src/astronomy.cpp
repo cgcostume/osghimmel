@@ -116,13 +116,13 @@ const osg::Matrixf Astronomy::moonOrientation(
     t_longf l, b;
     Moon::opticalLibrations(t, l, b);
 
-    const osg::Matrixf libLat = osg::Matrix::rotate(_rad(b), -1, 0, 0);
-    const osg::Matrixf libLon = osg::Matrix::rotate(_rad(l),  0, 1, 0);
+    const osg::Matrixf libLat = osg::Matrixf::rotate(_rad(b), -1, 0, 0);
+    const osg::Matrixf libLon = osg::Matrixf::rotate(_rad(l),  0, 1, 0);
 
     const float a = _rad(Moon::positionAngleOfAxis(t));
     const float p = _rad(Moon::parallacticAngle(aTime, latitude, longitude));
 
-    const osg::Matrixf zenith = osg::Matrix::rotate(p - a, 0, 0, 1);
+    const osg::Matrixf zenith = osg::Matrixf::rotate(p - a, 0, 0, 1);
 
     // finalOrientationWithLibrations
     const osg::Matrixf R(libLat * libLon * zenith);
@@ -136,8 +136,8 @@ const float Astronomy::earthShineIntensity(
 ,   const float latitude
 ,   const float longitude) const
 {
-    const osg::Vec3 m = moonPosition(aTime, latitude, longitude, false);
-    const osg::Vec3 s = sunPosition(aTime, latitude, longitude, false);
+    const osg::Vec3f m = moonPosition(aTime, latitude, longitude, false);
+    const osg::Vec3f s = sunPosition(aTime, latitude, longitude, false);
 
     // ("Multiple Light Scattering" - 1980 - Van de Hulst) and 
     // ("A Physically-Based Night Sky Model" - 2001 - Wann Jensen et al.) -> the 0.19 is the earth full intensity

@@ -165,7 +165,7 @@ const bool AtmospherePrecompute::compute(const bool ifDirtyOnly)
 
     osg::Camera *camera = view->getCamera();
     camera->setGraphicsContext(gc);
-    camera->setClearColor(osg::Vec4(0.f, 0.f, 0.f, 0.f));
+    camera->setClearColor(osg::Vec4f(0.f, 0.f, 0.f, 0.f));
     camera->setViewport(0, 0, 1, 1);
 
     osg::Group *group(new osg::Group);
@@ -340,10 +340,10 @@ osg::Geode *AtmospherePrecompute::genQuad() const
     osg::Geometry *quad(new osg::Geometry);
 
     osg::Vec3Array *vertices = new osg::Vec3Array();
-    vertices->push_back(osg::Vec3(-1.f, -1.f, 0.f));
-    vertices->push_back(osg::Vec3(-1.f,  1.f, 0.f));
-    vertices->push_back(osg::Vec3( 1.f,  1.f, 0.f));
-    vertices->push_back(osg::Vec3( 1.f, -1.f, 0.f));
+    vertices->push_back(osg::Vec3f(-1.f, -1.f, 0.f));
+    vertices->push_back(osg::Vec3f(-1.f,  1.f, 0.f));
+    vertices->push_back(osg::Vec3f( 1.f,  1.f, 0.f));
+    vertices->push_back(osg::Vec3f( 1.f, -1.f, 0.f));
 
     quad->setVertexArray(vertices);   
     quad->addPrimitiveSet(
@@ -483,9 +483,9 @@ void AtmospherePrecompute::setupLayerUniforms(
         stateSet->addUniform(new osg::Uniform("r", static_cast<float>(r)));
 
     if(stateSet->getUniform("dhdH"))
-        stateSet->getUniform("dhdH")->set(osg::Vec4(dmin, dmax, dminp, dmaxp));
+        stateSet->getUniform("dhdH")->set(osg::Vec4f(dmin, dmax, dminp, dmaxp));
     else
-        stateSet->addUniform(new osg::Uniform("dhdH", osg::Vec4(dmin, dmax, dminp, dmaxp)));
+        stateSet->addUniform(new osg::Uniform("dhdH", osg::Vec4f(dmin, dmax, dminp, dmaxp)));
 }
 
 

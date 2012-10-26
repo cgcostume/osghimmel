@@ -119,7 +119,7 @@ protected:
     float m_scale;
 
     float m_earthShineScale;
-    osg::Vec3 m_earthShineColor;
+    osg::Vec3f m_earthShineColor;
 
 
 #ifdef OSGHIMMEL_EXPOSE_SHADERS

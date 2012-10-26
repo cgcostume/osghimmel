@@ -59,7 +59,7 @@ HimmelOverlay::HimmelOverlay(
 
 ,   m_himmel(NULL)
 {
-    m_transform->setMatrix(osg::Matrix::identity());
+    m_transform->setMatrix(osg::Matrixf::identity());
     m_transform->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
 
     setSize(width, height);
@@ -73,12 +73,12 @@ HimmelOverlay::HimmelOverlay(
     m_text_time->setCharacterSize(44);
     m_text_time->setFont(font);
     m_text_time->setAxisAlignment(osgText::Text::SCREEN);
-    m_text_time->setPosition(osg::Vec3(64, 64, 0));
+    m_text_time->setPosition(osg::Vec3f(64, 64, 0));
 
     m_text_geo->setCharacterSize(22);
     m_text_geo->setFont(font);
     m_text_geo->setAxisAlignment(osgText::Text::SCREEN);
-    m_text_geo->setPosition(osg::Vec3(64, 32, 0));
+    m_text_geo->setPosition(osg::Vec3f(64, 32, 0));
 }
 
 
@@ -103,7 +103,7 @@ void HimmelOverlay::setSize(
     const int width
 ,   const int height)
 {
-    setMatrix(osg::Matrix::ortho2D(0, width, 0, height));
+    setMatrix(osg::Matrixf::ortho2D(0, width, 0, height));
 }
 
 
@@ -114,7 +114,7 @@ void HimmelOverlay::update()
     AbstractAstronomy *astro(m_himmel->astro());
     const t_aTime atime = t_aTime::fromTimeF(*m_himmel->getTime());
 
-    const osg::Vec4 c = astro->getSunPosition(false).z() < 0.35 ? osg::Vec4(246, 246, 246, 0.33) : osg::Vec4(8, 8, 8, 0.33);
+    const osg::Vec4f c = astro->getSunPosition(false).z() < 0.35 ? osg::Vec4f(246, 246, 246, 0.33) : osg::Vec4f(8, 8, 8, 0.33);
 
     m_text_time->setColor(c);
     m_text_geo->setColor(c);
