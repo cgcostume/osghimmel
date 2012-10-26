@@ -118,7 +118,7 @@ void AbstractHimmel::traverse(osg::NodeVisitor &nv)
 }
 
 
-bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrixf& matrix, osg::NodeVisitor* nv) const
+bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
     if(!cv)
@@ -131,7 +131,7 @@ bool AbstractHimmel::computeLocalToWorldMatrix(osg::Matrixf& matrix, osg::NodeVi
 }
 
 
-bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrixf& matrix, osg::NodeVisitor* nv) const
+bool AbstractHimmel::computeWorldToLocalMatrix(osg::Matrix& matrix, osg::NodeVisitor* nv) const
 {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
     if(!cv)
