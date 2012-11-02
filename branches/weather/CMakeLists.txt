@@ -120,6 +120,7 @@ include_directories(
 
 
 add_subdirectory("src")
+add_subdirectory("wetter")
 if(OPTION_MAKE_TESTS)
     add_subdirectory("tests")
 endif()
