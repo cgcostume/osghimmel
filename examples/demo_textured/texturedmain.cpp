@@ -291,8 +291,20 @@ osg::Node *createReflector()
 	//attach Shaders
 	iblProgram->addShader( iblVertex );
 	iblProgram->addShader( iblFragment );
-	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
 
+	//Uniforms
+	osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(1.f, 0.f, 0.f) );
+	osg::Uniform* diffusePercent = new osg::Uniform( "diffusePercent", 0.7f );
+
+	// create unfirom to point to the texture
+	osg::Uniform* himmelCube = new osg::Uniform("himmelCube", osg::Uniform::SAMPLER_CUBE);
+    himmelCube->set((int)0);
+
+	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
+	iblState->addUniform(baseColor);
+	iblState->addUniform(diffusePercent);
+	iblState->addUniform(himmelCube);
+	
     return node;
 }
 
