@@ -293,7 +293,7 @@ osg::Node *createReflector()
 	iblProgram->addShader( iblFragment );
 
 	//Uniforms
-	osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(1.f, 0.f, 0.f) );
+	osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(1.f, 1.f, 1.f) );
 	osg::Uniform* diffusePercent = new osg::Uniform( "diffusePercent", 0.7f );
 
 	// create unfirom to point to the texture
@@ -348,7 +348,7 @@ osg::Group *createScene(
     texgenNode->addChild(reflector);*/
 
 
-    HimmelEnvMap *envMap = new HimmelEnvMap(8);
+    HimmelEnvMap *envMap = new HimmelEnvMap(16);
     envMap->addChild(scene);
 
 
@@ -357,9 +357,11 @@ osg::Group *createScene(
     //group->addChild(texgenNode);
 	group->addChild(reflector);
 
-    /*osg::StateSet* stateset = reflector->getOrCreateStateSet();
+    osg::StateSet* stateset = reflector->getOrCreateStateSet();
     stateset->setTextureAttributeAndModes(unit, envMap->cubeMap(), osg::StateAttribute::ON);
-    stateset->setTextureMode(unit, GL_TEXTURE_GEN_S, osg::StateAttribute::ON);
+    
+	/*
+	stateset->setTextureMode(unit, GL_TEXTURE_GEN_S, osg::StateAttribute::ON);
     stateset->setTextureMode(unit, GL_TEXTURE_GEN_T, osg::StateAttribute::ON);
     stateset->setTextureMode(unit, GL_TEXTURE_GEN_R, osg::StateAttribute::ON);
     stateset->setTextureMode(unit, GL_TEXTURE_GEN_Q, osg::StateAttribute::ON);
