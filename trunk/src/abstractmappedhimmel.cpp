@@ -161,14 +161,14 @@ void AbstractMappedHimmel::update()
 }
 
 
-inline void AbstractMappedHimmel::assignBackUnit(const GLint textureUnit)
+void AbstractMappedHimmel::assignBackUnit(const GLint textureUnit)
 {
     assignUnit(textureUnit, BACK_TEXTURE_INDEX);
     m_activeBackUnit = textureUnit;
 }
 
 
-inline void AbstractMappedHimmel::assignSrcUnit(const GLint textureUnit)
+void AbstractMappedHimmel::assignSrcUnit(const GLint textureUnit)
 {
     assignUnit(textureUnit, SRC_TEXTURE_INDEX);
     m_activeSrcUnit = textureUnit;

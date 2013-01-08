@@ -34,7 +34,7 @@
 #include <osg/Vec3f>
 
 #include <string>
-
+#include <stdio.h>
 
 namespace osgHimmel
 {
