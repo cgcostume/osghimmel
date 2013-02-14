@@ -1,7 +1,8 @@
-uniform vec3 baseColor;
+uniform int cubeMapRes;
 uniform float diffusePercent;
 uniform samplerCube DiffuseEnvMap;
 
+varying vec3 baseColor;
 varying vec3 normal;
 
 void main() {
@@ -10,4 +11,5 @@ void main() {
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 	//normal = normalize(gl_NormalMatrix * gl_Normal);
 	normal =  gl_Normal;
+	baseColor = gl_Color.rgb;
 }
