@@ -227,19 +227,27 @@ void main() {
 		vec3 v = normal;
 		//if (i > 0.0)
 		//v = normalize(pick_random_point_in_semisphere(normal));
+		vec3 color = baseColor;
+		
+		for (float i = 0.0; i < 5.0; ++i) {
+		if (i > 0.0)
+			v = pick_random_point_in_semisphere(normal);
 		
 		vec3 envColor = vec3(textureCube(himmelCube, v));
 		//vec3 neutral = vec3(1.0/white.r * envColor.r, 1.0/white.g * envColor.g, 1.0/white.b * envColor.b);
 		
-		float dirWeight = dir_light_src(normal);
 		vec3 envColorHsv = rgb2hsv(vec4(envColor, 1.0));
 		vec3 brightness = envColorHsv.b;
 		
-		vec3 color = vec3(envColor.r * baseColor.r, envColor.g * baseColor.g, envColor.b * baseColor.b);
-		
-		
+		float dirWeight = 1.0;
 		if (src_known)
-			color = mix(baseColor, color, dirWeight);
+			dirWeight = dir_light_src(normal);
+			//color = mix(baseColor, color, dirWeight);
+			
+		color = mix(color, envColor, dirWeight/(i+1.0));
+		}
+			
+		//color = vec3(envColor.r * baseColor.r, envColor.g * baseColor.g, envColor.b * baseColor.b);			
 			
 		//vec3 colorHsv = rgb2hsv(vec4(color, 1.0));
 		
