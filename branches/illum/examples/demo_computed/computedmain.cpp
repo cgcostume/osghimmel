@@ -53,6 +53,8 @@
 #include <osg/TextureCubeMap>
 #include <osg/Texture2D>
 
+#include <osg/Material>
+
 
 using namespace osgHimmel;
 
@@ -186,10 +188,98 @@ osg::Group *createScene(
     stateset->setTextureMode(unit, GL_TEXTURE_GEN_R, osg::StateAttribute::ON);
     stateset->setTextureMode(unit, GL_TEXTURE_GEN_Q, osg::StateAttribute::ON);
 
-    return group;
+	return group;
 }
 
+osg::Node *createReflector()
+{
+	osg::Group *group = new osg::Group;
+	
+	//barrel
+	osg::Node *barrel = osgDB::readNodeFile("resources/barrel.obj");
+	osg::ref_ptr<osg::MatrixTransform> bTrans = new osg::MatrixTransform;
+	osg::Matrix bMat; 
+	bMat.makeTranslate(2.0f, 2.0f, 0.0f);
+	bTrans->setMatrix(bMat);
+	bTrans->addChild(barrel);
+	group->addChild(bTrans);
 
+	/*
+	//monkey
+	osg::Node *monkey = osgDB::readNodeFile("resources/models/monkey.obj");
+	osg::ref_ptr<osg::MatrixTransform> mTrans = new osg::MatrixTransform;
+	osg::Matrix mMat; 
+	mMat.makeTranslate(2.0f, 2.0f, 0.0f);
+	mTrans->setMatrix(mMat);
+	mTrans->addChild(monkey);
+	group->addChild(mTrans);
+
+	//cube
+	osg::Node *cube = osgDB::readNodeFile("resources/models/cube.obj");
+	osg::ref_ptr<osg::MatrixTransform> cTrans = new osg::MatrixTransform;
+	osg::Matrix cMat; 
+	cMat.makeTranslate(-2.0f, 2.0f, 0.0f);
+	cTrans->setMatrix(cMat);
+	cTrans->addChild(cube);
+	group->addChild(cTrans);
+
+	//sphere
+	osg::Node *sphere = osgDB::readNodeFile("resources/models/sphere.obj");
+	osg::ref_ptr<osg::MatrixTransform> sTrans = new osg::MatrixTransform;
+	osg::Matrix sMat; 
+	sMat.makeTranslate(2.0f, -2.0f, 0.0f);
+	sTrans->setMatrix(sMat);
+	sTrans->addChild(sphere);
+	group->addChild(sTrans);*/
+
+    osg::ref_ptr<osg::Material> m = new osg::Material;
+    m->setColorMode(osg::Material::DIFFUSE);
+    //m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
+
+    group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
+
+	//create Shader for Image Based Lighting
+	osg::StateSet *iblState = group->getOrCreateStateSet();
+	osg::Program* iblProgram = new osg::Program;
+
+	//Vertex Shader
+	osg::Shader* iblVertex = new osg::Shader( osg::Shader::VERTEX );
+	if(!( iblVertex->loadShaderSourceFromFile("shaders/ibl.vert") ))
+    {
+        osg::notify(osg::WARN) << "Vertex Shader \"shaders/ibl.vert\" could not be loaded." << std::endl;
+        return NULL;
+    }
+
+	//Fragment Shader
+	osg::Shader* iblFragment = new osg::Shader( osg::Shader::FRAGMENT );
+	if(!( iblFragment->loadShaderSourceFromFile("shaders/ibl.frag") ))
+    {
+        osg::notify(osg::WARN) << "Fragment Shader \"shaders/ibl.frag\" could not be loaded." << std::endl;
+        return NULL;
+    }
+	
+	//attach Shaders
+	iblProgram->addShader( iblVertex );
+	iblProgram->addShader( iblFragment );
+
+	//Uniforms
+	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", 64 );
+
+	//osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(.7f, .7f, .7f) );
+	osg::Uniform* diffusePercent = new osg::Uniform( "diffusePercent", 0.7f );
+
+	// create unfirom to point to the texture
+	osg::Uniform* himmelCube = new osg::Uniform("himmelCube", osg::Uniform::SAMPLER_CUBE);
+    himmelCube->set((int)0);
+
+	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
+	iblState->addUniform(cubeMapRes);
+	//iblState->addUniform(baseColor);
+	iblState->addUniform(diffusePercent);
+	iblState->addUniform(himmelCube);
+	
+    return group;
+}
 
 int main(int argc, char* argv[])
 {
@@ -228,7 +318,7 @@ int main(int argc, char* argv[])
     fovChanged();
 
 
-    osg::ref_ptr<osg::Group> root  = new osg::Group();
+	osg::ref_ptr<osg::Group> root  = new osg::Group();
     g_view->setSceneData(root.get());
 
     g_himmel = Himmel::createWithoutClouds();
@@ -245,7 +335,16 @@ int main(int argc, char* argv[])
     g_himmel->setLatitude(52.5491);
     g_himmel->setLongitude(13.3611);
 
-    root->addChild(g_himmel);
+	osg::Node *reflector(createReflector());
+    osg::ref_ptr<osg::Group> scene = g_himmel;
+
+    if(reflector)
+    {
+        scene = createScene(
+            g_himmel.get(), reflector);
+    }
+
+    root->addChild(scene.get());
 
     return viewer.run();
 }
