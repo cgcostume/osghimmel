@@ -48,6 +48,8 @@
 
 using namespace osgHimmel;
 
+const int CUBE_MAP_RES = 128;
+
 
 // utils
 
@@ -86,10 +88,11 @@ osg::ref_ptr<AbstractHimmel> createCubeMappedDemo()
     himmel->assignTime(g_timef);
     himmel->setTransitionDuration(0.2f);
 
-    std::string name[] = { "4", "6", "9", "17", "19" };
+    //std::string name[] = { "9", "6", "4", "17", "19" };
+	std::string name[] = { "4", "6", "9", "17", "19" };
     osg::TextureCubeMap *tcm[5];
 
-    const int n = 5;
+    const int n = 1;
     for(int i = 0; i < n; ++i)
     {
         tcm[i] = himmel->getOrCreateTextureCubeMap(i);
@@ -254,22 +257,52 @@ osg::Group *createHimmelScene()
 
 osg::Node *createReflector()
 {
-    osg::Node *node = osgDB::readNodeFile("resources/pumpkin.obj");
+	osg::Group *group = new osg::Group;
+	
+	//barrel
+	osg::Node *barrel = osgDB::readNodeFile("resources/barrel.obj");
+	osg::ref_ptr<osg::MatrixTransform> bTrans = new osg::MatrixTransform;
+	osg::Matrix bMat; 
+	bMat.makeTranslate(2.0f, 2.0f, 0.0f);
+	bTrans->setMatrix(bMat);
+	bTrans->addChild(barrel);
+	group->addChild(bTrans);
 
-    if(!node)
-    {
-        osg::notify(osg::WARN) << "Mesh \"resources/pumpkin.obj\" not found." << std::endl;
-        return NULL;
-    }
+	//monkey
+	osg::Node *monkey = osgDB::readNodeFile("resources/models/monkey.obj");
+	osg::ref_ptr<osg::MatrixTransform> mTrans = new osg::MatrixTransform;
+	osg::Matrix mMat; 
+	mMat.makeTranslate(2.0f, 2.0f, 0.0f);
+	mTrans->setMatrix(mMat);
+	mTrans->addChild(monkey);
+	group->addChild(mTrans);
+
+	//cube
+	osg::Node *cube = osgDB::readNodeFile("resources/models/cube.obj");
+	osg::ref_ptr<osg::MatrixTransform> cTrans = new osg::MatrixTransform;
+	osg::Matrix cMat; 
+	cMat.makeTranslate(-2.0f, 2.0f, 0.0f);
+	cTrans->setMatrix(cMat);
+	cTrans->addChild(cube);
+	group->addChild(cTrans);
+
+	//sphere
+	osg::Node *sphere = osgDB::readNodeFile("resources/models/sphere.obj");
+	osg::ref_ptr<osg::MatrixTransform> sTrans = new osg::MatrixTransform;
+	osg::Matrix sMat; 
+	sMat.makeTranslate(2.0f, -2.0f, 0.0f);
+	sTrans->setMatrix(sMat);
+	sTrans->addChild(sphere);
+	group->addChild(sTrans);
 
     osg::ref_ptr<osg::Material> m = new osg::Material;
     m->setColorMode(osg::Material::DIFFUSE);
-    m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
+    //m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
 
-    node->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
+    group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
 
 	//create Shader for Image Based Lighting
-	osg::StateSet *iblState = node->getOrCreateStateSet();
+	osg::StateSet *iblState = group->getOrCreateStateSet();
 	osg::Program* iblProgram = new osg::Program;
 
 	//Vertex Shader
@@ -293,7 +326,9 @@ osg::Node *createReflector()
 	iblProgram->addShader( iblFragment );
 
 	//Uniforms
-	osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(1.f, 1.f, 1.f) );
+	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", CUBE_MAP_RES );
+
+	//osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(.7f, .7f, .7f) );
 	osg::Uniform* diffusePercent = new osg::Uniform( "diffusePercent", 0.7f );
 
 	// create unfirom to point to the texture
@@ -301,11 +336,12 @@ osg::Node *createReflector()
     himmelCube->set((int)0);
 
 	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
-	iblState->addUniform(baseColor);
+	iblState->addUniform(cubeMapRes);
+	//iblState->addUniform(baseColor);
 	iblState->addUniform(diffusePercent);
 	iblState->addUniform(himmelCube);
 	
-    return node;
+    return group;
 }
 
 /*class TexMatCullCallback : public osg::NodeCallback
