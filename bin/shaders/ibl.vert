@@ -3,6 +3,9 @@ uniform float diffusePercent;
 uniform samplerCube himmelCube;
 //uniform vec3 kernel[8];
 
+uniform vec3 src;
+uniform bool src_known;
+
 varying vec3 pos;
 varying vec3 baseColor;
 varying vec3 normal;
