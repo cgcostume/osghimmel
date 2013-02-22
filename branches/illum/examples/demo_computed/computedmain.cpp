@@ -191,7 +191,7 @@ osg::Group *createScene(
 	return group;
 }
 
-osg::Node *createReflector()
+osg::Node *createReflector(HimmelEnvMap* hem)
 {
 	osg::Group *group = new osg::Group;
 	
@@ -237,6 +237,8 @@ osg::Node *createReflector()
     //m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
 
     group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
+	group->getOrCreateStateSet()->setTextureAttributeAndModes(
+
 
 	//create Shader for Image Based Lighting
 	osg::StateSet *iblState = group->getOrCreateStateSet();
@@ -317,6 +319,9 @@ int main(int argc, char* argv[])
 
     fovChanged();
 
+	osgHimmel::HimmelEnvMap* hem = new HimmelEnvMap(64);
+	
+
 
 	osg::ref_ptr<osg::Group> root  = new osg::Group();
     g_view->setSceneData(root.get());
@@ -335,16 +340,12 @@ int main(int argc, char* argv[])
     g_himmel->setLatitude(52.5491);
     g_himmel->setLongitude(13.3611);
 
-	osg::Node *reflector(createReflector());
-    osg::ref_ptr<osg::Group> scene = g_himmel;
 
-    if(reflector)
-    {
-        scene = createScene(
-            g_himmel.get(), reflector);
-    }
+	hem->addChild(g_himmel.get());
 
-    root->addChild(scene.get());
+	root->addChild(g_himmel.get());
+	root->addChild(hem);
+	root->addChild(createReflector(hem));
 
     return viewer.run();
 }

@@ -2,6 +2,8 @@ varying vec3 baseColor;
 uniform int cubeMapRes;
 uniform float diffusePercent;
 uniform samplerCube himmelCube;
+//uniform vec3 kernel[8];
+vec3 kernel[8];
 
 varying vec3 normal;
 varying vec3 pos;
@@ -218,7 +220,20 @@ vec3 hsv2rgb(vec3 hsv)
 
 }
 
+void init() {
+	kernel[0] = vec3(-0.35059, 0.662226, 0.2226);
+	kernel[1] = vec3(-0.912111, 0.326602, 0.2189907);
+	kernel[2] = vec3(0.658323, 0.188092, 0.728857);
+	kernel[3] = vec3(0.268081, -0.861688, 0.430844);
+	kernel[4] = vec3(0.630132, -0.467517, 0.619969);
+	kernel[5] = vec3(0.636674, 0.698788, 0.326101);
+	kernel[6] = vec3(-0.435028, -0.2648, 0.860599);
+	kernel[7] = vec3(-0.642728, -0.670673, 0.370267);
+}
+
 void main() {
+	init();
+	
 	//vec3 baseColorHsv = rgb2hsv(vec4(baseColor, 1.0));
 	
 	//vec3 color = baseColor;
@@ -227,19 +242,39 @@ void main() {
 		vec3 v = normal;
 		//if (i > 0.0)
 		//v = normalize(pick_random_point_in_semisphere(normal));
+		vec3 color = baseColor;
+		
+		vec3 rvec = normalize(vec3(pos.xy, 0.0)) * 2.0 - 1.0;
+	
+		vec3 tangent = normalize(rvec - normal * dot(rvec, normal));
+		vec3 bitangent = cross(normal, tangent);
+		mat3 tbn = mat3(tangent, bitangent, normal);
+		
+		for (float i = 0.0; i < 8.0; ++i) {
+		if (i > 0.0) {
+			//v = pick_random_point_in_semisphere(normal);
+			vec3 newSample = tbn * kernel[i] + pos;
+			//v += newSample * ((dot(newSample, normal) + 1.0) * 0.5);
+			v = newSample;
+		}
 		
 		vec3 envColor = vec3(textureCube(himmelCube, v));
 		//vec3 neutral = vec3(1.0/white.r * envColor.r, 1.0/white.g * envColor.g, 1.0/white.b * envColor.b);
 		
-		float dirWeight = dir_light_src(normal);
 		vec3 envColorHsv = rgb2hsv(vec4(envColor, 1.0));
 		vec3 brightness = envColorHsv.b;
 		
-		vec3 color = vec3(envColor.r * baseColor.r, envColor.g * baseColor.g, envColor.b * baseColor.b);
-		
-		
+		float dirWeight = 1.0;
 		if (src_known)
-			color = mix(baseColor, color, dirWeight);
+			dirWeight = dir_light_src(normal);
+			//color = mix(baseColor, color, dirWeight);
+			
+		color = mix(color, envColor, dirWeight/(i+1.0));
+		}
+		
+		//color = textureCube(himmelCube, normal + kernel[0]);
+			
+		//color = vec3(envColor.r * baseColor.r, envColor.g * baseColor.g, envColor.b * baseColor.b);			
 			
 		//vec3 colorHsv = rgb2hsv(vec4(color, 1.0));
 		
@@ -260,5 +295,23 @@ void main() {
 	//}
 	
 	
+	
+	vec3 sample = normal;
+	for (int i = 0; i < 8; ++i) {
+		// get sample position:
+		vec3 newSample = tbn * kernel[i] + pos;
+		//newSample = sample + pos;
+		sample += newSample * ((dot(newSample, normal) + 1.0) * 0.5);
+	  
+		// project sample position:
+		/*vec4 offset = vec4(sample, 1.0);
+		offset = uProjectionMat * offset;
+		offset.xy /= offset.w;
+		offset.xy = offset.xy * 0.5 + 0.5;*/
+	}
+	
 	gl_FragColor = vec4(color, 1.0);
+	//gl_FragColor = textureCube(himmelCube, sample);
+	//gl_FragColor = textureCube(himmelCube, normal);
+	
 }
