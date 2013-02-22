@@ -1,6 +1,7 @@
 uniform int cubeMapRes;
 uniform float diffusePercent;
 uniform samplerCube himmelCube;
+//uniform vec3 kernel[8];
 
 varying vec3 pos;
 varying vec3 baseColor;

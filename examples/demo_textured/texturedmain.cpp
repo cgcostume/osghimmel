@@ -301,6 +301,26 @@ osg::Node *createReflector()
 
     group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
 
+	int kernelSize = 8;
+	osg::Vec3f kernel[8];
+
+	for (int i = 0; i < kernelSize; ++i) {
+		kernel[i] = osg::Vec3f(
+			float(rand() % 100) / 100.0 * 2.0 - 1.0,
+			float(rand() % 100) / 100.0 * 2.0 - 1.0,
+			float(rand() % 100) / 100.0
+		);
+		
+		float scale = float(i) / float(kernelSize);
+		scale = (1.0 - 0.1) * scale * scale + 0.1;
+		//scale = lerp(0.1f, 1.0f, scale * scale);
+		kernel[i] *= scale;
+
+		kernel[i].normalize();
+
+		//osg::notify(osg::WARN) << kernel[i].x() << ", " << kernel[i].y() << ", " << kernel[i].z() << ", " << std::endl;
+	}
+
 	//create Shader for Image Based Lighting
 	osg::StateSet *iblState = group->getOrCreateStateSet();
 	osg::Program* iblProgram = new osg::Program;
@@ -326,6 +346,8 @@ osg::Node *createReflector()
 	iblProgram->addShader( iblFragment );
 
 	//Uniforms
+	//osg::Uniform* uKernel = new osg::Uniform( "kernel", kernel );
+
 	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", CUBE_MAP_RES );
 
 	//osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(.7f, .7f, .7f) );
@@ -336,6 +358,7 @@ osg::Node *createReflector()
     himmelCube->set((int)0);
 
 	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
+	//iblState->addUniform(uKernel);
 	iblState->addUniform(cubeMapRes);
 	//iblState->addUniform(baseColor);
 	iblState->addUniform(diffusePercent);
