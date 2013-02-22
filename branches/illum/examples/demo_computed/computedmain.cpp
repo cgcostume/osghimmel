@@ -191,7 +191,7 @@ osg::Group *createScene(
 	return group;
 }
 
-osg::Node *createReflector(HimmelEnvMap* hem)
+osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 {
 	osg::Group *group = new osg::Group;
 	
@@ -237,11 +237,10 @@ osg::Node *createReflector(HimmelEnvMap* hem)
     //m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
 
     group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
-	group->getOrCreateStateSet()->setTextureAttributeAndModes(
-
+	group->getOrCreateStateSet()->setTextureAttributeAndModes(1, hem->cubeMap(), osg::StateAttribute::ON);
 
 	//create Shader for Image Based Lighting
-	osg::StateSet *iblState = group->getOrCreateStateSet();
+	osg::StateSet* iblState = group->getOrCreateStateSet();
 	osg::Program* iblProgram = new osg::Program;
 
 	//Vertex Shader
@@ -272,9 +271,14 @@ osg::Node *createReflector(HimmelEnvMap* hem)
 
 	// create unfirom to point to the texture
 	osg::Uniform* himmelCube = new osg::Uniform("himmelCube", osg::Uniform::SAMPLER_CUBE);
-    himmelCube->set((int)0);
+    himmelCube->set((int)1);
+
+	osg::Uniform* uSunPosition = new osg::Uniform("src", sun);
+	osg::Uniform* uSunPositionAvailable = new osg::Uniform("src_known", true);
 
 	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
+	iblState->addUniform(uSunPosition);
+	iblState->addUniform(uSunPositionAvailable);
 	iblState->addUniform(cubeMapRes);
 	//iblState->addUniform(baseColor);
 	iblState->addUniform(diffusePercent);
@@ -345,7 +349,7 @@ int main(int argc, char* argv[])
 
 	root->addChild(g_himmel.get());
 	root->addChild(hem);
-	root->addChild(createReflector(hem));
+	root->addChild(createReflector(hem, g_himmel->getSunPosition()));
 
     return viewer.run();
 }

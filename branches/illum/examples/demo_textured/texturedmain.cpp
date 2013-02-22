@@ -357,7 +357,12 @@ osg::Node *createReflector()
 	osg::Uniform* himmelCube = new osg::Uniform("himmelCube", osg::Uniform::SAMPLER_CUBE);
     himmelCube->set((int)0);
 
+	osg::Uniform* uSunPosition = new osg::Uniform("src", osg::Vec3f(3.0, 5.0, -1.0));
+	osg::Uniform* uSunPositionAvailable = new osg::Uniform("src_known", true);	
+
 	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
+	iblState->addUniform(uSunPosition);
+	iblState->addUniform(uSunPositionAvailable);
 	//iblState->addUniform(uKernel);
 	iblState->addUniform(cubeMapRes);
 	//iblState->addUniform(baseColor);

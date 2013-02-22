@@ -8,8 +8,10 @@ vec3 kernel[8];
 varying vec3 normal;
 varying vec3 pos;
 
-vec3 src = vec3(3.0, 5.0, -1.0);
-bool src_known = true;
+//vec3 src = vec3(3.0, 5.0, -1.0);
+uniform vec3 src;
+//bool src_known = true;
+uniform bool src_known;
 
 float minEnvAffection = 0.2;
 float maxEnvAffection = 0.9;
@@ -270,6 +272,8 @@ void main() {
 			//color = mix(baseColor, color, dirWeight);
 			
 		color = mix(color, envColor, dirWeight/(i+1.0));
+		//vec3 colorHsv = rgb2hsv(vec4(color, 1.0));
+		//color = hsv2rgb(vec3(colorHsv.r, colorHsv.g, brightness));
 		}
 		
 		//color = textureCube(himmelCube, normal + kernel[0]);
