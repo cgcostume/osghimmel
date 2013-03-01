@@ -236,86 +236,33 @@ void init() {
 void main() {
 	init();
 	
-	//vec3 baseColorHsv = rgb2hsv(vec4(baseColor, 1.0));
+		
+	vec3 v = normal;
+	vec3 color = baseColor;
 	
-	//vec3 color = baseColor;
-	//for (float i = 0.0; i < 5.0; ++i) {
-		
-		vec3 v = normal;
-		//if (i > 0.0)
-		//v = normalize(pick_random_point_in_semisphere(normal));
-		vec3 color = baseColor;
-		
-		vec3 rvec = normalize(vec3(pos.xy, 0.0)) * 2.0 - 1.0;
+	vec3 rvec = normalize(vec3(pos.xy, 0.0)) * 2.0 - 1.0;
+
+	vec3 tangent = normalize(rvec - normal * dot(rvec, normal));
+	vec3 bitangent = cross(normal, tangent);
+	mat3 tbn = mat3(tangent, bitangent, normal);
 	
-		vec3 tangent = normalize(rvec - normal * dot(rvec, normal));
-		vec3 bitangent = cross(normal, tangent);
-		mat3 tbn = mat3(tangent, bitangent, normal);
-		
-		for (float i = 0.0; i < 8.0; ++i) {
+	for (float i = 0.0; i < 8.0; ++i) {
 		if (i > 0.0) {
-			//v = pick_random_point_in_semisphere(normal);
 			vec3 newSample = tbn * kernel[i] + pos;
-			//v += newSample * ((dot(newSample, normal) + 1.0) * 0.5);
 			v = newSample;
 		}
 		
 		vec3 envColor = vec3(textureCube(himmelCube, v));
-		//vec3 neutral = vec3(1.0/white.r * envColor.r, 1.0/white.g * envColor.g, 1.0/white.b * envColor.b);
-		
-		vec3 envColorHsv = rgb2hsv(vec4(envColor, 1.0));
-		vec3 brightness = envColorHsv.b;
+		/*vec3 envColorHsv = rgb2hsv(vec4(envColor, 1.0));
+		vec3 brightness = envColorHsv.b;*/
 		
 		float dirWeight = 1.0;
 		if (src_known)
 			dirWeight = dir_light_src(normal);
-			//color = mix(baseColor, color, dirWeight);
 			
 		color = mix(color, envColor, dirWeight/(i+1.0));
-		//vec3 colorHsv = rgb2hsv(vec4(color, 1.0));
-		//color = hsv2rgb(vec3(colorHsv.r, colorHsv.g, brightness));
-		}
-		
-		//color = textureCube(himmelCube, normal + kernel[0]);
-			
-		//color = vec3(envColor.r * baseColor.r, envColor.g * baseColor.g, envColor.b * baseColor.b);			
-			
-		//vec3 colorHsv = rgb2hsv(vec4(color, 1.0));
-		
-		//vec3 newColor = vec3(colorHsv.r, colorHsv.g, envColorHsv.b * 0.8);
-		//color = hsv2rgb(newColor);
-		
-		//vec3 diff = envColor - white;
-		
-		//float inS = envColorHsv.g; //influence of environment saturation
-		//float inB = envColorHsv.b; //influence of environment brightness
-
-		//float weight = 1.0;
-		//if (src_known)
-		//	weight = dir_light_src(v);
-
-		//color = mix(envColor, color, inB * inS * weight);
-		//color = mix(color, diff, 1.0);
-	//}
-	
-	
-	
-	vec3 sample = normal;
-	for (int i = 0; i < 8; ++i) {
-		// get sample position:
-		vec3 newSample = tbn * kernel[i] + pos;
-		//newSample = sample + pos;
-		sample += newSample * ((dot(newSample, normal) + 1.0) * 0.5);
-	  
-		// project sample position:
-		/*vec4 offset = vec4(sample, 1.0);
-		offset = uProjectionMat * offset;
-		offset.xy /= offset.w;
-		offset.xy = offset.xy * 0.5 + 0.5;*/
 	}
 	
 	gl_FragColor = vec4(color, 1.0);
-	//gl_FragColor = textureCube(himmelCube, sample);
-	//gl_FragColor = textureCube(himmelCube, normal);
 	
 }
