@@ -32,6 +32,7 @@
 #include "osgHimmel/himmel.h"
 #include "osgHimmel/timef.h"
 #include "osgHimmel/himmelenvmap.h"
+#include "osgHimmel/atmospheregeode.h"
 
 #include <osgDB/ReadFile>
 
@@ -193,6 +194,7 @@ osg::Group *createScene(
 
 osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 {
+	const unsigned int unit = 0;
 	osg::Group *group = new osg::Group;
 	
 	//barrel
@@ -204,43 +206,17 @@ osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 	bTrans->addChild(barrel);
 	group->addChild(bTrans);
 
-	/*
-	//monkey
-	osg::Node *monkey = osgDB::readNodeFile("resources/models/monkey.obj");
-	osg::ref_ptr<osg::MatrixTransform> mTrans = new osg::MatrixTransform;
-	osg::Matrix mMat; 
-	mMat.makeTranslate(2.0f, 2.0f, 0.0f);
-	mTrans->setMatrix(mMat);
-	mTrans->addChild(monkey);
-	group->addChild(mTrans);
+	//osg::ref_ptr<osg::Material> m = new osg::Material;
+    //m->setColorMode(osg::Material::DIFFUSE);
 
-	//cube
-	osg::Node *cube = osgDB::readNodeFile("resources/models/cube.obj");
-	osg::ref_ptr<osg::MatrixTransform> cTrans = new osg::MatrixTransform;
-	osg::Matrix cMat; 
-	cMat.makeTranslate(-2.0f, 2.0f, 0.0f);
-	cTrans->setMatrix(cMat);
-	cTrans->addChild(cube);
-	group->addChild(cTrans);
-
-	//sphere
-	osg::Node *sphere = osgDB::readNodeFile("resources/models/sphere.obj");
-	osg::ref_ptr<osg::MatrixTransform> sTrans = new osg::MatrixTransform;
-	osg::Matrix sMat; 
-	sMat.makeTranslate(2.0f, -2.0f, 0.0f);
-	sTrans->setMatrix(sMat);
-	sTrans->addChild(sphere);
-	group->addChild(sTrans);*/
-
-    osg::ref_ptr<osg::Material> m = new osg::Material;
-    m->setColorMode(osg::Material::DIFFUSE);
-    //m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
-
-    group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
-	group->getOrCreateStateSet()->setTextureAttributeAndModes(1, hem->cubeMap(), osg::StateAttribute::ON);
+    osg::StateSet* stateset = group->getOrCreateStateSet();
+	stateset->setTextureAttributeAndModes(0, hem->cubeMap(), osg::StateAttribute::ON);
+	stateset->setTextureMode(unit, GL_TEXTURE_GEN_S, osg::StateAttribute::ON);
+    stateset->setTextureMode(unit, GL_TEXTURE_GEN_T, osg::StateAttribute::ON);
+    stateset->setTextureMode(unit, GL_TEXTURE_GEN_R, osg::StateAttribute::ON);
+    stateset->setTextureMode(unit, GL_TEXTURE_GEN_Q, osg::StateAttribute::ON);
 
 	//create Shader for Image Based Lighting
-	osg::StateSet* iblState = group->getOrCreateStateSet();
 	osg::Program* iblProgram = new osg::Program;
 
 	//Vertex Shader
@@ -271,18 +247,20 @@ osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 
 	// create unfirom to point to the texture
 	osg::Uniform* himmelCube = new osg::Uniform("himmelCube", osg::Uniform::SAMPLER_CUBE);
-    himmelCube->set((int)1);
+    himmelCube->set((int)0);
 
 	osg::Uniform* uSunPosition = new osg::Uniform("src", sun);
+	osg::notify(osg::WARN) << sun.x() << ", " << sun.y() << ", " << sun.z() << std::endl;
+
 	osg::Uniform* uSunPositionAvailable = new osg::Uniform("src_known", true);
 
-	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
-	iblState->addUniform(uSunPosition);
-	iblState->addUniform(uSunPositionAvailable);
-	iblState->addUniform(cubeMapRes);
-	//iblState->addUniform(baseColor);
-	iblState->addUniform(diffusePercent);
-	iblState->addUniform(himmelCube);
+	stateset->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
+	stateset->addUniform(uSunPosition);
+	stateset->addUniform(uSunPositionAvailable);
+	stateset->addUniform(cubeMapRes);
+	//stateset->addUniform(baseColor);
+	stateset->addUniform(diffusePercent);
+	stateset->addUniform(himmelCube);
 	
     return group;
 }
@@ -344,12 +322,25 @@ int main(int argc, char* argv[])
     g_himmel->setLatitude(52.5491);
     g_himmel->setLongitude(13.3611);
 
+	/*g_himmel->atmosphere()->setSunScale(2.0);
+	g_himmel->atmosphere()->setExposure(0.22);
+	g_himmel->atmosphere()->setLHeureBleueColor(osg::Vec3f(0.07843137254, 0.29803921568, 1.0));
+	g_himmel->atmosphere()->setLHeureBleueIntensity(0.5);
+	g_himmel->atmosphere()->setAverageGroundReflectance(0.1);
+	g_himmel->atmosphere()->setThicknessRayleigh(8.00);
+	g_himmel->atmosphere()->setScatteringRayleigh(osg::Vec3f(5.80, 13.50, 33.10));
+	g_himmel->atmosphere()->setThicknessMie(1.20);
+	g_himmel->atmosphere()->setScatteringMie(8.00);
+	g_himmel->atmosphere()->setPhaseG(0.76);*/
+
 
 	hem->addChild(g_himmel.get());
 
-	root->addChild(g_himmel.get());
+	//root->addChild(g_himmel.get());
 	root->addChild(hem);
-	root->addChild(createReflector(hem, g_himmel->getSunPosition()));
+	//osg::Vec3f sunPosition = g_himmel->astro()->sunPosition(, g_himmel->getLatitude(), g_himmel->getLongitude(), true);
+	root->addChild(createReflector(hem, g_himmel->astro()->getSunPosition(true)));
+	
 
     return viewer.run();
 }
