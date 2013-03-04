@@ -240,6 +240,24 @@ osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 	iblProgram->addShader( iblFragment );
 
 	//Uniforms
+
+	osg::Texture2D* noiseMap = new osg::Texture2D;
+	osg::Image* noiseImg = osgDB::readImageFile("resources/noise.png");
+	if (!noiseImg)
+       {
+          std::cout << " couldn't find texture, quiting." << std::endl;
+          return NULL;
+       }
+	noiseMap->setImage(noiseImg);
+	stateset->setTextureAttributeAndModes(1,noiseMap,osg::StateAttribute::ON);
+	stateset->setTextureMode(1, GL_TEXTURE_GEN_S, osg::StateAttribute::ON);
+    stateset->setTextureMode(1, GL_TEXTURE_GEN_T, osg::StateAttribute::ON);
+    stateset->setTextureMode(1, GL_TEXTURE_GEN_R, osg::StateAttribute::ON);
+    stateset->setTextureMode(1, GL_TEXTURE_GEN_Q, osg::StateAttribute::ON);
+
+	osg::Uniform* uNoiseMap = new osg::Uniform("noiseMap", osg::Uniform::SAMPLER_2D);
+    uNoiseMap->set((int)1);
+
 	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", 64 );
 
 	//osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(.7f, .7f, .7f) );
@@ -261,6 +279,7 @@ osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 	//stateset->addUniform(baseColor);
 	stateset->addUniform(diffusePercent);
 	stateset->addUniform(himmelCube);
+	stateset->addUniform(uNoiseMap);
 	
     return group;
 }
@@ -310,7 +329,7 @@ int main(int argc, char* argv[])
 
     g_himmel = Himmel::createWithoutClouds();
 
-    g_timef = new TimeF(time(NULL), - 3600.0L * 2.0L, 3600.0L);
+    g_timef = new TimeF(time(NULL), - 3600.0L * 2.0L, 15.0L);
     g_timef->start();
 
     g_himmel->assignTime(g_timef);

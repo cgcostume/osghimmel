@@ -301,8 +301,8 @@ osg::Node *createReflector()
 
     group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
 
-	int kernelSize = 8;
-	osg::Vec3f kernel[8];
+	/*int kernelSize = 32;
+	osg::Vec3f kernel[32];
 
 	for (int i = 0; i < kernelSize; ++i) {
 		kernel[i] = osg::Vec3f(
@@ -319,7 +319,7 @@ osg::Node *createReflector()
 		kernel[i].normalize();
 
 		//osg::notify(osg::WARN) << kernel[i].x() << ", " << kernel[i].y() << ", " << kernel[i].z() << ", " << std::endl;
-	}
+	}*/
 
 	//create Shader for Image Based Lighting
 	osg::StateSet *iblState = group->getOrCreateStateSet();
@@ -346,6 +346,24 @@ osg::Node *createReflector()
 	iblProgram->addShader( iblFragment );
 
 	//Uniforms
+	osg::Texture2D* noiseMap = new osg::Texture2D;
+	noiseMap->setWrap(osg::Texture::WRAP_S,	osg::Texture::REPEAT);
+	noiseMap->setWrap(osg::Texture::WRAP_T,	osg::Texture::REPEAT);
+	noiseMap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
+	noiseMap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
+	//noiseMap->setWrap(osg::Texture::WRAP_R,	osg::Texture::REPEAT);
+	osg::Image* noiseImg = osgDB::readImageFile("resources/noise.png");
+	if (!noiseImg)
+       {
+          std::cout << " couldn't find texture, quiting." << std::endl;
+          return NULL;
+       }
+	noiseMap->setImage(noiseImg);
+	iblState->setTextureAttributeAndModes(1,noiseMap,osg::StateAttribute::ON);
+
+	osg::Uniform* uNoiseMap = new osg::Uniform("noiseMap", osg::Uniform::SAMPLER_2D);
+    uNoiseMap->set((int)1);
+
 	//osg::Uniform* uKernel = new osg::Uniform( "kernel", kernel );
 
 	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", CUBE_MAP_RES );
@@ -368,6 +386,7 @@ osg::Node *createReflector()
 	//iblState->addUniform(baseColor);
 	iblState->addUniform(diffusePercent);
 	iblState->addUniform(himmelCube);
+	iblState->addUniform(uNoiseMap);
 	
     return group;
 }
