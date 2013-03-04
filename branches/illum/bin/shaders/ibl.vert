@@ -1,6 +1,7 @@
 uniform int cubeMapRes;
 uniform float diffusePercent;
 uniform samplerCube himmelCube;
+uniform sampler2D noiseMap;
 //uniform vec3 kernel[8];
 
 uniform vec3 src;

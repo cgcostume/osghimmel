@@ -2,8 +2,9 @@ varying vec3 baseColor;
 uniform int cubeMapRes;
 uniform float diffusePercent;
 uniform samplerCube himmelCube;
+uniform sampler2D noiseMap;
 //uniform vec3 kernel[8];
-vec3 kernel[8];
+vec3 kernel[32];
 
 varying vec3 normal;
 varying vec3 pos;
@@ -231,12 +232,35 @@ void init() {
 	kernel[5] = vec3(0.636674, 0.698788, 0.326101);
 	kernel[6] = vec3(-0.435028, -0.2648, 0.860599);
 	kernel[7] = vec3(-0.642728, -0.670673, 0.370267);
+	kernel[8] = vec3(-0.35059, 0.662226, 0.662226);
+	kernel[9] = vec3(-0.912111, 0.346602, 0.218907);
+	kernel[10] = vec3(0.658323, 0.188092, 0.728857);
+	kernel[11] = vec3(0.268081, -0.861688, 0.430844);
+	kernel[12] = vec3(0.630132, -0.467517, 0.619969);
+	kernel[13] = vec3(0.636674, 0.698788, 0.326101);
+	kernel[14] = vec3(-0.435028, -0.2648, 0.860599);
+	kernel[15] = vec3(-0.642728, -0.670673, 0.370267);
+	kernel[16] = vec3(0.10083, 0.604978, 0.789832);
+	kernel[17] = vec3(-0.190476, 0.380952, 0.904762);
+	kernel[18] = vec3(-0.66492, 0.46033, 0.588199);
+	kernel[19] = vec3(-0.199117, -0.464606, 0.86284);
+	kernel[20] = vec3(-0.582581, -0.257021, 0.771064);
+	kernel[21] = vec3(-0.205398, 0.975643, 0.0770244);
+	kernel[22] = vec3(-0.290129, -0.232104, 0.928414);
+	kernel[23] = vec3(-0.39036, -0.78072, 0.48795);
+	kernel[24] = vec3(0.699926, -0.367461, 0.612435);
+	kernel[25] = vec3(0, -0.999935, 0.0113629);
+	kernel[26] = vec3(0.946657, -0.0440305, 0.319221);
+	kernel[27] = vec3(-0.528094, 0.665007, 0.528094);
+	kernel[28] = vec3(0.171429, -0.285714, 0.942857);
+	kernel[29] = vec3(0.801234, -0.585517, 0.123267);
+	kernel[30] = vec3(-0.332309, -0.609234, 0.720003);
+	kernel[31] = vec3(-0.760941, -0.366379, 0.535477);
 }
 
 void main() {
 	init();
 	
-		
 	vec3 v = normal;
 	vec3 color = baseColor;
 	
@@ -248,21 +272,23 @@ void main() {
 	
 	for (float i = 0.0; i < 8.0; ++i) {
 		if (i > 0.0) {
-			vec3 newSample = tbn * kernel[i] + pos;
-			v = newSample;
+			vec3 noise = texture2D(noiseMap, pos.xy * i);
+			v = tbn * noise + pos;
 		}
 		
 		vec3 envColor = vec3(textureCube(himmelCube, v));
-		/*vec3 envColorHsv = rgb2hsv(vec4(envColor, 1.0));
-		vec3 brightness = envColorHsv.b;*/
+		vec3 envColorHsv = rgb2hsv(vec4(envColor, 1.0));
 		
 		float dirWeight = 1.0;
 		if (src_known)
-			dirWeight = dir_light_src(normal);
+			dirWeight = dir_light_src(v);
 			
-		color = mix(color, envColor, dirWeight/(i+1.0));
+		//vec3 colorHsv = rgb2hsv(vec4(color, 1.0));
+		//color = hsv2rgb( vec3(colorHsv.r, colorHsv.g, envColorHsv.b * dirWeight + (1.0 - dirWeight) * colorHsv.b) );
+		color = mix(color, envColor, dirWeight / (i+1.0));
 	}
 	
+	//gl_FragColor = texture2D(noiseMap, gl_TexCoord[0]);
 	gl_FragColor = vec4(color, 1.0);
 	
 }
