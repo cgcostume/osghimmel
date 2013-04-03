@@ -194,7 +194,7 @@ osg::Group *createScene(
 
 osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 {
-	const unsigned int unit = 0;
+	const unsigned int unit = 1;
 	osg::Group *group = new osg::Group;
 	
 	//barrel
@@ -258,7 +258,7 @@ osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
 	osg::Uniform* uNoiseMap = new osg::Uniform("noiseMap", osg::Uniform::SAMPLER_2D);
     uNoiseMap->set((int)1);
 
-	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", 64 );
+	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", 128 );
 
 	//osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(.7f, .7f, .7f) );
 	osg::Uniform* diffusePercent = new osg::Uniform( "diffusePercent", 0.7f );
@@ -268,7 +268,7 @@ osg::Node *createReflector(HimmelEnvMap* hem, osg::Vec3f sun)
     himmelCube->set((int)0);
 
 	osg::Uniform* uSunPosition = new osg::Uniform("src", sun);
-	osg::notify(osg::WARN) << sun.x() << ", " << sun.y() << ", " << sun.z() << std::endl;
+	osg::notify(osg::WARN) << "Sun: " << sun.x() << ", " << sun.y() << ", " << sun.z() << std::endl;
 
 	osg::Uniform* uSunPositionAvailable = new osg::Uniform("src_known", true);
 
@@ -320,7 +320,7 @@ int main(int argc, char* argv[])
 
     fovChanged();
 
-	osgHimmel::HimmelEnvMap* hem = new HimmelEnvMap(64);
+	osgHimmel::HimmelEnvMap* hem = new HimmelEnvMap(256);
 	
 
 
@@ -329,7 +329,7 @@ int main(int argc, char* argv[])
 
     g_himmel = Himmel::createWithoutClouds();
 
-    g_timef = new TimeF(time(NULL), - 3600.0L * 2.0L, 15.0L);
+    g_timef = new TimeF(time(NULL), - 3600.0L * 2.0L, 20.0L);
     g_timef->start();
 
     g_himmel->assignTime(g_timef);
