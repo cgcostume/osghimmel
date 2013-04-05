@@ -259,15 +259,6 @@ osg::Node *createReflector()
 {
 	osg::Group *group = new osg::Group;
 	
-	//barrel
-	osg::Node *barrel = osgDB::readNodeFile("resources/barrel.obj");
-	osg::ref_ptr<osg::MatrixTransform> bTrans = new osg::MatrixTransform;
-	osg::Matrix bMat; 
-	bMat.makeTranslate(2.0f, 2.0f, 0.0f);
-	bTrans->setMatrix(bMat);
-	bTrans->addChild(barrel);
-	group->addChild(bTrans);
-
 	//monkey
 	osg::Node *monkey = osgDB::readNodeFile("resources/models/monkey.obj");
 	osg::ref_ptr<osg::MatrixTransform> mTrans = new osg::MatrixTransform;
@@ -277,49 +268,11 @@ osg::Node *createReflector()
 	mTrans->addChild(monkey);
 	group->addChild(mTrans);
 
-	//cube
-	osg::Node *cube = osgDB::readNodeFile("resources/models/cube.obj");
-	osg::ref_ptr<osg::MatrixTransform> cTrans = new osg::MatrixTransform;
-	osg::Matrix cMat; 
-	cMat.makeTranslate(-2.0f, 2.0f, 0.0f);
-	cTrans->setMatrix(cMat);
-	cTrans->addChild(cube);
-	group->addChild(cTrans);
-
-	//sphere
-	osg::Node *sphere = osgDB::readNodeFile("resources/models/sphere.obj");
-	osg::ref_ptr<osg::MatrixTransform> sTrans = new osg::MatrixTransform;
-	osg::Matrix sMat; 
-	sMat.makeTranslate(2.0f, -2.0f, 0.0f);
-	sTrans->setMatrix(sMat);
-	sTrans->addChild(sphere);
-	group->addChild(sTrans);
-
     osg::ref_ptr<osg::Material> m = new osg::Material;
     m->setColorMode(osg::Material::DIFFUSE);
     //m->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(6.0f, 6.0f, 6.0f, 1.f));
 
     group->getOrCreateStateSet()->setAttributeAndModes(m.get(), osg::StateAttribute::ON);
-
-	/*int kernelSize = 32;
-	osg::Vec3f kernel[32];
-
-	for (int i = 0; i < kernelSize; ++i) {
-		kernel[i] = osg::Vec3f(
-			float(rand() % 100) / 100.0 * 2.0 - 1.0,
-			float(rand() % 100) / 100.0 * 2.0 - 1.0,
-			float(rand() % 100) / 100.0
-		);
-		
-		float scale = float(i) / float(kernelSize);
-		scale = (1.0 - 0.1) * scale * scale + 0.1;
-		//scale = lerp(0.1f, 1.0f, scale * scale);
-		kernel[i] *= scale;
-
-		kernel[i].normalize();
-
-		//osg::notify(osg::WARN) << kernel[i].x() << ", " << kernel[i].y() << ", " << kernel[i].z() << ", " << std::endl;
-	}*/
 
 	//create Shader for Image Based Lighting
 	osg::StateSet *iblState = group->getOrCreateStateSet();
@@ -351,7 +304,6 @@ osg::Node *createReflector()
 	noiseMap->setWrap(osg::Texture::WRAP_T,	osg::Texture::REPEAT);
 	noiseMap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
 	noiseMap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::NEAREST);
-	//noiseMap->setWrap(osg::Texture::WRAP_R,	osg::Texture::REPEAT);
 	osg::Image* noiseImg = osgDB::readImageFile("resources/noise.png");
 	if (!noiseImg)
        {
@@ -364,12 +316,7 @@ osg::Node *createReflector()
 	osg::Uniform* uNoiseMap = new osg::Uniform("noiseMap", osg::Uniform::SAMPLER_2D);
     uNoiseMap->set((int)1);
 
-	//osg::Uniform* uKernel = new osg::Uniform( "kernel", kernel );
-
-	osg::Uniform* cubeMapRes = new osg::Uniform( "cubeMapRes", CUBE_MAP_RES );
-
-	//osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(.7f, .7f, .7f) );
-	osg::Uniform* diffusePercent = new osg::Uniform( "diffusePercent", 0.7f );
+	osg::Uniform* baseColor = new osg::Uniform( "baseColor", osg::Vec3f(1.0f, 1.0f, 1.0f) );
 
 	// create unfirom to point to the texture
 	osg::Uniform* himmelCube = new osg::Uniform("himmelCube", osg::Uniform::SAMPLER_CUBE);
@@ -379,12 +326,9 @@ osg::Node *createReflector()
 	osg::Uniform* uSunPositionAvailable = new osg::Uniform("src_known", true);	
 
 	iblState->setAttributeAndModes(iblProgram, osg::StateAttribute::ON);
+	iblState->addUniform(baseColor);
 	iblState->addUniform(uSunPosition);
 	iblState->addUniform(uSunPositionAvailable);
-	//iblState->addUniform(uKernel);
-	iblState->addUniform(cubeMapRes);
-	//iblState->addUniform(baseColor);
-	iblState->addUniform(diffusePercent);
 	iblState->addUniform(himmelCube);
 	iblState->addUniform(uNoiseMap);
 	

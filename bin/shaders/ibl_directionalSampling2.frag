@@ -271,7 +271,7 @@ void main() {
 	vec3 envColor = vec3(1.0);
 	float totalWeights = 0.0;
 	
-	for (int i = 0; i < 32; ++i) {
+	for (int i = 0; i < 8; ++i) {
 		vec3 noise = kernel[i];
 		v = tbn * noise;
 		
@@ -282,16 +282,12 @@ void main() {
 		if (src_known)
 			dirWeight = pow(dir_light_src(v), 1.5);
 			
-		if (i == 0)
-			envColor = vColor;
-		else {
-			envColor = mix(vColor, envColor, dot(normal, v));
-		}
+		color = mix(vColor, color, dirWeight);
 	}
 	
 	//color balance
-	float luminance = (baseColor.x + baseColor.y + baseColor.z) / 3.0;
-	color = mix(envColor, color, dir_light_src(normal) * (1.0 - luminance));
+	//float luminance = (baseColor.x + baseColor.y + baseColor.z) / 3.0;
+	//color = mix(envColor, color, dir_light_src(normal) + (1.0 - luminance));
 	
 	//final fragment
 	gl_FragColor = vec4(color, 1.0);
