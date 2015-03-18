@@ -31,12 +31,10 @@
 # http://qt.gitorious.org/qt-solutions/qt-solutions/trees/master/qtpropertybrowser
 # cmake modified from: http://bugreports.qt.nokia.com/browse/QTSOLBUG-80
 
-set(QT_USE_UI TRUE)
-set(QT_USE_CORE TRUE)
-set(QT_USE_GUI TRUE)
-
 include_directories(
-    ${QT_INCLUDE_DIR}
+    ${Qt5Core_INCLUDE_DIRS}
+	${Qt5OpenGL_INCLUDE_DIRS}
+	${Qt5Gui_INCLUDE_DIRS}
     ${CMAKE_CURRENT_BINARY_DIR})
 
 set(sources

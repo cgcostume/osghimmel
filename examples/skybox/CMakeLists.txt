@@ -102,12 +102,13 @@ set(SKYBOX_SOURCES
     utils/tr.h)
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
-
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${QT_INCLUDES})
+    ${Qt5Core_INCLUDE_DIRS}
+	${Qt5OpenGL_INCLUDE_DIRS}
+	${Qt5Gui_INCLUDE_DIRS})
     
-add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
+add_executable(skybox ${SKYBOX_SOURCES})
 
 target_link_libraries(skybox
     osgHimmel
