@@ -27,72 +27,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 
-# macros
-
-macro(QT4_AUTO_WRAP outfiles)
-
-    set(moc_headers "")
-    set(ui_files "")
-    set(qrc_files "")
-
-    foreach(fileName ${ARGV})
-
-        if(fileName MATCHES "\\.h$")
-            file(STRINGS ${fileName} lines REGEX Q_OBJECT)
-            IF(lines)
-                list(APPEND moc_headers ${fileName})
-                message(STATUS "moc: ${fileName}")
-            endif()
-        endif()
-        
-        if(fileName MATCHES "\\.ui$")
-            list(APPEND ui_files ${fileName})
-            message(STATUS "uic: ${fileName}")
-        endif()
-
-        if(fileName MATCHES "\\.qrc$")
-            list(APPEND qrc_files ${fileName})
-            message(STATUS "qrc: ${fileName}")
-        endif()
-
-    endforeach()
-
-    qt4_wrap_cpp(mocGeneratedByHeader ${moc_headers})
-    qt4_wrap_ui(uicGenerated ${ui_files})
-
-    qt4_add_resources(mocGeneratedByRessources ${qrc_files})
-
-    list(APPEND ${outfiles}
-        ${uicGenerated}
-        ${mocGeneratedByHeader} 
-        ${mocGeneratedByRessources})
-
-    source_group("_ Qt Generated" FILES 
-        ${uicGenerated}
-        ${mocGeneratedByHeader}
-		${mocGeneratedByRessources})
-
-	source_group("_ CMake Rules" REGULAR_EXPRESSION "rule$")
-
-endmacro()
-
-# config
-
 message(STATUS "add executable: skybox")
 
-set(QT_MIN_VERSION "4.7.0")
-find_package(Qt4 COMPONENTS QtCore QtOpenGL QtGui REQUIRED)
-include(${QT_USE_FILE})
+find_package(Qt5 CONFIG REQUIRED Core OpenGL Gui)
 
-if(NOT QT4_FOUND)
-	message(FATAL_ERROR "Skybox project cannot be build.")
-endif(NOT QT4_FOUND)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 add_subdirectory("qtpropertybrowser")
-
-set(QT_USE_QTOPENGL TRUE)
-set(QT_USE_UI TRUE)
-set(QT_USE_CORE TRUE)
 
 set(SKYBOX_SOURCES
     abstracthimmelscene.h
@@ -158,25 +101,20 @@ set(SKYBOX_SOURCES
     utils/shadermodifier.cpp
     utils/tr.h)
 
-qt4_auto_wrap(QT4_SOURCES ${SKYBOX_SOURCES})
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} ${SKYBOX_SOURCES})
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${QT_INCLUDES})
     
-if(MSVC)
-    add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
-else(MSVC)
-    add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
-endif()
+add_executable(skybox ${QT4_SOURCES} ${SKYBOX_SOURCES})
 
 target_link_libraries(skybox
     osgHimmel
     qtpropertybrowser
-    ${QT_QTMAIN_LIBRARY}
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTGUI_LIBRARY}
+    Qt5::Core
+	Qt5::Gui
+	Qt5::OpenGL
     ${OPENSCENEGRAPH_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY})
@@ -188,18 +126,6 @@ set_target_properties(skybox
 install(TARGETS skybox
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     CONFIGURATIONS Debug Release)
-
-install(FILES 
-    "${QT_BINARY_DIR}/QtCored${QT_VERSION_MAJOR}.dll"
-    "${QT_BINARY_DIR}/QtGuid${QT_VERSION_MAJOR}.dll"
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    CONFIGURATIONS Debug)
-
-install(FILES 
-    "${QT_BINARY_DIR}/QtCore${QT_VERSION_MAJOR}.dll"
-    "${QT_BINARY_DIR}/QtGui${QT_VERSION_MAJOR}.dll"
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    CONFIGURATIONS Release)
 
 add_definitions("-DOSGHIMMEL_EXPOSE_SHADERS")
 

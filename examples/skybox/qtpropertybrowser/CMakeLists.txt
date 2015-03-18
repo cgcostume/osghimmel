@@ -58,16 +58,16 @@ set(sources
     qtgroupboxpropertybrowser.cpp
     qtpropertybrowserutils.cpp)
 
-qt4_generate_moc(qtpropertybrowser.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowser.cpp)
-qt4_generate_moc(qtpropertymanager.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertymanager.cpp)
-qt4_generate_moc(qteditorfactory.h           ${CMAKE_CURRENT_BINARY_DIR}/moc_qteditorfactory.cpp)
-qt4_generate_moc(qtvariantproperty.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtvariantproperty.cpp)
-qt4_generate_moc(qttreepropertybrowser.h     ${CMAKE_CURRENT_BINARY_DIR}/moc_qttreepropertybrowser.cpp)
-qt4_generate_moc(qtbuttonpropertybrowser.h   ${CMAKE_CURRENT_BINARY_DIR}/moc_qtbuttonpropertybrowser.cpp)
-qt4_generate_moc(qtgroupboxpropertybrowser.h ${CMAKE_CURRENT_BINARY_DIR}/moc_qtgroupboxpropertybrowser.cpp)
-qt4_generate_moc(qtpropertymanager.cpp       ${CMAKE_CURRENT_BINARY_DIR}/qtpropertymanager.moc)
-qt4_generate_moc(qteditorfactory.cpp         ${CMAKE_CURRENT_BINARY_DIR}/qteditorfactory.moc)
-qt4_generate_moc(qttreepropertybrowser.cpp   ${CMAKE_CURRENT_BINARY_DIR}/qttreepropertybrowser.moc)
+qt5_generate_moc(qtpropertybrowser.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowser.cpp)
+qt5_generate_moc(qtpropertymanager.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertymanager.cpp)
+qt5_generate_moc(qteditorfactory.h           ${CMAKE_CURRENT_BINARY_DIR}/moc_qteditorfactory.cpp)
+qt5_generate_moc(qtvariantproperty.h         ${CMAKE_CURRENT_BINARY_DIR}/moc_qtvariantproperty.cpp)
+qt5_generate_moc(qttreepropertybrowser.h     ${CMAKE_CURRENT_BINARY_DIR}/moc_qttreepropertybrowser.cpp)
+qt5_generate_moc(qtbuttonpropertybrowser.h   ${CMAKE_CURRENT_BINARY_DIR}/moc_qtbuttonpropertybrowser.cpp)
+qt5_generate_moc(qtgroupboxpropertybrowser.h ${CMAKE_CURRENT_BINARY_DIR}/moc_qtgroupboxpropertybrowser.cpp)
+qt5_generate_moc(qtpropertymanager.cpp       ${CMAKE_CURRENT_BINARY_DIR}/qtpropertymanager.moc)
+qt5_generate_moc(qteditorfactory.cpp         ${CMAKE_CURRENT_BINARY_DIR}/qteditorfactory.moc)
+qt5_generate_moc(qttreepropertybrowser.cpp   ${CMAKE_CURRENT_BINARY_DIR}/qttreepropertybrowser.moc)
 
 set(headers_MOC
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowser.cpp
@@ -86,7 +86,7 @@ set_source_files_properties(${headers_MOC}
     PROPERTIES
     HEADER_FILE_ONLY true)
 
-qt4_generate_moc(qtpropertybrowserutils_p.h  
+qt5_generate_moc(qtpropertybrowserutils_p.h  
     ${CMAKE_CURRENT_BINARY_DIR}/moc_qtpropertybrowserutils_p.cpp)
 
 add_library(qtpropertybrowser STATIC

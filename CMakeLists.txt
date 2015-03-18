@@ -31,7 +31,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
   
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.11 FATAL_ERROR)
 
 # macros
 
@@ -93,7 +93,8 @@ find_package(OpenSceneGraph REQUIRED
 string(REPLACE "include" "bin" OSG_BINARY_DIR ${OSG_INCLUDE_DIR})
 
 set(OSG_BINARY_DIR ${OSG_BINARY_DIR} CACHE PATH "Binary directory containing OSG dlls.")
-set(OSG_SOVERSION "80" CACHE STRING "OSG binaries version (osg##.dll).")
+set(OSG_SOVERSION "115" CACHE STRING "OSG binaries version (osg##.dll).")
+set(OPENSCENEGRAPH_VERSION "3.3.3" CACHE STRING "OSG version for plugins (osgPlugins-##).")
 
 
 # lib/bin copy
